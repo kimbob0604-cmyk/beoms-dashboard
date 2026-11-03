@@ -46,7 +46,8 @@ const U = (() => {
     },
     async json(url) {
       if (!cache[url]) {
-        cache[url] = fetch(url).then(r => {
+        // no-cache: 매번 서버에 바뀌었는지 확인(바뀌지 않았으면 304로 가볍게). 새로고침하면 바로 최신 데이터.
+        cache[url] = fetch(url, { cache: 'no-cache' }).then(r => {
           if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
           return r.json();
         });
