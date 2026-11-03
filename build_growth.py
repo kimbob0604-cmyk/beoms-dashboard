@@ -68,6 +68,9 @@ def slim(calc):
                 'lb': 1 if v['low_base'] else 0,
                 'w1': _round(v['rev_w1'], 4), 'm1': _round(v['rev_m1'], 4), 'm3': _round(v['rev_m3'], 4),
             }
+            if period == 'y0':  # 올해 추정치 리비전 (y1 의 출발 연도는 y0 의 다음 연도와 같아 중복)
+                out[period][m].update({'bw1': _round(v['rev_b_w1'], 4), 'bm1': _round(v['rev_b_m1'], 4),
+                                       'bm3': _round(v['rev_b_m3'], 4)})
     return out
 
 

@@ -1,7 +1,8 @@
 """
-매일 실행: 가격 수집 → 컨센서스 수집 → 이익 성장 JSON 빌드 → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급) → JSON 빌드 → GitHub Pages 배포(publish.py)
 
-launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10에 부른다.
+launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 18:40에 부른다.
+18:40 실행은 그날 장 마감 뒤 네이버 수급·신고가를 받아 저녁에 화면을 갱신하기 위해서다.
 컨센서스는 월요일만 전체(약 1시간), 화~토는 추정치 있던 종목 + 신규만(약 15분) 받는다.
 같은 날 다시 돌려도 안전하다. 컨센서스는 오늘 이미 받은 종목을 건너뛰고, 가격·빌드는 덮어쓴다.
 KRX 일별 데이터는 보통 다음 날 아침에 열리므로 12:10 실행이 07:10에 못 받은 가격을 채운다.
@@ -66,11 +67,26 @@ def main() -> int:
         elif cns != 0:
             problems.append(f'컨센서스 점검 실패(코드 {cns}) — 빌드 건너뜀')
 
+        built = False
         if cns in (0, 1):
             if run('빌드', ['build_growth.py'], log) != 0:
-                problems.append('JSON 빌드 실패')
-            elif run('배포', ['publish.py'], log) != 0:
-                problems.append('GitHub Pages 배포 실패')
+                problems.append('이익 성장 JSON 빌드 실패')
+            else:
+                built = True
+
+        # 네이버는 컨센서스와 다른 서버라 컨센서스가 막혀도 받는다
+        nv = run('네이버', ['collect_naver.py', 'all'], log)
+        if nv == 3:
+            problems.append('네이버 서버 응답 없음 — 다음 실행에서 이어 받음')
+        elif nv != 0:
+            problems.append('네이버 수집 오류가 많음')
+        if run('네이버 빌드', ['build_naver.py'], log) != 0:
+            problems.append('리포트·수급·신고가 JSON 빌드 실패')
+        else:
+            built = True
+
+        if built and run('배포', ['publish.py'], log) != 0:
+            problems.append('GitHub Pages 배포 실패')
 
         log.write(f'=== {datetime.now():%H:%M:%S} 끝: {"; ".join(problems) or "정상"}\n')
 

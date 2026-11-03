@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>컨센 리비전 · Beom's Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/app.css">
+<script>
+  // 깜빡임 방지: 저장된 테마를 렌더 전에 적용
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Beom's Dashboard</div>
+  <nav class="tabs">
+    <span class="tab off" title="준비 중">홈</span>
+    <a class="tab" href="./">이익 성장</a>
+    <a class="tab on" href="revision.html">컨센 리비전</a>
+    <a class="tab" href="high.html">신고가</a>
+    <a class="tab" href="flow.html">수급</a>
+  </nav>
+  <div class="top-right">
+    <span id="view"></span>
+    <select id="date" aria-label="기준일"></select>
+    <button id="theme" class="icon-btn" aria-label="다크 모드 전환" title="다크 모드 전환">◐</button>
+  </div>
+</header>
+
+<main>
+  <section class="filters" id="filters"></section>
+  <details class="card summary" id="summary-box" open>
+    <summary id="summary-head"></summary>
+    <div id="summary"></div>
+  </details>
+  <details class="card sectors" id="sectors">
+    <summary id="sectors-head"></summary>
+    <div id="sector-list"></div>
+  </details>
+  <section class="cols">
+    <div class="col card" id="col-KOSPI"></div>
+    <div class="col card" id="col-KOSDAQ"></div>
+  </section>
+  <p class="msg" id="msg">불러오는 중…</p>
+</main>
+
+<footer id="foot"></footer>
+
+<script src="js/util.js"></script>
+<script src="js/stock.js"></script>
+<script src="js/revision.js"></script>
+</body>
+</html>

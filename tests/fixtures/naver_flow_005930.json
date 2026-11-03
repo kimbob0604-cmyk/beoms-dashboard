@@ -1,0 +1,87 @@
+{
+ "hasNext": true,
+ "items": [
+  {
+   "localTradedAt": "2026-11-02",
+   "foreignHoldingStockQuantity": "2698726848",
+   "foreignHoldingRatio": "46.16",
+   "krx": {
+    "foreignNetVolume": "515900",
+    "foreignBuyVolume": "5052381",
+    "foreignSellVolume": "4536481",
+    "organizationNetVolume": "733138",
+    "organizationBuyVolume": "6551562",
+    "organizationSellVolume": "5818424",
+    "individualNetVolume": "-1810914",
+    "individualBuyVolume": "2288350",
+    "individualSellVolume": "4099264",
+    "closingPrice": "230000",
+    "priceMovement": "rising",
+    "basePrice": "225000",
+    "regularMarketClosingPrice": "229000",
+    "regularMarketPriceMovement": "rising",
+    "tradingVolume": "14537981",
+    "regularMarketChangePrice": "4000",
+    "regularMarketChangeRate": "1.78",
+    "changePrice": "5000",
+    "changeRate": "2.22"
+   },
+   "nxt": null
+  },
+  {
+   "localTradedAt": "2026-10-30",
+   "foreignHoldingStockQuantity": "2698092713",
+   "foreignHoldingRatio": "46.15",
+   "krx": {
+    "foreignNetVolume": "-1072820",
+    "foreignBuyVolume": "6792250",
+    "foreignSellVolume": "7865070",
+    "organizationNetVolume": "1742739",
+    "organizationBuyVolume": "8993391",
+    "organizationSellVolume": "7250652",
+    "individualNetVolume": "-85248",
+    "individualBuyVolume": "3796550",
+    "individualSellVolume": "3881798",
+    "closingPrice": "220500",
+    "priceMovement": "falling",
+    "basePrice": "232000",
+    "regularMarketClosingPrice": "225000",
+    "regularMarketPriceMovement": "falling",
+    "tradingVolume": "19668075",
+    "regularMarketChangePrice": "-7000",
+    "regularMarketChangeRate": "-3.02",
+    "changePrice": "-11500",
+    "changeRate": "-4.96"
+   },
+   "nxt": null
+  },
+  {
+   "localTradedAt": "2026-10-29",
+   "foreignHoldingStockQuantity": "2699009428",
+   "foreignHoldingRatio": "46.17",
+   "krx": {
+    "foreignNetVolume": "-518762",
+    "foreignBuyVolume": "7503501",
+    "foreignSellVolume": "8022263",
+    "organizationNetVolume": "245680",
+    "organizationBuyVolume": "9359265",
+    "organizationSellVolume": "9113585",
+    "individualNetVolume": "614637",
+    "individualBuyVolume": "7946840",
+    "individualSellVolume": "7332203",
+    "closingPrice": "230500",
+    "priceMovement": "falling",
+    "basePrice": "242000",
+    "regularMarketClosingPrice": "232000",
+    "regularMarketPriceMovement": "falling",
+    "tradingVolume": "24975596",
+    "regularMarketChangePrice": "-10000",
+    "regularMarketChangeRate": "-4.13",
+    "changePrice": "-11500",
+    "changeRate": "-4.75"
+   },
+   "nxt": null
+  }
+ ],
+ "cursor": "MjAyNjEwMjk"
+}

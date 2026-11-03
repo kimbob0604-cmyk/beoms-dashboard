@@ -1,0 +1,79 @@
+{
+ "researchContent": {
+  "itemCode": "005930",
+  "itemName": "삼성전자",
+  "researchId": 97383,
+  "title": "초우량 고성장 파격 세일 중",
+  "brokerName": "미래에셋증권",
+  "writeDate": "2026-10-30",
+  "readCount": "33786",
+  "attachUrl": "https://stock.pstatic.net/stock-research/company/56/20261030_company_814644000.pdf",
+  "content": "<p><strong>환율 부담에도 분기 영업이익 100조원 돌파</strong></p><p><br>동사에 대한 목표주가를 40만원으로 유지한다.<br>(테스트용으로 줄인 본문)</p>",
+  "opinion": "매수",
+  "goalPrice": "400000",
+  "prevGoalPrice": "232000",
+  "priceAtWriteDate": "232000"
+ },
+ "researchSummaries": [
+  {
+   "researchCategory": "종목분석",
+   "category": "종목분석",
+   "itemCode": "005930",
+   "itemName": "삼성전자",
+   "researchId": 97383,
+   "title": "초우량 고성장 파격 세일 중",
+   "brokerName": "미래에셋증권",
+   "writeDate": "2026-10-30",
+   "readCount": "33786",
+   "endUrl": "https://m.stock.naver.com/research/company/97383"
+  },
+  {
+   "researchCategory": "종목분석",
+   "category": "종목분석",
+   "itemCode": "005930",
+   "itemName": "삼성전자",
+   "researchId": 97370,
+   "title": "3Q26 Review 사상 최대 실적, 메모리가 이끌었다",
+   "brokerName": "교보증권",
+   "writeDate": "2026-10-30",
+   "readCount": "20583",
+   "endUrl": "https://m.stock.naver.com/research/company/97370"
+  },
+  {
+   "researchCategory": "종목분석",
+   "category": "종목분석",
+   "itemCode": "005930",
+   "itemName": "삼성전자",
+   "researchId": 97363,
+   "title": "2027년 영업이익 전망치 상향으로 방향 전환",
+   "brokerName": "하나증권",
+   "writeDate": "2026-10-30",
+   "readCount": "21042",
+   "endUrl": "https://m.stock.naver.com/research/company/97363"
+  },
+  {
+   "researchCategory": "종목분석",
+   "category": "종목분석",
+   "itemCode": "005930",
+   "itemName": "삼성전자",
+   "researchId": 97356,
+   "title": "3Q26 Re: 추정치 추가 상향",
+   "brokerName": "DS투자증권",
+   "writeDate": "2026-10-30",
+   "readCount": "18326",
+   "endUrl": "https://m.stock.naver.com/research/company/97356"
+  },
+  {
+   "researchCategory": "종목분석",
+   "category": "종목분석",
+   "itemCode": "005930",
+   "itemName": "삼성전자",
+   "researchId": 97353,
+   "title": "4Q26 예상 영업이익 137.3조원",
+   "brokerName": "유안타증권",
+   "writeDate": "2026-10-30",
+   "readCount": "13989",
+   "endUrl": "https://m.stock.naver.com/research/company/97353"
+  }
+ ]
+}

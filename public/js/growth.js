@@ -272,7 +272,7 @@
 
   const gClass = v => (v.k === 'turnaround' ? 'up' : v.k === 'loss' ? 'down' : U.cls(v.g));
   const nextFyOf = s => s.fy0 + (state.period === 'y1' ? 2 : 1);
-  const naverLink = s => `<a href="https://finance.naver.com/item/main.naver?code=${s.c}" target="_blank" rel="noopener">${U.esc(s.n)}</a>`;
+  const naverLink = s => Stock.link(s);   // 누르면 종목 상세 패널, ⌘/Ctrl+클릭은 네이버 새 탭
   const chHtml = s => `<span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span>`;
   const streakBadge = s => {
     const st = s.st[state.metric];
@@ -300,7 +300,7 @@
   function rowHtml(s, rank) {
     const v = pick(s);
     const [mName, mult] = METRICS[state.metric];
-    return `<article class="row">
+    return `<article class="row" ${Stock.hintAttr(s)}>
       <span class="rank">${rank}</span>
       <div class="r-main">
         <div class="r-top">
@@ -338,7 +338,7 @@
         const o = s.k[state.period]?.[m];
         return `<td class="num ${o ? gClass(o) : ''}">${o ? growthText(o) : '–'}</td>`;
       }).join('');
-      return `<tr>
+      return `<tr ${Stock.hintAttr(s)}>
         <td class="num muted">${i + 1}</td>
         <td class="name-cell">${naverLink(s)}<small class="muted">${MARKETS[s.mk]} · ${U.esc(s.w || '')}</small></td>
         <td class="num">${U.eok(s.mc)}</td>

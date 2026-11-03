@@ -1,6 +1,6 @@
 # Beom's Dashboard
 
-이익 성장 · 컨센 리비전 · 신고가 · 수급 대시보드.
+이익 성장 · 컨센 리비전 · 신고가 · 수급 대시보드. 종목을 누르면 차트·리포트 키워드·목표가·수급을 보는 상세 패널이 열린다.
 구조: Python 수집기 → SQLite(`db/dashboard.db`) → 날짜별 JSON → 정적 프론트.
 
 ## 1단계: 연간 컨센서스 수집 (완료)
@@ -84,7 +84,8 @@ python3 serve.py                          # http://127.0.0.1:8765 (이 컴퓨터
 
 ## 4단계: 매일 자동 실행 (완료)
 
-`daily.py`가 네 단계를 차례로 돌린다: 가격 → 컨센서스 → 빌드 → GitHub Pages 배포. launchd가 월~토 07:10과 12:10에 부른다.
+`daily.py`가 차례로 돌린다: 가격 → 컨센서스 → 이익 성장 빌드 → 네이버(리포트·신고가·수급) 수집·빌드 → GitHub Pages 배포.
+launchd가 월~토 07:10·12:10, 월~금 18:40에 부른다. 18:40은 장 마감 뒤 그날 수급·신고가를 저녁에 반영하기 위해서다.
 
 - 07:10 실행: 컨센서스를 받는다.
   - 월요일: 전체 약 2,700종목(약 1시간).
@@ -109,9 +110,49 @@ launchctl print gui/$(id -u)/com.kimbob.beomdashboard.daily | grep -E "state|las
 launchctl bootout gui/$(id -u)/com.kimbob.beomdashboard.daily
 ```
 
+## 5단계: 종목 상세 · 컨센 리비전 · 신고가 · 수급 (완료)
+
+출처는 네이버 증권이다. 네이버 API는 다른 사이트의 브라우저 호출을 막아서(CORS 403) 차트 이미지만 브라우저가 직접 받고, 나머지는 맥에서 받아 JSON으로 만든다.
+
+| 응답 | 내용 |
+|---|---|
+| `m.stock.naver.com/api/research/company?page=&pageSize=100` | 종목분석 리포트 목록 (하루 약 50건) |
+| `m.stock.naver.com/api/research/company/{id}` | 리포트 요약 본문·투자의견·목표주가 |
+| `stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code}?exchangeType=krx` | 일별 외국인·기관·개인 순매수 수량, 외국인 지분율 |
+| `m.stock.naver.com/api/stocks/high52week/{KOSPI\|KOSDAQ}` | 그날 52주 신고가 종목 |
+| `ssl.pstatic.net/imgfinance/chart/item/{area/day\|candle/day\|candle/week\|candle/month}/{code}.png` | 차트 이미지 (브라우저가 직접, 캐시 12초) |
+
+```bash
+python3 collect_naver.py research --days 90   # 리포트 백필 (평소엔 최근 14일 목록에서 새 리포트만)
+python3 collect_naver.py flow                 # 수급 (처음 받는 종목은 60거래일, 이후 10거래일)
+python3 collect_naver.py high                 # 52주 신고가 목록
+python3 build_naver.py                        # flow/·high/·reports/·stocks/ JSON
+```
+
+- 종목 상세 패널: 어느 탭에서든 종목 이름을 누르면 오른쪽에 열린다. ⌘/Ctrl+클릭은 네이버 증권 새 탭이다. 주소 `#005930`으로 바로 열 수 있다.
+  - 차트는 네이버 이미지라 장중(08:50~15:40)에는 30초마다 다시 받는다.
+  - 리포트는 최근 90일이다. 목표가 변경은 같은 증권사의 직전 리포트와 비교한다. 네이버의 prevGoalPrice는 작성일 주가와 같은 값이라 쓰지 않는다.
+  - 키워드(`keywords.py`, 형태소 분석기 없이 동작)
+    - 리포트 글에서 조사·어미를 떼고, 숫자·기간 표기·흔한 말을 뺀다.
+    - '이 종목의 여러 리포트가 함께 쓴 말 × 다른 종목 리포트엔 드문 말(idf)' 순으로 8개를 고른다.
+    - 키워드마다 그 말이 든 문장을 최신 리포트부터 3개까지 붙인다. 종목명 조각은 키워드에서 뺀다.
+- 컨센 리비전 탭: 이익 성장 JSON의 추정치 변화를 그대로 쓴다. 올해(FY0) 추정치 변화(`bw1/bm1/bm3`)를 빌드에 추가했다.
+  - 추정치 보기: 연도·지표·기간별 상향/하향 종목, 시장별 상향·하향 종목 수와 합계 변화, 업종별 리비전.
+  - 목표가 보기: 최근 1일/1주/1개월 리포트의 목표가 상향·하향. 상향(하향)이 많은 종목을 위에 칩으로 모은다.
+- 수급 탭: 시총 1,000억 이상 보통주 + 컨센서스·리포트가 있는 종목(약 1,400종목)이 대상이다. 시장 전체 합계와는 다르다.
+  - 금액은 순매수 수량 × 그날 정규장 종가로 어림한다. 주체는 외국인/기관/외국인+기관, 기간은 1·5·20·60일이다. 금액 순 또는 시총 대비 순으로 본다.
+- 신고가 탭: 네이버 52주 신고가 목록을 매일 쌓는다. 신고가 횟수·연속 일수·'최근 20거래일 신고가'는 쌓기 시작한 날(2026-11-03)부터 센다.
+  - 12:10 실행은 장중 목록을 저장하고, 18:40이나 다음 날 07:10 실행이 마감 목록으로 덮어쓴다.
+- KRX 종가는 다음 날 아침에 열린다. 그 전에는 수급 응답의 정규장 종가로 그날 주가·등락률을 채운다.
+- 안전장치: 네이버 요청은 0.2초 간격이다. 연속 8회 네트워크 실패면 멈춘다(종료 코드 3). 컨센서스 서버와 별개라 컨센서스가 막혀도 네이버는 받는다.
+- 리포트 요약의 권리는 각 증권사에 있다. 화면에는 소제목·키워드 문장만 보이고 원문은 네이버·PDF 링크로 연결한다.
+
 ## 테이블
 
 - `consensus_annual`: (as_of, code, fy, fy_month)별 실적/추정
 - `consensus_trend`: (as_of, code, fy, fy_month, metric)별 now / w1 / m1 / m3 / y1
 - `stock_meta`: 시장, WICS (7일마다 갱신)
 - `collect_log`: 종목별 수집 상태 (ok / no_data / error)
+- `research`: 네이버 리서치 리포트 (id, 종목, 증권사, 날짜, 제목, 의견, 목표가, 소제목, 본문 요약)
+- `flow_daily`: (date, code)별 외국인·기관·개인 순매수 수량, 종가, 외국인 지분율
+- `high52_daily`: (date, code) 그날 52주 신고가 종목

@@ -69,3 +69,47 @@ CREATE TABLE IF NOT EXISTS collect_log (
     fetched_at  TEXT,
     PRIMARY KEY (as_of, code)
 );
+
+-- 네이버 리서치 종목분석 리포트 (m.stock.naver.com/api/research)
+CREATE TABLE IF NOT EXISTS research (
+    id          INTEGER PRIMARY KEY,  -- researchId
+    code        TEXT NOT NULL,
+    name        TEXT,
+    broker      TEXT,
+    date        TEXT NOT NULL,        -- 작성일 YYYY-MM-DD
+    title       TEXT,
+    opinion     TEXT,                 -- 매수 / Buy / 중립 …
+    goal        REAL,                 -- 목표주가 (원)
+    price       REAL,                 -- 작성일 주가 (원)
+    heads       TEXT,                 -- 본문 소제목 JSON 배열
+    body        TEXT,                 -- 본문 요약 (태그 제거)
+    pdf         TEXT,
+    fetched_at  TEXT
+);
+CREATE INDEX IF NOT EXISTS research_code ON research (code, date);
+
+-- 종목별 투자자 순매수 (수량, 주) — stock.naver.com investor-trend
+CREATE TABLE IF NOT EXISTS flow_daily (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    frgn        REAL,                 -- 외국인 순매수 수량
+    org         REAL,                 -- 기관 순매수 수량
+    ind         REAL,                 -- 개인 순매수 수량
+    close       REAL,                 -- 종가 (금액 환산용)
+    frgn_ratio  REAL,                 -- 외국인 지분율 %
+    PRIMARY KEY (date, code)
+);
+
+-- 네이버 52주 신고가 목록 스냅샷 (그날 신고가를 낸 종목)
+CREATE TABLE IF NOT EXISTS high52_daily (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    name        TEXT,
+    market      TEXT,
+    close       REAL,
+    change_pct  REAL,
+    mcap        REAL,                 -- 억원
+    trd_val     REAL,                 -- 거래대금, 억원
+    fetched_at  TEXT,
+    PRIMARY KEY (date, code)
+);

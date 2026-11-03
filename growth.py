@@ -117,6 +117,7 @@ def compute_stock(annual: List[Dict], trend: List[Dict], mcap: float, price: flo
             if base is None or nxt is None:
                 continue
             t = trend_by.get((n_fy, m), {})
+            tb = trend_by.get((b_fy, m), {})
             calc[pname][m] = {
                 'base': base,
                 'next': nxt,
@@ -129,6 +130,10 @@ def compute_stock(annual: List[Dict], trend: List[Dict], mcap: float, price: flo
                 'rev_w1': pct_change(t.get('now'), t.get('w1')),
                 'rev_m1': pct_change(t.get('now'), t.get('m1')),
                 'rev_m3': pct_change(t.get('now'), t.get('m3')),
+                # 출발 연도 추정치의 리비전 (컨센 리비전 탭에서 올해 추정치 변화로 씀)
+                'rev_b_w1': pct_change(tb.get('now'), tb.get('w1')),
+                'rev_b_m1': pct_change(tb.get('now'), tb.get('m1')),
+                'rev_b_m3': pct_change(tb.get('now'), tb.get('m3')),
             }
     if not any(calc.values()):
         return None
