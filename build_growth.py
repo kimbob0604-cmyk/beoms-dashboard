@@ -113,7 +113,7 @@ def build(conn, d: str) -> dict:
             'k': slim(res['calc']),
         })
 
-    checked_at = conn.execute('SELECT MAX(fetched_at) FROM collect_log WHERE as_of = ?', (as_of,)).fetchone()[0]
+    checked_at = conn.execute("SELECT MAX(fetched_at) FROM collect_log WHERE as_of = ? AND status != 'error'", (as_of,)).fetchone()[0]
     fy0s = [s['fy0'] for s in stocks]
     return {
         'date': d,

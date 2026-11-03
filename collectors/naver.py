@@ -6,6 +6,7 @@
 - m.stock.naver.com/api/research/company/{id}                : 리포트 본문 요약·투자의견·목표주가
 - stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code} : 일별 외국인·기관·개인 순매수 수량
 - m.stock.naver.com/api/stocks/high52week/{KOSPI|KOSDAQ}     : 그날 52주 신고가를 낸 종목
+- m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
 
 주의: 이 API들은 다른 사이트의 브라우저 호출을 막는다(CORS 403). 그래서 맥에서 받아 JSON으로 만든다.
 리포트 상세의 prevGoalPrice 는 이전 목표가가 아니라 작성일 주가와 같은 값이라 쓰지 않는다.
@@ -158,6 +159,18 @@ def parse_high52(payload: Dict, market: str) -> Dict:
 
 def fetch_high52(session, market: str, page: int = 1, page_size: int = 100, timeout: float = 10) -> Dict:
     r = session.get(f'{M_API}/stocks/high52week/{market}',
+                    params={'page': page, 'pageSize': page_size}, timeout=timeout)
+    r.raise_for_status()
+    return parse_high52(r.json(), market)
+
+
+def fetch_market_list(session, market: str, page: int = 1, page_size: int = 100, timeout: float = 10) -> Dict:
+    """
+    시총순 전 종목 시세. 신고가 목록과 응답 모양이 같다.
+    closePrice 는 네이버 통합 시세라 장 마감 뒤에도 넥스트레이드 시간외 거래(~20:00)를 따라 움직인다.
+    등락률은 KRX 전일 종가 대비. KRX 정규장 종가 자체는 이 응답에 없다.
+    """
+    r = session.get(f'{M_API}/stocks/marketValue/{market}',
                     params={'page': page, 'pageSize': page_size}, timeout=timeout)
     r.raise_for_status()
     return parse_high52(r.json(), market)

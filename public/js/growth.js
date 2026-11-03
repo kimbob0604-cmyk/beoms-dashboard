@@ -409,7 +409,7 @@
     const d = U.dateLabel(data.date);
     $('foot').innerHTML = `
       <p>컨센서스: FnGuide 종목별 컨센서스(네이버 종목분석, 연결 우선·없으면 별도), 기준일 ${U.dateLabel(data.cns_date)}. 1개월·3개월 비교는 FnGuide의 1개월 전·3개월 전 값.</p>
-      <p>시세: ${d} KRX 정규장 종가(KRX Open API). 시총은 보통주+우선주.</p>
+      <p>시세: ${d} KRX 종가(KRX Open API). KRX가 자료를 여는 다음 날 아침 전까지는 네이버 시세(시간외 거래 포함)로 임시 표시. 시총은 보통주+우선주.</p>
       <p>업종: WICS(네이버 금융). 금액 단위 억원, EPS·주가 원. 변화율 = (현재 − 이전) ÷ |이전|.</p>
       <p>컨센서스 데이터의 권리는 FnGuide에 있습니다. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
   }
