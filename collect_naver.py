@@ -196,9 +196,12 @@ def collect_high(conn, session) -> int:
 # 지수
 # ------------------------------------------------------------
 
+INDEX_CODES = ('KOSPI', 'KOSDAQ', 'FUT')   # FUT: 코스피200 선물 최근월물
+
+
 def collect_index(conn, session) -> int:
     guard, rows = Guard(), []
-    for code in ('KOSPI', 'KOSDAQ'):
+    for code in INDEX_CODES:
         try:
             rows += naver.fetch_index(session, code)
             guard.ok()
@@ -225,14 +228,15 @@ def collect_index(conn, session) -> int:
     return guard.errors
 
 
-SNAP_END = '15:30'   # 장 마감 뒤 받은 스냅샷은 15:30 칸에 덮어쓴다 (확정 순매수)
+# 장 마감 뒤 받은 스냅샷은 마감 칸에 덮어쓴다 (확정 순매수). 선물은 15:45 마감
+SNAP_END = {'KOSPI': '15:30', 'KOSDAQ': '15:30', 'FUT': '15:45'}
 
 
 def collect_index_chart(conn, session, rows) -> int:
     """홈 차트: 지수 일봉(1년), 최근 거래일 1분봉, 그 시각 투자자별 누적 순매수 스냅샷"""
     guard = Guard()
-    t = min(datetime.now().strftime('%H:%M'), SNAP_END)
-    for code in ('KOSPI', 'KOSDAQ'):
+    for code in INDEX_CODES:
+        t = min(datetime.now().strftime('%H:%M'), SNAP_END[code])
         mine = [r for r in rows if r['code'] == code]
         if not mine:
             continue

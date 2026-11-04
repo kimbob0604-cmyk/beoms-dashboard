@@ -2,7 +2,7 @@
 홈 탭 JSON: public/data/home.json
 
 다른 탭이 이미 만든 JSON(이익 성장·수급·신고가·리포트)과 DB(가격·지수)에서 오늘 볼 것만 골라 한 파일로 묶는다.
-- idx      코스피·코스닥 종가·등락률, 그날 투자자별·프로그램 순매수(억원), 상승/하락 종목 수,
+- idx      코스피·코스닥·코스피200 선물(최근월물) 종가·등락률, 그날 투자자별·프로그램 순매수(억원), 상승/하락 종목 수,
            당일 1분봉(min)·장중 순매수 스냅샷(snap)·1년 일봉(ohlc, 열 단위 배열)
 - live     장중이면 전 종목 시세를 받은 시각 (그때 big·movers·sectors·breadth 는 장중 시세 기준)
 - sectors  WICS 업종별 시총 가중 등락률 (5종목 이상 업종 전부, 업종 시총 상위 3종목 포함)
@@ -47,7 +47,7 @@ def slim(s, **extra):
 
 def build_index(conn):
     out = []
-    for code, name in (('KOSPI', '코스피'), ('KOSDAQ', '코스닥')):
+    for code, name in (('KOSPI', '코스피'), ('KOSDAQ', '코스닥'), ('FUT', '코스피200 선물')):
         rows = [dict(r) for r in conn.execute(
             'SELECT * FROM index_daily WHERE code = ? ORDER BY date DESC LIMIT 60', (code,))]
         if not rows:

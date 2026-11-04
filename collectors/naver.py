@@ -6,7 +6,7 @@
 - m.stock.naver.com/api/research/company/{id}                : 리포트 본문 요약·투자의견·목표주가
 - stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code} : 일별 외국인·기관·개인 순매수 수량
 - m.stock.naver.com/api/stocks/high52week/{KOSPI|KOSDAQ}     : 그날 52주 신고가를 낸 종목
-- m.stock.naver.com/api/index/{KOSPI|KOSDAQ}/integration|price : 지수 일별 종가, 투자자별 순매수, 상승/하락 종목 수
+- m.stock.naver.com/api/index/{KOSPI|KOSDAQ|FUT}/integration|price : 지수·코스피200 선물 일별 종가, 투자자별 순매수, 상승/하락 종목 수
 - m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
 - api.stock.naver.com/chart/domestic/index/{code}/minute     : 지수 당일 1분봉
 - fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day : 지수 일봉 (XML)
@@ -251,13 +251,13 @@ def fetch_index_minute(session, code: str, day: str, timeout: float = 10) -> Lis
     """day: YYYY-MM-DD"""
     k = day.replace('-', '')
     r = session.get(f'{CHART_API}/index/{code}/minute',
-                    params={'startDateTime': f'{k}0900', 'endDateTime': f'{k}1530'}, timeout=timeout)
+                    params={'startDateTime': f'{k}0900', 'endDateTime': f'{k}1545'}, timeout=timeout)   # 선물은 15:45 마감
     r.raise_for_status()
     return parse_minute(r.json(), day)
 
 
 def fetch_index(session, code: str, days: int = 60, timeout: float = 10) -> List[Dict]:
-    """code: KOSPI | KOSDAQ"""
+    """code: KOSPI | KOSDAQ | FUT(코스피200 선물 최근월물. 프로그램·등락 종목 수는 없음)"""
     r1 = session.get(f'{M_API}/index/{code}/integration', timeout=timeout)
     r1.raise_for_status()
     r2 = session.get(f'{M_API}/index/{code}/price', params={'page': 1, 'pageSize': days}, timeout=timeout)

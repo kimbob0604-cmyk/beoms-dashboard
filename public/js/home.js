@@ -5,10 +5,16 @@
   const POLL_MS = 60000;
   const RANGES = [['1d', '당일'], ['3m', '3개월'], ['1y', '1년']];
   const INV = [['개인', 3, 'var(--inv-ind)'], ['외국인', 1, 'var(--inv-frgn)'], ['기관', 2, 'var(--inv-org)']];
-  const SESSION_MIN = 391;   // 09:00 ~ 15:30
+  // 09:00 ~ 15:30 (선물은 15:45)
+  const session = x => (x.c === 'FUT' ? 406 : 391);
+  const isFut = x => x.c === 'FUT';
+  // 선물 순매수는 네이버가 단위를 표시하지 않아 받은 숫자 그대로 (지수는 억원)
+  const signed = v => (v == null ? '–' : `${v > 0 ? '+' : ''}${Math.round(v).toLocaleString('ko-KR')}`);
+  const flowFmt = x => (isFut(x) ? signed : v => U.eok(v, true));
+  const contracts = v => (v >= 1e4 ? `${(v / 1e4).toFixed(1)}만` : Math.round(v).toLocaleString('ko-KR'));
 
   const $ = id => document.getElementById(id);
-  const range = { KOSPI: '1d', KOSDAQ: '1d' };
+  const range = { KOSPI: '1d', KOSDAQ: '1d', FUT: '1d' };
   const tabs = {};          // 카드별 선택 탭
   let map = 'sector';
   let data = null;
@@ -27,9 +33,11 @@
   // ---------- 지수 ----------
   function idxCard(x) {
     const b = x.up != null ? { up: x.up, dn: x.dn, fl: x.fl } : data.breadth[x.c];
-    const total = b.up + b.dn + b.fl || 1;
-    const intraday = x.at && x.at.slice(0, 10) === x.d && hm(x.at) < '15:40';
-    const flows = [['개인', x.i, 'ind'], ['외국인', x.f, 'frgn'], ['기관', x.o, 'org'], ['프로그램', x.pg, 'prog']];
+    const total = b ? b.up + b.dn + b.fl || 1 : 1;
+    const intraday = x.at && x.at.slice(0, 10) === x.d && hm(x.at) < (isFut(x) ? '15:50' : '15:40');
+    const flows = [['개인', x.i, 'ind'], ['외국인', x.f, 'frgn'], ['기관', x.o, 'org'],
+      ...(isFut(x) ? [] : [['프로그램', x.pg, 'prog']])];
+    const ff = flowFmt(x);
     return `<article class="card hm-ix" data-ix="${x.c}">
       <header class="hm-ix-head">
         <div>
@@ -44,13 +52,13 @@
         <span class="muted small hm-legend"></span>
       </div>
       <div class="hm-ix-chart"></div>
-      ${x.f != null ? `<div class="hm-ix-flow">${flows.map(([n, v, k]) =>
-        `<div class="inv-${k}"><span>${n}</span><b class="${U.cls(v)}">${U.eok(v, true)}</b></div>`).join('')}</div>` : ''}
-      <div class="hm-breadth">
+      ${x.f != null ? `<div class="hm-ix-flow${isFut(x) ? ' three' : ''}">${flows.map(([n, v, k]) =>
+        `<div class="inv-${k}"><span>${n}</span><b class="${U.cls(v)}">${ff(v)}</b></div>`).join('')}</div>` : ''}
+      ${isFut(x) ? `<p class="muted small">최근월물 · 투자자별 순매수는 네이버 값 그대로 (네이버가 단위를 표시하지 않음)</p>` : b ? `<div class="hm-breadth">
         <div class="hm-bd-bar"><i class="up-bg" style="flex:${b.up}"></i><i class="flat-bg" style="flex:${b.fl}"></i><i class="dn-bg" style="flex:${b.dn}"></i></div>
         <div class="small hm-bd-txt"><span class="up">상승 ${b.up}</span><span class="muted">보합 ${b.fl}</span><span class="down">하락 ${b.dn}</span>
           <span class="muted">상승 비율 ${Math.round(b.up / total * 100)}%</span></div>
-      </div>
+      </div>` : ''}
     </article>`;
   }
 
@@ -65,7 +73,8 @@
   }
 
   function drawIntraday(card, x) {
-    const n = SESSION_MIN;
+    const n = session(x);
+    const ff = flowFmt(x);
     const price = Array(n).fill(null);
     for (const [t, p] of x.min) { const i = minIdx(t); if (i >= 0 && i < n) price[i] = p; }
     const base = x.prev;
@@ -79,7 +88,7 @@
     const panes = [{ h: 3, baseline: base, fmt: v => idxNum(v),
       series: [{ type: 'line', values: price, split: true, area: true, width: 1.7 }] }];
     if (hasFlow) {
-      panes.push({ h: 1.6, zero: true, label: '투자자별 누적 순매수 (억원)', fmt: v => U.eok(v, true),
+      panes.push({ h: 1.6, zero: true, label: `투자자별 누적 순매수${isFut(x) ? '' : ' (억원)'}`, fmt: ff,
         series: inv.map(s => ({ type: 'line', values: s.vals, color: s.color, connect: true, width: 1.6, last: true })) });
     }
     const last = (arr, i) => { for (let k = i; k >= 0; k--) if (arr[k] != null) return arr[k]; return null; };
@@ -94,7 +103,7 @@
         const v = price[i];
         const rows = hasFlow ? inv.map(s => {
           const fv = last(s.vals, i);
-          return fv == null ? '' : `<div><i style="--c:${s.color}"></i>${s.name}<b class="${U.cls(fv)}">${U.eok(fv, true)}</b></div>`;
+          return fv == null ? '' : `<div><i style="--c:${s.color}"></i>${s.name}<b class="${U.cls(fv)}">${ff(fv)}</b></div>`;
         }).join('') : '';
         return `<div class="tt-h">${minLabel(i)}</div><div class="tt-v">${idxNum(v)} ${chgHtml(base ? (v / base - 1) * 100 : null)}</div>${rows}`;
       },
@@ -122,12 +131,12 @@
     Plot.chart(card.querySelector('.hm-ix-chart'), {
       n: d.length, height: 270, uid: `ix${x.c}`,
       panes: [{ h: 3.2, fmt: v => idxNum(v), series: price },
-        { h: 1, fmt: idxVol, series: [{ type: 'bar', values: vol, cls: i => (pchg(i) >= 0 ? 'up' : 'dn') }] }],
+        { h: 1, fmt: isFut(x) ? contracts : idxVol, series: [{ type: 'bar', values: vol, cls: i => (pchg(i) >= 0 ? 'up' : 'dn') }] }],
       xTicks: Plot.monthTicks(d),
       tip: i => `<div class="tt-h">${Plot.dateStr(d[i])}</div>
         <div class="tt-v">${idxNum(c[i])} ${chgHtml(pchg(i))}</div>
         ${candle ? `<div class="tt-g"><span>시가</span><b>${idxNum(o.o[from + i])}</b><span>고가</span><b>${idxNum(o.h[from + i])}</b>
-          <span>저가</span><b>${idxNum(o.l[from + i])}</b><span>거래량</span><b>${idxVol(vol[i])}주</b></div>` : ''}`,
+          <span>저가</span><b>${idxNum(o.l[from + i])}</b><span>거래량</span><b>${isFut(x) ? `${Math.round(vol[i]).toLocaleString('ko-KR')}계약` : `${idxVol(vol[i])}주`}</b></div>` : ''}`,
       onHover: i => readout(card, x, i == null ? null : c[i], i == null ? null : pchg(i),
         i == null ? '' : U.dateLabel(`${String(d[i]).slice(0, 4)}-${String(d[i]).slice(4, 6)}-${String(d[i]).slice(6, 8)}`)),
     });
