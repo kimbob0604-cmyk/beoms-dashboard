@@ -1,5 +1,5 @@
 """
-KRX Open API 일별매매정보 (시장별 1회 호출로 전 종목 종가·시총)
+KRX Open API 일별매매정보 (시장별 1회 호출로 전 종목 시가·고가·저가·종가·거래량·시총)
 
 - sto/stk_bydd_trd : KOSPI
 - sto/ksq_bydd_trd : KOSDAQ
@@ -41,6 +41,10 @@ def parse_daily(payload: Dict, market: str) -> List[Dict]:
             'mcap': (_num(r.get('MKTCAP')) or 0) / 1e8,       # 억원
             'shares': _num(r.get('LIST_SHRS')),
             'trd_val': (_num(r.get('ACC_TRDVAL')) or 0) / 1e8,  # 억원
+            'open': _num(r.get('TDD_OPNPRC')),
+            'high': _num(r.get('TDD_HGPRC')),
+            'low': _num(r.get('TDD_LWPRC')),
+            'volume': _num(r.get('ACC_TRDVOL')),
         })
     return out
 

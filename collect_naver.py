@@ -1,13 +1,14 @@
 """
-네이버 증권 수집: 리서치 리포트 · 투자자별 순매수(수급) · 52주 신고가 · 지수
+네이버 증권 수집: 리서치 리포트 · 투자자별 순매수(수급) · 52주 신고가 · 지수 · 장중 시세
 
 CLI
   python3 collect_naver.py research              # 최근 14일 목록에서 새 리포트만 본문까지 받기
   python3 collect_naver.py research --days 90    # 백필 (약 4,500건, 20분 안팎)
   python3 collect_naver.py flow                  # 대상 종목 최근 순매수 (처음 받는 종목은 60거래일)
   python3 collect_naver.py high                  # 그날 52주 신고가 목록
-  python3 collect_naver.py index                 # 코스피·코스닥 지수 60거래일 + 그날 투자자별 순매수
-  python3 collect_naver.py all                   # 넷 다
+  python3 collect_naver.py index                 # 코스피·코스닥 지수 60거래일·1년 일봉·당일 1분봉 + 그날 투자자별 순매수
+  python3 collect_naver.py quotes                # 전 종목 장중 시세 (live.py 가 10분마다)
+  python3 collect_naver.py all                   # quotes 빼고 넷 다
 
 종료 코드: 0 정상, 1 오류가 많음, 3 서버 응답 없음(연속 실패로 중단)
 
@@ -219,12 +220,88 @@ def collect_index(conn, session) -> int:
             [{**r, 'fetched_at': now()} for r in rows])
     last = max((r['date'] for r in rows), default='-')
     log.info('지수 %s까지 %d행', last, len(rows))
+    if rows:
+        guard.errors += collect_index_chart(conn, session, rows)
+    return guard.errors
+
+
+SNAP_END = '15:30'   # 장 마감 뒤 받은 스냅샷은 15:30 칸에 덮어쓴다 (확정 순매수)
+
+
+def collect_index_chart(conn, session, rows) -> int:
+    """홈 차트: 지수 일봉(1년), 최근 거래일 1분봉, 그 시각 투자자별 누적 순매수 스냅샷"""
+    guard = Guard()
+    t = min(datetime.now().strftime('%H:%M'), SNAP_END)
+    for code in ('KOSPI', 'KOSDAQ'):
+        mine = [r for r in rows if r['code'] == code]
+        if not mine:
+            continue
+        last = mine[-1]
+        try:
+            ohlc = naver.fetch_index_ohlc(session, code)
+            time.sleep(DELAY)
+            minute = naver.fetch_index_minute(session, code, last['date'])
+            guard.ok()
+        except Exception as e:
+            guard.fail(f'지수 차트 {code}', e)
+            continue
+        with conn:
+            conn.executemany(
+                """INSERT OR REPLACE INTO index_ohlc (date, code, open, high, low, close, volume)
+                   VALUES (:date, :code, :open, :high, :low, :close, :volume)""", ohlc)
+            if minute:
+                conn.execute('DELETE FROM index_minute WHERE date = ? AND code = ?', (last['date'], code))
+                conn.executemany('INSERT INTO index_minute (date, code, t, price) VALUES (?, ?, ?, ?)',
+                                 [(last['date'], code, m['t'], m['price']) for m in minute])
+            # 오늘 장 데이터일 때만 (지난 날 값을 오늘 시각으로 남기지 않게)
+            if last['date'] == date.today().isoformat() and last['frgn'] is not None and minute:
+                conn.execute(
+                    """INSERT OR REPLACE INTO index_snap (date, code, t, close, frgn, org, ind, prog)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (last['date'], code, min(t, minute[-1]['t']), last['close'],
+                     last['frgn'], last['org'], last['ind'], last['prog']))
+        log.info('지수 차트 %s: 일봉 %d · 분봉 %d', code, len(ohlc), len(minute))
+        time.sleep(DELAY)
+    return guard.errors
+
+
+QUOTE_MIN_ROWS = 2000
+
+
+def collect_quotes(conn, session) -> int:
+    """장중 전 종목 시세를 quote_live 에 통째로 (홈 장중 갱신). 덜 받으면 저장하지 않는다."""
+    guard, rows = Guard(), []
+    for market in ('KOSPI', 'KOSDAQ'):
+        page = 1
+        while True:
+            try:
+                res = naver.fetch_market_list(session, market, page)
+                guard.ok()
+            except Exception as e:
+                guard.fail(f'시세 {market} {page}쪽', e)
+                break
+            rows += res['rows']
+            if page * 100 >= res['total']:
+                break
+            page += 1
+            time.sleep(DELAY)
+    if len(rows) < QUOTE_MIN_ROWS:
+        log.warning('시세 %d종목만 받아 저장 안 함', len(rows))
+        return guard.errors + 1
+    at = now()
+    with conn:
+        conn.execute('DELETE FROM quote_live')
+        conn.executemany(
+            """INSERT OR REPLACE INTO quote_live (code, name, market, date, close, change_pct, mcap, trd_val, at)
+               VALUES (:code, :name, :market, :date, :close, :change_pct, :mcap, :trd_val, :at)""",
+            [{**r, 'at': at} for r in rows])
+    log.info('장중 시세 %d종목', len(rows))
     return guard.errors
 
 
 def main():
-    ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가·지수)')
-    ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'all'])
+    ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가·지수·장중 시세)')
+    ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'quotes', 'all'])
     ap.add_argument('--days', type=int, default=14, help='리포트 목록을 거슬러 볼 일수')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
@@ -241,6 +318,8 @@ def main():
             errors += collect_index(conn, session)
         if args.what in ('flow', 'all'):
             errors += collect_flow(conn, session)
+        if args.what == 'quotes':
+            errors += collect_quotes(conn, session)
     except Unreachable as e:
         log.error('네이버 서버 응답 없음, 중단: %s', e)
         sys.exit(EXIT_UNREACHABLE)

@@ -1,14 +1,12 @@
 // 종목 상세 패널: 종목 이름을 누르면 오른쪽에서 열린다 (모든 탭 공통)
-// - 차트: 네이버 차트 이미지를 직접 불러온다. 장중에는 30초마다 새로 받는다 (네이버 이미지 캐시 12초).
+// - 차트: data/chart/{code}.json 일봉(최근 1년)을 직접 그려 마우스를 올린 날의 시가·고가·저가·종가·거래량을 보여준다
 // - 리포트·키워드·목표가·수급: data/stocks/{code}.json (맥에서 매일 빌드)
 // 이름 링크는 네이버 증권 주소라서 Ctrl/⌘+클릭하면 네이버가 새 탭으로 열린다.
 const Stock = (() => {
-  const CHARTS = [
-    ['area/day', '당일'], ['candle/day', '일봉'], ['candle/week', '주봉'], ['candle/month', '월봉'],
-  ];
-  const REFRESH_MS = 30000;
+  const CHARTS = [['3m', '3개월'], ['6m', '6개월'], ['1y', '1년'], ['w', '주봉']];
+  const DAYS = { '3m': 63, '6m': 126, '1y': 260 };
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
-  let panel, code = null, hint = {}, chart = 'candle/day', timer = null, kwOpen = null;
+  let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null;
 
   const naverUrl = c => `https://finance.naver.com/item/main.naver?code=${c}`;
   const researchUrl = id => `https://m.stock.naver.com/research/company/${id}`;
@@ -33,24 +31,45 @@ const Stock = (() => {
     panel.addEventListener('click', onPanelClick);
   }
 
-  function chartSrc() {
-    return `https://ssl.pstatic.net/imgfinance/chart/item/${chart}/${code}.png?t=${Math.floor(Date.now() / 10000)}`;
+  const num = v => (v == null ? '–' : Math.round(v).toLocaleString('ko-KR'));
+  const vol = v => (v == null ? '–' : v >= 1e8 ? `${(v / 1e8).toFixed(1)}억주` : v >= 1e4 ? `${Math.round(v / 1e4).toLocaleString('ko-KR')}만주` : `${v}주`);
+
+  function drawChart() {
+    const el = panel.querySelector('.st-plot');
+    if (!el) return;
+    if (!cdata?.d?.length) {
+      el.innerHTML = `<p class="muted st-loading">${cdata === undefined ? '차트 불러오는 중…' : '차트 데이터 없음'}</p>`;
+      return;
+    }
+    const all = chart === 'w' ? Plot.weekly(cdata) : cdata;
+    const from = chart === 'w' ? 0 : Math.max(0, all.d.length - DAYS[chart]);
+    const cut = k => all[k].slice(from);
+    const d = cut('d'), c = cut('c'), o = cut('o'), h = cut('h'), l = cut('l'), v = cut('v');
+    const mas = chart === 'w' ? [[13, 'var(--ma20)'], [26, 'var(--ma60)']] : [[5, 'var(--muted)'], [20, 'var(--ma20)'], [60, 'var(--ma60)']];
+    const prev = i => (from + i > 0 ? all.c[from + i - 1] : null);
+    const pch = i => (prev(i) ? (c[i] / prev(i) - 1) * 100 : null);
+    panel.querySelector('.st-legend').innerHTML = mas.map(([k, col]) => `<i style="--c:${col}"></i>${k}${chart === 'w' ? '주' : '일'}`).join(' ') + ' 이동평균';
+    Plot.chart(el, {
+      n: d.length, height: 300, uid: 'stc',
+      panes: [
+        { h: 3.4, fmt: num, series: [{ type: 'candle', o, h, l, c },
+          ...mas.map(([k, col]) => ({ type: 'line', values: Plot.ma(all.c, k).slice(from), color: col, width: 1.1, nodot: true }))] },
+        { h: 1, fmt: vol, series: [{ type: 'bar', values: v, cls: i => (pch(i) >= 0 ? 'up' : 'dn') }] },
+      ],
+      xTicks: Plot.monthTicks(d),
+      tip: i => `<div class="tt-h">${Plot.dateStr(d[i])}${chart === 'w' ? ' 주' : ''}</div>
+        <div class="tt-v">${num(c[i])} ${chHtml(pch(i))}</div>
+        ${o[i] == null ? '<div class="muted">KRX 공개 전 임시 종가</div>' : `<div class="tt-g"><span>시가</span><b>${num(o[i])}</b><span>고가</span><b>${num(h[i])}</b>
+          <span>저가</span><b>${num(l[i])}</b><span>거래량</span><b>${vol(v[i])}</b></div>`}`,
+    });
   }
 
-  function refreshChart() {
-    const img = panel.querySelector('.st-chart img');
-    if (!img) return;
-    img.src = chartSrc();
-    const t = new Date();
-    panel.querySelector('.st-chart-time').textContent =
-      `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')} 불러옴${U.marketHours() ? ' · 장중 30초마다 갱신' : ''}`;
-  }
-
-  function startTimer() {
-    clearInterval(timer);
-    timer = setInterval(() => {
-      if (!document.hidden && U.marketHours()) refreshChart();
-    }, REFRESH_MS);
+  async function loadChart(c) {
+    cdata = undefined;
+    drawChart();
+    let x = null;
+    try { x = await U.json(`data/chart/${c}.json`); } catch (e) { /* 차트 없는 종목 */ }
+    if (code === c) { cdata = x; drawChart(); }
   }
 
   // ---------- 그리기 ----------
@@ -76,10 +95,10 @@ const Stock = (() => {
     return `<section class="st-sec st-chart">
       <div class="st-sec-head">
         <div class="seg" role="group">${CHARTS.map(([k, l]) => `<button data-chart="${k}" class="${k === chart ? 'on' : ''}">${l}</button>`).join('')}</div>
-        <button class="linkish st-refresh" title="차트 새로 받기">↻ <span class="st-chart-time"></span></button>
+        <span class="muted small st-legend"></span>
       </div>
-      <a href="${naverUrl(code)}" target="_blank" rel="noopener" title="네이버 증권에서 보기"><img alt="${code} 차트" width="700" height="289"></a>
-      <p class="muted small">차트: 네이버 증권</p>
+      <div class="st-plot"></div>
+      <p class="muted small">일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
     </section>`;
   }
 
@@ -180,7 +199,7 @@ const Stock = (() => {
         : `${growthHtml(s.gx)}${targetHtml(s)}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
            목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다.</p>`}</div>`;
-    refreshChart();
+    drawChart();
   }
 
   async function open(c, h = {}) {
@@ -192,9 +211,10 @@ const Stock = (() => {
     document.querySelector('.scrim').hidden = false;
     document.body.classList.add('drawer-open');
     if (location.hash !== `#${c}`) history.pushState(null, '', `${location.pathname}${location.search}#${c}`);
+    cdata = undefined;
     render(undefined);
     panel.scrollTop = 0;
-    startTimer();
+    loadChart(c);
     let d = null;
     try {
       d = await U.json(`data/stocks/${c}.json`);
@@ -207,7 +227,6 @@ const Stock = (() => {
     panel.hidden = true;
     document.querySelector('.scrim').hidden = true;
     document.body.classList.remove('drawer-open');
-    clearInterval(timer);
     code = null;
     if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   }
@@ -218,9 +237,8 @@ const Stock = (() => {
     if (c) {
       chart = c.dataset.chart;
       panel.querySelectorAll('[data-chart]').forEach(b => b.classList.toggle('on', b === c));
-      return refreshChart();
+      return drawChart();
     }
-    if (e.target.closest('.st-refresh')) return refreshChart();
     const k = e.target.closest('[data-kw]');
     if (k) {
       const i = +k.dataset.kw;

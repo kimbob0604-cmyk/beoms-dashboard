@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Beom's Dashboard 장중 홈 갱신: 10분마다 live.py (평일 09:00~15:50 밖이면 바로 끝남). 설치: README 참고 -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kimbob.beomdashboard.live</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <string>/Users/beomjun/Beom's Dashboard/live.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/beomjun/Beom's Dashboard</string>
+
+    <key>StartInterval</key>
+    <integer>600</integer>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/beomjun/Beom's Dashboard/logs/launchd.live.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/beomjun/Beom's Dashboard/logs/launchd.live.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>LANG</key>
+        <string>ko_KR.UTF-8</string>
+    </dict>
+</dict>
+</plist>

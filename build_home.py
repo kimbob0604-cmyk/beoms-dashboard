@@ -2,9 +2,11 @@
 홈 탭 JSON: public/data/home.json
 
 다른 탭이 이미 만든 JSON(이익 성장·수급·신고가·리포트)과 DB(가격·지수)에서 오늘 볼 것만 골라 한 파일로 묶는다.
-- idx      코스피·코스닥 종가·등락률, 그날 투자자별·프로그램 순매수(억원), 상승/하락 종목 수, 60거래일 종가
-- sectors  WICS 업종별 시총 가중 등락률 (5종목 이상 업종) 상위·하위
-- big      회사 시총 상위 종목 등락
+- idx      코스피·코스닥 종가·등락률, 그날 투자자별·프로그램 순매수(억원), 상승/하락 종목 수,
+           당일 1분봉(min)·장중 순매수 스냅샷(snap)·1년 일봉(ohlc, 열 단위 배열)
+- live     장중이면 전 종목 시세를 받은 시각 (그때 big·movers·sectors·breadth 는 장중 시세 기준)
+- sectors  WICS 업종별 시총 가중 등락률 (5종목 이상 업종 전부, 업종 시총 상위 3종목 포함)
+- big      회사 시총 상위 BIG 종목 등락 (홈 지도)
 - movers   시총 3,000억 이상 중 상승률·하락률 상위
 - rev      내년 영업이익 추정치 1주 상향·하향 상위 (이익 성장 JSON)
 - tgt      최근 1주 목표가 상향·하향 (같은 증권사 직전 목표가 대비)
@@ -25,6 +27,7 @@ import db
 from build_naver import DATA, market_info, public, write_json
 
 TOP = 5
+BIG = 60
 SECTOR_MIN = 5          # 업종 등락에 넣을 최소 종목 수
 MOVER_MIN_MCAP = 3000   # 억원
 FLAT = 0.001            # 리비전 ±0.1% 미만은 변화 없음
@@ -56,9 +59,35 @@ def build_index(conn):
             'fd': flow and flow['date'], 'at': flow and flow['fetched_at'],
             'f': flow and flow['frgn'], 'o': flow and flow['org'], 'i': flow and flow['ind'], 'pg': flow and flow['prog'],
             'up': flow and flow['up'], 'dn': flow and flow['down'], 'fl': flow and flow['flat'],
-            'spark': [[r['date'], r['close']] for r in reversed(rows)],
+            'prev': rows[1]['close'] if len(rows) > 1 else None,
+            'min': [[r['t'], r['price']] for r in conn.execute(
+                'SELECT t, price FROM index_minute WHERE code = ? AND date = ? ORDER BY t', (code, last['date']))],
+            'snap': [[r['t'], r['frgn'], r['org'], r['ind'], r['prog']] for r in conn.execute(
+                'SELECT * FROM index_snap WHERE code = ? AND date = ? ORDER BY t', (code, last['date']))],
+            'ohlc': ohlc_cols(conn, code),
         })
     return out
+
+
+def ohlc_cols(conn, code):
+    rows = list(conn.execute('SELECT * FROM index_ohlc WHERE code = ? ORDER BY date DESC LIMIT 260', (code,)))[::-1]
+    return {'d': [int(r['date'].replace('-', '')) for r in rows], 'o': [r['open'] for r in rows],
+            'h': [r['high'] for r in rows], 'l': [r['low'] for r in rows], 'c': [r['close'] for r in rows],
+            'v': [r['volume'] for r in rows]}
+
+
+def apply_live(conn, info, pd):
+    """장중: price_daily 보다 새 날짜의 장중 시세가 있으면 가격·등락률·시총을 그 값으로. 받은 시각을 돌려준다."""
+    q = {r['code']: r for r in conn.execute('SELECT * FROM quote_live WHERE date > ?', (pd or '',))}
+    if not q:
+        return None
+    for c, i in info.items():
+        r = q.get(c)
+        if r and r['close']:
+            if i['p'] and i['mc']:
+                i['mc'] = round(i['mc'] * r['close'] / i['p'])
+            i['p'], i['ch'] = r['close'], r['change_pct']
+    return max(r['at'] for r in q.values())
 
 
 def build_sectors(info):
@@ -77,7 +106,7 @@ def build_sectors(info):
         secs.append({'w': w, 'ch': round(s / m, 2), 'k': len(members), 'mc': round(m),
                      'top': [slim(x) for x in members[:3]]})
     secs.sort(key=lambda x: -x['ch'])
-    return {'up': secs[:6], 'dn': secs[::-1][:6], 'n': len(secs)}
+    return {'all': secs, 'n': len(secs)}
 
 
 def build_rev(growth):
@@ -125,13 +154,14 @@ def build_high(high):
 
 def build(conn) -> dict:
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
-    info, _ = market_info(conn, d)
+    info, pd = market_info(conn, d)
+    live = apply_live(conn, info, pd)
     info = {c: public(i) for c, i in info.items()}
     commons = [{'c': c, **i} for c, i in info.items() if i['mc'] and i['ch'] is not None]
-    big = sorted(commons, key=lambda s: -s['mc'])[:12]
+    big = sorted(commons, key=lambda s: -s['mc'])[:BIG]
     movers = [s for s in commons if s['mc'] >= MOVER_MIN_MCAP]
     out = {
-        'date': d, 'built': datetime.now().isoformat(timespec='seconds'),
+        'date': d, 'built': datetime.now().isoformat(timespec='seconds'), 'live': live,
         'idx': build_index(conn),
         'breadth': {m: {'up': sum(s['ch'] > 0 for s in commons if s['mk'] == m),
                         'dn': sum(s['ch'] < 0 for s in commons if s['mk'] == m),

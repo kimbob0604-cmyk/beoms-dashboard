@@ -84,7 +84,7 @@ python3 serve.py                          # http://127.0.0.1:8765 (이 컴퓨터
 
 ## 4단계: 매일 자동 실행 (완료)
 
-`daily.py`가 차례로 돌린다: 가격 → 컨센서스 → 이익 성장 빌드 → 네이버(리포트·신고가·수급) 수집·빌드 → GitHub Pages 배포.
+`daily.py`가 차례로 돌린다: 가격 → 컨센서스 → 이익 성장 빌드 → 네이버(리포트·신고가·수급·지수) 수집·빌드 → 홈·종목 차트 빌드 → GitHub Pages 배포. 장중 10분 간격 홈 갱신은 `live.py`(아래 6단계).
 launchd가 월~토 07:10·12:10, 월~금 20:40에 부른다. 20:40은 그날 수급·신고가·임시 종가를 저녁에 반영하기 위해서다. 네이버 투자자별 매매동향은 넥스트레이드 시간외가 끝난 뒤 20:20 무렵 올라온다(2026-11-03 확인).
 KRX 일별 가격은 다음 날 아침에 열리므로, 그 전까지는 네이버 전 종목 시세(시간외 포함 통합 가격)로 그날 종가를 임시로 채우고 KRX 가 열리면 덮어쓴다.
 
@@ -150,18 +150,36 @@ python3 build_naver.py                        # flow/·high/·reports/·stocks/ 
 
 ## 6단계: 홈 (완료)
 
-`public/index.html` + `public/js/home.js`, 데이터는 `public/data/home.json`(build_home.py).
+`public/index.html` + `public/js/home.js`, 데이터는 `public/data/home.json`(build_home.py). 차트는 `public/js/plot.js`(SVG, 외부 라이브러리 없음)로 직접 그려 마우스·손가락을 올린 시각·날짜의 값을 보여준다.
 
 ```bash
-python3 collect_naver.py index   # 코스피·코스닥 60거래일 종가 + 그날 투자자별·프로그램 순매수, 상승/하락 종목 수 → index_daily
-python3 build_home.py            # 다른 탭 JSON 과 DB 에서 홈에 보일 것만 모음 (build_growth·build_naver 뒤)
+python3 collect_naver.py index    # 지수 60거래일 종가·1년 일봉·당일 1분봉 + 그날 투자자별·프로그램 순매수 → index_daily·index_ohlc·index_minute·index_snap
+python3 collect_naver.py quotes   # 전 종목 장중 시세 → quote_live
+python3 build_home.py             # 다른 탭 JSON 과 DB 에서 홈에 보일 것만 모음 (build_growth·build_naver 뒤)
+python3 build_charts.py           # 종목 패널 차트: public/data/chart/{code}.json (보통주 전부, 최근 260거래일 일봉)
+python3 live.py --force           # 장중 갱신 한 번 (index + quotes → build_home → publish)
 ```
 
-- 지수 카드: 네이버 지수 차트 이미지(당일·일봉)를 직접 불러와 장중 30초마다 갱신한다. 당일 차트의 선은 지수(초록)와 개인(보라)·외국인(주황)·기관(파랑) 순매수다(2026-11-04 API 숫자와 대조해 확인).
-  지수 값·순매수·상승/하락 종목 수는 수집 시각 기준이라 12:10 실행이면 장중 값으로 표시된다.
-- 업종 등락: WICS 업종(5종목 이상) 시총 가중 등락률 상위·하위 6개와 각 업종 시총 상위 3종목.
-- 카드: 시총 상위, 급등·급락(시총 3,000억 이상), FY+1 영업이익 추정치 1주 리비전, 최근 1주 목표가 변경, 외국인+기관 1일 순매수·순매도, 52주 신고가, 최신 리포트. 카드마다 해당 탭으로 가는 링크가 있다.
-- daily.py 는 `collect_naver.py all` 에 지수를 포함하고, 네이버 빌드 뒤 build_home.py 를 돌린다. publish.py 가 home.json 을 함께 올린다.
+- 지수 카드: 당일(1분봉, 전일 종가 위는 빨강·아래는 파랑), 3개월(캔들 + 20·60일 이동평균 + 거래량), 1년(종가 선). 마우스를 올리면 헤더 숫자가 그 시각 값으로 바뀐다.
+  당일 아래 칸은 투자자별 누적 순매수 흐름이다. 네이버의 시간대별 순매수 API 가 없어져서, 장중 실행(10분마다)이 받은 누적값을 이어 그린다. 그래서 장중 실행이 두 번 이상 돌아야 보인다.
+- 업종 지도 / 시총 상위 지도: 크기 = 시총의 0.6제곱(반도체·삼성전자가 화면을 다 차지하지 않게), 색 = 등락률(±3%에서 가장 진함).
+- 카드: 급등·급락, 외국인+기관, 52주 신고가, 추정치 리비전, 목표가 변경, 최신 리포트. 상승/하락 탭과 해당 탭으로 가는 링크.
+- 종목 패널 차트: 3개월·6개월·1년 일봉, 주봉(1년). 5·20·60일(주봉은 13·26주) 이동평균과 거래량. 일봉은 KRX 일별매매정보(가격 수집과 같은 호출)에서 받는다(`ohlc_daily`).
+  처음 한 번 `python3 collect_prices.py --ohlc-days 380` 으로 1년치를 채웠다(2026-11-05, 약 9분). KRX 공개 전 네이버로 채운 날은 종가만 있어 짧은 가로선으로 그린다.
+
+### 장중 갱신 (live.py)
+
+브라우저에서 네이버 JSON 을 바로 부를 수 없어서(CORS 403) 맥이 받아 올린다.
+launchd(`com.kimbob.beomdashboard.live`)가 10분마다 부르고, 평일 09:00~15:50 밖이면 바로 끝난다. daily.py 가 돌고 있으면 건너뛴다.
+화면은 장중에 1분마다 home.json 이 바뀌었는지 확인해 다시 그린다. GitHub Pages 반영까지 1분 안팎이 더 걸린다.
+10분 간격은 GitHub Pages 빌드 한도(시간당 10회 안팎) 때문이다.
+
+publish.py 는 배포용 저장소(`.publish/`, gitignore)를 지우지 않고 두어 원격에 이미 있는 파일은 다시 올리지 않는다. 장중 배포는 home.json 만 바뀌어 몇 초면 끝난다.
+
+```bash
+cp launchd/com.kimbob.beomdashboard.live.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard.live.plist
+```
 
 ## 테이블
 
@@ -173,3 +191,6 @@ python3 build_home.py            # 다른 탭 JSON 과 DB 에서 홈에 보일 �
 - `flow_daily`: (date, code)별 외국인·기관·개인 순매수 수량, 종가, 외국인 지분율
 - `high52_daily`: (date, code) 그날 52주 신고가 종목
 - `index_daily`: (date, code) 코스피·코스닥 종가·등락률, 투자자별·프로그램 순매수(억원), 상승/하락/보합 종목 수
+- `index_ohlc`: (date, code) 지수 일봉 / `index_minute`: (date, code, t) 당일 1분봉 / `index_snap`: (date, code, t) 장중 실행 때 누적 순매수
+- `ohlc_daily`: (date, code) 종목 일봉 (시가·고가·저가·종가·거래량)
+- `quote_live`: 전 종목 장중 시세 (받을 때마다 통째로 바꿈)

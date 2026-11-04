@@ -52,6 +52,23 @@ class ParseTest(unittest.TestCase):
         self.assertIsNone(rows[0]['frgn'])   # 순매수는 dealTrendInfo 날짜에만
 
 
+    def test_fchart(self):
+        xml = ('<chartdata symbol="KOSPI"><item data="20261102|5637.77|5910.83|5616.5|5859.08|198130" />'
+               '<item data="20261103|5715.19|5735.92|5615.8|5648.79|210000" /></chartdata>')
+        rows = naver.parse_fchart(xml, 'KOSPI')
+        self.assertEqual(rows[0], {'date': '2026-11-02', 'code': 'KOSPI', 'open': 5637.77, 'high': 5910.83,
+                                   'low': 5616.5, 'close': 5859.08, 'volume': 198130})
+        with self.assertRaises(ValueError):
+            naver.parse_fchart('<protocol />', 'KOSPI')
+
+    def test_minute_keeps_only_that_day(self):
+        rows = [{'localDateTime': '20261103153000', 'currentPrice': 1.0},
+                {'localDateTime': '20261104090000', 'currentPrice': 5789.98},
+                {'localDateTime': '20261104090100', 'currentPrice': 5778.47}]
+        self.assertEqual(naver.parse_minute(rows, '2026-11-04'),
+                         [{'t': '09:00', 'price': 5789.98}, {'t': '09:01', 'price': 5778.47}])
+
+
 class FlowTest(unittest.TestCase):
     def test_streak(self):
         self.assertEqual(B.streak([5, 3, 1, -2, 4]), 3)

@@ -1,206 +1,348 @@
-// 홈 탭: data/home.json — 지수·업종·시총 상위와 각 탭의 오늘 핵심만 모아 보여준다
-// 지수 차트만 네이버 이미지를 직접 불러와 장중 30초마다 갱신하고, 나머지는 맥에서 하루 세 번 빌드한 값이다.
+// 홈 탭: data/home.json
+// - 지수: 당일 1분봉·투자자별 순매수 흐름·일봉을 직접 그려, 마우스를 올린 시각·날짜의 값을 보여준다
+// - 장중에는 맥이 10분마다 home.json 을 새로 올리고(live.py), 화면은 1분마다 바뀌었는지 확인해 다시 그린다
 (() => {
-  const REFRESH_MS = 30000;
-  const CHARTS = { day: '당일', candle: '일봉' };
-  // 네이버 당일 지수 차트의 순매수 선 색 (지수 선은 초록)
-  const LEGEND = [['개인', '#9b6bd3'], ['외국인', '#f08a24'], ['기관', '#3d8bdb']];
-  const SECTOR_NOTE = '5종목 이상 업종, 오른쪽은 업종 시총 상위 3종목';
+  const POLL_MS = 60000;
+  const RANGES = [['1d', '당일'], ['3m', '3개월'], ['1y', '1년']];
+  const INV = [['개인', 3, 'var(--inv-ind)'], ['외국인', 1, 'var(--inv-frgn)'], ['기관', 2, 'var(--inv-org)']];
+  const SESSION_MIN = 391;   // 09:00 ~ 15:30
 
   const $ = id => document.getElementById(id);
-  const chart = { KOSPI: 'day', KOSDAQ: 'day' };
+  const range = { KOSPI: '1d', KOSDAQ: '1d' };
+  const tabs = {};          // 카드별 선택 탭
+  let map = 'sector';
   let data = null;
 
   const chg = ch => (ch == null ? '–' : `${ch > 0 ? '+' : ''}${ch.toFixed(2)}%`);
   const chgHtml = ch => `<span class="${U.cls(ch)}">${chg(ch)}</span>`;
+  const pill = ch => `<span class="pill-ch ${U.cls(ch)}">${chg(ch)}</span>`;
   const hm = ts => ts.slice(11, 16);
   const idxNum = v => (v == null ? '–' : v.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
-  function chartSrc(c) {
-    const t = Math.floor(Date.now() / 10000);
-    return chart[c] === 'day'
-      ? `https://ssl.pstatic.net/imgfinance/chart/sise/siseMain${c}.png?t=${t}`
-      : `https://ssl.pstatic.net/imgfinance/chart/mobile/candle/day/${c}_end.png?t=${t}`;
-  }
+  const minIdx = t => (+t.slice(0, 2) - 9) * 60 + +t.slice(3, 5);
+  const minLabel = i => `${String(9 + Math.floor(i / 60)).padStart(2, '0')}:${String(i % 60).padStart(2, '0')}`;
+  // 지수 거래량은 천주 단위
+  const idxVol = v => (v >= 1e5 ? `${(v / 1e5).toFixed(1)}억` : `${Math.round(v / 1e3).toLocaleString('ko-KR')}백만`);
+  const isLive = () => data.live && U.marketHours();
 
   // ---------- 지수 ----------
-  function idxHtml(x) {
-    // 장중에 받은 값이면 그 시각, 마감 뒤 받은 값이면 종가
-    const intraday = x.at && x.at.slice(0, 10) === x.d && hm(x.at) < '15:40';
+  function idxCard(x) {
     const b = x.up != null ? { up: x.up, dn: x.dn, fl: x.fl } : data.breadth[x.c];
     const total = b.up + b.dn + b.fl || 1;
-    const flows = [['개인', x.i], ['외국인', x.f], ['기관', x.o], ['프로그램', x.pg]];
+    const intraday = x.at && x.at.slice(0, 10) === x.d && hm(x.at) < '15:40';
+    const flows = [['개인', x.i, 'ind'], ['외국인', x.f, 'frgn'], ['기관', x.o, 'org'], ['프로그램', x.pg, 'prog']];
     return `<article class="card hm-ix" data-ix="${x.c}">
       <header class="hm-ix-head">
-        <div><h2>${x.n}</h2><span class="muted small">${U.dateLabel(x.d)} ${intraday ? `장중 ${hm(x.at)} 기준` : '종가'}</span></div>
-        <div class="hm-ix-val"><b>${idxNum(x.v)}</b>${chgHtml(x.ch)}</div>
+        <div>
+          <h2>${x.n}</h2>
+          <span class="muted small hm-ix-when">${U.dateLabel(x.d)} ${intraday ? `장중 ${hm(x.at)}` : '종가'}</span>
+        </div>
+        <div class="hm-ix-val"><b>${idxNum(x.v)}</b><span class="hm-ix-ch">${chgHtml(x.ch)}</span></div>
       </header>
       <div class="hm-ix-bar">
-        <div class="seg" role="group">${Object.entries(CHARTS).map(([k, l]) =>
-          `<button data-chart="${k}" class="${chart[x.c] === k ? 'on' : ''}">${l}</button>`).join('')}</div>
-        <span class="muted small hm-legend">${chart[x.c] === 'day'
-          ? `지수 <i style="--c:#3fae2a"></i> 순매수 ${LEGEND.map(([n, c]) => `${n} <i style="--c:${c}"></i>`).join(' ')}`
-          : '5·20·60일 이동평균'}</span>
+        <div class="seg" role="group">${RANGES.map(([k, l]) =>
+          `<button data-range="${k}" class="${range[x.c] === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+        <span class="muted small hm-legend"></span>
       </div>
-      <img class="hm-ix-chart" src="${chartSrc(x.c)}" alt="${x.n} 차트">
-      <p class="muted small hm-ix-time"></p>
-      ${x.f != null ? `<div class="hm-ix-flow">${flows.map(([n, v]) =>
-        `<div><span>${n}</span><b class="${U.cls(v)}">${U.eok(v, true)}</b></div>`).join('')}</div>
-        <p class="muted small">${x.fd !== x.d ? `${U.dateLabel(x.fd)} ` : ''}투자자별 순매수${x.at ? ` · ${hm(x.at)} 집계` : ''}</p>` : ''}
+      <div class="hm-ix-chart"></div>
+      ${x.f != null ? `<div class="hm-ix-flow">${flows.map(([n, v, k]) =>
+        `<div class="inv-${k}"><span>${n}</span><b class="${U.cls(v)}">${U.eok(v, true)}</b></div>`).join('')}</div>` : ''}
       <div class="hm-breadth">
         <div class="hm-bd-bar"><i class="up-bg" style="flex:${b.up}"></i><i class="flat-bg" style="flex:${b.fl}"></i><i class="dn-bg" style="flex:${b.dn}"></i></div>
-        <div class="small"><span class="up">상승 ${b.up}</span> · 보합 ${b.fl} · <span class="down">하락 ${b.dn}</span>
-          <span class="muted">(${Math.round(b.up / total * 100)}% 상승)</span></div>
+        <div class="small hm-bd-txt"><span class="up">상승 ${b.up}</span><span class="muted">보합 ${b.fl}</span><span class="down">하락 ${b.dn}</span>
+          <span class="muted">상승 비율 ${Math.round(b.up / total * 100)}%</span></div>
       </div>
     </article>`;
   }
 
-  function stampCharts() {
-    const t = new Date();
-    const txt = `차트 ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')} 불러옴${U.marketHours() ? ' · 장중 30초마다 갱신' : ''}`;
-    document.querySelectorAll('.hm-ix-time').forEach(p => { p.textContent = txt; });
+  // 헤더 숫자를 마우스가 가리키는 값으로 (떠나면 원래대로)
+  function readout(card, x, v, ch, when) {
+    card.querySelector('.hm-ix-val b').textContent = idxNum(v ?? x.v);
+    card.querySelector('.hm-ix-ch').innerHTML = chgHtml(v == null ? x.ch : ch);
+    const w = card.querySelector('.hm-ix-when');
+    if (!w.dataset.orig) w.dataset.orig = w.textContent;
+    w.textContent = v == null ? w.dataset.orig : when;
+    card.classList.toggle('hovering', v != null);
   }
 
-  function refreshCharts() {
-    document.querySelectorAll('.hm-ix').forEach(card => { card.querySelector('.hm-ix-chart').src = chartSrc(card.dataset.ix); });
-    stampCharts();
+  function drawIntraday(card, x) {
+    const n = SESSION_MIN;
+    const price = Array(n).fill(null);
+    for (const [t, p] of x.min) { const i = minIdx(t); if (i >= 0 && i < n) price[i] = p; }
+    const base = x.prev;
+    const snaps = x.snap || [];
+    const inv = INV.map(([name, k, color]) => {
+      const vals = Array(n).fill(null);
+      for (const s of snaps) { const i = Math.min(n - 1, Math.max(0, minIdx(s[0]))); vals[i] = s[k]; }
+      return { name, color, vals };
+    });
+    const hasFlow = snaps.length >= 2;
+    const panes = [{ h: 3, baseline: base, fmt: v => idxNum(v),
+      series: [{ type: 'line', values: price, split: true, area: true, width: 1.7 }] }];
+    if (hasFlow) {
+      panes.push({ h: 1.6, zero: true, label: '투자자별 누적 순매수 (억원)', fmt: v => U.eok(v, true),
+        series: inv.map(s => ({ type: 'line', values: s.vals, color: s.color, connect: true, width: 1.6, last: true })) });
+    }
+    const last = (arr, i) => { for (let k = i; k >= 0; k--) if (arr[k] != null) return arr[k]; return null; };
+    card.querySelector('.hm-legend').innerHTML = hasFlow
+      ? INV.map(([n, , c]) => `<i style="--c:${c}"></i>${n}`).join(' ') + ' <span>순매수</span>'
+      : `전일 종가 ${idxNum(base)} 기준`;
+    Plot.chart(card.querySelector('.hm-ix-chart'), {
+      n, height: hasFlow ? 300 : 230, panes, uid: `ix${x.c}`,
+      xTicks: [0, 60, 120, 180, 240, 300, 360].map(i => [i, minLabel(i)]),
+      has: i => price[i] != null,
+      tip: i => {
+        const v = price[i];
+        const rows = hasFlow ? inv.map(s => {
+          const fv = last(s.vals, i);
+          return fv == null ? '' : `<div><i style="--c:${s.color}"></i>${s.name}<b class="${U.cls(fv)}">${U.eok(fv, true)}</b></div>`;
+        }).join('') : '';
+        return `<div class="tt-h">${minLabel(i)}</div><div class="tt-v">${idxNum(v)} ${chgHtml(base ? (v / base - 1) * 100 : null)}</div>${rows}`;
+      },
+      onHover: i => readout(card, x, i == null ? null : price[i], i == null ? null : (price[i] / base - 1) * 100,
+        i == null ? '' : `${U.dateLabel(x.d)} ${minLabel(i)}`),
+    });
+  }
+
+  function drawDaily(card, x, days, candle) {
+    const o = x.ohlc;
+    const from = Math.max(0, o.d.length - days);
+    const cut = k => o[k].slice(from);
+    const d = cut('d'), c = cut('c');
+    const ma = k => Plot.ma(o.c, k).slice(from);
+    const prevC = i => (from + i > 0 ? o.c[from + i - 1] : null);
+    const pchg = i => (prevC(i) ? (c[i] / prevC(i) - 1) * 100 : null);
+    const price = candle
+      ? [{ type: 'candle', o: cut('o'), h: cut('h'), l: cut('l'), c },
+        { type: 'line', values: ma(20), color: 'var(--ma20)', width: 1.2, nodot: true },
+        { type: 'line', values: ma(60), color: 'var(--ma60)', width: 1.2, nodot: true }]
+      : [{ type: 'line', values: c, color: 'var(--text)', area: true, width: 1.5 }];
+    const vol = cut('v');
+    card.querySelector('.hm-legend').innerHTML = candle
+      ? '<i style="--c:var(--ma20)"></i>20일 <i style="--c:var(--ma60)"></i>60일 이동평균' : '종가';
+    Plot.chart(card.querySelector('.hm-ix-chart'), {
+      n: d.length, height: 270, uid: `ix${x.c}`,
+      panes: [{ h: 3.2, fmt: v => idxNum(v), series: price },
+        { h: 1, fmt: idxVol, series: [{ type: 'bar', values: vol, cls: i => (pchg(i) >= 0 ? 'up' : 'dn') }] }],
+      xTicks: Plot.monthTicks(d),
+      tip: i => `<div class="tt-h">${Plot.dateStr(d[i])}</div>
+        <div class="tt-v">${idxNum(c[i])} ${chgHtml(pchg(i))}</div>
+        ${candle ? `<div class="tt-g"><span>시가</span><b>${idxNum(o.o[from + i])}</b><span>고가</span><b>${idxNum(o.h[from + i])}</b>
+          <span>저가</span><b>${idxNum(o.l[from + i])}</b><span>거래량</span><b>${idxVol(vol[i])}주</b></div>` : ''}`,
+      onHover: i => readout(card, x, i == null ? null : c[i], i == null ? null : pchg(i),
+        i == null ? '' : U.dateLabel(`${String(d[i]).slice(0, 4)}-${String(d[i]).slice(4, 6)}-${String(d[i]).slice(6, 8)}`)),
+    });
+  }
+
+  function drawIdx(card) {
+    const x = data.idx.find(t => t.c === card.dataset.ix);
+    const r = range[x.c];
+    if (r === '1d' && x.min?.length) drawIntraday(card, x);
+    else if (r === '3m') drawDaily(card, x, 63, true);
+    else drawDaily(card, x, 260, false);
   }
 
   function renderIdx() {
-    $('idx').innerHTML = data.idx.map(idxHtml).join('');
-    stampCharts();
+    $('idx').innerHTML = data.idx.map(idxCard).join('');
+    document.querySelectorAll('.hm-ix').forEach(drawIdx);
   }
 
   $('idx').addEventListener('click', e => {
-    const b = e.target.closest('[data-chart]');
+    const b = e.target.closest('[data-range]');
     if (!b) return;
-    chart[b.closest('.hm-ix').dataset.ix] = b.dataset.chart;
-    renderIdx();
+    const card = b.closest('.hm-ix');
+    range[card.dataset.ix] = b.dataset.range;
+    card.querySelectorAll('[data-range]').forEach(x => x.classList.toggle('on', x === b));
+    drawIdx(card);
   });
 
-  // ---------- 업종 ----------
-  function secRow(s) {
-    return `<div class="hm-sec-row">
-      <span class="hm-sec-name">${U.esc(s.w)} <small class="muted">${s.k}</small></span>
-      <b class="${U.cls(s.ch)}">${chg(s.ch)}</b>
-      <span class="hm-sec-top small">${s.top.map(t => `<span ${Stock.hintAttr(t)}>${Stock.link(t)} ${chgHtml(t.ch)}</span>`).join('')}</span>
-    </div>`;
+  // ---------- 지도 (업종 / 시총 상위) ----------
+  function memberTip(t) {
+    return `<div class="tt-row"><span>${U.esc(t.n)}</span>${chgHtml(t.ch)}</div>`;
   }
 
-  function renderSectors() {
-    const s = data.sectors;
-    $('sectors').innerHTML = `<div class="hm-head"><h2>업종 등락 <span class="muted small">${U.dateLabel(data.date)} · WICS 업종 시총 가중 · ${SECTOR_NOTE}</span></h2></div>
-      <div class="hm-two">
-        <div><h3 class="hm-sub up">강세 업종</h3>${s.up.map(secRow).join('')}</div>
-        <div><h3 class="hm-sub down">약세 업종</h3>${s.dn.map(secRow).join('')}</div>
-      </div>`;
+  // 시총 차이가 너무 커서(반도체·삼성전자) 면적은 시총의 0.6제곱에 비례시킨다
+  const area = mc => Math.pow(mc, 0.6);
+
+  function renderMap() {
+    const sec = map === 'sector';
+    const items = sec
+      ? data.sectors.all.map(s => ({
+        v: area(s.mc), color: Plot.heat(s.ch), hot: Math.abs(s.ch) >= 1,
+        html: `<b>${U.esc(s.w)}</b><span>${chg(s.ch)}</span>`,
+        tip: `<div class="tt-h">${U.esc(s.w)} <span class="muted">${s.k}종목 · 시총 ${U.eok(s.mc)}</span></div>
+          <div class="tt-v">${chgHtml(s.ch)}</div>${s.top.map(memberTip).join('')}`,
+      }))
+      : data.big.map(s => ({
+        v: area(s.mc), color: Plot.heat(s.ch), hot: Math.abs(s.ch ?? 0) >= 1,
+        html: `<a href="https://finance.naver.com/item/main.naver?code=${s.c}" target="_blank" rel="noopener" data-code="${s.c}"><b>${U.esc(s.n)}</b></a><span>${chg(s.ch)}</span>`,
+        attrs: Stock.hintAttr(s),
+        tip: `<div class="tt-h">${U.esc(s.n)} <span class="muted">${s.w ? U.esc(s.w) : ''}</span></div>
+          <div class="tt-v">${U.price(s.p)} ${chgHtml(s.ch)}</div><div class="muted">시총 ${U.eok(s.mc)}</div>`,
+      }));
+    $('map').innerHTML = `<div class="sec-head">
+        <div><h2>${sec ? '업종 지도' : '시총 상위 지도'}</h2>
+          <p class="muted small">${sec ? `WICS 업종 ${data.sectors.n}개 · 크기 = 업종 시총(큰 업종은 줄여 표시) · 색 = 시총 가중 등락률` : `시총 상위 ${data.big.length}종목 · 크기 = 시총(큰 종목은 줄여 표시) · 색 = 등락률 · 누르면 종목 상세`}</p></div>
+        <div class="sec-tools">
+          <div class="seg" role="group"><button data-map="sector" class="${sec ? 'on' : ''}">업종</button><button data-map="big" class="${sec ? '' : 'on'}">시총 상위</button></div>
+        </div>
+      </div>
+      <div class="tm-wrap"></div>
+      <div class="tm-scale small muted"><span>-3%</span>${[-3, -2, -1, 0, 1, 2, 3].map(v => `<i style="background:${Plot.heat(v)}"></i>`).join('')}<span>+3%</span></div>`;
+    const wrap = $('map').querySelector('.tm-wrap');
+    Plot.treemap(wrap, { items, height: window.innerWidth < 560 ? 340 : 400 });
   }
+
+  $('map').addEventListener('click', e => {
+    const b = e.target.closest('[data-map]');
+    if (!b) return;
+    map = b.dataset.map;
+    renderMap();
+  });
 
   // ---------- 카드 ----------
-  function item(s, right, sub = '') {
+  function item(s, right, sub = '', rank = null) {
     return `<li ${Stock.hintAttr(s)}>
+      ${rank != null ? `<span class="hm-rank">${rank}</span>` : ''}
       <div class="hm-it-main">${Stock.link(s)}${sub ? `<small class="muted">${sub}</small>` : ''}</div>
       <div class="hm-it-right">${right}</div>
     </li>`;
   }
-  const list = (rows, empty = '해당 종목 없음') => (rows && rows.length ? `<ul class="hm-list">${rows.join('')}</ul>` : `<p class="muted small hm-empty">${empty}</p>`);
+  const list = (rows, empty = '해당 종목 없음') => (rows && rows.length
+    ? `<ol class="hm-list">${rows.join('')}</ol>` : `<p class="muted small hm-empty">${empty}</p>`);
 
-  function card(title, meta, href, body, wide = false) {
-    return `<article class="card hm-card${wide ? ' wide' : ''}">
-      <div class="hm-head"><h2>${title} <span class="muted small">${meta}</span></h2>${href ? `<a class="hm-more small" href="${href}">더 보기 →</a>` : ''}</div>
-      ${body}
+  // tabs: [[key, label, cls, html]]
+  function card(id, { title, meta, href, tabs: tb, body, wide }) {
+    const on = tabs[id] || (tb && tb[0][0]);
+    return `<article class="card hm-card${wide ? ' wide' : ''}" data-card="${id}">
+      <header class="hm-card-head">
+        <div><h3>${title}</h3><p class="muted small">${meta}</p></div>
+        ${href ? `<a class="hm-more" href="${href}" title="자세히">더 보기 <span aria-hidden="true">›</span></a>` : ''}
+      </header>
+      ${tb ? `<div class="hm-tabs" role="tablist">${tb.map(([k, l, c]) =>
+        `<button role="tab" data-tab="${k}" class="${c || ''}${k === on ? ' on' : ''}">${l}</button>`).join('')}</div>
+        ${tb.map(([k, , , html]) => `<div class="hm-pane" data-pane="${k}"${k === on ? '' : ' hidden'}>${html}</div>`).join('')}` : body}
     </article>`;
-  }
-
-  const two = (a, b) => `<div class="hm-two">${a}${b}</div>`;
-  const half = (label, cls, body) => `<div><h3 class="hm-sub ${cls}">${label}</h3>${body}</div>`;
-
-  function bigCard() {
-    return card('시총 상위', U.dateLabel(data.date), 'growth.html',
-      list(data.big.map(s => item(s, `<span class="muted">${U.price(s.p)}</span> ${chgHtml(s.ch)}`, U.eok(s.mc)))));
   }
 
   function moversCard() {
     const m = data.movers;
-    return card('급등·급락', '시총 3,000억 이상', null, two(
-      half('상승률 상위', 'up', list(m.up.map(s => item(s, chgHtml(s.ch), s.w ? U.esc(s.w) : '')))),
-      half('하락률 상위', 'down', list(m.dn.map(s => item(s, chgHtml(s.ch), s.w ? U.esc(s.w) : ''))))));
+    const row = (s, i) => item(s, pill(s.ch), [s.w && U.esc(s.w), U.eok(s.mc)].filter(Boolean).join(' · '), i + 1);
+    return card('movers', { title: '급등 · 급락', meta: `시총 3,000억 이상${isLive() ? ` · 장중 ${hm(data.live)}` : ''}`,
+      tabs: [['up', `상승 ${m.up.length}`, 'up', list(m.up.map(row))], ['dn', `하락 ${m.dn.length}`, 'down', list(m.dn.map(row))]] });
+  }
+
+  function flowCard() {
+    const f = data.flow;
+    if (!f) return '';
+    const row = (s, i) => item(s, `<b class="${U.cls(s.f + s.o)}">${U.eok(s.f + s.o, true)}</b>`,
+      `외국인 ${U.eok(s.f, true)} · 기관 ${U.eok(s.o, true)}`, i + 1);
+    return card('flow', { title: '외국인 + 기관', meta: `${U.dateLabel(f.d)} 하루 순매수 금액`, href: 'flow.html?who=fo&days=1',
+      tabs: [['buy', '순매수', 'up', list(f.buy.map(row))], ['sell', '순매도', 'down', list(f.sell.map(row))]] });
   }
 
   function revCard() {
     const r = data.rev;
     if (!r) return '';
     const fy = `FY${String(r.fy).slice(2)}`;
-    const row = s => item(s, `<b class="${U.cls(s.r)}">${U.pct(s.r)}</b>`, `${fy} 영업이익 ${U.eok(s.now)}`);
-    return card('추정치 리비전', `${fy} 영업이익 1주 변화 · 상향 ${r.nup} / 하향 ${r.ndn}종목`, 'revision.html?per=w1',
-      two(half('상향', 'up', list(r.up.map(row))), half('하향', 'down', list(r.dn.map(row)))));
+    const row = (s, i) => item(s, `<b class="${U.cls(s.r)}">${U.pct(s.r)}</b>`, `${fy} 영업이익 ${U.eok(s.now)}`, i + 1);
+    return card('rev', { title: '추정치 리비전', meta: `${fy} 영업이익 1주 변화`, href: 'revision.html?per=w1',
+      tabs: [['up', `상향 ${r.nup}`, 'up', list(r.up.map(row))], ['dn', `하향 ${r.ndn}`, 'down', list(r.dn.map(row))]] });
   }
 
   function tgtCard() {
     const t = data.tgt;
     if (!t) return '';
-    const row = s => item(s, `<b class="${U.cls(s.r)}">${U.pct(s.r, 0)}</b>`,
-      `${U.esc(s.b)} ${U.price(s.pg)} → ${U.price(s.g)}`);
-    return card('목표가 변경', `최근 1주 리포트 ${t.n}건 · 상향 ${t.nup} / 하향 ${t.ndn}건`, 'revision.html?view=tgt',
-      two(half('상향', 'up', list(t.up.map(row))), half('하향', 'down', list(t.dn.map(row)))));
-  }
-
-  function flowCard() {
-    const f = data.flow;
-    if (!f) return '';
-    const row = s => item(s, `<b class="${U.cls(s.f + s.o)}">${U.eok(s.f + s.o, true)}</b>`,
-      `외 ${U.eok(s.f, true)} · 기 ${U.eok(s.o, true)}`);
-    return card('외국인+기관 수급', `${U.dateLabel(f.d)} 하루`, 'flow.html?who=fo&days=1',
-      two(half('순매수', 'up', list(f.buy.map(row))), half('순매도', 'down', list(f.sell.map(row)))));
+    const row = (s, i) => item(s, `<b class="${U.cls(s.r)}">${U.pct(s.r, 0)}</b>`,
+      `${U.esc(s.b)} · ${U.price(s.pg)} → ${U.price(s.g)}`, i + 1);
+    return card('tgt', { title: '목표가 변경', meta: `최근 1주 리포트 ${t.n}건 · 같은 증권사 직전 대비`, href: 'revision.html?view=tgt',
+      tabs: [['up', `상향 ${t.nup}`, 'up', list(t.up.map(row))], ['dn', `하향 ${t.ndn}`, 'down', list(t.dn.map(row))]] });
   }
 
   function highCard() {
     const h = data.high;
     if (!h) return '';
     const intraday = h.at && h.at.slice(0, 10) === h.d && hm(h.at) < '15:40';
-    return card('52주 신고가', `${U.dateLabel(h.d)} ${h.n}종목${intraday ? ` · 장중 ${hm(h.at)}` : ''}`, 'high.html',
-      list(h.list.map(s => item(s, chgHtml(s.ch), [s.w && U.esc(s.w), U.eok(s.mc), s.run >= 2 ? `${s.run}일 연속` : ''].filter(Boolean).join(' · '))),
-        '이날 신고가 종목 없음'));
+    return card('high', { title: '52주 신고가', meta: `${U.dateLabel(h.d)} ${h.n}종목${intraday ? ` · 장중 ${hm(h.at)}` : ''} · 시총 순`, href: 'high.html',
+      body: list(h.list.map((s, i) => item(s, pill(s.ch),
+        [s.w && U.esc(s.w), U.eok(s.mc), s.run >= 2 ? `${s.run}일 연속` : ''].filter(Boolean).join(' · '), i + 1)),
+      '이날 신고가 종목 없음') });
   }
 
   function reportsCard() {
     if (!data.reports) return '';
     const rows = data.reports.map(r => `<li ${Stock.hintAttr(r)}>
-      <div class="hm-it-main"><span class="muted small">${U.md(r.d)} ${U.esc(r.b)}</span>${Stock.link(r)}
-        <a class="hm-rep-t small" href="https://m.stock.naver.com/research/company/${r.id}" target="_blank" rel="noopener">${U.esc(r.t)}</a></div>
-      <div class="hm-it-right small">${r.op ? U.esc(r.op) : ''}${r.g ? ` ${U.price(r.g)}` : ''}${r.g && r.pg && r.g !== r.pg
-        ? ` <span class="${U.cls(r.g - r.pg)}">${r.g > r.pg ? '▲' : '▼'}</span>` : ''}</div>
+      <div class="hm-rep-meta small"><span class="muted">${U.md(r.d)}</span><span>${U.esc(r.b)}</span>
+        ${r.op ? `<span class="pill">${U.esc(r.op)}</span>` : ''}
+        ${r.g ? `<span class="hm-rep-g">목표 ${U.price(r.g)}${r.g && r.pg && r.g !== r.pg
+          ? ` <span class="${U.cls(r.g - r.pg)}">${r.g > r.pg ? '▲' : '▼'}${U.pct(r.g / r.pg - 1, 0)}</span>` : ''}</span>` : ''}</div>
+      <div class="hm-rep-main">${Stock.link(r)}
+        <a class="hm-rep-t" href="https://m.stock.naver.com/research/company/${r.id}" target="_blank" rel="noopener">${U.esc(r.t)}</a></div>
     </li>`);
-    return card('최신 리포트', '네이버 증권 종목분석', 'revision.html?view=tgt&tdays=1', `<ul class="hm-list">${rows.join('')}</ul>`, true);
+    return card('rep', { title: '최신 리포트', meta: '네이버 증권 종목분석 · 제목을 누르면 원문', href: 'revision.html?view=tgt&tdays=1',
+      body: `<ul class="hm-reps">${rows.slice(0, 8).join('')}</ul>` });
   }
 
   function renderGrid() {
-    $('grid').innerHTML = [bigCard(), moversCard(), revCard(), tgtCard(), flowCard(), highCard(), reportsCard()].join('');
+    $('grid').innerHTML = [moversCard(), flowCard(), highCard(), revCard(), tgtCard(), reportsCard()].join('');
   }
+
+  $('grid').addEventListener('click', e => {
+    const b = e.target.closest('[data-tab]');
+    if (!b) return;
+    const c = b.closest('[data-card]');
+    tabs[c.dataset.card] = b.dataset.tab;
+    c.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === b));
+    c.querySelectorAll('[data-pane]').forEach(p => { p.hidden = p.dataset.pane !== b.dataset.tab; });
+  });
 
   function renderFoot() {
     $('foot').innerHTML = `
-      <p>지수·투자자별 순매수·상승/하락 종목 수: 네이버 증권 (지수 차트는 네이버 이미지 실시간, 숫자는 ${U.timeLabel(data.built)} 빌드 시점).</p>
-      <p>종목 시세: KRX 종가 (다음 날 아침 KRX 공개 전까지는 네이버 시세로 임시 표시). 업종: WICS. 추정치: FnGuide 컨센서스(네이버 종목분석, 컨센 ${U.dateLabel(data.rev?.cns || data.date)}).</p>
+      <p>지수·분봉·투자자별 순매수·상승/하락 종목 수: 네이버 증권. 장중에는 10분마다 받아 올립니다 (당일 순매수 흐름은 그 10분 간격 값을 이은 선).</p>
+      <p>종목 시세: KRX 종가 (KRX 공개 전·장중에는 네이버 시세). 업종: WICS. 추정치: FnGuide 컨센서스(네이버 종목분석, 컨센 ${U.dateLabel(data.rev?.cns || data.date)}).</p>
       <p>목표가·리포트: 네이버 증권 리서치(증권사 제공). 수급 금액은 순매수 수량 × 종가 어림. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
+  }
+
+  function stamp() {
+    $('asof').innerHTML = isLive()
+      ? `<span class="live-dot"></span>장중 ${hm(data.live)} 시세 · 10분마다 갱신`
+      : `${U.dateLabel(data.date)} 종가 기준 · ${U.timeLabel(data.built)} 갱신`;
+  }
+
+  function renderAll() {
+    stamp();
+    renderIdx();
+    renderMap();
+    renderGrid();
+    renderFoot();
+  }
+
+  async function fetchHome() {
+    const r = await fetch('data/home.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
   }
 
   async function load() {
     try {
-      data = await U.json('data/home.json');
+      data = await fetchHome();
     } catch (e) {
       $('msg').textContent = `데이터를 불러오지 못했습니다. (${e.message})`;
       return;
     }
     $('msg').hidden = true;
-    $('asof').textContent = `${U.dateLabel(data.date)} 종가 기준 · ${U.timeLabel(data.built)} 갱신`;
-    renderIdx();
-    renderSectors();
-    renderGrid();
-    renderFoot();
+    renderAll();
+  }
+
+  // 장중: 새로 올라왔으면 다시 그린다 (차트에 마우스를 올려 둔 중이면 다음 확인 때)
+  async function poll() {
+    if (document.hidden || !U.marketHours() || document.querySelector('.hm-ix.hovering')) return;
+    try {
+      const d = await fetchHome();
+      if (d.built !== data.built) { data = d; renderAll(); }
+    } catch (e) { /* 다음 확인 때 */ }
   }
 
   U.initTheme($('theme'));
-  setInterval(() => { if (!document.hidden && U.marketHours()) refreshCharts(); }, REFRESH_MS);
+  setInterval(poll, POLL_MS);
   load();
 })();

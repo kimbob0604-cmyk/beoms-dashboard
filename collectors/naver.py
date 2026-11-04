@@ -8,6 +8,8 @@
 - m.stock.naver.com/api/stocks/high52week/{KOSPI|KOSDAQ}     : 그날 52주 신고가를 낸 종목
 - m.stock.naver.com/api/index/{KOSPI|KOSDAQ}/integration|price : 지수 일별 종가, 투자자별 순매수, 상승/하락 종목 수
 - m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
+- api.stock.naver.com/chart/domestic/index/{code}/minute     : 지수 당일 1분봉
+- fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day : 지수 일봉 (XML)
 
 주의: 이 API들은 다른 사이트의 브라우저 호출을 막는다(CORS 403). 그래서 맥에서 받아 JSON으로 만든다.
 리포트 상세의 prevGoalPrice 는 이전 목표가가 아니라 작성일 주가와 같은 값이라 쓰지 않는다.
@@ -208,6 +210,50 @@ def parse_index(integration: Dict, prices: List[Dict], code: str) -> List[Dict]:
             'up': cnt('upperCount', 'riseCount'), 'down': cnt('lowerCount', 'fallCount'), 'flat': cnt('steadyCount'),
         })
     return sorted(rows.values(), key=lambda r: r['date'])
+
+
+FCHART = 'https://fchart.stock.naver.com/sise.nhn'
+CHART_API = 'https://api.stock.naver.com/chart/domestic'
+
+
+def parse_fchart(text: str, code: str) -> List[Dict]:
+    """<item data="20261029|시가|고가|저가|종가|거래량" /> → 일봉 행 (날짜순)"""
+    out = []
+    for m in re.finditer(r'<item data="([^"]+)"', text):
+        f = m.group(1).split('|')
+        if len(f) < 6:
+            continue
+        o, h, l, c, v = (to_num(x) for x in f[1:6])
+        if c:
+            out.append({'date': _date(f[0]), 'code': code, 'open': o, 'high': h, 'low': l, 'close': c, 'volume': v})
+    if not out:
+        raise ValueError('fchart 일봉 없음')
+    return out
+
+
+def fetch_index_ohlc(session, code: str, count: int = 260, timeout: float = 10) -> List[Dict]:
+    r = session.get(FCHART, params={'symbol': code, 'timeframe': 'day', 'count': count, 'requestType': 0},
+                    timeout=timeout)
+    r.raise_for_status()
+    return parse_fchart(r.content.decode('euc-kr', 'replace'), code)
+
+
+def parse_minute(rows: List[Dict], day: str) -> List[Dict]:
+    """1분봉 → [{'t': 'HH:MM', 'price': …}] (day 의 것만)"""
+    if not isinstance(rows, list):
+        raise ValueError('분봉 응답 형식 변경')
+    key = day.replace('-', '')
+    return [{'t': f"{r['localDateTime'][8:10]}:{r['localDateTime'][10:12]}", 'price': r['currentPrice']}
+            for r in rows if str(r.get('localDateTime', '')).startswith(key) and r.get('currentPrice')]
+
+
+def fetch_index_minute(session, code: str, day: str, timeout: float = 10) -> List[Dict]:
+    """day: YYYY-MM-DD"""
+    k = day.replace('-', '')
+    r = session.get(f'{CHART_API}/index/{code}/minute',
+                    params={'startDateTime': f'{k}0900', 'endDateTime': f'{k}1530'}, timeout=timeout)
+    r.raise_for_status()
+    return parse_minute(r.json(), day)
 
 
 def fetch_index(session, code: str, days: int = 60, timeout: float = 10) -> List[Dict]:

@@ -15,7 +15,7 @@
     <key>WorkingDirectory</key>
     <string>/Users/beomjun/Beom's Dashboard</string>
 
-    <!-- 월~토 07:10 (컨센서스 + 가격 + 네이버 + 빌드), 12:10 (못 받은 가격 보충), 월~금 18:40 (장 마감 뒤 수급·신고가) -->
+    <!-- 월~토 07:10 (컨센서스 + 가격 + 네이버 + 빌드), 12:10 (못 받은 가격 보충), 월~금 20:40 (장 마감 뒤 수급·신고가) -->
     <key>StartCalendarInterval</key>
     <array>
         <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>10</integer></dict>

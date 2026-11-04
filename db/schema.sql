@@ -130,3 +130,63 @@ CREATE TABLE IF NOT EXISTS index_daily (
     fetched_at  TEXT,
     PRIMARY KEY (date, code)
 );
+
+-- 종목 일봉 (종목 패널 차트). KRX 일별매매정보와 같은 호출에서 받는다.
+-- KRX 공개 전 네이버로 채운 날은 종가만 있고 시가·고가·저가·거래량이 비어 있다 (KRX 가 나중에 덮어씀)
+CREATE TABLE IF NOT EXISTS ohlc_daily (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    open        REAL,
+    high        REAL,
+    low         REAL,
+    close       REAL,
+    volume      REAL,                 -- 주
+    PRIMARY KEY (date, code)
+);
+
+-- 지수 일봉 (홈 차트, 네이버 fchart)
+CREATE TABLE IF NOT EXISTS index_ohlc (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    open        REAL,
+    high        REAL,
+    low         REAL,
+    close       REAL,
+    volume      REAL,                 -- 천주
+    PRIMARY KEY (date, code)
+);
+
+-- 지수 당일 분봉 (홈 차트)
+CREATE TABLE IF NOT EXISTS index_minute (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    t           TEXT NOT NULL,        -- HH:MM
+    price       REAL,
+    PRIMARY KEY (date, code, t)
+);
+
+-- 장중 실행마다 받은 지수·투자자별 누적 순매수 스냅샷 (홈 당일 순매수 흐름)
+CREATE TABLE IF NOT EXISTS index_snap (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    t           TEXT NOT NULL,        -- HH:MM (받은 시각)
+    close       REAL,
+    frgn        REAL,
+    org         REAL,
+    ind         REAL,
+    prog        REAL,
+    PRIMARY KEY (date, code, t)
+);
+
+-- 장중 전 종목 시세 (홈 실시간 갱신용, 받을 때마다 통째로 바꿈). 네이버 통합 시세
+CREATE TABLE IF NOT EXISTS quote_live (
+    code        TEXT PRIMARY KEY,
+    name        TEXT,
+    market      TEXT,
+    date        TEXT,
+    close       REAL,
+    change_pct  REAL,
+    mcap        REAL,                 -- 억원
+    trd_val     REAL,                 -- 억원
+    at          TEXT
+);

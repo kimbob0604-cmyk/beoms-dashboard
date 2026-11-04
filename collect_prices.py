@@ -30,19 +30,27 @@ PREOPEN = dtime(8, 0)         # 넥스트레이드 프리마켓 시작. 이 뒤�
 NAVER_MIN_ROWS = 2000         # 이보다 적으면 목록이 덜 온 것으로 보고 쓰지 않음
 
 
-def collect_date(conn, session, d: date) -> int:
+OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume)
+              VALUES (:date, :code, :open, :high, :low, :close, :volume)"""
+
+
+def collect_date(conn, session, d: date, ohlc_only: bool = False) -> int:
+    """ohlc_only: 일봉만 채운다 (차트용 과거 백필. price_daily 는 건드리지 않음)"""
     rows = []
     for market in krx.ENDPOINTS:
         rows += krx.fetch_daily(session, config.KRX_API_KEY, d.strftime('%Y%m%d'), market)
         time.sleep(0.3)
     if rows:
         with conn:
-            conn.execute('DELETE FROM price_daily WHERE date = ?', (d.isoformat(),))
-            conn.executemany(
-                """INSERT INTO price_daily
-                   (date, code, name, market, close, change_pct, mcap, shares, trd_val)
-                   VALUES (:date, :code, :name, :market, :close, :change_pct, :mcap, :shares, :trd_val)""",
-                rows)
+            if not ohlc_only:
+                conn.execute('DELETE FROM price_daily WHERE date = ?', (d.isoformat(),))
+                conn.executemany(
+                    """INSERT INTO price_daily
+                       (date, code, name, market, close, change_pct, mcap, shares, trd_val)
+                       VALUES (:date, :code, :name, :market, :close, :change_pct, :mcap, :shares, :trd_val)""",
+                    rows)
+            conn.execute('DELETE FROM ohlc_daily WHERE date = ?', (d.isoformat(),))
+            conn.executemany(OHLC_SQL, rows)
     return len(rows)
 
 
@@ -85,6 +93,9 @@ def collect_naver(conn, session, d: date) -> int:
                (date, code, name, market, close, change_pct, mcap, shares, trd_val)
                VALUES (:date, :code, :name, :market, :close, :change_pct, :mcap, :shares, :trd_val)""",
             rows)
+        # 시가·고가·저가는 이 목록에 없어 종가만 (KRX 가 공개되면 덮어씀)
+        conn.execute('DELETE FROM ohlc_daily WHERE date = ?', (d.isoformat(),))
+        conn.executemany(OHLC_SQL, [{**r, 'open': None, 'high': None, 'low': None, 'volume': None} for r in rows])
     return len(rows)
 
 
@@ -108,6 +119,7 @@ def main():
     ap = argparse.ArgumentParser(description='KRX 일별 종가·시총 수집')
     ap.add_argument('--date', help='YYYY-MM-DD')
     ap.add_argument('--days', type=int, help='오늘부터 N일 전까지 백필')
+    ap.add_argument('--ohlc-days', type=int, help='차트용 일봉만 N일 전까지 백필 (이미 있는 날은 건너뜀)')
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
@@ -122,6 +134,20 @@ def main():
         n = collect_date(conn, session, date.fromisoformat(args.date))
         log.info('%s: %d종목', args.date, n)
         sys.exit(0 if n else 1)
+
+    if args.ohlc_days:
+        have = {r[0] for r in conn.execute('SELECT DISTINCT date FROM ohlc_daily WHERE open IS NOT NULL')}
+        for i in range(args.ohlc_days, 0, -1):
+            d = today - timedelta(days=i)
+            if d.weekday() >= 5 or d.isoformat() in have:
+                continue
+            try:
+                n = collect_date(conn, session, d, ohlc_only=True)
+            except requests.RequestException as e:
+                log.warning('%s: %s', d, e)
+                continue
+            log.info('%s: 일봉 %d종목', d, n)
+        return
 
     if args.days:
         for i in range(args.days, -1, -1):

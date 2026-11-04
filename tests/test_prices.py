@@ -21,3 +21,13 @@ class ExpectedSessionTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class LiveTest(unittest.TestCase):
+    def test_in_session(self):
+        import live
+        self.assertTrue(live.in_session(datetime(2026, 11, 5, 9, 0)))
+        self.assertTrue(live.in_session(datetime(2026, 11, 5, 15, 50)))
+        self.assertFalse(live.in_session(datetime(2026, 11, 5, 8, 59)))
+        self.assertFalse(live.in_session(datetime(2026, 11, 5, 16, 0)))
+        self.assertFalse(live.in_session(datetime(2026, 11, 7, 10, 0)))   # 토요일
