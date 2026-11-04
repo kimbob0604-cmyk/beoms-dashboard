@@ -460,3 +460,53 @@ line.pl-up, line.pl-dn, line.pl-eq { stroke-width: 1; }
   .hm-ix-val b { font-size: 24px; }
   .hm-ix-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- 목록 탭 공통 다듬기 (이익 성장·컨센 리비전·신고가·수급) ---------- */
+.page-head { margin: 6px 2px 14px; }
+.page-head h1 { margin: 0 0 2px; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+.page-head p { color: var(--muted); font-size: 13px; }
+.filters {
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow);
+  padding: 12px 14px; gap: 10px;
+}
+.filters .frow + .frow { padding-top: 10px; border-top: 1px dashed var(--line); }
+.filters select, .filters input[type="search"] { background: var(--hover); border-color: transparent; }
+.filters input[type="search"]:focus, .filters select:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); background: var(--card); }
+@media (min-width: 901px) {
+  .filters { position: sticky; top: 66px; z-index: 4; }
+  .filters::before { content: ""; position: absolute; left: -1px; right: -1px; top: -9px; height: 8px; background: var(--bg); }
+}
+.summary, .sectors { padding: 0 22px; }
+.summary h2 { font-size: 17px; }
+.bk { padding: 8px 12px; border-radius: 12px; background: var(--hover); }
+.bk:hover { background: var(--chip); }
+.bk b { font-size: 22px; }
+.dist { height: 10px; border-radius: 5px; }
+.col { padding-bottom: 8px; }
+.col-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 12px; border-bottom: 1px solid var(--line); }
+.col-head h3 { font-size: 16px; }
+.col-head h3 .muted { font-size: 12px; font-weight: 500; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: var(--chip); }
+.row { padding: 12px 20px; border-top-color: var(--grid); }
+.col-head + .row { border-top: 0; }
+.rank {
+  flex: none; width: 24px; height: 24px; min-width: 24px; border-radius: 50%; padding: 0; margin-top: 1px;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; background: var(--chip); color: var(--sub);
+}
+.row:nth-child(-n+4) .rank { background: var(--text); color: var(--card); }
+.r-main { gap: 3px; }
+.r-name a { font-size: 15px; font-weight: 700; }
+.r-name a:hover { color: var(--accent); text-decoration: none; }
+.r-growth b { font-size: 17px; letter-spacing: -0.02em; }
+.tag { border-radius: 6px; padding: 1px 7px; }
+.chip { border-radius: 6px; }
+.r-rev .chip { font-size: 11px; }
+.more { border-style: solid; background: var(--hover); color: var(--sub); font-weight: 600; transition: background .1s; }
+.more:hover { background: var(--chip); color: var(--text); }
+.tbl-wrap.card, .card > .tbl-wrap { border-radius: 16px; }
+.tbl thead th { position: sticky; top: 0; }
+footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; }
+@media (max-width: 900px) {
+  .page-head h1 { font-size: 20px; }
+  .filters { padding: 10px; }
+  .row { padding: 12px 14px; }
+}
