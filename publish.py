@@ -1,7 +1,7 @@
 """
 GitHub Pages 배포: public/ 화면 + 최근 KEEP_DAYS일 데이터 → origin 의 gh-pages 브랜치
 
-- 날짜별 데이터(growth·flow·high)는 최근 KEEP_DAYS개만, 종목 상세(stocks)·차트(chart)·리포트(reports)·홈(home.json)은 현재 파일 그대로.
+- 날짜별 데이터(growth·flow·high·dart)는 최근 KEEP_DAYS개만, 종목 상세(stocks)·차트(chart)·리포트(reports)·홈(home.json)은 현재 파일 그대로.
 
 매번 gh-pages 를 커밋 하나짜리로 새로 만들어 강제 푸시한다. 매일 수십 MB 의 JSON 이 바뀌어도
 저장소 히스토리가 불어나지 않게 하기 위해서다. 코드(main 브랜치)는 건드리지 않는다.
@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
-DATED = ('growth', 'flow', 'high')   # 날짜별 JSON + dates.json
+DATED = ('growth', 'flow', 'high', 'dart')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'chart', 'reports')   # 최신 파일만
 FILES = ('home.json',)              # 최신 단일 파일
 KEEP_DAYS = 90
@@ -46,6 +46,8 @@ def stage(out: Path) -> int:
             shutil.copy2(src / f'{d}.json', dst / f'{d}.json')
         (dst / 'dates.json').write_text(json.dumps(dates))
         counts[folder] = len(dates)
+    if (DATA / 'dart' / 's').exists():   # 종목별 최근 공시
+        shutil.copytree(DATA / 'dart' / 's', out / 'data' / 'dart' / 's')
     for folder in CURRENT:
         if (DATA / folder).exists():
             shutil.copytree(DATA / folder, out / 'data' / folder)

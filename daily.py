@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → JSON 빌드(이익 성장·네이버·홈·종목 차트) → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·홈·종목 차트) → GitHub Pages 배포(publish.py)
 장중 10분 간격 홈 갱신은 live.py 가 따로 한다.
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
@@ -88,6 +88,12 @@ def main() -> int:
             problems.append('리포트·수급·신고가 JSON 빌드 실패')
         else:
             built = True
+        # 공시: 어제·오늘 (어제 늦게 올라온 장후 공시 포함). 분기 추정치는 하루 한 번 받으면 다음 실행은 건너뛴다
+        if run('DART 공시', ['collect_dart.py', '--days', '1'], log) not in (0, 1):
+            problems.append('DART 응답 없음 — 다음 실행에서 이어 받음')
+        run('분기 추정치', ['collect_dart.py', 'cns'], log)
+        if run('공시 빌드', ['build_dart.py'], log) != 0:
+            problems.append('공시 JSON 빌드 실패')
         # 홈은 위 두 빌드의 결과 JSON 을 모으므로 마지막에
         if run('홈 빌드', ['build_home.py'], log) != 0:
             problems.append('홈 JSON 빌드 실패')

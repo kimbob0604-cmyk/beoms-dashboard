@@ -190,3 +190,31 @@ CREATE TABLE IF NOT EXISTS quote_live (
     trd_val     REAL,                 -- 억원
     at          TEXT
 );
+
+-- DART 공시 (공시 탭). kind 는 collectors/dart.py KINDS, data 는 원문에서 뽑은 항목 JSON
+CREATE TABLE IF NOT EXISTS dart_filing (
+    rcept_no    TEXT PRIMARY KEY,
+    date        TEXT NOT NULL,        -- 접수일 YYYY-MM-DD
+    code        TEXT NOT NULL,
+    name        TEXT,
+    market      TEXT,                 -- KOSPI / KOSDAQ
+    kind        TEXT NOT NULL,
+    title       TEXT,                 -- 공시 제목 원문
+    fixed       INTEGER,              -- 정정 공시면 1
+    data        TEXT,                 -- JSON (파싱 실패면 NULL)
+    fetched_at  TEXT
+);
+CREATE INDEX IF NOT EXISTS dart_filing_date ON dart_filing (date);
+CREATE INDEX IF NOT EXISTS dart_filing_code ON dart_filing (code, date);
+
+-- 분기 컨센서스 스냅샷 (네이버 종목 분기 재무의 추정 열, 억원). 잠정실적 서프라이즈·쇼크 판정용
+CREATE TABLE IF NOT EXISTS cns_quarter (
+    as_of       TEXT NOT NULL,        -- 받은 날
+    code        TEXT NOT NULL,
+    period      TEXT NOT NULL,        -- YYYYMM (분기 끝 달)
+    sales       REAL,
+    op          REAL,
+    np          REAL,
+    cnp         REAL,
+    PRIMARY KEY (as_of, code, period)
+);

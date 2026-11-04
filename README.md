@@ -182,6 +182,27 @@ cp launchd/com.kimbob.beomdashboard.live.plist ~/Library/LaunchAgents/
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard.live.plist
 ```
 
+## 7단계: 공시 (DART)
+
+`public/dart.html` + `public/js/dart.js`(화면) + `public/js/dartfmt.js`(공시 한 건 → 문장, 홈·종목 패널 공통). 데이터는 `public/data/dart/{접수일}.json`, 종목별 `data/dart/s/{code}.json`(build_dart.py).
+
+```bash
+python3 collect_dart.py             # 오늘·어제 공시 (처음 보는 공시만 원문을 받아 항목을 읽음) → dart_filing
+python3 collect_dart.py --days 21   # 백필 (2026-11-05 에 3주치, 약 5분)
+python3 collect_dart.py cns         # 컨센서스 있는 종목의 분기 추정치 스냅샷 → cns_quarter (하루 한 번, 약 3분)
+python3 build_dart.py
+```
+
+- 종류: 단일판매·공급계약(체결·해지), 잠정실적, 투자판단 관련 주요경영사항(품목허가·임상 등), 주식소각, 자기주식 취득·신탁, CB·BW·EB 발행, 유상·무상증자, 최대주주 변경, 타법인 주식 취득, 배당, IR, 결산실적 공시 예고. 원문 XML 의 표 칸을 '항목 이름 → 다음 칸'으로 읽는다(`collectors/dart.py`). 유가증권·코스닥 서식이 조금 달라 둘 다 처리한다.
+- 잠정실적 서프라이즈·쇼크: 네이버 종목 분기 재무의 추정(isConsensus=Y) 열(FnGuide)과 비교. 공시일까지 받은 마지막 스냅샷을 쓴다. 잠정실적이 들어오면 그 종목 추정치를 바로 한 번 더 받아 둔다(네이버가 발표 뒤에도 하루쯤 추정 열을 남겨 두는 것을 이용).
+  영업이익 ±10% 이상이면 서프·쇼크, 추정 흑자인데 적자면 쇼크. 별도 실적인데 매출이 추정치와 50% 넘게 다르면 연결 추정치로 보고 비교하지 않는다(지주사 등).
+  2026-11-04 공시를 사용자가 붙여 준 정리와 대조해 카카오뱅크·대웅제약·롯데하이마트·산일전기·고려아연 비율이 일치하는 것을 확인했다.
+- '글로 복사' 버튼은 보이는 공시를 `[11월 4일(수) 주요 공시]` 양식 글로 클립보드에 넣는다(다음 거래일 실적발표 예정 종목 포함).
+- 실적발표 예정: 결산실적 공시 예고와 '실적' 내용이 있는 IR 공시로 확인된 회사만. 이미 잠정실적을 낸 회사의 다음 날 컨퍼런스콜은 뺀다. 예고 없이 발표하는 대형주(HMM·카카오 등)는 빠진다.
+- 장전·장후 표시는 장중 수집(live.py, 평일 07:00~19:30 10분마다)이 처음 본 시각 기준이다.
+- 홈 '오늘의 공시' 카드: 서프·쇼크 실적(4개까지), 최대주주 변경, 매출액 대비 10%·500억 이상 수주, 100억 이상 자사주·자금조달, 주요경영사항. 정정 공시는 뺀다.
+- DART 키는 `DART_API_KEY`(.env 또는 ~/stock-dashboard/.env).
+
 ## 테이블
 
 - `consensus_annual`: (as_of, code, fy, fy_month)별 실적/추정
@@ -195,3 +216,5 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard
 - `index_ohlc`: (date, code) 지수 일봉 / `index_minute`: (date, code, t) 당일 1분봉 / `index_snap`: (date, code, t) 장중 실행 때 누적 순매수
 - `ohlc_daily`: (date, code) 종목 일봉 (시가·고가·저가·종가·거래량)
 - `quote_live`: 전 종목 장중 시세 (받을 때마다 통째로 바꿈)
+- `dart_filing`: (rcept_no) DART 공시, 종류(kind)와 원문에서 읽은 항목(data JSON)
+- `cns_quarter`: (as_of, code, period) 네이버 분기 추정치 스냅샷

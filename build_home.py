@@ -13,8 +13,9 @@
 - flow     외국인+기관 1일 순매수·순매도 상위 (수급 JSON)
 - high     그날 52주 신고가 (시총 순)
 - reports  최신 리포트
+- dart     최근 공시일의 눈에 띄는 공시 (잠정실적 서프·쇼크, 큰 수주, 최대주주 변경, 큰 자사주 소각·취득, 자금조달)
 
-build_growth.py · build_naver.py 뒤에 돌린다.
+build_growth.py · build_naver.py · build_dart.py 뒤에 돌린다.
 
   python3 build_home.py
 """
@@ -152,6 +153,45 @@ def build_high(high):
             'list': [slim(s, run=s.get('run')) for s in today[:8]]}
 
 
+def dart_rank(x):
+    """홈에 올릴 공시면 우선순위(작을수록 먼저), 아니면 None"""
+    d, k = x.get('d') or {}, x['k']
+    if x.get('fx'):   # 정정 공시는 빼고
+        return None
+    amt = lambda: (d.get('amt') or 0) / 1e8   # 억
+    if k == 'earn' and (x.get('s') or {}).get('tag'):
+        return 0
+    if k == 'holder':
+        return 1
+    if k == 'contract' and ((d.get('pct') or 0) >= 10 or amt() >= 500):
+        return 2
+    if k in ('cancel', 'buyback', 'trust') and amt() >= 100:
+        return 3
+    if k in ('cb', 'bw', 'eb', 'rights') and amt() >= 100:
+        return 4
+    if k == 'biz':
+        return 5
+    return None
+
+
+def build_dart():
+    dates_path = DATA / 'dart' / 'dates.json'
+    if not dates_path.exists():
+        return None
+    dates = json.loads(dates_path.read_text())
+    if not dates:
+        return None
+    day = json.loads((DATA / 'dart' / f'{dates[0]}.json').read_text(encoding='utf-8'))
+    picks = [(dart_rank(x), x) for x in day['items']]
+    picks = sorted((p for p in picks if p[0] is not None), key=lambda p: (p[0], -(p[1].get('mc') or 0)))
+    earn = [x for x in day['items'] if x['k'] == 'earn']
+    return {'d': day['date'], 'n': len(day['items']), 'earn': len(earn),
+            'sp': sum((x.get('s') or {}).get('tag') == '서프' for x in earn),
+            'sk': sum((x.get('s') or {}).get('tag') == '쇼크' for x in earn),
+            'items': ([x for r, x in picks if r == 0][:4] + [x for r, x in picks if r != 0])[:8],   # 실적은 4개까지
+            'next': [e for e in day['schedule'] if e['earn'] and e['date'] > day['date']][:30]}
+
+
 def build(conn) -> dict:
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
     info, pd = market_info(conn, d)
@@ -178,6 +218,7 @@ def build(conn) -> dict:
     out['tgt'] = recent and build_tgt(recent)
     out['flow'] = flow and build_flow(flow)
     out['high'] = high and build_high(high)
+    out['dart'] = build_dart()
     out['reports'] = recent and [{**slim(r), 'id': r['id'], 'd': r['d'], 'b': r['b'], 't': r['t'], 'op': r.get('op'),
                                   'g': r.get('g'), 'pg': r.get('pg')} for r in recent['reports'][:10]]
     return out

@@ -6,7 +6,7 @@ const Stock = (() => {
   const CHARTS = [['3m', '3개월'], ['6m', '6개월'], ['1y', '1년'], ['w', '주봉']];
   const DAYS = { '3m': 63, '6m': 126, '1y': 260 };
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
-  let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null;
+  let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null, filings = null;
 
   const naverUrl = c => `https://finance.naver.com/item/main.naver?code=${c}`;
   const researchUrl = id => `https://m.stock.naver.com/research/company/${id}`;
@@ -192,11 +192,36 @@ const Stock = (() => {
     </section>`;
   }
 
+  // 최근 90일 DART 주요 공시 (data/dart/s/{code}.json)
+  function dartHtml() {
+    if (!filings?.length || typeof DartFmt === 'undefined') return '<div class="st-dart-slot"></div>';
+    return `<div class="st-dart-slot"><section class="st-sec st-dart">
+      <div class="st-sec-head"><h3>최근 공시 <small class="muted">DART 주요 공시 ${filings.length}건</small></h3>
+        <a class="linkish" href="https://dart.fss.or.kr/dsab007/main.do?textCrpNm=${encodeURIComponent(hint.n || '')}" target="_blank" rel="noopener">DART 전체 ↗</a></div>
+      ${filings.slice(0, 8).map(x => `<article class="dt-item">
+        <header><div class="dt-name"><span class="muted small">${U.md(x.date)}</span><b>${DartFmt.KIND_LABEL[x.k] || x.k}</b>
+          ${DartFmt.tags(x).map(t => `<span class="dt-tag ${t === '서프' ? 'up' : t === '쇼크' ? 'down' : ''}">${t}</span>`).join('')}</div>
+          <a class="muted small" href="${DartFmt.dartUrl(x.no)}" target="_blank" rel="noopener">원문 ↗</a></header>
+        <p class="dt-kv">${U.esc(x.d && Object.keys(x.d).length ? DartFmt.body(x).split('\n')[0] : x.t)}</p>
+      </article>`).join('')}
+    </section></div>`;
+  }
+
+  async function loadFilings(c) {
+    filings = null;
+    let x = null;
+    try { x = await U.json(`data/dart/s/${c}.json`); } catch (e) { /* 최근 주요 공시 없음 */ }
+    if (code !== c) return;
+    filings = x;
+    const slot = panel.querySelector('.st-dart-slot');
+    if (slot) slot.outerHTML = dartHtml();
+  }
+
   function render(d) {
     const s = { c: code, ...hint, ...(d || {}) };
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
-        : `${growthHtml(s.gx)}${targetHtml(s)}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
+        : `${growthHtml(s.gx)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
            목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다.</p>`}</div>`;
     drawChart();
@@ -215,6 +240,7 @@ const Stock = (() => {
     render(undefined);
     panel.scrollTop = 0;
     loadChart(c);
+    loadFilings(c);
     let d = null;
     try {
       d = await U.json(`data/stocks/${c}.json`);

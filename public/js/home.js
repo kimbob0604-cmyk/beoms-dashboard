@@ -291,8 +291,23 @@
       body: `<ul class="hm-reps">${rows.slice(0, 8).join('')}</ul>` });
   }
 
+  function dartCard() {
+    const t = data.dart;
+    if (!t) return '';
+    const F = DartFmt;
+    const rows = t.items.map(x => `<li ${Stock.hintAttr(x)}>
+      <div class="hm-it-main"><div class="dt-name">${Stock.link(x)}<small class="muted">${F.KIND_LABEL[x.k]}</small>
+        ${F.tags(x).filter(g => g !== '정정').map(g => `<span class="dt-tag ${g === '서프' ? 'up' : g === '쇼크' ? 'down' : ''}">${g}</span>`).join('')}</div>
+        <small class="muted hm-dart-line">${U.esc(F.body(x).split('\n')[0])}</small></div>
+    </li>`);
+    const next = t.next.length ? `<p class="small hm-dart-next"><b>${F.md(t.next[0].date)} 실적발표 예정</b>
+      ${t.next.filter(e => e.date === t.next[0].date).slice(0, 12).map(e => `<span ${Stock.hintAttr(e)}>${Stock.link(e)}</span>`).join(' · ')}</p>` : '';
+    return card('dart', { title: '오늘의 공시', meta: `${U.dateLabel(t.d)} ${t.n}건 · 잠정실적 ${t.earn}건 (서프 ${t.sp} · 쇼크 ${t.sk})`,
+      href: 'dart.html', body: `${list(rows, '눈에 띄는 공시 없음')}${next}`, wide: true });
+  }
+
   function renderGrid() {
-    $('grid').innerHTML = [moversCard(), flowCard(), highCard(), revCard(), tgtCard(), reportsCard()].join('');
+    $('grid').innerHTML = [dartCard(), moversCard(), flowCard(), highCard(), revCard(), tgtCard(), reportsCard()].join('');
   }
 
   $('grid').addEventListener('click', e => {
