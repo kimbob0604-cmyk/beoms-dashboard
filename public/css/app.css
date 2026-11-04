@@ -594,3 +594,14 @@ footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; 
   .gsearch input, .gsearch input:focus { width: 100%; }
   .gsearch ul { left: 0; right: auto; width: 100%; }
 }
+
+/* 관심종목·시장 폭·거래대금 급증 */
+.st-star.on { color: #f5a524; border-color: color-mix(in srgb, #f5a524 50%, var(--line)); }
+.st-52 { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 6px 0 2px; }
+.st-52-bar { position: relative; width: 120px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--down), var(--line), var(--up)); opacity: .8; }
+.st-52-bar i { position: absolute; top: -4px; width: 4px; height: 14px; margin-left: -2px; border-radius: 2px; background: var(--text); }
+.sec-tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.hm-mab-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 18px 6px; flex-wrap: wrap; }
+.hm-mab-chart { padding: 0 10px 0 14px; }
+.hm-mab-now { display: flex; gap: 14px; padding: 4px 18px 6px; color: var(--sub); }
+.hm-x { color: var(--accent); margin-right: 4px; }

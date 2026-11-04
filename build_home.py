@@ -13,6 +13,10 @@
 - flow     외국인+기관 1일 순매수·순매도 상위 (수급 JSON)
 - high     그날 52주 신고가 (시총 순)
 - reports  최신 리포트
+- mab      시장 폭: 20·60·120일 이동평균 위에 있는 종목 비율(%) 최근 120거래일 (코스피·코스닥)
+- spike    거래대금 급증: 20일 평균 대비 3배 이상 (시총 500억·평균 5억 이상). 장중이면 그때까지의 거래대금
+- sectors·big 의 w1·m1·m3: 1주·1개월·3개월 수익률(%) (업종은 시총 가중)
+- quotes.json 전 종목 [가격, 등락률] (관심종목 카드용)
 - dart     최근 공시일의 눈에 띄는 공시 (잠정실적 서프·쇼크, 큰 수주, 최대주주 변경, 큰 자사주 소각·취득, 자금조달)
 
 build_growth.py · build_naver.py · build_dart.py 뒤에 돌린다.
@@ -104,8 +108,13 @@ def build_sectors(info):
         if len(members) < SECTOR_MIN:
             continue
         members.sort(key=lambda x: -x['mc'])
-        secs.append({'w': w, 'ch': round(s / m, 2), 'k': len(members), 'mc': round(m),
-                     'top': [slim(x) for x in members[:3]]})
+        per = {}
+        for key in PERIODS:   # 기간 수익률도 시총 가중 (값 있는 종목만)
+            xs = [(x['mc'], x[key]) for x in members if x.get(key) is not None]
+            if xs:
+                per[key] = round(sum(a * b for a, b in xs) / sum(a for a, _ in xs), 2)
+        secs.append({'w': w, 'ch': round(s / m, 2), 'k': len(members), 'mc': round(m), **per,
+                     'top': [slim(x, **{k: x.get(k) for k in PERIODS}) for x in members[:3]]})
     secs.sort(key=lambda x: -x['ch'])
     return {'all': secs, 'n': len(secs)}
 
@@ -192,11 +201,100 @@ def build_dart():
             'next': [e for e in day['schedule'] if e['earn'] and e['date'] > day['date']][:30]}
 
 
+PERIODS = {'w1': 5, 'm1': 21, 'm3': 63}   # 거래일
+MA_WINDOWS = (20, 60, 120)
+MAB_DAYS = 120
+SPIKE_X, SPIKE_MCAP, SPIKE_AVG = 3.0, 500, 5   # 배, 억원, 억원
+
+
+def period_returns(conn, info, price_date):
+    """{code: {'w1': %, 'm1': %, 'm3': %}} — 현재가(장중이면 장중 시세) 대 N거래일 전 종가"""
+    dates = [r[0] for r in conn.execute('SELECT DISTINCT date FROM ohlc_daily ORDER BY date DESC LIMIT 70')]
+    shift = 1 if dates and price_date > dates[0] else 0   # 오늘 일봉이 아직 없으면 하루 덜 거슬러 간다
+    out = defaultdict(dict)
+    for key, k in PERIODS.items():
+        if len(dates) <= k - shift:
+            continue
+        base = dict(conn.execute('SELECT code, close FROM ohlc_daily WHERE date = ?', (dates[k - shift],)).fetchall())
+        for c, i in info.items():
+            b = base.get(c)
+            if b and i.get('p'):
+                out[c][key] = round((i['p'] / b - 1) * 100, 2)
+    return out
+
+
+def ma_breadth(conn, markets):
+    """날짜별로 N일 이동평균 위에 있는 종목 비율 (그날 종가와 이동평균이 다 있는 종목 중)"""
+    dates = [r[0] for r in conn.execute('SELECT DISTINCT date FROM ohlc_daily ORDER BY date')]
+    if len(dates) < max(MA_WINDOWS):
+        return None
+    pos = {d: i for i, d in enumerate(dates)}
+    n = len(dates)
+    closes = defaultdict(lambda: [None] * n)
+    for code, d, c in conn.execute('SELECT code, date, close FROM ohlc_daily'):
+        if code in markets:
+            closes[code][pos[d]] = c
+    start = n - MAB_DAYS
+    above = {m: {w: [0] * MAB_DAYS for w in MA_WINDOWS} for m in ('KOSPI', 'KOSDAQ')}
+    total = {m: {w: [0] * MAB_DAYS for w in MA_WINDOWS} for m in ('KOSPI', 'KOSDAQ')}
+    for code, xs in closes.items():
+        m = markets[code]
+        if m not in above:
+            continue
+        ps, pc = [0.0], [0]   # 누적합, 값 있는 날 수
+        for x in xs:
+            ps.append(ps[-1] + (x or 0))
+            pc.append(pc[-1] + (x is not None))
+        for t in range(max(start, 0), n):
+            if xs[t] is None:
+                continue
+            for w in MA_WINDOWS:
+                if t + 1 < w or pc[t + 1] - pc[t + 1 - w] < w:
+                    continue
+                ma = (ps[t + 1] - ps[t + 1 - w]) / w
+                total[m][w][t - start] += 1
+                above[m][w][t - start] += xs[t] > ma
+    pct = lambda a, b: round(a / b * 100, 1) if b else None
+    return {'d': [int(d.replace('-', '')) for d in dates[start:]],
+            **{m: {str(w): [pct(a, b) for a, b in zip(above[m][w], total[m][w])] for w in MA_WINDOWS} for m in above}}
+
+
+def trd_spike(conn, info, live):
+    """거래대금이 20일 평균의 SPIKE_X 배 이상인 종목"""
+    dates = [r[0] for r in conn.execute('SELECT DISTINCT date FROM price_daily ORDER BY date DESC LIMIT 21')]
+    if len(dates) < 16:
+        return None
+    if live:   # 장중: 오늘 거래대금은 장중 시세, 평균은 최근 20거래일
+        cur = dict(conn.execute('SELECT code, trd_val FROM quote_live').fetchall())
+        prev, day = dates[:20], None
+    else:
+        cur = dict(conn.execute('SELECT code, trd_val FROM price_daily WHERE date = ?', (dates[0],)).fetchall())
+        prev, day = dates[1:21], dates[0]
+    sums, cnt = defaultdict(float), defaultdict(int)
+    q = f"SELECT code, trd_val FROM price_daily WHERE date IN ({','.join('?' * len(prev))})"
+    for code, v in conn.execute(q, prev):
+        if v:
+            sums[code] += v
+            cnt[code] += 1
+    rows = []
+    for c, i in info.items():
+        if c not in cur or not cur[c] or cnt[c] < 15 or (i.get('mc') or 0) < SPIKE_MCAP:
+            continue
+        avg = sums[c] / cnt[c]
+        if avg >= SPIKE_AVG and cur[c] >= avg * SPIKE_X:
+            rows.append(slim({'c': c, **i}, x=round(cur[c] / avg, 1), tv=round(cur[c]), av=round(avg)))
+    rows.sort(key=lambda r: -r['x'])
+    return {'d': day, 'live': bool(live), 'n': len(rows), 'list': rows[:10]}
+
+
 def build(conn) -> dict:
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
     info, pd = market_info(conn, d)
     live = apply_live(conn, info, pd)
-    info = {c: public(i) for c, i in info.items()}
+    price_date = conn.execute('SELECT MAX(date) FROM quote_live').fetchone()[0] if live else pd
+    rets = period_returns(conn, info, price_date or pd)
+    info = {c: {**public(i), **rets.get(c, {})} for c, i in info.items()}
+    write_json(DATA / 'quotes.json', {c: [i['p'], i['ch']] for c, i in info.items() if i.get('p') is not None})
     commons = [{'c': c, **i} for c, i in info.items() if i['mc'] and i['ch'] is not None]
     big = sorted(commons, key=lambda s: -s['mc'])[:BIG]
     movers = [s for s in commons if s['mc'] >= MOVER_MIN_MCAP]
@@ -207,7 +305,9 @@ def build(conn) -> dict:
                         'dn': sum(s['ch'] < 0 for s in commons if s['mk'] == m),
                         'fl': sum(s['ch'] == 0 for s in commons if s['mk'] == m)} for m in ('KOSPI', 'KOSDAQ')},
         'sectors': build_sectors(info),
-        'big': [slim(s) for s in big],
+        'mab': ma_breadth(conn, {c: i['mk'] for c, i in info.items()}),
+        'spike': trd_spike(conn, info, live),
+        'big': [slim(s, **{k: s.get(k) for k in PERIODS}) for s in big],
         'movers': {'up': [slim(s) for s in sorted(movers, key=lambda s: -s['ch'])[:8]],
                    'dn': [slim(s) for s in sorted(movers, key=lambda s: s['ch'])[:8]]},
     }

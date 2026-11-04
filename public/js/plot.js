@@ -67,6 +67,8 @@ const Plot = (() => {
 
   function draw(el) {
     const spec = el._spec;
+    // 아직 자리가 안 잡힌(폭 0) 상태면 그리지 않는다 — 자리가 잡히면 ResizeObserver 가 다시 부른다
+    if (el.isConnected && el.clientWidth > 0 && el.clientWidth < PAD_L + PAD_R + 40) return;
     const W = el._w = el.clientWidth || 600;
     const H = spec.height || 240;
     const n = spec.n;

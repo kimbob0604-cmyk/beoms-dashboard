@@ -8,6 +8,18 @@ const Stock = (() => {
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null, filings = null;
 
+  // ---------- 관심종목 (이 브라우저에만 저장) ----------
+  const WKEY = 'watch';
+  const watchList = () => { try { return JSON.parse(localStorage.getItem(WKEY)) || []; } catch (e) { return []; } };
+  const isWatched = c => watchList().some(w => w.c === c);
+  function toggleWatch(s) {
+    let ws = watchList();
+    ws = ws.some(w => w.c === s.c) ? ws.filter(w => w.c !== s.c) : [...ws, { c: s.c, n: s.n, mk: s.mk }];
+    try { localStorage.setItem(WKEY, JSON.stringify(ws)); } catch (e) { /* 저장 안 되는 브라우저 */ }
+    document.dispatchEvent(new CustomEvent('watchchange'));
+    return ws.some(w => w.c === s.c);
+  }
+
   const naverUrl = c => `https://finance.naver.com/item/main.naver?code=${c}`;
   const researchUrl = id => `https://m.stock.naver.com/research/company/${id}`;
 
@@ -48,6 +60,16 @@ const Stock = (() => {
     const mas = chart === 'w' ? [[13, 'var(--ma20)'], [26, 'var(--ma60)']] : [[5, 'var(--muted)'], [20, 'var(--ma20)'], [60, 'var(--ma60)']];
     const prev = i => (from + i > 0 ? all.c[from + i - 1] : null);
     const pch = i => (prev(i) ? (c[i] / prev(i) - 1) * 100 : null);
+    // 52주 위치 (최근 250거래일 고가·저가 대비 현재 종가)
+    const n52 = Math.max(0, cdata.d.length - 250);
+    const hi = Math.max(...cdata.h.slice(n52).map((x, i) => x ?? cdata.c[n52 + i]));
+    const lo = Math.min(...cdata.c.slice(n52).map((x, i) => cdata.l[n52 + i] ?? x));
+    const last = cdata.c[cdata.c.length - 1];
+    const pos = hi > lo ? (last - lo) / (hi - lo) : 0.5;
+    const pos52 = panel.querySelector('.st-52');
+    if (pos52) pos52.innerHTML = `<span class="muted">52주</span> 최저 <b>${num(lo)}</b>
+      <span class="st-52-bar"><i style="left:${(pos * 100).toFixed(1)}%"></i></span> 최고 <b>${num(hi)}</b>
+      <span class="muted">고점 대비 <b class="${U.cls(last / hi - 1)}">${U.pct(last / hi - 1)}</b> · 저점 대비 <b class="${U.cls(last / lo - 1)}">${U.pct(last / lo - 1)}</b></span>`;
     panel.querySelector('.st-legend').innerHTML = mas.map(([k, col]) => `<i style="--c:${col}"></i>${k}${chart === 'w' ? '주' : '일'}`).join(' ') + ' 이동평균';
     Plot.chart(el, {
       n: d.length, height: 300, uid: 'stc',
@@ -82,6 +104,7 @@ const Stock = (() => {
         <p class="muted small">${[MARKETS[s.mk], s.w, s.mc != null ? `시총 ${U.eok(s.mc)}` : ''].filter(Boolean).map(U.esc).join(' · ')}</p>
       </div>
       <div class="st-price">${s.p != null ? `<b>${U.price(s.p)}</b>${chHtml(s.ch)}<small class="muted">종가</small>` : ''}</div>
+      <button class="icon-btn st-star${isWatched(code) ? ' on' : ''}" aria-label="관심종목" title="관심종목 (홈에 모아 보기)">${isWatched(code) ? '★' : '☆'}</button>
       <button class="icon-btn st-close" aria-label="닫기" title="닫기 (Esc)">✕</button>
     </header>
     <nav class="st-links small">
@@ -98,6 +121,7 @@ const Stock = (() => {
         <span class="muted small st-legend"></span>
       </div>
       <div class="st-plot"></div>
+      <p class="small st-52"></p>
       <p class="muted small">일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
     </section>`;
   }
@@ -259,6 +283,13 @@ const Stock = (() => {
 
   function onPanelClick(e) {
     if (e.target.closest('.st-close')) return close();
+    const star = e.target.closest('.st-star');
+    if (star) {
+      const on = toggleWatch({ c: code, n: hint.n || panel.querySelector('.st-head h2')?.firstChild?.textContent?.trim(), mk: hint.mk });
+      star.classList.toggle('on', on);
+      star.textContent = on ? '★' : '☆';
+      return;
+    }
     const c = e.target.closest('[data-chart]');
     if (c) {
       chart = c.dataset.chart;
@@ -370,5 +401,5 @@ const Stock = (() => {
   // 행에 붙여 둘 패널 첫 화면용 정보 (이름·시장·시총·가격)
   const hintAttr = s => `data-hint="${U.esc(JSON.stringify({ n: s.n, mk: s.mk, w: s.w, mc: s.mc, p: s.p, ch: s.ch }))}"`;
 
-  return { open, close, link, hintAttr };
+  return { open, close, link, hintAttr, watchList, toggleWatch };
 })();

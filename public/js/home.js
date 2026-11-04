@@ -16,7 +16,9 @@
   const $ = id => document.getElementById(id);
   const range = { KOSPI: '1d', KOSDAQ: '1d', FUT: '1d' };
   const tabs = {};          // 카드별 선택 탭
-  let map = 'sector';
+  let map = 'sector', mapPer = 'ch', mabMk = 'KOSPI';
+  // 지도 기간: 키, 이름, 가장 진한 색이 되는 등락률
+  const MAP_PERS = [['ch', '1일', 3], ['w1', '1주', 7], ['m1', '1개월', 15], ['m3', '3개월', 25]];
   let data = null;
 
   const chg = ch => (ch == null ? '–' : `${ch > 0 ? '+' : ''}${ch.toFixed(2)}%`);
@@ -174,37 +176,43 @@
 
   function renderMap() {
     const sec = map === 'sector';
+    const [pk, pl, pmax] = MAP_PERS.find(x => x[0] === mapPer);
+    const val = x => x[pk];
     const items = sec
       ? data.sectors.all.map(s => ({
-        v: area(s.mc), color: Plot.heat(s.ch), hot: Math.abs(s.ch) >= 1,
-        html: `<b>${U.esc(s.w)}</b><span>${chg(s.ch)}</span>`,
+        v: area(s.mc), color: Plot.heat(val(s), pmax), hot: Math.abs(val(s) ?? 0) >= pmax / 3,
+        html: `<b>${U.esc(s.w)}</b><span>${chg(val(s))}</span>`,
         tip: `<div class="tt-h">${U.esc(s.w)} <span class="muted">${s.k}종목 · 시총 ${U.eok(s.mc)}</span></div>
-          <div class="tt-v">${chgHtml(s.ch)}</div>${s.top.map(memberTip).join('')}`,
+          <div class="tt-v">${pl} ${chgHtml(val(s))}</div>${s.top.map(t => memberTip({ ...t, ch: val(t) })).join('')}`,
       }))
       : data.big.map(s => ({
-        v: area(s.mc), color: Plot.heat(s.ch), hot: Math.abs(s.ch ?? 0) >= 1,
-        html: `<a href="https://finance.naver.com/item/main.naver?code=${s.c}" target="_blank" rel="noopener" data-code="${s.c}"><b>${U.esc(s.n)}</b></a><span>${chg(s.ch)}</span>`,
+        v: area(s.mc), color: Plot.heat(val(s), pmax), hot: Math.abs(val(s) ?? 0) >= pmax / 3,
+        html: `<a href="https://finance.naver.com/item/main.naver?code=${s.c}" target="_blank" rel="noopener" data-code="${s.c}"><b>${U.esc(s.n)}</b></a><span>${chg(val(s))}</span>`,
         attrs: Stock.hintAttr(s),
         tip: `<div class="tt-h">${U.esc(s.n)} <span class="muted">${s.w ? U.esc(s.w) : ''}</span></div>
-          <div class="tt-v">${U.price(s.p)} ${chgHtml(s.ch)}</div><div class="muted">시총 ${U.eok(s.mc)}</div>`,
+          <div class="tt-v">${U.price(s.p)} ${chgHtml(s.ch)}</div>
+          <div class="tt-g"><span>1주</span><b>${chgHtml(s.w1)}</b><span>1개월</span><b>${chgHtml(s.m1)}</b><span>3개월</span><b>${chgHtml(s.m3)}</b></div>
+          <div class="muted">시총 ${U.eok(s.mc)}</div>`,
       }));
     $('map').innerHTML = `<div class="sec-head">
         <div><h2>${sec ? '업종 지도' : '시총 상위 지도'}</h2>
           <p class="muted small">${sec ? `WICS 업종 ${data.sectors.n}개 · 크기 = 업종 시총(큰 업종은 줄여 표시) · 색 = 시총 가중 등락률` : `시총 상위 ${data.big.length}종목 · 크기 = 시총(큰 종목은 줄여 표시) · 색 = 등락률 · 누르면 종목 상세`}</p></div>
         <div class="sec-tools">
+          <div class="seg" role="group">${MAP_PERS.map(([k, l]) => `<button data-per="${k}" class="${k === mapPer ? 'on' : ''}">${l}</button>`).join('')}</div>
           <div class="seg" role="group"><button data-map="sector" class="${sec ? 'on' : ''}">업종</button><button data-map="big" class="${sec ? '' : 'on'}">시총 상위</button></div>
         </div>
       </div>
       <div class="tm-wrap"></div>
-      <div class="tm-scale small muted"><span>-3%</span>${[-3, -2, -1, 0, 1, 2, 3].map(v => `<i style="background:${Plot.heat(v)}"></i>`).join('')}<span>+3%</span></div>`;
+      <div class="tm-scale small muted"><span>-${pmax}%</span>${[-3, -2, -1, 0, 1, 2, 3].map(v => `<i style="background:${Plot.heat(v * pmax / 3, pmax)}"></i>`).join('')}<span>+${pmax}%</span></div>`;
     const wrap = $('map').querySelector('.tm-wrap');
     Plot.treemap(wrap, { items, height: window.innerWidth < 560 ? 340 : 400 });
   }
 
   $('map').addEventListener('click', e => {
-    const b = e.target.closest('[data-map]');
-    if (!b) return;
-    map = b.dataset.map;
+    const b = e.target.closest('[data-map]'), p = e.target.closest('[data-per]');
+    if (b) map = b.dataset.map;
+    else if (p) mapPer = p.dataset.per;
+    else return;
     renderMap();
   });
 
@@ -293,6 +301,71 @@
       body: `<ul class="hm-reps">${rows.slice(0, 8).join('')}</ul>` });
   }
 
+  // 관심종목: 종목 패널의 ☆로 담은 종목 (이 브라우저에 저장). 시세는 data/quotes.json
+  let quotes = null;
+  function watchCard() {
+    const ws = Stock.watchList();
+    if (!ws.length) {
+      return card('watch', { title: '관심종목', meta: '이 브라우저에만 저장',
+        body: '<p class="muted small hm-empty">종목 이름을 눌러 상세 패널을 열고 ☆를 누르면 여기에 모입니다. 오른쪽 위 검색(/)으로도 찾을 수 있습니다.</p>' });
+    }
+    const rows = ws.map(w => {
+      const q = quotes?.[w.c];
+      const s = { ...w, p: q?.[0], ch: q?.[1] };
+      return item(s, q ? `<span class="muted">${U.price(s.p)}</span> ${pill(s.ch)}` : '<span class="muted small">시세 없음</span>');
+    });
+    return card('watch', { title: '관심종목', meta: `${ws.length}종목 · ${isLive() ? `장중 ${hm(data.live)}` : U.dateLabel(data.date)}`, body: list(rows) });
+  }
+
+  async function loadQuotes() {
+    if (!Stock.watchList().length) return;
+    try {
+      quotes = await (await fetch('data/quotes.json', { cache: 'no-cache' })).json();
+    } catch (e) { quotes = {}; }
+    const el = document.querySelector('[data-card="watch"]');
+    if (el) el.outerHTML = watchCard();
+  }
+  document.addEventListener('watchchange', () => {
+    const el = document.querySelector('[data-card="watch"]');
+    if (el) el.outerHTML = watchCard();
+    if (!quotes) loadQuotes();
+  });
+
+  // 시장 폭: 이동평균 위 종목 비율 (stock-vcpscreener 류의 breadth 지표)
+  function mabCard() {
+    if (!data.mab) return '';
+    return card('mab', { title: '시장 폭', meta: '이동평균 위에 있는 종목 비율 · 높을수록 고르게 오름',
+      body: `<div class="hm-mab-bar"><div class="seg" role="group">${[['KOSPI', '코스피'], ['KOSDAQ', '코스닥']].map(([k, l]) =>
+        `<button data-mab="${k}" class="${k === mabMk ? 'on' : ''}">${l}</button>`).join('')}</div>
+        <span class="muted small hm-legend"><i style="--c:var(--ma20)"></i>20일 <i style="--c:var(--inv-org)"></i>60일 <i style="--c:var(--ma60)"></i>120일</span></div>
+        <div class="hm-mab-chart"></div><div class="hm-mab-now small"></div>` });
+  }
+
+  function drawMab() {
+    const el = document.querySelector('.hm-mab-chart');
+    if (!el || !data.mab) return;
+    const m = data.mab, x = m[mabMk];
+    const ser = [['20', 'var(--ma20)', '20일'], ['60', 'var(--inv-org)', '60일'], ['120', 'var(--ma60)', '120일']];
+    Plot.chart(el, {
+      n: m.d.length, height: 200, uid: 'mab',
+      panes: [{ fmt: v => `${Math.round(v)}%`, series: ser.map(([k, c]) => ({ type: 'line', values: x[k], color: c, width: 1.6, last: true })) }],
+      xTicks: Plot.monthTicks(m.d),
+      tip: i => `<div class="tt-h">${Plot.dateStr(m.d[i])}</div>${ser.map(([k, c, l]) =>
+        `<div><i style="--c:${c}"></i>${l} 위<b>${x[k][i] ?? '–'}%</b></div>`).join('')}`,
+    });
+    const last = k => x[k][x[k].length - 1];
+    document.querySelector('.hm-mab-now').innerHTML = ser.map(([k, , l]) => `<span>${l} 위 <b>${last(k) ?? '–'}%</b></span>`).join('');
+  }
+
+  // 거래대금 급증 (stocking 류의 거래량 급증 알림)
+  function spikeCard() {
+    const t = data.spike;
+    if (!t) return '';
+    const row = (s, i) => item(s, `<b class="hm-x">${s.x}배</b> ${pill(s.ch)}`, `거래대금 ${U.eok(s.tv)} · 20일 평균 ${U.eok(s.av)}`, i + 1);
+    return card('spike', { title: '거래대금 급증', meta: `${t.live ? `장중 ${hm(data.live)}까지` : U.dateLabel(t.d)} · 20일 평균의 3배 이상 ${t.n}종목`,
+      body: list(t.list.map(row), '오늘은 급증한 종목 없음') });
+  }
+
   function dartCard() {
     const t = data.dart;
     if (!t) return '';
@@ -309,10 +382,19 @@
   }
 
   function renderGrid() {
-    $('grid').innerHTML = [dartCard(), moversCard(), flowCard(), highCard(), revCard(), tgtCard(), reportsCard()].join('');
+    $('grid').innerHTML = [dartCard(), watchCard(), mabCard(), spikeCard(), moversCard(), flowCard(), highCard(),
+      revCard(), tgtCard(), reportsCard()].join('');
+    drawMab();
+    loadQuotes();
   }
 
   $('grid').addEventListener('click', e => {
+    const mb = e.target.closest('[data-mab]');
+    if (mb) {
+      mabMk = mb.dataset.mab;
+      document.querySelectorAll('[data-mab]').forEach(x => x.classList.toggle('on', x === mb));
+      return drawMab();
+    }
     const b = e.target.closest('[data-tab]');
     if (!b) return;
     const c = b.closest('[data-card]');
