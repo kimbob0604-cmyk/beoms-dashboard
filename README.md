@@ -54,7 +54,7 @@ python3 build_growth.py                   # public/data/growth/{기준일}.json 
 python3 serve.py                          # http://127.0.0.1:8765 (이 컴퓨터에서만 접속)
 ```
 
-- 정적 페이지다: `public/index.html`, `public/css/app.css`, `public/js/util.js`(포맷·테마 공통), `public/js/growth.js`(이 탭).
+- 정적 페이지다: `public/growth.html`(2026-11-04 홈 탭이 생기며 index.html 에서 옮김), `public/css/app.css`, `public/js/util.js`(포맷·테마 공통), `public/js/growth.js`(이 탭).
 - 빌드도 프레임워크도 없다. `data/growth/dates.json`과 `{기준일}.json`을 읽어 브라우저에서 필터·정렬·합계를 계산한다.
 - 필터 상태는 URL 쿼리에 남는다. 예: `?metric=ni&market=KOSDAQ&sort=peg`. 북마크하면 같은 화면이 다시 열린다.
 - 화면 규칙 (원본 스크린샷 형태: 시장별 흰 카드 안에 종목을 줄로 나열, 색은 성장률·변화율 숫자에만)
@@ -144,9 +144,24 @@ python3 build_naver.py                        # flow/·high/·reports/·stocks/ 
   - 금액은 순매수 수량 × 그날 정규장 종가로 어림한다. 주체는 외국인/기관/외국인+기관, 기간은 1·5·20·60일이다. 금액 순 또는 시총 대비 순으로 본다.
 - 신고가 탭: 네이버 52주 신고가 목록을 매일 쌓는다. 신고가 횟수·연속 일수·'최근 20거래일 신고가'는 쌓기 시작한 날(2026-11-03)부터 센다.
   - 12:10 실행은 장중 목록을 저장하고, 20:40이나 다음 날 07:10 실행이 마감 목록으로 덮어쓴다.
-- KRX 종가는 다음 날 아침에 열린다. 그 전에는 수급 응답의 정규장 종가로 그날 주가·등락률을 채운다.
+- KRX 종가는 다음 날 아침에 열린다. 그 전에는 collect_prices.py 가 네이버 전 종목 시세로 그날 가격을 임시로 채운다.
 - 안전장치: 네이버 요청은 0.2초 간격이다. 연속 8회 네트워크 실패면 멈춘다(종료 코드 3). 컨센서스 서버와 별개라 컨센서스가 막혀도 네이버는 받는다.
 - 리포트 요약의 권리는 각 증권사에 있다. 화면에는 소제목·키워드 문장만 보이고 원문은 네이버·PDF 링크로 연결한다.
+
+## 6단계: 홈 (완료)
+
+`public/index.html` + `public/js/home.js`, 데이터는 `public/data/home.json`(build_home.py).
+
+```bash
+python3 collect_naver.py index   # 코스피·코스닥 60거래일 종가 + 그날 투자자별·프로그램 순매수, 상승/하락 종목 수 → index_daily
+python3 build_home.py            # 다른 탭 JSON 과 DB 에서 홈에 보일 것만 모음 (build_growth·build_naver 뒤)
+```
+
+- 지수 카드: 네이버 지수 차트 이미지(당일·일봉)를 직접 불러와 장중 30초마다 갱신한다. 당일 차트의 선은 지수(초록)와 개인(보라)·외국인(주황)·기관(파랑) 순매수다(2026-11-04 API 숫자와 대조해 확인).
+  지수 값·순매수·상승/하락 종목 수는 수집 시각 기준이라 12:10 실행이면 장중 값으로 표시된다.
+- 업종 등락: WICS 업종(5종목 이상) 시총 가중 등락률 상위·하위 6개와 각 업종 시총 상위 3종목.
+- 카드: 시총 상위, 급등·급락(시총 3,000억 이상), FY+1 영업이익 추정치 1주 리비전, 최근 1주 목표가 변경, 외국인+기관 1일 순매수·순매도, 52주 신고가, 최신 리포트. 카드마다 해당 탭으로 가는 링크가 있다.
+- daily.py 는 `collect_naver.py all` 에 지수를 포함하고, 네이버 빌드 뒤 build_home.py 를 돌린다. publish.py 가 home.json 을 함께 올린다.
 
 ## 테이블
 
@@ -157,3 +172,4 @@ python3 build_naver.py                        # flow/·high/·reports/·stocks/ 
 - `research`: 네이버 리서치 리포트 (id, 종목, 증권사, 날짜, 제목, 의견, 목표가, 소제목, 본문 요약)
 - `flow_daily`: (date, code)별 외국인·기관·개인 순매수 수량, 종가, 외국인 지분율
 - `high52_daily`: (date, code) 그날 52주 신고가 종목
+- `index_daily`: (date, code) 코스피·코스닥 종가·등락률, 투자자별·프로그램 순매수(억원), 상승/하락/보합 종목 수

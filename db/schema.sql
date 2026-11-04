@@ -113,3 +113,20 @@ CREATE TABLE IF NOT EXISTS high52_daily (
     fetched_at  TEXT,
     PRIMARY KEY (date, code)
 );
+
+-- 지수 일별 (홈 탭). 순매수·프로그램(억원)·상승/하락 종목 수는 받은 날의 최근 거래일에만 채워진다
+CREATE TABLE IF NOT EXISTS index_daily (
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,        -- KOSPI / KOSDAQ
+    close       REAL,
+    change_pct  REAL,
+    frgn        REAL,
+    org         REAL,
+    ind         REAL,
+    prog        REAL,
+    up          INTEGER,
+    down        INTEGER,
+    flat        INTEGER,
+    fetched_at  TEXT,
+    PRIMARY KEY (date, code)
+);

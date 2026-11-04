@@ -1,7 +1,7 @@
 """
 GitHub Pages 배포: public/ 화면 + 최근 KEEP_DAYS일 데이터 → origin 의 gh-pages 브랜치
 
-- 날짜별 데이터(growth·flow·high)는 최근 KEEP_DAYS개만, 종목 상세(stocks)·리포트(reports)는 현재 파일 그대로.
+- 날짜별 데이터(growth·flow·high)는 최근 KEEP_DAYS개만, 종목 상세(stocks)·리포트(reports)·홈(home.json)은 현재 파일 그대로.
 
 매번 gh-pages 를 커밋 하나짜리로 새로 만들어 강제 푸시한다. 매일 1MB 가까운 JSON 이 쌓여도
 저장소 히스토리가 불어나지 않게 하기 위해서다. 코드(main 브랜치)는 건드리지 않는다.
@@ -22,6 +22,7 @@ PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'reports')     # 최신 파일만
+FILES = ('home.json',)              # 최신 단일 파일
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 
@@ -45,6 +46,9 @@ def stage(out: Path) -> int:
     for folder in CURRENT:
         if (DATA / folder).exists():
             shutil.copytree(DATA / folder, out / 'data' / folder)
+    for f in FILES:
+        if (DATA / f).exists():
+            shutil.copy2(DATA / f, out / 'data' / f)
     (out / '.nojekyll').touch()   # Jekyll 처리 없이 파일 그대로 서빙
     print('배포 데이터:', ', '.join(f'{k} {v}일' for k, v in counts.items()),
           f"· 종목 상세 {len(list((out / 'data' / 'stocks').glob('*.json')))}개")

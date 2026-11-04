@@ -264,6 +264,50 @@ mark { background: none; color: var(--text); font-weight: 700; }
 .tgt-top .chip a { font-weight: 600; color: var(--text); }
 #recent-title[hidden], #recent-cols[hidden] { display: none; }
 
+/* 홈 */
+.home > section { margin-bottom: 14px; }
+.hm-idx { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.hm-ix { padding: 16px 20px 18px; display: flex; flex-direction: column; gap: 8px; }
+.hm-ix-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.hm-ix-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.hm-ix-val { display: flex; flex-direction: column; align-items: flex-end; }
+.hm-ix-val b { font-size: 24px; font-weight: 700; line-height: 1.2; }
+.hm-ix-val span { font-weight: 600; }
+.hm-ix-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.hm-legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; background: var(--c); vertical-align: middle; margin-right: 4px; }
+.hm-ix-chart { display: block; width: 100%; height: auto; border-radius: 8px; background: #fff; }
+.hm-ix-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+.hm-ix-flow > div { display: flex; flex-direction: column; }
+.hm-ix-flow span { font-size: 12px; color: var(--muted); }
+.hm-ix-flow b { font-size: 16px; font-weight: 700; white-space: nowrap; }
+.hm-breadth { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.hm-bd-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: var(--chip); }
+.hm-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 16px 20px 8px; }
+.hm-head h2 { margin: 0; font-size: 16px; font-weight: 700; }
+.hm-head h2 .muted { margin-left: 4px; }
+.hm-more { white-space: nowrap; color: var(--sub); }
+.hm-sec { padding-bottom: 12px; }
+.hm-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; padding: 0 20px; }
+.hm-sub { margin: 4px 0 4px; font-size: 13px; font-weight: 600; }
+.hm-sec-row { display: grid; grid-template-columns: minmax(110px, 1fr) 64px minmax(0, 2.2fr); gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.hm-sec-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-sec-row > b { text-align: right; }
+.hm-sec-top { display: flex; flex-wrap: wrap; gap: 2px 10px; color: var(--sub); }
+.hm-sec-top a { color: var(--text); }
+.hm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.hm-card { padding-bottom: 10px; min-width: 0; }
+.hm-card > .hm-list { padding: 0 20px; }
+.hm-list { list-style: none; margin: 0; padding: 0; }
+.hm-list li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.hm-it-main { min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+.hm-it-main > a[data-code] { font-weight: 600; font-size: 14px; }
+.hm-it-right { white-space: nowrap; text-align: right; }
+.hm-rep-t { flex-basis: 100%; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hm-empty { padding: 6px 0 4px; }
+.hm-card.wide { grid-column: 1 / -1; }
+.hm-card.wide > .hm-list { columns: 2; column-gap: 24px; }
+.hm-card.wide li { break-inside: avoid; }
+
 @media (max-width: 900px) {
   .top { flex-wrap: wrap; gap: 8px 16px; padding: 10px 16px; }
   .tabs { order: 3; width: 100%; }
@@ -280,6 +324,10 @@ mark { background: none; color: var(--text); font-weight: 700; }
   .summary, .sectors { padding: 0 16px; }
   .col-head, .row { padding-left: 14px; padding-right: 14px; }
   #q { flex: 1; }
+  .hm-idx, .hm-grid { grid-template-columns: minmax(0, 1fr); }
+  .hm-card.wide > .hm-list { columns: 1; }
+  .hm-ix, .hm-head { padding-left: 16px; padding-right: 16px; }
+  .hm-two, .hm-card > .hm-list { padding: 0 16px; }
 }
 @media (max-width: 560px) {
   .top-right { width: 100%; order: 2; margin-left: 0; }
@@ -290,4 +338,8 @@ mark { background: none; color: var(--text); font-weight: 700; }
   .kw { grid-template-columns: minmax(0, 1fr); }
   .kw .kw-more { grid-column: 1; }
   .bar-cell { display: none; }
+  .hm-two { grid-template-columns: minmax(0, 1fr); }
+  .hm-ix-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-sec-row { grid-template-columns: minmax(0, 1fr) 64px; }
+  .hm-sec-top { grid-column: 1 / -1; }
 }

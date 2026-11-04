@@ -15,34 +15,22 @@
 <header class="top">
   <div class="brand">Beom's Dashboard</div>
   <nav class="tabs">
-    <span class="tab off" title="준비 중">홈</span>
-    <a class="tab on" href="./">이익 성장</a>
+    <a class="tab on" href="./">홈</a>
+    <a class="tab" href="growth.html">이익 성장</a>
     <a class="tab" href="revision.html">컨센 리비전</a>
     <a class="tab" href="high.html">신고가</a>
     <a class="tab" href="flow.html">수급</a>
   </nav>
   <div class="top-right">
-    <span id="view"></span>
-    <select id="date" aria-label="기준일"></select>
+    <span class="muted small" id="asof"></span>
     <button id="theme" class="icon-btn" aria-label="다크 모드 전환" title="다크 모드 전환">◐</button>
   </div>
 </header>
 
-<main>
-  <section class="filters" id="filters"></section>
-  <details class="card summary" id="summary-box" open>
-    <summary id="summary-head"></summary>
-    <div id="summary"></div>
-  </details>
-  <details class="card sectors" id="sectors">
-    <summary id="sectors-head"></summary>
-    <div id="sector-list"></div>
-  </details>
-  <section class="cols">
-    <div class="col card" id="col-KOSPI"></div>
-    <div class="col card" id="col-KOSDAQ"></div>
-  </section>
-  <section id="table" hidden></section>
+<main class="home">
+  <section class="hm-idx" id="idx"></section>
+  <section class="card hm-sec" id="sectors"></section>
+  <section class="hm-grid" id="grid"></section>
   <p class="msg" id="msg">불러오는 중…</p>
 </main>
 
@@ -50,6 +38,6 @@
 
 <script src="js/util.js"></script>
 <script src="js/stock.js"></script>
-<script src="js/growth.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>

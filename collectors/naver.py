@@ -6,6 +6,7 @@
 - m.stock.naver.com/api/research/company/{id}                : 리포트 본문 요약·투자의견·목표주가
 - stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code} : 일별 외국인·기관·개인 순매수 수량
 - m.stock.naver.com/api/stocks/high52week/{KOSPI|KOSDAQ}     : 그날 52주 신고가를 낸 종목
+- m.stock.naver.com/api/index/{KOSPI|KOSDAQ}/integration|price : 지수 일별 종가, 투자자별 순매수, 상승/하락 종목 수
 - m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
 
 주의: 이 API들은 다른 사이트의 브라우저 호출을 막는다(CORS 403). 그래서 맥에서 받아 JSON으로 만든다.
@@ -174,3 +175,45 @@ def fetch_market_list(session, market: str, page: int = 1, page_size: int = 100,
                     params={'page': page, 'pageSize': page_size}, timeout=timeout)
     r.raise_for_status()
     return parse_high52(r.json(), market)
+
+
+# ------------------------------------------------------------
+# 지수 (홈 탭)
+# ------------------------------------------------------------
+
+def parse_index(integration: Dict, prices: List[Dict], code: str) -> List[Dict]:
+    """
+    지수 일별 종가(prices, 최신순) + 최근 거래일의 투자자별 순매수(억원)·프로그램 순매수·상승/하락 종목 수.
+    순매수 등은 dealTrendInfo 의 날짜 행에만 붙고, 나머지 날은 None 이다.
+    """
+    if not isinstance(prices, list) or 'dealTrendInfo' not in integration:
+        raise ValueError('지수 응답 형식 변경')
+    rows = {}
+    for p in prices:
+        d = _date(p['localTradedAt'])
+        rows[d] = {'date': d, 'code': code, 'close': to_num(p.get('closePrice')),
+                   'change_pct': to_num(p.get('fluctuationsRatio')),
+                   'frgn': None, 'org': None, 'ind': None, 'prog': None,
+                   'up': None, 'down': None, 'flat': None}
+    deal = integration.get('dealTrendInfo') or {}
+    d = _date(deal.get('bizdate', ''))
+    if d in rows:
+        ud = integration.get('upDownStockInfo') or {}
+        cnt = lambda *ks: sum(int(to_num(ud.get(k)) or 0) for k in ks) if ud else None
+        rows[d].update({
+            'frgn': to_num(deal.get('foreignValue')),
+            'org': to_num(deal.get('institutionalValue')),
+            'ind': to_num(deal.get('personalValue')),
+            'prog': to_num((integration.get('programTrendInfo') or {}).get('indexTotalReal')),
+            'up': cnt('upperCount', 'riseCount'), 'down': cnt('lowerCount', 'fallCount'), 'flat': cnt('steadyCount'),
+        })
+    return sorted(rows.values(), key=lambda r: r['date'])
+
+
+def fetch_index(session, code: str, days: int = 60, timeout: float = 10) -> List[Dict]:
+    """code: KOSPI | KOSDAQ"""
+    r1 = session.get(f'{M_API}/index/{code}/integration', timeout=timeout)
+    r1.raise_for_status()
+    r2 = session.get(f'{M_API}/index/{code}/price', params={'page': 1, 'pageSize': days}, timeout=timeout)
+    r2.raise_for_status()
+    return parse_index(r1.json(), r2.json(), code)

@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급) → JSON 빌드 → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → JSON 빌드(이익 성장·네이버·홈) → GitHub Pages 배포(publish.py)
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
 20:40 실행은 그날 네이버 수급·신고가·임시 종가를 받아 저녁에 화면을 갱신하기 위해서다.
@@ -87,6 +87,9 @@ def main() -> int:
             problems.append('리포트·수급·신고가 JSON 빌드 실패')
         else:
             built = True
+        # 홈은 위 두 빌드의 결과 JSON 을 모으므로 마지막에
+        if run('홈 빌드', ['build_home.py'], log) != 0:
+            problems.append('홈 JSON 빌드 실패')
 
         if built and run('배포', ['publish.py'], log) != 0:
             problems.append('GitHub Pages 배포 실패')

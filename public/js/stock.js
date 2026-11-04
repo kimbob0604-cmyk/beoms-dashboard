@@ -33,13 +33,6 @@ const Stock = (() => {
     panel.addEventListener('click', onPanelClick);
   }
 
-  function inMarketHours() {
-    // 한국 시간 평일 08:50~15:40 (NXT 프리·애프터는 제외)
-    const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
-    const m = k.getHours() * 60 + k.getMinutes();
-    return k.getDay() > 0 && k.getDay() < 6 && m >= 530 && m <= 940;
-  }
-
   function chartSrc() {
     return `https://ssl.pstatic.net/imgfinance/chart/item/${chart}/${code}.png?t=${Math.floor(Date.now() / 10000)}`;
   }
@@ -50,13 +43,13 @@ const Stock = (() => {
     img.src = chartSrc();
     const t = new Date();
     panel.querySelector('.st-chart-time').textContent =
-      `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')} 불러옴${inMarketHours() ? ' · 장중 30초마다 갱신' : ''}`;
+      `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')} 불러옴${U.marketHours() ? ' · 장중 30초마다 갱신' : ''}`;
   }
 
   function startTimer() {
     clearInterval(timer);
     timer = setInterval(() => {
-      if (!document.hidden && inMarketHours()) refreshChart();
+      if (!document.hidden && U.marketHours()) refreshChart();
     }, REFRESH_MS);
   }
 

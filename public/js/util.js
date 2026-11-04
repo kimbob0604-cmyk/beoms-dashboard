@@ -123,6 +123,12 @@ const U = (() => {
       sel.addEventListener('change', e => { pg.state.date = e.target.value; pg.write(); onPick(e.target.value); });
       return pg.state.date;
     },
+    // 한국 시간 평일 08:50~15:40 (NXT 프리·애프터는 제외). 차트 이미지 자동 갱신에 쓴다
+    marketHours() {
+      const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
+      const m = k.getHours() * 60 + k.getMinutes();
+      return k.getDay() > 0 && k.getDay() < 6 && m >= 530 && m <= 940;
+    },
     initTheme(btn) {
       btn.addEventListener('click', () => {
         const root = document.documentElement;

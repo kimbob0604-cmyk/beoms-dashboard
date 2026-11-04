@@ -42,6 +42,15 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(res['rows'][0]['close'], 20700)
         self.assertGreater(res['total'], 0)
 
+    def test_index(self):
+        f = load('naver_index_kospi.json')
+        rows = naver.parse_index(f['integration'], f['price'], 'KOSPI')
+        self.assertEqual([r['date'] for r in rows], ['2026-11-02', '2026-11-03', '2026-11-04'])
+        last = rows[-1]
+        self.assertEqual((last['frgn'], last['org'], last['ind']), (-23319, 6032, 14070))
+        self.assertEqual((last['up'], last['down'], last['flat']), (428, 450, 33))   # 상한가 포함
+        self.assertIsNone(rows[0]['frgn'])   # 순매수는 dealTrendInfo 날짜에만
+
 
 class FlowTest(unittest.TestCase):
     def test_streak(self):

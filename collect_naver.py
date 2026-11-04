@@ -1,12 +1,13 @@
 """
-네이버 증권 수집: 리서치 리포트 · 투자자별 순매수(수급) · 52주 신고가
+네이버 증권 수집: 리서치 리포트 · 투자자별 순매수(수급) · 52주 신고가 · 지수
 
 CLI
   python3 collect_naver.py research              # 최근 14일 목록에서 새 리포트만 본문까지 받기
   python3 collect_naver.py research --days 90    # 백필 (약 4,500건, 20분 안팎)
   python3 collect_naver.py flow                  # 대상 종목 최근 순매수 (처음 받는 종목은 60거래일)
   python3 collect_naver.py high                  # 그날 52주 신고가 목록
-  python3 collect_naver.py all                   # 셋 다
+  python3 collect_naver.py index                 # 코스피·코스닥 지수 60거래일 + 그날 투자자별 순매수
+  python3 collect_naver.py all                   # 넷 다
 
 종료 코드: 0 정상, 1 오류가 많음, 3 서버 응답 없음(연속 실패로 중단)
 
@@ -190,9 +191,40 @@ def collect_high(conn, session) -> int:
     return guard.errors
 
 
+# ------------------------------------------------------------
+# 지수
+# ------------------------------------------------------------
+
+def collect_index(conn, session) -> int:
+    guard, rows = Guard(), []
+    for code in ('KOSPI', 'KOSDAQ'):
+        try:
+            rows += naver.fetch_index(session, code)
+            guard.ok()
+        except Exception as e:
+            guard.fail(f'지수 {code}', e)
+        time.sleep(DELAY)
+    # 종가는 늘 덮어쓰고, 순매수 등은 값이 있을 때만 (지난 날 행의 순매수를 지우지 않게)
+    with conn:
+        conn.executemany(
+            """INSERT INTO index_daily (date, code, close, change_pct, frgn, org, ind, prog, up, down, flat, fetched_at)
+               VALUES (:date, :code, :close, :change_pct, :frgn, :org, :ind, :prog, :up, :down, :flat, :fetched_at)
+               ON CONFLICT (date, code) DO UPDATE SET
+                 close = excluded.close, change_pct = excluded.change_pct,
+                 frgn = COALESCE(excluded.frgn, frgn), org = COALESCE(excluded.org, org),
+                 ind = COALESCE(excluded.ind, ind), prog = COALESCE(excluded.prog, prog),
+                 up = COALESCE(excluded.up, up), down = COALESCE(excluded.down, down),
+                 flat = COALESCE(excluded.flat, flat),
+                 fetched_at = CASE WHEN excluded.frgn IS NULL THEN fetched_at ELSE excluded.fetched_at END""",
+            [{**r, 'fetched_at': now()} for r in rows])
+    last = max((r['date'] for r in rows), default='-')
+    log.info('지수 %s까지 %d행', last, len(rows))
+    return guard.errors
+
+
 def main():
-    ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가)')
-    ap.add_argument('what', choices=['research', 'flow', 'high', 'all'])
+    ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가·지수)')
+    ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'all'])
     ap.add_argument('--days', type=int, default=14, help='리포트 목록을 거슬러 볼 일수')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
@@ -205,6 +237,8 @@ def main():
             errors += collect_research(conn, session, args.days)
         if args.what in ('high', 'all'):
             errors += collect_high(conn, session)
+        if args.what in ('index', 'all'):
+            errors += collect_index(conn, session)
         if args.what in ('flow', 'all'):
             errors += collect_flow(conn, session)
     except Unreachable as e:

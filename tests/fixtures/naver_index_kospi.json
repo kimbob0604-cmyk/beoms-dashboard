@@ -1,0 +1,69 @@
+{
+ "integration": {
+  "itemCode": "KOSPI",
+  "stockName": "코스피",
+  "dealTrendInfo": {
+   "bizdate": "20261104",
+   "personalValue": "+14,070",
+   "foreignValue": "-23,319",
+   "institutionalValue": "+6,032"
+  },
+  "programTrendInfo": {
+   "bizdate": "20261104",
+   "indexDifferenceReal": "+260",
+   "indexBiDifferenceReal": "-17,510",
+   "indexTotalReal": "-17,251"
+  },
+  "upDownStockInfo": {
+   "upperCount": "1",
+   "riseCount": "427",
+   "lowerCount": "0",
+   "fallCount": "450",
+   "steadyCount": "33"
+  }
+ },
+ "price": [
+  {
+   "localTradedAt": "2026-11-04",
+   "closePrice": "5,625.74",
+   "compareToPreviousClosePrice": "-23.05",
+   "compareToPreviousPrice": {
+    "code": "5",
+    "text": "하락",
+    "name": "FALLING"
+   },
+   "fluctuationsRatio": "-0.41",
+   "openPrice": "5,786.13",
+   "highPrice": "5,828.13",
+   "lowPrice": "5,421.72"
+  },
+  {
+   "localTradedAt": "2026-11-03",
+   "closePrice": "5,648.79",
+   "compareToPreviousClosePrice": "-210.29",
+   "compareToPreviousPrice": {
+    "code": "5",
+    "text": "하락",
+    "name": "FALLING"
+   },
+   "fluctuationsRatio": "-3.59",
+   "openPrice": "5,715.19",
+   "highPrice": "5,735.92",
+   "lowPrice": "5,615.80"
+  },
+  {
+   "localTradedAt": "2026-11-02",
+   "closePrice": "5,859.08",
+   "compareToPreviousClosePrice": "128.34",
+   "compareToPreviousPrice": {
+    "code": "2",
+    "text": "상승",
+    "name": "RISING"
+   },
+   "fluctuationsRatio": "2.24",
+   "openPrice": "5,637.77",
+   "highPrice": "5,910.83",
+   "lowPrice": "5,616.50"
+  }
+ ]
+}
