@@ -2,8 +2,10 @@
 장중 갱신: 지수(분봉·투자자별 순매수) + 전 종목 시세 + DART 새 공시 → home.json·공시 JSON → GitHub Pages
 
 launchd(com.kimbob.beomdashboard.live)가 10분마다 부른다. 평일에만 돈다.
-- 07:00~19:30: DART 새 공시 (장전 공시 07:30~08:50, 장후 공시 15:30~19:00 무렵이 많다)
-- 09:00~15:50: 지수·전 종목 시세
+- 07:00~19:30: DART 새 공시 (장전 공시 07:30~08:50, 장후 공시 15:30~19:00 무렵이 많다), 새 증권사 리포트
+- 09:00~15:50: 지수·전 종목 시세·52주 신고가
+- 06:00~23:59 (매일): 종목별 수급이 새 거래일로 올라왔는지 1번 확인하고, 올라왔으면 전 종목 수급을 받아 다시 빌드한다.
+  네이버가 KRX 종목별 투자자 매매동향을 올리는 시각이 날마다 달라서(20:20 무렵 ~ 다음 날) 정해진 실행 시각만으로는 놓친다.
 daily.py 가 돌고 있으면(같은 잠금 파일) 건너뛴다. GitHub Pages 빌드 한도(시간당 10회 안팎) 때문에 10분 간격이다.
 
   python3 live.py           # 장 시간 밖이면 아무것도 안 함
@@ -20,6 +22,7 @@ ROOT = Path(__file__).resolve().parent
 LOG_DIR = ROOT / 'logs'
 START, END = dtime(9, 0), dtime(15, 50)
 DART_START, DART_END = dtime(7, 0), dtime(19, 30)
+FLOW_START = dtime(6, 0)
 
 
 def in_session(now: datetime) -> bool:
@@ -40,7 +43,8 @@ def main() -> int:
     force = '--force' in sys.argv
     t = datetime.now()
     market, filings = force or in_session(t), force or in_dart_hours(t)
-    if not (market or filings):
+    flow = force or t.time() >= FLOW_START
+    if not (market or filings or flow):
         return 0
     LOG_DIR.mkdir(exist_ok=True)
     lock = open(LOG_DIR / 'daily.lock', 'w')
@@ -49,19 +53,30 @@ def main() -> int:
     except BlockingIOError:
         return 0   # 정기 실행 중
     with open(LOG_DIR / f'live_{datetime.now():%Y%m%d}.log', 'a', encoding='utf-8') as log:
-        ok = False
+        got = lambda code: code in (0, 1)   # 0 정상, 1 일부 오류 — 둘 다 새로 받은 것이 있다
+        ok = need_naver = False
+        if flow:   # 새 거래일 종목별 수급이 올라왔을 때만 받는다 (없으면 종료 코드 10)
+            new_flow = got(run(['collect_naver.py', 'flow', '--if-new'], log))
+            ok |= new_flow
+            need_naver |= new_flow
         if market:
-            a = run(['collect_naver.py', 'index'], log)
-            b = run(['collect_naver.py', 'quotes'], log)
-            ok |= a in (0, 1) or b in (0, 1)
+            ok |= got(run(['collect_naver.py', 'index'], log))
+            ok |= got(run(['collect_naver.py', 'quotes'], log))
+            new_high = got(run(['collect_naver.py', 'high'], log))
+            ok |= new_high
+            need_naver |= new_high
         if filings:
-            c = run(['collect_dart.py'], log)
-            ok |= c in (0, 1)
+            ok |= got(run(['collect_dart.py'], log))
+            new_rep = got(run(['collect_naver.py', 'research', '--days', '2'], log))
+            ok |= new_rep
+            need_naver |= new_rep
             if run(['build_dart.py'], log) != 0:
                 return 1
-        if not ok:
-            log.write('응답 없음, 배포 건너뜀\n')
+        if need_naver and run(['build_naver.py'], log) != 0:
             return 1
+        if not ok:
+            log.write('새로 받은 것 없음, 배포 건너뜀\n')
+            return 0
         if run(['build_home.py'], log) != 0 or run(['publish.py'], log) != 0:
             return 1
     return 0

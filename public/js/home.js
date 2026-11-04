@@ -245,7 +245,9 @@
     if (!f) return '';
     const row = (s, i) => item(s, `<b class="${U.cls(s.f + s.o)}">${U.eok(s.f + s.o, true)}</b>`,
       `외국인 ${U.eok(s.f, true)} · 기관 ${U.eok(s.o, true)}`, i + 1);
-    return card('flow', { title: '외국인 + 기관', meta: `${U.dateLabel(f.d)} 하루 순매수 금액`, href: 'flow.html?who=fo&days=1',
+    // 네이버가 그날 종목별 수급을 아직 안 올렸으면 이전 거래일 것 (올라오면 10분 안에 자동으로 바뀜)
+    const late = f.d < data.date ? ` · ${U.dateLabel(data.date)} 종목별 수급은 네이버 공개 전` : '';
+    return card('flow', { title: '외국인 + 기관', meta: `${U.dateLabel(f.d)} 하루 순매수 금액${late}`, href: 'flow.html?who=fo&days=1',
       tabs: [['buy', '순매수', 'up', list(f.buy.map(row))], ['sell', '순매도', 'down', list(f.sell.map(row))]] });
   }
 

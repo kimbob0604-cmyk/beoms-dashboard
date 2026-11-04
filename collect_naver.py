@@ -5,6 +5,7 @@ CLI
   python3 collect_naver.py research              # 최근 14일 목록에서 새 리포트만 본문까지 받기
   python3 collect_naver.py research --days 90    # 백필 (약 4,500건, 20분 안팎)
   python3 collect_naver.py flow                  # 대상 종목 최근 순매수 (처음 받는 종목은 60거래일)
+  python3 collect_naver.py flow --if-new         # 네이버에 새 거래일 수급이 올라왔을 때만 (live.py 가 10분마다 확인)
   python3 collect_naver.py high                  # 그날 52주 신고가 목록
   python3 collect_naver.py index                 # 코스피·코스닥 지수 60거래일·1년 일봉·당일 1분봉 + 그날 투자자별 순매수
   python3 collect_naver.py quotes                # 전 종목 장중 시세 (live.py 가 10분마다)
@@ -32,6 +33,7 @@ log = logging.getLogger('collect_naver')
 
 DELAY = 0.2            # 요청 사이 간격(초)
 MAX_NET_FAILS = 8      # 연속 네트워크 실패가 이만큼이면 중단
+NO_NEW = 10            # --if-new 인데 새 데이터가 없을 때 종료 코드
 EXIT_UNREACHABLE = 3
 FLOW_MIN_MCAP = 1000   # 억원
 FLOW_BACKFILL = 60     # 처음 받는 종목의 거래일 수
@@ -131,6 +133,20 @@ def flow_targets(conn):
     codes |= {r[0] for r in conn.execute('SELECT DISTINCT code FROM research WHERE date >= ?', (since,))}
     listed = {r[0] for r in conn.execute('SELECT code FROM price_daily WHERE date = ?', (d,))}
     return sorted(c for c in codes if c and is_common(c) and c in listed)
+
+
+PROBE = '005930'   # 네이버가 그날 종목별 수급을 올렸는지 볼 종목
+
+
+def flow_is_new(conn, session) -> bool:
+    """네이버에 DB 보다 새 거래일의 종목별 수급(KRX)이 올라왔으면 True (요청 1번)"""
+    try:
+        rows = naver.fetch_flow(session, PROBE, 2)
+    except Exception as e:
+        log.warning('수급 확인 실패: %s', e)
+        return False
+    have = conn.execute('SELECT MAX(date) FROM flow_daily').fetchone()[0] or ''
+    return bool(rows) and rows[0]['date'] > have
 
 
 def collect_flow(conn, session) -> int:
@@ -307,6 +323,8 @@ def main():
     ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가·지수·장중 시세)')
     ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'quotes', 'all'])
     ap.add_argument('--days', type=int, default=14, help='리포트 목록을 거슬러 볼 일수')
+    ap.add_argument('--if-new', action='store_true',
+                    help='flow: 네이버에 새 거래일 수급이 올라왔을 때만 받는다 (없으면 종료 코드 10)')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
 
@@ -320,6 +338,9 @@ def main():
             errors += collect_high(conn, session)
         if args.what in ('index', 'all'):
             errors += collect_index(conn, session)
+        if args.what == 'flow' and args.if_new and not flow_is_new(conn, session):
+            log.info('새 거래일 수급 아직 없음')
+            sys.exit(NO_NEW)
         if args.what in ('flow', 'all'):
             errors += collect_flow(conn, session)
         if args.what == 'quotes':
