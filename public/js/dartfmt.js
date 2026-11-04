@@ -3,6 +3,7 @@ const DartFmt = (() => {
   const SECTIONS = [
     ['contract', '단일판매 · 공급계약체결', ['contract']],
     ['earn', '잠정실적 발표', ['earn']],
+    ['earn_m', '월간 실적 (매출·판매·수주)', ['earn_m']],
     ['biz', '투자판단 관련 주요경영사항', ['biz']],
     ['cancel', '주식소각결정', ['cancel']],
     ['buyback', '자기주식 취득', ['buyback', 'trust']],
@@ -15,7 +16,7 @@ const DartFmt = (() => {
     ['ir', '실적발표 · 기업설명회 일정', ['ir', 'preview']],
   ];
   const KIND_LABEL = {
-    contract: '공급계약', contract_x: '계약해지', earn: '잠정실적', biz: '주요경영사항', cancel: '주식소각',
+    contract: '공급계약', contract_x: '계약해지', earn: '잠정실적', earn_m: '월간 실적', biz: '주요경영사항', cancel: '주식소각',
     buyback: '자사주 취득', trust: '자사주 신탁', cb: '전환사채', bw: '신주인수권부사채', eb: '교환사채',
     rights: '유상증자', bonus: '무상증자', holder: '최대주주 변경', invest: '타법인 취득', dividend: '배당',
     ir: 'IR', preview: '실적 공시 예고',
@@ -78,6 +79,12 @@ const DartFmt = (() => {
           d.pct != null && `매출대비 : ${d.pct}%`, d.reason && `사유 : ${d.reason}`]);
       case 'earn':
         return earnLine(x);
+      case 'earn_m': {
+        const r = x.d.rows?.sales;
+        return join([x.d.end && `기간 : ${x.d.end.slice(0, 7).replace('-', '.')}`, r?.v != null && `매출 : ${eok(r.v)}`,
+          r?.yoy != null && `전년 대비 : ${r.yoy > 0 ? '+' : ''}${r.yoy.toFixed(1)}%`, r?.qoq != null && `전기 대비 : ${r.qoq > 0 ? '+' : ''}${r.qoq.toFixed(1)}%`])
+          || '세부 항목은 원문 참고';
+      }
       case 'biz':
         return `${d.title || x.t}${d.body ? `\n${d.body.slice(0, 220)}${d.body.length > 220 ? '…' : ''}` : ''}`;
       case 'cancel':

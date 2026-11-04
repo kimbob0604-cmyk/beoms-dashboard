@@ -82,11 +82,14 @@ def load_day(conn, day):
         if r['kind'] != 'earn' or not r['data']:
             continue
         d = json.loads(r['data'])
+        if ((d.get('rows') or {}).get('op') or {}).get('v') is None:   # 월 실적은 따로 (연결·별도 고르기 대상 아님)
+            continue
         prev = earn.get(r['code'])
         if not prev or (d.get('basis') == '연결') >= (prev[1].get('basis') == '연결'):
             earn[r['code']] = (r['rcept_no'], d)
     keep_earn = {v[0] for v in earn.values()}
-    return [r for r in rows if r['kind'] != 'earn' or r['rcept_no'] in keep_earn]
+    monthly = lambda r: r['data'] and ((json.loads(r['data']).get('rows') or {}).get('op') or {}).get('v') is None
+    return [r for r in rows if r['kind'] != 'earn' or r['rcept_no'] in keep_earn or monthly(r)]
 
 
 def item(conn, r, info):
@@ -95,7 +98,9 @@ def item(conn, r, info):
     out = {'no': r['rcept_no'], 'k': r['kind'], 'c': r['code'], 'n': r['name'], 'mk': r['market'],
            'mc': i.get('mc'), 'p': i.get('p'), 'ch': i.get('ch'), 'w': i.get('w'),
            't': r['title'], 'fx': r['fixed'] or None, 'ss': session_tag(r['date'], r['fetched_at']), 'd': d}
-    if r['kind'] == 'earn' and d.get('end'):
+    if r['kind'] == 'earn' and ((d.get('rows') or {}).get('op') or {}).get('v') is None:
+        out['k'] = 'earn_m'   # 영업이익 칸이 없는 '영업(잠정)실적' = 월 매출·판매·수주 실적
+    elif r['kind'] == 'earn' and d.get('end'):
         out['s'] = surprise(d, cns_for(conn, r['code'], d['end'][:4] + d['end'][5:7], r['date']))
     return out
 

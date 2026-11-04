@@ -104,6 +104,10 @@ def main() -> int:
             problems.append('GitHub Pages 배포 실패')
 
         log.write(f'=== {datetime.now():%H:%M:%S} 끝: {"; ".join(problems) or "정상"}\n')
+        # 60일 지난 로그 정리
+        for f in LOG_DIR.glob('*_20*.log'):
+            if (datetime.now() - datetime.fromtimestamp(f.stat().st_mtime)).days > 60:
+                f.unlink()
 
     if problems:
         notify("Beom's Dashboard", ' / '.join(problems) + ' (logs 확인)')

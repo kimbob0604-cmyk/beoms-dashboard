@@ -11,8 +11,10 @@ GitHub Pages 배포: public/ 화면 + 최근 KEEP_DAYS일 데이터 → origin �
   python3 publish.py
 """
 
+import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -24,7 +26,7 @@ PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'chart', 'reports')   # 최신 파일만
-FILES = ('home.json',)              # 최신 단일 파일
+FILES = ('home.json', 'names.json')   # 최신 단일 파일
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
@@ -32,6 +34,20 @@ REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
 
 def git(*args, cwd):
     return subprocess.run(['git', *args], cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
+
+
+def stamp_assets(out: Path):
+    """HTML 의 js/css 주소에 내용 해시를 붙인다 (?v=…). GitHub Pages 가 10분 캐시하므로,
+    배포 직후 옛 스크립트와 새 데이터가 섞여 화면이 깨지는 것을 막는다."""
+    def ver(m):
+        f = out / m.group(2)
+        if not f.exists():
+            return m.group(0)
+        h = hashlib.sha1(f.read_bytes()).hexdigest()[:8]
+        return f'{m.group(1)}{m.group(2)}?v={h}"'
+    for page in out.glob('*.html'):
+        s = page.read_text(encoding='utf-8')
+        page.write_text(re.sub(r'((?:src|href)=")((?:js|css)/[\w.-]+\.(?:js|css))"', ver, s), encoding='utf-8')
 
 
 def stage(out: Path) -> int:
@@ -54,6 +70,7 @@ def stage(out: Path) -> int:
     for f in FILES:
         if (DATA / f).exists():
             shutil.copy2(DATA / f, out / 'data' / f)
+    stamp_assets(out)
     (out / '.nojekyll').touch()   # Jekyll 처리 없이 파일 그대로 서빙
     print('배포 데이터:', ', '.join(f'{k} {v}일' for k, v in counts.items()),
           f"· 종목 상세 {len(list((out / 'data' / 'stocks').glob('*.json')))}개")
@@ -84,6 +101,11 @@ def main() -> int:
         return 1
     git('add', '-A', cwd=REPO)
     tree = git('write-tree', cwd=REPO)
+    remote_tree = subprocess.run(['git', 'rev-parse', f'refs/remotes/origin/{BRANCH}^{{tree}}'], cwd=REPO,
+                                 capture_output=True, text=True).stdout.strip()
+    if tree == remote_tree and '--always' not in sys.argv:
+        print('바뀐 파일 없음, 배포 건너뜀')
+        return 0
     env = {'GIT_AUTHOR_NAME': name, 'GIT_AUTHOR_EMAIL': email, 'GIT_COMMITTER_NAME': name, 'GIT_COMMITTER_EMAIL': email}
     commit = subprocess.run(['git', 'commit-tree', tree, '-m', f'데이터 갱신 {datetime.now():%Y-%m-%d %H:%M}'],
                             cwd=REPO, check=True, capture_output=True, text=True,

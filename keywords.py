@@ -149,7 +149,7 @@ def stock_keywords(reports: List[Dict], df: Counter, n_docs: int, vocab: Counter
             continue
         idf = math.log((n_docs + 1) / (df.get(kw, 0) + 1)) + 1
         scored.append((kw, n * idf))
-    scored.sort(key=lambda x: -x[1])
+    scored.sort(key=lambda x: (-x[1], x[0]))   # 점수가 같으면 글자순 (실행마다 순서가 바뀌지 않게)
     out, used = [], set()
     for kw, _ in _dedupe(scored)[:top]:
         cands = []   # (이미 다른 키워드에 쓴 문장인가, 최신순 위치, 리포트, 문장)
@@ -185,7 +185,7 @@ def report_keywords(text: str, df: Counter, n_docs: int, vocab: Counter, name: s
     def score(item):
         kw, n = item
         return n * (math.log((n_docs + 1) / (df.get(kw, 0) + 1)) + 1) * (2 if kw in prefer else 1)
-    ranked = sorted(tf.items(), key=score, reverse=True)
+    ranked = sorted(tf.items(), key=lambda it: (-score(it), it[0]))
     return [k for k, _ in _dedupe([(k, 0) for k, _ in ranked])[:top]]
 
 

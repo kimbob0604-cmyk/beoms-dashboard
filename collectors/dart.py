@@ -173,13 +173,13 @@ def parse_contract_x(c):
 
 EARN_ROWS = [('sales', ('매출액', '영업수익', '수익(매출액)', '순영업수익')), ('op', ('영업이익',)),
              ('pbt', ('법인세비용차감전',)), ('cnp', ('지배기업', '지배주주')), ('np', ('당기순이익',))]
-UNITS = {'원': 1e-8, '천원': 1e-5, '백만원': 1e-2, '억원': 1.0}
+UNITS = {'원': 1e-8, '천원': 1e-5, '백만원': 1e-2, '십억원': 10.0, '억원': 1.0, '조원': 1e4}
 
 
 def parse_earn(c):
     unit = 1e-2
     for x in c:
-        m = re.search(r'단위\s*:\s*([천백만억]*원)', x)
+        m = re.search(r'단위\s*:\s*([천백만십억조]*원)', x)
         if m:
             unit = UNITS.get(m.group(1), unit)
             break

@@ -296,6 +296,77 @@ const Stock = (() => {
     if (/^[0-9A-Z]{6}$/.test(c)) open(c);
   });
 
+  // ---------- 헤더 검색: 어느 탭에서든 종목 이름·코드·초성으로 찾아 패널을 연다 ('/' 키) ----------
+  const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+  const chosung = s => [...s].map(ch => {
+    const k = ch.charCodeAt(0) - 0xac00;
+    return k >= 0 && k < 11172 ? CHO[Math.floor(k / 588)] : ch;
+  }).join('');
+  let names = null, hits = [], sel = 0;
+
+  function search(q) {
+    q = q.trim().toLowerCase().replace(/\s+/g, '');
+    if (!q || !names) return [];
+    const onlyCho = /^[ㄱ-ㅎ]+$/.test(q);
+    const out = [];
+    for (const r of names) {
+      const n = r[1].toLowerCase().replace(/\s+/g, '');
+      if (r[0].startsWith(q) || n.includes(q) || (onlyCho && r[3].includes(q))) out.push(r);
+      if (out.length >= 8) break;
+    }
+    return out;
+  }
+
+  function mountSearch() {
+    const host = document.querySelector('.top-right');
+    if (!host || host.querySelector('.gsearch')) return;
+    const box = document.createElement('div');
+    box.className = 'gsearch';
+    box.innerHTML = `<input type="search" placeholder="종목 검색 /" aria-label="종목 검색" autocomplete="off"><ul hidden></ul>`;
+    host.prepend(box);
+    const inp = box.querySelector('input'), ul = box.querySelector('ul');
+    const draw = () => {
+      ul.hidden = !hits.length;
+      ul.innerHTML = hits.map((r, i) => `<li class="${i === sel ? 'on' : ''}" data-i="${i}"><b>${U.esc(r[1])}</b><small class="muted">${r[0]} · ${MARKETS[r[2]] || ''}</small></li>`).join('');
+    };
+    const pick = r => {
+      if (!r) return;
+      inp.value = '';
+      hits = [];
+      draw();
+      inp.blur();
+      open(r[0], { n: r[1], mk: r[2] });
+    };
+    inp.addEventListener('focus', async () => {
+      if (names) return;
+      try {
+        names = (await U.json('data/names.json')).map(r => [...r, chosung(r[1])]);
+      } catch (e) { names = []; }
+      if (inp.value) { hits = search(inp.value); draw(); }
+    });
+    inp.addEventListener('input', () => { hits = search(inp.value); sel = 0; draw(); });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        sel = (sel + (e.key === 'ArrowDown' ? 1 : hits.length - 1)) % Math.max(hits.length, 1);
+        draw();
+      } else if (e.key === 'Enter') {
+        pick(hits[sel]);
+      } else if (e.key === 'Escape') {
+        inp.value = ''; hits = []; draw(); inp.blur();
+      }
+    });
+    ul.addEventListener('mousedown', e => {
+      const li = e.target.closest('li');
+      if (li) { e.preventDefault(); pick(hits[+li.dataset.i]); }
+    });
+    inp.addEventListener('blur', () => setTimeout(() => { ul.hidden = true; }, 100));
+    document.addEventListener('keydown', e => {
+      if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); inp.focus(); }
+    });
+  }
+  window.addEventListener('DOMContentLoaded', mountSearch);
+
   // 행에 붙여 둘 패널 첫 화면용 정보 (이름·시장·시총·가격)
   const hintAttr = s => `data-hint="${U.esc(JSON.stringify({ n: s.n, mk: s.mk, w: s.w, mc: s.mc, p: s.p, ch: s.ch }))}"`;
 

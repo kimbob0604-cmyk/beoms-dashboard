@@ -3,7 +3,7 @@
   const CAPS = { L: [10000, Infinity], M: [3000, 10000], S: [0, 3000] };
   const GROUPS = {
     all: ['전체', null],
-    earn: ['실적', ['earn']],
+    earn: ['실적', ['earn', 'earn_m']],
     contract: ['수주·계약', ['contract', 'contract_x']],
     ret: ['주주환원', ['cancel', 'buyback', 'trust', 'dividend']],
     fund: ['자금조달', ['cb', 'bw', 'eb', 'rights', 'bonus']],
@@ -183,6 +183,16 @@
     $('msg').hidden = true;
     render();
   }
+
+  // 보고 있는 날짜에 새 공시가 들어오면(장중 10분마다) 조용히 다시 그린다
+  async function refreshSame() {
+    if (!data || !U.busyHours()) return;
+    try {
+      const d = await (await fetch(`data/dart/${data.date}.json`, { cache: 'no-cache' })).json();
+      if (d.built !== data.built) { data = d; renderBody(); }
+    } catch (e) { /* 다음 때 */ }
+  }
+  setInterval(refreshSame, 120000);
 
   pg.bind($('filters'));
   U.initTheme($('theme'));

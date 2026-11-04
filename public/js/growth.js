@@ -463,6 +463,7 @@
   (async () => {
     try {
       dates = await U.json('data/growth/dates.json');
+      U.watch('growth', dates[0]);
     } catch (e) {
       showError('데이터 목록을 불러오지 못했습니다. 로컬 서버로 열었는지 확인하세요: python3 serve.py');
       return;

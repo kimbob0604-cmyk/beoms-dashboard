@@ -1,5 +1,6 @@
 """
 종목 패널 차트 JSON: public/data/chart/{code}.json (보통주 전부, 최근 CHART_DAYS 거래일 일봉)
++ 헤더 검색용 종목 목록 public/data/names.json
 
 {"code": 코드, "d": [20261104, …], "o": [...], "h": [...], "l": [...], "c": [...], "v": [...]}
 - 열 단위 배열이라 파일이 작다 (종목당 10KB 안팎).
@@ -34,6 +35,10 @@ def build(conn) -> int:
         for k, f in (('o', 'open'), ('h', 'high'), ('l', 'low'), ('c', 'close'), ('v', 'volume')):
             v = r[f]
             x[k].append(None if v is None else (int(v) if v == int(v) else v))
+    # 헤더 검색용 종목 목록 [[코드, 이름, 시장]] (시총 큰 순 → 같은 검색어면 큰 종목이 먼저)
+    names = [[r['code'], r['name'], r['market']] for r in conn.execute(
+        'SELECT code, name, market FROM price_daily WHERE date = ? ORDER BY mcap DESC', (latest,)) if is_common(r['code'])]
+    write_json(DATA / 'names.json', names)
     OUT.mkdir(parents=True, exist_ok=True)
     for code, x in cols.items():
         write_json(OUT / f'{code}.json', {'code': code, **x})

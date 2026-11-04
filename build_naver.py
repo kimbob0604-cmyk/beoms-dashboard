@@ -137,8 +137,20 @@ def public(i):
 
 
 def write_json(path: Path, data):
+    """내용이 그대로면(빌드 시각 'built' 만 다르면) 파일을 건드리지 않는다 → 바뀐 게 없으면 배포도 안 한다"""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    if path.exists() and isinstance(data, dict) and 'built' in data:
+        try:
+            old = json.loads(path.read_text(encoding='utf-8'))
+            if {**old, 'built': None} == {**data, 'built': None}:
+                return False
+        except ValueError:
+            pass
+    text = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+    if path.exists() and path.read_text(encoding='utf-8') == text:
+        return False
+    path.write_text(text, encoding='utf-8')
+    return True
 
 
 def write_dates(folder: Path):

@@ -567,3 +567,30 @@ footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; 
 .hm-dart-next a[data-code] { font-weight: 600; }
 @media (max-width: 900px) { .hm-card.wide .hm-list { grid-template-columns: minmax(0, 1fr); } }
 .filters .seg { flex-wrap: wrap; max-width: 100%; }
+
+/* 새 데이터 알림 */
+.toast {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px 10px 16px; border-radius: 14px; background: var(--text); color: var(--card); box-shadow: 0 8px 28px rgba(0,0,0,.25);
+  font-size: 13px; white-space: nowrap; max-width: calc(100vw - 32px);
+}
+.toast[hidden] { display: none; }
+.toast button { border: 0; border-radius: 8px; padding: 5px 10px; cursor: pointer; font-weight: 700; background: var(--card); color: var(--text); }
+.toast button.x { background: none; color: var(--card); opacity: .7; padding: 4px 6px; }
+
+/* 헤더 종목 검색 */
+.gsearch { position: relative; }
+.gsearch input { width: 170px; height: 34px; border-radius: 10px; background: var(--hover); border: 1px solid transparent; padding: 6px 10px; }
+.gsearch input:focus { outline: none; border-color: var(--line); background: var(--card); width: 220px; }
+.gsearch ul {
+  position: absolute; right: 0; top: 40px; z-index: 25; width: 260px; margin: 0; padding: 6px; list-style: none;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.gsearch ul[hidden] { display: none; }
+.gsearch li { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.gsearch li.on, .gsearch li:hover { background: var(--hover); }
+@media (max-width: 560px) {
+  .gsearch { flex: 1; }
+  .gsearch input, .gsearch input:focus { width: 100%; }
+  .gsearch ul { left: 0; right: auto; width: 100%; }
+}

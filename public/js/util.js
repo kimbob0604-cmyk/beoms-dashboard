@@ -121,7 +121,49 @@ const U = (() => {
       if (!ds.includes(pg.state.date)) pg.state.date = ds[0];
       sel.innerHTML = ds.map(d => `<option value="${d}"${d === pg.state.date ? ' selected' : ''}>${U.dateLabel(d)} 기준</option>`).join('');
       sel.addEventListener('change', e => { pg.state.date = e.target.value; pg.write(); onPick(e.target.value); });
+      U.watch(folder, ds[0]);
       return pg.state.date;
+    },
+    // 열어 둔 화면: 5분마다, 그리고 탭으로 돌아올 때 더 새 날짜가 올라왔는지 보고 알려 준다
+    watch(folder, latest, onSame) {
+      const check = async () => {
+        if (document.hidden) return;
+        try {
+          const ds = await (await fetch(`data/${folder}/dates.json`, { cache: 'no-cache' })).json();
+          if (ds[0] && ds[0] > latest) {
+            U.toast(`${U.dateLabel(ds[0])} 데이터가 새로 올라왔습니다`, '보기', () => {
+              const q = new URLSearchParams(location.search);
+              q.delete('date');
+              location.href = `${location.pathname}${q.toString() ? `?${q}` : ''}${location.hash}`;
+            });
+          } else if (onSame) onSame();
+        } catch (e) { /* 다음 확인 때 */ }
+      };
+      setInterval(check, 300000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+    },
+    toast(msg, label, onClick) {
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.className = 'toast';
+        document.body.append(t);
+      }
+      t.innerHTML = `<span>${U.esc(msg)}</span>${label ? `<button>${U.esc(label)}</button>` : ''}<button class="x" aria-label="닫기">✕</button>`;
+      t.hidden = false;
+      t.querySelector('button:not(.x)')?.addEventListener('click', onClick);
+      t.querySelector('.x').addEventListener('click', () => { t.hidden = true; });
+    },
+    // 한국 시간 (요일 0~6, 분)
+    kst() {
+      const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
+      return { dow: k.getDay(), min: k.getHours() * 60 + k.getMinutes() };
+    },
+    // 맥이 새 데이터를 올리는 시간대 (평일 07:00~20:00): 이때만 열어 둔 화면을 자주 확인한다
+    busyHours() {
+      const { dow, min } = U.kst();
+      return dow > 0 && dow < 6 && min >= 420 && min <= 1200;
     },
     // 한국 시간 평일 08:50~15:40 (NXT 프리·애프터는 제외). 차트 이미지 자동 갱신에 쓴다
     marketHours() {

@@ -1,6 +1,6 @@
 // 홈 탭: data/home.json
 // - 지수: 당일 1분봉·투자자별 순매수 흐름·일봉을 직접 그려, 마우스를 올린 시각·날짜의 값을 보여준다
-// - 장중에는 맥이 10분마다 home.json 을 새로 올리고(live.py), 화면은 1분마다 바뀌었는지 확인해 다시 그린다
+// - 맥이 10분마다 home.json 을 새로 올리고(live.py), 화면은 평일 07:00~20:00 1분마다·탭으로 돌아올 때 바뀌었는지 확인해 다시 그린다
 (() => {
   const POLL_MS = 60000;
   const RANGES = [['1d', '당일'], ['3m', '3개월'], ['1y', '1년']];
@@ -360,8 +360,8 @@
   }
 
   // 장중: 새로 올라왔으면 다시 그린다 (차트에 마우스를 올려 둔 중이면 다음 확인 때)
-  async function poll() {
-    if (document.hidden || !U.marketHours() || document.querySelector('.hm-ix.hovering')) return;
+  async function poll(force) {
+    if (document.hidden || (!force && !U.busyHours()) || document.querySelector('.hm-ix.hovering')) return;
     try {
       const d = await fetchHome();
       if (d.built !== data.built) { data = d; renderAll(); }
@@ -370,5 +370,7 @@
 
   U.initTheme($('theme'));
   setInterval(poll, POLL_MS);
+  // 다른 창에 있다가 돌아오면 바로 확인 (밤에 켜 둔 화면도 아침에 보면 최신)
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(true); });
   load();
 })();
