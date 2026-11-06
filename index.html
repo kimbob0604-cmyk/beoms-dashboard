@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beom's Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/app.css?v=a026c2ee">
+<script>
+  // 깜빡임 방지: 저장된 테마를 렌더 전에 적용
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Beom's Dashboard</div>
+  <nav class="tabs">
+    <a class="tab on" href="./">홈</a>
+    <a class="tab" href="growth.html">이익 성장</a>
+    <a class="tab" href="revision.html">컨센 리비전</a>
+    <a class="tab" href="high.html">신고가</a>
+    <a class="tab" href="flow.html">수급</a>
+    <a class="tab" href="dart.html">공시</a>
+    <a class="tab" href="quant.html">퀀트</a>
+  </nav>
+  <div class="top-right">
+    <span class="muted small" id="asof"></span>
+    <button id="theme" class="icon-btn" aria-label="다크 모드 전환" title="다크 모드 전환">◐</button>
+  </div>
+</header>
+
+<main class="home">
+  <p class="msg" id="msg">불러오는 중…</p>
+  <h2 class="sec-title">시장</h2>
+  <section class="hm-idx" id="idx"></section>
+  <section class="card hm-map" id="map"></section>
+  <h2 class="sec-title">오늘의 신호</h2>
+  <section class="hm-grid" id="grid"></section>
+</main>
+
+<footer id="foot"></footer>
+
+<script src="js/util.js?v=48d5ae68"></script>
+<script src="js/plot.js?v=d356d001"></script>
+<script src="js/dartfmt.js?v=5eb1a75f"></script>
+<script src="js/stock.js?v=8fca34c3"></script>
+<script src="js/home.js?v=29b09f0d"></script>
+</body>
+</html>
