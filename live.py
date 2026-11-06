@@ -77,6 +77,7 @@ def main() -> int:
         if not ok:
             log.write('새로 받은 것 없음, 배포 건너뜀\n')
             return 0
+        run(['build_factors.py'], log)   # 수급·공시·가격이 바뀌면 퀀트 팩터도 (0.5초)
         if run(['build_home.py'], log) != 0 or run(['publish.py'], log) != 0:
             return 1
     return 0
