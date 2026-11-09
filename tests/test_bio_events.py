@@ -39,7 +39,14 @@ class TestExtractEvents(unittest.TestCase):
         self.assertEqual(be.extract_events('Cash runway extends into the first half of 2028 based on the operating plan.', today=TODAY), [])
 
     def test_html_to_text(self):
-        self.assertEqual(be.html_to_text('<p>A&nbsp;B</p><script>x</script>C'), 'A B. C')
+        self.assertEqual(be.html_to_text('<p>A&nbsp;B</p><script>x</script>C'), 'A B\nC')
+
+    def test_paragraphs_not_merged(self):
+        txt = be.html_to_text('<p>FDA discussions are planned for later this year to determine the path forward in D2T RA.</p>'
+                              '<p>The Company expects to report topline data in Graves disease in calendar year 2027.</p>')
+        ev = be.extract_events(txt, today=TODAY)
+        self.assertEqual(len(ev), 1)
+        self.assertTrue(ev[0]['sentence'].startswith('The Company expects'))
 
 
 class TestTrialChanges(unittest.TestCase):

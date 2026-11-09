@@ -100,19 +100,25 @@ def sec_get(url: str, **kw):
 
 
 def html_to_text(s: str) -> str:
+    """HTML → 텍스트. 문단(블록) 경계는 줄바꿈으로 남겨, 문장이 다른 문단과 섞이지 않게 한다."""
     s = re.sub(r'(?is)<(script|style)[^>]*>.*?</\1>', ' ', s)
-    s = re.sub(r'(?i)<br\s*/?>|</(p|div|tr|li|h\d)>', '. ', s)
+    s = re.sub(r'(?i)<br\s*/?>|</(p|div|tr|li|h\d|td|table)>', '\n', s)
     s = re.sub(r'<[^>]+>', ' ', s)
     s = html.unescape(s).replace('\xa0', ' ')
-    return re.sub(r'\s+', ' ', s).strip()
+    s = re.sub(r'[ \t\r\f\v]+', ' ', s)
+    return re.sub(r'\s*\n\s*', '\n', s).strip()
+
+
+# 소문자·숫자 뒤나 두 글자 이상 약어(RA., GD.) 뒤의 마침표에서 나눈다. U.S., U.K. 같은 한 글자 약어에서는 끊지 않는다.
+_SPLIT = re.compile(r'(?:(?<=[a-z0-9)%][.!?])|(?<=[A-Z]{2}[.!?]))\s+(?=[A-Z•·\-–(])')
 
 
 def sentences(text: str):
-    # 소문자·숫자 뒤의 마침표에서만 나눈다 (U.S., U.K. 같은 약어에서 끊기지 않게)
-    for s in re.split(r'(?<=[a-z0-9)%][.!?])\s+(?=[A-Z•·\-–(])', text):
-        s = s.strip(' .•·-–')
-        if 30 <= len(s) <= 600:
-            yield s
+    for para in text.split('\n'):
+        for s in _SPLIT.split(para):
+            s = s.strip(' .•·-–')
+            if 30 <= len(s) <= 600:
+                yield s
 
 
 def extract_events(text: str, today: date | None = None) -> list:
@@ -129,7 +135,7 @@ def extract_events(text: str, today: date | None = None) -> list:
                     d, prec = conv(m)
                 except (ValueError, KeyError):
                     continue
-                if d < today or d > today + timedelta(days=365 * 4):
+                if d < today or d > date.today() + timedelta(days=365 * 4):   # 상한은 실제 오늘 기준 (캐시용 호출은 today 를 과거로 줌)
                     continue
                 key = (d.isoformat(), kind, s[:80])
                 if key in seen:
@@ -166,28 +172,38 @@ def company_filing_events(cik: int, cache: dict, today: date | None = None, fili
     docs = [(f['acc'], f['filed'], f['form'], f['primary']) for f in filings]
     events = []
     for acc, filed, form, primary in docs[:MAX_DOCS_PER_COMPANY]:
-        key = f'{cik}:{acc}'
+        key = f'v5:{cik}:{acc}'   # v5: 별첨 이름 규칙·문단 분리·날짜 상한 수정 뒤 다시 읽기
         if key not in cache:
             base = f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc.replace("-", "")}'
             urls = [f'{base}/{primary}']
             if form in ('8-K', '6-K'):   # 보도자료는 보통 별첨 99.x
                 try:
                     idx = sec_get(f'{base}/index.json').json()['directory']['item']
-                    urls += [f'{base}/{x["name"]}' for x in idx if re.search(r'ex-?99', x['name'], re.I) and x['name'].endswith('.htm')]
+                    urls += [f'{base}/{x["name"]}' for x in idx if re.search(r'ex(?:hibit)?[-_]?99', x['name'], re.I) and x['name'].endswith('.htm')]
                 except (requests.RequestException, ValueError, KeyError):
                     pass
-            found = []
+            found, failed = [], 0
             for u in urls:
                 try:
                     txt = html_to_text(sec_get(u).text)
-                except requests.RequestException:
+                except requests.RequestException as ex:
+                    failed += 1
+                    print(f'  SEC 원문 실패 {u}: {ex}', file=sys.stderr)
                     continue
                 for e in extract_events(txt, today=date(2000, 1, 1)):   # 캐시에는 과거 것까지 두고, 쓸 때 거른다
                     found.append({**e, 'url': u})
+            if failed:   # 하나라도 못 읽었으면 캐시에 남기지 않고 다음 실행에서 다시 읽는다
+                events += [{**e, 'filed': filed, 'form': form, 'src': f'SEC {form} ({filed})'} for e in found if e['date'] >= today.isoformat()]
+                continue
             cache[key] = {'filed': filed, 'form': form, 'events': found}
         for e in cache[key]['events']:
             if e['date'] >= today.isoformat():
                 events.append({**e, 'filed': cache[key]['filed'], 'form': cache[key]['form'], 'src': f'SEC {cache[key]["form"]} ({cache[key]["filed"]})'})
+    # 가장 최근 정기보고서(10-Q·10-K)보다 오래된 공시의 일정은 버린다: 정기보고서가 현재 안내를 다시 적으므로,
+    # 그 전 8-K 의 일정(예: 8월 '4분기 탑라인' → 11월 '1분기')은 이미 바뀌었을 수 있다.
+    periodic = [f[1] for f in docs if f[2] in ('10-Q', '10-K')]
+    if periodic:
+        events = [e for e in events if e['filed'] >= max(periodic)]
     # 같은 날짜·종류는 가장 최근 공시 하나만
     events.sort(key=lambda e: e['filed'], reverse=True)
     uniq, seen = [], set()
@@ -258,7 +274,7 @@ def market_screen(cache: dict, days: int = 14, limit: int = 40, today: date | No
             hits.append({'kind': kind, 'adsh': adsh, 'file': fname, 'cik': cik, 'name': name, 'filed': src.get('file_date')})
     out, seen = [], set()
     for h in hits:
-        key = f'{h["cik"]}:{h["adsh"]}:{h["file"]}'
+        key = f'v5:{h["cik"]}:{h["adsh"]}:{h["file"]}'
         if key in seen:
             continue
         seen.add(key)
@@ -272,8 +288,9 @@ def market_screen(cache: dict, days: int = 14, limit: int = 40, today: date | No
         if key not in cache:
             try:
                 ev = extract_events(html_to_text(sec_get(url).text), today=date(2000, 1, 1))
-            except requests.RequestException:
-                ev = []
+            except requests.RequestException as ex:
+                print(f'  SEC 원문 실패 {url}: {ex}', file=sys.stderr)
+                continue
             cache[key] = {'filed': h['filed'], 'events': ev}
         for e in cache[key]['events']:
             if e['date'] >= today.isoformat() and e['kind'] in ('regulatory', 'readout'):
