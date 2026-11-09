@@ -24,7 +24,7 @@
   const CNS = new Set(['rev1', 'rev3', 'grow', 'ey']);
   const CAPS = { L: [10000, Infinity], M: [3000, 10000], S: [0, 3000] };
   const PAGE = 50;
-  const DEFAULTS = { p: 'base', w: PRESETS.base[1].join(''), market: 'all', cap: 'all', sec: '', cns: '1', q: '', sort: 'score' };
+  const DEFAULTS = { p: 'base', w: PRESETS.base[1].join(''), market: 'all', cap: 'all', sec: '', cns: '1', q: '', sort: 'score', ord: 'desc' };
 
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => (typing ? renderBody() : render()));
@@ -71,8 +71,14 @@
       const miss = w.reduce((a, x, j) => a + (x && ps[j] == null ? 1 : 0), 0);
       return { r, ps, score, miss };
     }).filter(x => !q || x.r[1].toLowerCase().includes(q) || x.r[0].includes(q));
-    const key = st.sort === 'score' ? x => x.score : x => x.ps[KEYS.indexOf(st.sort)] ?? -1;
-    rows.sort((a, b) => key(b) - key(a));
+    const key = st.sort === 'score' ? x => x.score : x => x.ps[KEYS.indexOf(st.sort)];
+    const sign = st.ord === 'asc' ? -1 : 1;   // 같은 머리글을 다시 누르면 작은 순
+    rows.sort((a, b) => {
+      const x = key(a), y = key(b);
+      if (x == null) return y == null ? 0 : 1;   // 값 없는 종목은 늘 아래
+      if (y == null) return -1;
+      return sign * (y - x);
+    });
   }
 
   // ---------- 그리기 ----------
@@ -130,7 +136,7 @@
 
   function renderTable() {
     const list = rows.slice(0, shown);
-    const th = (k, l) => `<th class="num sortable${st.sort === k ? ' on' : ''}" data-sort="${k}">${l}</th>`;
+    const th = (k, l) => `<th class="num sortable${st.sort === k ? ' on' : ''}" data-sort="${k}">${l}${st.sort === k ? (st.ord === 'asc' ? ' ▲' : ' ▼') : ''}</th>`;
     $('table').innerHTML = `<div class="col-head"><h3>순위 <span class="muted">${rows.length.toLocaleString('ko-KR')}종목 · ${st.sort === 'score' ? '점수' : FACT[KEYS.indexOf(st.sort)][1]} 순</span></h3>
         <span class="muted small">칸 숫자 = 백분위(0~100), 아래 = 원값 · 머리글을 누르면 그 팩터 순</span></div>
       <div class="tbl-wrap"><table class="tbl qt-tbl">
@@ -190,7 +196,11 @@
 
   $('table').addEventListener('click', e => {
     const h = e.target.closest('[data-sort]');
-    if (h) { st.sort = h.dataset.sort; pg.write(); shown = PAGE; return renderBody(); }
+    if (h) {
+      st.ord = st.sort === h.dataset.sort && st.ord === 'desc' ? 'asc' : 'desc';
+      st.sort = h.dataset.sort;
+      pg.write(); shown = PAGE; return renderBody();
+    }
     if (e.target.closest('#more')) { shown += PAGE; renderTable(); }
   });
 

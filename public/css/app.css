@@ -771,3 +771,21 @@ b.n.down { color: var(--down); }
 .rp-rank { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; margin-bottom: 4px;
   background: var(--text); color: var(--card); font-size: 12px; font-weight: 800; }
 .rp-big { font-size: 18px !important; padding: 3px 10px !important; }
+.ladder { position: relative; height: 156px; margin: 10px 8px 4px; }
+.lad-line { position: absolute; left: 0; right: 0; top: 69px; height: 4px; border-radius: 2px; background: var(--chip); }
+.lad-m { position: absolute; top: 66px; width: 0; }
+.lad-m::before { content: ""; position: absolute; left: -5px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--text); }
+.lad-m span { position: absolute; left: 0; transform: translateX(-50%); white-space: nowrap; text-align: center; font-size: 11px; line-height: 1.35; color: var(--sub); }
+.lad-m.hi span { bottom: 16px; }
+.lad-m.lo span { top: 16px; }
+.lad-m span b { display: block; font-size: 13px; color: var(--text); }
+.lad-m span i { font-style: normal; font-weight: 600; }
+.lad-px { position: absolute; top: 0; bottom: 16px; width: 0; border-left: 2px dashed var(--accent, #3b82f6); }
+.lad-px span { position: absolute; bottom: -18px; left: 0; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: var(--accent, #3b82f6); }
+
+/* 표 머리글 정렬 */
+table.tbl thead th { cursor: pointer; user-select: none; }
+table.tbl thead th:hover { color: var(--text); }
+table.tbl thead th.sorted { color: var(--accent); }
+table.tbl thead th.sorted[data-dir="desc"]::after { content: " ▼"; font-size: 10px; }
+table.tbl thead th.sorted[data-dir="asc"]::after { content: " ▲"; font-size: 10px; }

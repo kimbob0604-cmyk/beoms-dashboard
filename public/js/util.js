@@ -223,3 +223,85 @@ const U = (() => {
     },
   };
 })();
+
+// ---------- 표 머리글을 누르면 그 열로 정렬 (모든 탭 공통) ----------
+// 숫자 열은 처음 누르면 큰 순, 다시 누르면 작은 순. 글자 열은 가나다 순부터. 값 없는 칸(–)은 늘 맨 아래.
+// 자체 정렬이 있는 표(th.sortable·th[data-sort], 이익 성장·퀀트)는 건드리지 않는다.
+// 표를 다시 그려도(장중 갱신·필터 변경) 고른 정렬을 다시 적용한다.
+(() => {
+  const state = {};   // 표 키 → { col, dir }
+  const keyOf = t => `${t.closest('[id]')?.id || ''}|${t.className}`;
+  const own = t => !!t.querySelector('thead th.sortable, thead th[data-sort]') || t.dataset.nosort != null;
+
+  function value(td) {
+    if (!td) return null;
+    if (td.dataset.v != null) return td.dataset.v === '' ? null : (isNaN(+td.dataset.v) ? td.dataset.v : +td.dataset.v);
+    const main = td.querySelector('b, .qt-p') || td;   // 칸의 대표 숫자 (아래 작은 글씨는 빼고)
+    const txt = main.textContent.trim();
+    if (!txt || txt === '–' || txt === '-') return null;
+    const m = txt.replace(/,/g, '').replace(/−/g, '-').match(/^[^\d+-]{0,6}([+-]?\d+(?:\.\d+)?)\s*(조|억|만|천)?/);
+    if (m) {
+      let v = parseFloat(m[1]);
+      v *= { 조: 1e4, 억: 1, 만: 1e-4, 천: 1e-5 }[m[2]] ?? 1;
+      return v;
+    }
+    return txt;
+  }
+
+  function apply(t, col, dir) {
+    const body = t.tBodies[0];
+    if (!body) return;
+    // 구분 줄(칸 하나가 줄 전체를 차지)은 제자리에 두고 그 사이 묶음끼리 정렬
+    const rows = [...body.rows], groups = [[]], seps = [];
+    for (const r of rows) {
+      if (r.cells.length === 1 && r.cells[0].colSpan > 1) { seps.push(r); groups.push([]); } else groups[groups.length - 1].push(r);
+    }
+    const cmp = (a, b) => {
+      const x = value(a.cells[col]), y = value(b.cells[col]);
+      if (x == null) return y == null ? 0 : 1;
+      if (y == null) return -1;
+      if (typeof x === 'number' && typeof y === 'number') return dir === 'desc' ? y - x : x - y;
+      if (typeof x === 'number') return -1;
+      if (typeof y === 'number') return 1;
+      return dir === 'desc' ? String(y).localeCompare(String(x), 'ko') : String(x).localeCompare(String(y), 'ko');
+    };
+    const frag = document.createDocumentFragment();
+    groups.forEach((g, i) => {
+      g.sort(cmp).forEach(r => frag.append(r));
+      if (seps[i]) frag.append(seps[i]);
+    });
+    body.append(frag);
+    [...t.tHead.rows[0].cells].forEach((th, i) => {
+      th.classList.toggle('sorted', i === col);
+      th.dataset.dir = i === col ? dir : '';
+    });
+  }
+
+  document.addEventListener('click', e => {
+    const th = e.target.closest('table.tbl thead th');
+    if (!th || e.target.closest('a, button, input')) return;
+    const t = th.closest('table');
+    if (own(t) || th.classList.contains('nosort')) return;
+    const col = th.cellIndex;
+    const sample = [...(t.tBodies[0]?.rows || [])].map(r => value(r.cells[col])).find(v => v != null);
+    const first = typeof sample === 'number' ? 'desc' : 'asc';
+    const cur = state[keyOf(t)];
+    const dir = cur && cur.col === col ? (cur.dir === 'desc' ? 'asc' : 'desc') : first;
+    state[keyOf(t)] = { col, dir };
+    apply(t, col, dir);
+  });
+
+  // 다시 그려진 표에 고른 정렬을 다시 적용
+  let queued = false;
+  new MutationObserver(() => {
+    if (queued) return;
+    queued = true;
+    setTimeout(() => {   // requestAnimationFrame 은 탭이 뒤에 있으면 멈춰서 setTimeout
+      queued = false;
+      document.querySelectorAll('table.tbl').forEach(t => {
+        const s = state[keyOf(t)];
+        if (s && !own(t) && !t.tHead?.rows[0]?.cells[s.col]?.classList.contains('sorted')) apply(t, s.col, s.dir);
+      });
+    }, 0);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
