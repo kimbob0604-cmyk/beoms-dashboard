@@ -74,17 +74,40 @@
         ${fl.length ? fl.map(f => `<li><span class="d">${f.filed}</span><b>${f.form}</b>${newTag(f)} ${esc(f.labels.join(' · '))} <a href="${esc(f.url)}" target="_blank" rel="noopener">원문</a></li>`).join('') : '<li class="muted">없음</li>'}</ul>`;
   }
 
+  const SF = { win: '90', kind: 'all', cap: '0', q: '' };
+
   function renderScreen() {
     const s = data.market_screen;
     if (!s) { $('screen').innerHTML = ''; return; }
-    $('screen').innerHTML = `<div class="col-head"><h3>시장 스크리닝 <span class="muted">최근 14일 8-K·6-K 중 PDUFA·탑라인 언급</span></h3>
-        <span class="muted small">EDGAR 전문 검색 · ${data.archive_ok ? '원문에서 뽑은 날짜' : '날짜는 원문을 열어야 확인 (SEC_USER_AGENT 필요)'}</span></div>
-      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>회사</th><th>공시일</th><th>종류</th><th>찾은 날짜</th><th>문장</th></tr></thead><tbody>
-      ${s.slice(0, 40).map(e => `<tr><td><b>${esc(e.ticker || '')}</b><small>${esc(e.company)}</small></td><td>${esc(e.filed || '')}</td><td>${KIND_KO[e.kind] || e.kind}</td>
-        <td>${e.date ? `${e.date}<small>${esc(e.date_text)}</small>` : '<span class="muted">–</span>'}</td>
-        <td style="white-space:normal">${e.sentence ? esc(e.sentence.slice(0, 160)) + ' ' : ''}<a href="${esc(e.url)}" target="_blank" rel="noopener">원문</a></td></tr>`).join('')}
-      </tbody></table></div>`;
+    const mine = new Set(data.companies.map(c => c.ticker));
+    const seg = (key, opts) => `<span class="seg" role="group">${opts.map(([v, l]) => `<button type="button" data-sf="${key}" data-v="${v}" class="${SF[key] === v ? 'on' : ''}">${l}</button>`).join('')}</span>`;
+    const q = SF.q.trim().toLowerCase();
+    const rows = s.filter(e => {
+      if (!e.date) return SF.win === 'all';
+      const dd = days(e.date);
+      if (SF.win !== 'all' && dd > +SF.win) return false;
+      if (SF.kind !== 'all' && e.kind !== SF.kind) return false;
+      if (+SF.cap && !(e.mcap >= +SF.cap)) return false;
+      if (q && !((e.ticker || '').toLowerCase().includes(q) || (e.company || '').toLowerCase().includes(q))) return false;
+      return true;
+    });
+    $('screen').innerHTML = `<div class="col-head"><h3>시장 스크리너 <span class="muted">최근 30일 8-K·6-K에서 찾은 PDUFA·탑라인 일정 ${rows.length}/${s.length}건</span></h3>
+        <span class="muted small">EDGAR 전문 검색 → 원문 문장에서 날짜 추출 · 시총은 yfinance(원문 아님)</span></div>
+      <div class="bio-pad scr-ctl">${seg('win', [['30', '30일 안'], ['60', '60일'], ['90', '90일'], ['all', '전체']])}
+        ${seg('kind', [['all', '전체'], ['regulatory', '허가·규제'], ['readout', '임상 결과']])}
+        ${seg('cap', [['0', '시총 전체'], ['300', '$300M+'], ['1000', '$1B+'], ['10000', '$10B+']])}
+        <label class="scr-q"><span class="muted small">검색</span> <input id="scrq" type="search" value="${esc(SF.q)}" placeholder="티커·회사"></label></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>남은 날</th><th>날짜</th><th>회사</th><th class="num">시총</th><th>종류</th><th>원문 문장</th><th>공시</th></tr></thead><tbody>
+      ${rows.length ? rows.map(e => `<tr class="${mine.has(e.ticker) ? 'scr-mine' : ''}"><td><b>${e.date ? dday(e.date) : '–'}</b></td>
+        <td>${e.date || '<span class="muted">–</span>'}${e.date_text ? `<small>${esc(e.date_text)}</small>` : ''}</td>
+        <td><b>${esc(e.ticker || '')}</b>${mine.has(e.ticker) ? ' <span class="bio-tag go">추적 중</span>' : ''}<small>${esc(e.company)}</small></td>
+        <td class="num">${e.mcap != null ? usd(e.mcap) : '–'}</td><td>${KIND_KO[e.kind] || e.kind}</td>
+        <td style="white-space:normal">${e.sentence ? esc(e.sentence.slice(0, 200)) : ''}</td>
+        <td>${esc(e.filed || '')} <a href="${esc(e.url)}" target="_blank" rel="noopener">원문</a></td></tr>`).join('') : '<tr><td colspan="7" class="muted">조건에 맞는 일정 없음</td></tr>'}
+      </tbody></table></div>
+      <p class="bio-pad muted small">날짜는 회사가 공시에 적은 표현을 그대로 옮긴 것입니다. '4분기'·'상반기' 같은 표현은 그 기간의 마지막 날로 둡니다. 같은 회사가 여러 공시에 같은 일정을 적으면 하나로 합칩니다. 검토 전 자료라 투자 판단 전 원문을 확인하세요.</p>`;
   }
+
 
   function renderCards() {
     const chip = (v, l) => v == null ? '' : `<span class="bc-chip ${U.cls(v)}">${l} ${pc(v)}</span>`;
@@ -456,12 +479,10 @@
 
   function renderCal() {
     const t0 = todayIso();
-    const ev = data.companies.flatMap(c => [
-      ...(c.catalysts || []).map(x => ({ ...x, t: c.ticker })),
-      ...(c.auto && c.auto.earnings && c.auto.earnings.date >= t0 && !(c.catalysts || []).some(x => x.date === c.auto.earnings.date)
-        ? [{ date: c.auto.earnings.date, text: '실적 발표 (자동: yfinance)', t: c.ticker, auto: true }] : []),
-      ...((c.auto && c.auto.events) || []).map(x => ({ date: x.date, text: `${KIND_KO[x.kind] || x.kind}: ${x.date_text} (자동: ${x.src})`, t: c.ticker, auto: true, new: x.new })),
-    ]).sort((a, b) => a.date.localeCompare(b.date));
+    // 종목별 타임라인(확정·공시 자동·실적을 이미 합친 것)을 그대로 모은다. 임상 완료 예정일은 많아서 여기서는 뺀다.
+    const ev = data.companies.flatMap(c => (c.timeline || []).filter(x => x.kind !== 'trial' && x.date >= t0)
+      .map(x => ({ date: x.date, text: x.text + (x.confirmed_by ? ' (공시로도 확인)' : ''), t: c.ticker, auto: x.auto })))
+      .sort((a, b) => a.date.localeCompare(b.date));
     $('cal').innerHTML = `<div class="col-head"><h3>일정 <span class="muted">다가오는 순</span></h3><span class="muted small">날짜가 분기·반기 단위인 항목은 마지막 날로 적었습니다</span></div>
       <ul class="bio-list">${ev.map(e => `<li><span class="d">${e.date}</span><b>${esc(e.t)}</b> ${esc(e.text)} <span class="bio-tag">${days(e.date) >= 0 ? dday(e.date) : '지남'}</span>${e.auto ? ' <span class="bio-tag">자동·검토 필요</span>' : ''}${newTag(e)}</li>`).join('')}</ul>`;
   }
@@ -493,6 +514,19 @@
     range = b.dataset.range;
     const c = data.companies.find(x => x.ticker === st.c);
     $('pxbox').innerHTML = priceSvg(c);
+  });
+  $('screen').addEventListener('click', e => {
+    const b = e.target.closest('[data-sf]');
+    if (!b) return;
+    SF[b.dataset.sf] = b.dataset.v;
+    renderScreen();
+  });
+  $('screen').addEventListener('input', e => {
+    if (e.target.id !== 'scrq') return;
+    SF.q = e.target.value;
+    const pos = e.target.selectionStart;
+    renderScreen();
+    const el = $('scrq'); el.focus(); el.setSelectionRange(pos, pos);
   });
   $('cards').addEventListener('click', e => {
     const r = e.target.closest('[data-c]');

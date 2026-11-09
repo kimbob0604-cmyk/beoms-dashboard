@@ -291,9 +291,9 @@ SCREEN_QUERIES = [
 ]
 
 
-def market_screen(cache: dict, days: int = 14, limit: int = 40, today: date | None = None) -> list:
+def market_screen(cache: dict, days: int = 30, limit: int = 100, today: date | None = None) -> list:
     # 원문을 못 열면(SEC_USER_AGENT 미설정) 회사·공시일·링크만 돌려준다 (날짜는 원문을 열어야 뽑을 수 있음)
-    """시장 전체: 최근 며칠 사이 8-K·6-K 에서 PDUFA·탑라인 일정을 말한 회사를 찾는다 (EDGAR 전문 검색)."""
+    """시장 전체: 최근 30일 8-K·6-K 에서 PDUFA·탑라인 일정을 말한 회사를 찾는다 (EDGAR 전문 검색, 검색어마다 최대 100건)."""
     today = today or date.today()
     start = (today - timedelta(days=days)).isoformat()
     hits = []

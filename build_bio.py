@@ -464,6 +464,23 @@ def sensitivity(co, mk, g, rf):
     return out
 
 
+def enrich_screen(items: list, limit: int = 80):
+    """스크리닝 결과에 주가·시총(yfinance fast_info, 원문 아님)을 붙인다. 티커당 한 번만 조회."""
+    import yfinance as yf
+    info = {}
+    for t in list(dict.fromkeys(i['ticker'] for i in items if i.get('ticker')))[:limit]:
+        try:
+            fi = yf.Ticker(t).fast_info
+            info[t] = {'price': float(fi['last_price']), 'mcap': float(fi['market_cap']) / 1e6}
+        except Exception:
+            info[t] = None
+    for i in items:
+        x = info.get(i.get('ticker'))
+        i['price'] = x['price'] if x else None
+        i['mcap'] = x['mcap'] if x else None
+    return items
+
+
 def card(co, row, today_iso):
     """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
     auto = row.get('auto') or {}
@@ -627,7 +644,7 @@ def build():
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)
     try:
-        screen = be.market_screen(cache)
+        screen = enrich_screen(be.market_screen(cache))
     except Exception as e:
         print(f'  시장 스크리닝 실패: {e}', file=sys.stderr)
         screen = None
