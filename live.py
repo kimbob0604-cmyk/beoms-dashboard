@@ -74,6 +74,8 @@ def main() -> int:
                 return 1
         if need_naver and run(['build_naver.py'], log) != 0:
             return 1
+        if need_naver:
+            run(['build_digest.py'], log)   # 새 리포트가 들어오면 리포트 탭도 (3초)
         if not ok:
             log.write('새로 받은 것 없음, 배포 건너뜀\n')
             return 0

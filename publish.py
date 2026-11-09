@@ -24,12 +24,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
-DATED = ('growth', 'flow', 'high', 'dart')   # 날짜별 JSON + dates.json
+DATED = ('growth', 'flow', 'high', 'dart', 'digest')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'chart', 'reports')   # 최신 파일만
 FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json', 'events.json')   # 최신 단일 파일
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
+# 아직 공개하면 안 되는 화면·데이터 (public/ 기준 경로, 한 줄에 하나). 이 파일이 있으면 배포에서 빼고,
+# 다른 화면의 탭 링크도 지운다. 공개해도 되면 해당 줄(또는 파일)을 지우면 된다.
+HOLD_FILE = ROOT / 'publish_hold.txt'
 
 
 def git(*args, cwd):
@@ -48,6 +51,28 @@ def stamp_assets(out: Path):
     for page in out.glob('*.html'):
         s = page.read_text(encoding='utf-8')
         page.write_text(re.sub(r'((?:src|href)=")((?:js|css)/[\w.-]+\.(?:js|css))"', ver, s), encoding='utf-8')
+
+
+def held() -> set:
+    if not HOLD_FILE.exists():
+        return set()
+    return {ln.strip() for ln in HOLD_FILE.read_text(encoding='utf-8').splitlines()
+            if ln.strip() and not ln.startswith('#')}
+
+
+def apply_hold(out: Path, hold: set):
+    """보류한 파일을 지우고, 다른 화면에서 그 화면으로 가는 탭 링크를 뺀다"""
+    for rel in hold:
+        f = out / rel
+        if f.is_file():
+            f.unlink()
+    pages = [h for h in hold if h.endswith('.html')]
+    if not pages:
+        return
+    pat = re.compile(r'\n?[ \t]*<a class="tab[^"]*" href="(?:' + '|'.join(map(re.escape, pages)) + r')">[^<]*</a>')
+    for page in out.glob('*.html'):
+        s = page.read_text(encoding='utf-8')
+        page.write_text(pat.sub('', s), encoding='utf-8')
 
 
 def stage(out: Path) -> int:
@@ -70,6 +95,10 @@ def stage(out: Path) -> int:
     for f in FILES:
         if (DATA / f).exists():
             shutil.copy2(DATA / f, out / 'data' / f)
+    hold = held()
+    if hold:
+        apply_hold(out, hold)
+        print('공개 보류:', ', '.join(sorted(hold)))
     stamp_assets(out)
     (out / '.nojekyll').touch()   # Jekyll 처리 없이 파일 그대로 서빙
     print('배포 데이터:', ', '.join(f'{k} {v}일' for k, v in counts.items()),

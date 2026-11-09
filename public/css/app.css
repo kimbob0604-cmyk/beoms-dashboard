@@ -659,3 +659,73 @@ footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; 
 #recent { margin-bottom: 16px; }
 
 .stale { color: var(--down); font-weight: 700; }
+
+/* ---------- 카드덱 (신고가·컨센 리비전·수급·공시·리포트) ----------
+   종목마다 카드 하나. 시장(코스피/코스닥)·종류별로 덱을 나눠 위에서 아래로 쌓는다. */
+.deck .cols { display: flex; flex-direction: column; align-items: stretch; gap: 22px; }
+.deck .col {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; align-items: start;
+  background: none; border: 0; box-shadow: none; padding: 0;
+}
+.deck .col-head { grid-column: 1 / -1; padding: 2px 2px 0; border: 0; }
+.deck .col-head h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.deck .row {
+  height: 100%; padding: 14px 16px; border: 1px solid var(--line) !important; border-radius: 14px;
+  background: var(--card); box-shadow: var(--shadow); transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+.deck .row:hover { background: var(--card); transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)) !important;
+  box-shadow: 0 2px 4px rgba(16,24,40,.05), 0 12px 28px rgba(16,24,40,.10); }
+.deck .r-top { align-items: flex-start; }
+.deck .r-name a { font-size: 16px; }
+.deck .r-growth { flex-direction: column; align-items: flex-end; gap: 0; text-align: right; }
+.deck .r-growth b { font-size: 20px; line-height: 1.2; }
+.deck .r-growth small { font-size: 11px; }
+.deck .r-line, .deck .r-sub, .deck .r-rev { font-size: 12px; }
+.deck .more, .deck .empty { grid-column: 1 / -1; width: 100%; margin: 4px 0 0; }
+.deck .col > .msg, .deck .col > p { grid-column: 1 / -1; }
+.deck #recent-title { margin-top: 30px; }
+/* 공시: 종류별 덱, 공시 한 건이 카드 하나 */
+.deck .dt-cols { columns: 1; }
+.deck .dt-cols > .dt-sec { background: none; border: 0; box-shadow: none; margin-bottom: 22px; }
+.deck .dt-cols > .dt-sec > .col-head { padding: 2px 2px 10px; }
+.deck .dt-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; align-items: start; }
+.deck .dt-items .dt-item {
+  border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--shadow); padding: 14px 16px;
+  transition: transform .12s, box-shadow .12s;
+}
+.deck .dt-items .dt-item:hover { transform: translateY(-2px); background: var(--card); box-shadow: 0 2px 4px rgba(16,24,40,.05), 0 12px 28px rgba(16,24,40,.10); }
+.deck .dt-items .dt-kv { flex-direction: column; gap: 2px; }
+
+/* 리포트 카드 */
+.rp-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; align-items: start; }
+.rp-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 16px 18px 12px; min-width: 0;
+  transition: box-shadow .12s, border-color .12s; }
+.rp-card:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: 0 2px 4px rgba(16,24,40,.05), 0 12px 28px rgba(16,24,40,.10); }
+.rp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.rp-name { display: flex; flex-direction: column; min-width: 0; }
+.rp-name > a[data-code] { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+.rp-px { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; font-size: 13px; }
+.rp-px b { font-size: 15px; }
+.rp-badges { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 4px; }
+.rp-badges .chip { font-size: 11px; }
+.rp-rep { padding: 10px 0 8px; border-top: 1px dashed var(--line); }
+.rp-rep:first-of-type { border-top: 0; }
+.rp-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px; }
+.rp-goal { margin-left: auto; white-space: nowrap; }
+.rp-goal .pill-ch { min-width: 0; padding: 1px 6px; font-size: 11px; }
+.rp-opchg { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.rp-title { display: block; margin: 4px 0 2px; font-weight: 700; font-size: 14px; line-height: 1.45; }
+.rp-heads { margin: 2px 0 4px; padding-left: 16px; font-size: 12.5px; color: var(--sub); }
+.rp-sum { font-size: 12.5px; color: var(--sub); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.rp-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 6px; }
+.rp-foot .tag { border: 0; cursor: pointer; }
+.rp-foot .tag:hover { background: var(--chip-on); color: var(--text); }
+.rp-foot .muted.small:first-of-type { margin-left: auto; }
+.rp-more { margin: 6px 0 2px !important; width: 100% !important; }
+.rp-kws { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.rp-kws .chip { border: 0; cursor: pointer; font-size: 12px; padding: 3px 10px; border-radius: 999px; }
+.rp-kws .chip.on { background: var(--text); color: var(--card); }
+.rp-kwon { border: 0; cursor: pointer; padding: 4px 10px; border-radius: 999px; background: var(--text); color: var(--card); font-size: 12px; }
+@media (max-width: 560px) {
+  .deck .col, .deck .dt-items, .rp-deck { grid-template-columns: minmax(0, 1fr); }
+}

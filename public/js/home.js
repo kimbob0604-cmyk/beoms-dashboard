@@ -298,7 +298,7 @@
       <div class="hm-rep-main">${Stock.link(r)}
         <a class="hm-rep-t" href="https://m.stock.naver.com/research/company/${r.id}" target="_blank" rel="noopener">${U.esc(r.t)}</a></div>
     </li>`);
-    return card('rep', { title: '최신 리포트', meta: '네이버 증권 종목분석 · 제목을 누르면 원문', href: 'revision.html?view=tgt&tdays=1',
+    return card('rep', { title: '최신 리포트', meta: '네이버 증권 종목분석 · 제목을 누르면 원문', href: 'report.html',
       body: `<ul class="hm-reps">${rows.slice(0, 8).join('')}</ul>` });
   }
 
