@@ -759,3 +759,15 @@ b.n.down { color: var(--down); }
 /* 요약 칸 큰 숫자 */
 .dt-kpis b, .bk b, .fl-sum b, .hm-ix-flow b { font-weight: 800; letter-spacing: -0.02em; }
 .hm-dart-line em { font-style: normal; color: var(--muted); }
+
+/* 리포트 탭: 날짜별·주간 핵심 */
+.rp-day { cursor: pointer; }
+.rp-date { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.rp-day .rp-badges { margin: 0; }
+.rp-most { margin: 8px 0 2px; }
+.rp-movers { list-style: none; margin: 6px 0 0; padding: 0; }
+.rp-movers li { display: flex; align-items: baseline; gap: 6px; padding: 5px 0; border-top: 1px dashed var(--line); font-size: 12.5px; }
+.rp-movers li a[data-code] { font-weight: 700; }
+.rp-rank { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; margin-bottom: 4px;
+  background: var(--text); color: var(--card); font-size: 12px; font-weight: 800; }
+.rp-big { font-size: 18px !important; padding: 3px 10px !important; }

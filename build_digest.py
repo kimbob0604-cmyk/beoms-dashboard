@@ -6,6 +6,10 @@
 - kws      그날 리포트들이 많이 쓴 말 (최근 90일 리포트 대비 그날 유난히 많이 나온 말 순)
 - sum      건수·종목·증권사 수, 목표가 상향·하향·유지, 의견 상향·하향, 업종 분포
 
++ data/digest_index.json   날짜별 요약 (건수·목표가 상향/하향·많이 쓴 말·목표가 변화 큰 리포트·많이 다룬 종목)
++ data/digest_weekly.json  주간 핵심: 주(월~일)마다 목표가 변경률(같은 증권사 직전 대비)이 가장 큰 리포트 상향·하향 각 10개 (종목당 한 건, 같은 방향 다른 증권사는 more).
+                           종목의 지금 컨센서스 리비전(내년 영업이익 1주·1개월)을 같이 싣는다 (과거 컨센서스 기록은 11/3부터라 순위에는 안 씀)
+
   python3 build_digest.py      # build_naver.py 뒤
 """
 
@@ -17,12 +21,15 @@ from datetime import date, datetime, timedelta
 
 import db
 import keywords as K
+from build_home import latest_json
 from build_naver import DATA, market_info, opinion, public, report_text, write_json
 
 OUT = DATA / 'digest'
 KEEP_DAYS = 30            # 화면에 둘 작성일 수
 CORPUS_DAYS = 90          # 키워드 기준이 되는 기간
 LONE_DAYS = 90
+WEEKS = 5                 # 주간 핵심을 낼 주 수
+WEEK_TOP = 10
 OP_RANK = {'매도': 0, '중립': 1, '매수': 2}
 
 
@@ -92,6 +99,49 @@ def day_keywords(docs, df, n_docs, vocab, names, top=15):
     return out
 
 
+def weekly(rows, info):
+    """주(월요일 시작)별 목표가 변경률 상위 리포트. 같은 증권사 직전 목표가가 있는 리포트만"""
+    growth = latest_json('growth') or {}
+    cns = {s['c']: ((s.get('k') or {}).get('y0') or {}).get('op') or {} for s in growth.get('stocks', [])}
+    last = date.fromisoformat(rows[-1]['date'])
+    start = last - timedelta(days=last.weekday() + 7 * (WEEKS - 1))
+    weeks = defaultdict(list)
+    for r in rows:
+        d = date.fromisoformat(r['date'])
+        if d >= start:
+            weeks[(d - timedelta(days=d.weekday())).isoformat()].append(r)
+    out = []
+    for wk in sorted(weeks, reverse=True):
+        reps = weeks[wk]
+        rated = [r for r in reps if r['goal'] and r['pg'] and r['goal'] != r['pg']]
+
+        def card(r):
+            i = info.get(r['code'], {})
+            op = cns.get(r['code'], {})
+            return {'id': r['id'], 'd': r['date'], 'c': r['code'], 'n': i.get('n') or r['name'], 'mk': i.get('mk'),
+                    'w': i.get('w'), 'mc': i.get('mc'), 'p': i.get('p'), 'ch': i.get('ch'),
+                    'b': r['broker'], 'op': opinion(r['opinion']), 'pop': r['pop'] if r['pop'] != opinion(r['opinion']) else None,
+                    'pg': r['pg'], 'g': r['goal'], 'r': round(r['goal'] / r['pg'] - 1, 4), 't': r['title'],
+                    'h': json.loads(r['heads'] or '[]')[:2], 's': summary_of(r['body'], 160), 'pdf': r['pdf'],
+                    'cw1': op.get('w1'), 'cm1': op.get('m1')}
+        def top(side, key):
+            """종목마다 변경률이 가장 큰 리포트 하나 (같은 방향 다른 리포트는 'more' 로)"""
+            best, others = {}, defaultdict(list)
+            for r in sorted((r for r in rated if side(r)), key=key):
+                if r['code'] in best:
+                    others[r['code']].append(r['broker'])
+                else:
+                    best[r['code']] = r
+            return [(r, others[r['code']]) for r in list(best.values())[:WEEK_TOP]]
+        up = top(lambda r: r['goal'] > r['pg'], lambda r: -(r['goal'] / r['pg']))
+        dn = top(lambda r: r['goal'] < r['pg'], lambda r: r['goal'] / r['pg'])
+        end = (date.fromisoformat(wk) + timedelta(days=6)).isoformat()
+        out.append({'week': wk, 'end': end, 'n': len(reps), 'rated': len(rated),
+                    'nup': sum(r['goal'] > r['pg'] for r in rated), 'ndn': sum(r['goal'] < r['pg'] for r in rated),
+                    'up': [{**card(r), 'more': m} for r, m in up], 'dn': [{**card(r), 'more': m} for r, m in dn]})
+    return out
+
+
 def build(conn):
     rows = history(conn)
     if not rows:
@@ -108,6 +158,7 @@ def build(conn):
     texts = {r['id']: report_text(r) for r in corpus}
     vocab = K.build_vocab(texts.values())
     df = K.doc_freq(K.doc_terms(t, vocab) for t in texts.values())
+    index = []
     for day in days:
         todays = [r for r in corpus if r['date'] == day]
         by_code = defaultdict(list)
@@ -145,8 +196,21 @@ def build(conn):
         }
         docs = [{'n': info.get(r['code'], {}).get('n') or r['name'], 'text': texts[r['id']]} for r in todays]
         names = {d['n'] for d in docs}
-        write_json(OUT / f'{day}.json', {'date': day, 'built': built, 'sum': summ,
-                                         'kws': day_keywords(docs, df, len(corpus), vocab, names), 'stocks': stocks})
+        kws = day_keywords(docs, df, len(corpus), vocab, names)
+        write_json(OUT / f'{day}.json', {'date': day, 'built': built, 'sum': summ, 'kws': kws, 'stocks': stocks})
+        movers, seen = [], set()   # 목표가 변화 큰 리포트, 종목당 하나
+        for s_, x in sorted(((s_, x) for s_ in stocks for x in s_['r'] if x['g'] and x['pg']),
+                            key=lambda t: -abs(t[1]['g'] / t[1]['pg'] - 1)):
+            if s_['c'] not in seen and len(movers) < 5:
+                seen.add(s_['c'])
+                movers.append((s_, x))
+        index.append({'date': day, **{k: summ[k] for k in ('n', 'stocks', 'brokers', 'up', 'dn', 'keep', 'lone')},
+                      'kws': [k['kw'] for k in kws[:6]],
+                      'movers': [{'c': s_['c'], 'n': s_['n'], 'b': x['b'], 'pg': x['pg'], 'g': x['g'],
+                                  'r': round(x['g'] / x['pg'] - 1, 4)} for s_, x in movers],
+                      'most': [{'c': s['c'], 'n': s['n'], 'k': len(s['r'])} for s in stocks[:3]]})
+    write_json(DATA / 'digest_index.json', {'built': built, 'days': index})
+    write_json(DATA / 'digest_weekly.json', {'built': built, 'weeks': weekly(rows, info)})
     (OUT / 'dates.json').write_text(json.dumps(days))
     for p in OUT.glob('20*.json'):
         if p.stem not in days:
