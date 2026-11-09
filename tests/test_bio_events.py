@@ -49,6 +49,18 @@ class TestExtractEvents(unittest.TestCase):
         self.assertTrue(ev[0]['sentence'].startswith('The Company expects'))
 
 
+class TestPressRelease(unittest.TestCase):
+    def test_title_and_highlights(self):
+        txt = ('Immunovant Provides Corporate Updates and Reports Financial Results for the Quarter Ended September 30, 2026\n'
+               'IMVT-1402 600 mg met the primary endpoint of ACR20 response at Week 28 (92.5% vs. 75.6% placebo, p=0.0139).\n'
+               'This press release contains forward-looking statements about cash of $722.3 million.\n'
+               'Roivant will host a live conference call and webcast at 8:00 a.m. ET on Monday.')
+        pr = be.press_release(txt)
+        self.assertTrue(pr['title'].startswith('Immunovant Provides'))
+        self.assertEqual(len(pr['highlights']), 1)
+        self.assertIn('92.5%', pr['highlights'][0])
+
+
 class TestTrialChanges(unittest.TestCase):
     def test_changes(self):
         old = [{'id': 'N1', 'done': '2027-06', 'status': 'RECRUITING', 'title': 't1'},

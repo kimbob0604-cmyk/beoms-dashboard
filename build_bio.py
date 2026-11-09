@@ -14,7 +14,7 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import requests
@@ -398,6 +398,47 @@ def pipeline(co, row):
     return out
 
 
+def _month_end(s: str) -> str:
+    """'2027-06' → '2027-06-30', '2027-06-15' 은 그대로."""
+    if len(s) == 10:
+        return s
+    y, m = int(s[:4]), int(s[5:7])
+    nxt = date(y + (m == 12), m % 12 + 1, 1)
+    return (nxt - timedelta(days=1)).isoformat()
+
+
+def timeline(co, row, today_iso):
+    """확정 일정(bio_assets) + 공시 자동 추출 + 실적 발표일 + 임상 1차 완료 예정일을 한 시간축에.
+    확정 일정과 같은 날짜·종류의 자동 일정이 있으면 하나로 합치고 '공시로도 확인'으로 표시한다."""
+    items = []
+    for x in co.get('catalysts', []):
+        if x['date'] >= today_iso:
+            items.append({'date': x['date'], 'kind': x.get('kind', 'milestone'), 'text': x['text'], 'src': 'bio_assets (직접 확인)', 'auto': False})
+    auto = row.get('auto') or {}
+    for x in auto.get('events', []):
+        hit = next((i for i in items if not i['auto'] and i['date'] == x['date'] and (i['kind'] == x['kind'] or i['kind'] == 'milestone')), None)
+        if hit:
+            hit['confirmed_by'] = {'src': x['src'], 'url': x.get('url'), 'sentence': x.get('sentence')}
+            continue
+        items.append({'date': x['date'], 'kind': x['kind'], 'text': f"{x['date_text']}: {x.get('sentence', '')[:160]}", 'src': x['src'], 'url': x.get('url'), 'auto': True})
+    e = auto.get('earnings')
+    if e and e['date'] >= today_iso and not any(i['date'] == e['date'] and i['kind'] == 'earnings' for i in items):
+        items.append({'date': e['date'], 'kind': 'earnings', 'text': '실적 발표', 'src': e['src'], 'auto': True})
+    seen = set()
+    for r in row.get('pipeline', []):
+        for t in r.get('trials', []):
+            if not t.get('done') or t['id'] in seen:
+                continue
+            d = _month_end(t['done'])
+            if d < today_iso:
+                continue
+            seen.add(t['id'])
+            items.append({'date': d, 'kind': 'trial', 'text': f"{t['id']} 1차 완료 예정 ({r['drug']} · {r['indication']})", 'src': 'ClinicalTrials.gov (예정일은 바뀔 수 있음)',
+                          'url': f"https://clinicaltrials.gov/study/{t['id']}", 'auto': True})
+    items.sort(key=lambda i: (i['date'], i['auto']))
+    return items
+
+
 def card(co, row, today_iso):
     """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
     auto = row.get('auto') or {}
@@ -492,7 +533,9 @@ def build():
         if co.get('cik'):
             try:
                 auto['filings'] = be.recent_filings(co['cik'], days=60)
-                auto['events'] = be.company_filing_events(co['cik'], cache, filings=be.recent_filings(co['cik']))
+                fl_all = be.recent_filings(co['cik'])
+                auto['events'] = be.company_filing_events(co['cik'], cache, filings=fl_all)
+                auto['ir'] = be.company_ir(co['cik'], cache, [f for f in fl_all if f['form'] in ('8-K', '6-K')])[:6]
             except Exception as e:
                 print(f'  SEC 공시 실패: {e}', file=sys.stderr)
                 auto['filings'] = (old.get('auto') or {}).get('filings', [])
@@ -544,6 +587,7 @@ def build():
             row['card'] = card(co, row, date.today().isoformat())
             row['checks'] = checks(row, fin)
             row['pipeline'] = pipeline(co, row)
+            row['timeline'] = timeline(co, row, date.today().isoformat())
             try:
                 cons = fetch_consensus(t)
             except Exception as e:

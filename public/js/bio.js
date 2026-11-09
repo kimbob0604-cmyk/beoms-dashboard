@@ -64,13 +64,11 @@
     const earn = a.earnings && a.earnings.date >= t ? a.earnings : null;
     const fl = a.filings || [];
     const tc = a.trial_changes || [];
-    return `<div class="bio-sub">자동 수집 <span class="muted small">검토 필요 · 가치 계산에는 넣지 않음</span></div>
+    return `<div class="bio-sub">자동 수집: 임상 시험 변경 <span class="muted small">직전 수집과 비교 · 가치 계산에는 넣지 않음</span></div>
       ${a.archive_ok ? '' : '<div class="bio-warn">공시 원문에서 날짜를 뽑는 기능이 꺼져 있습니다. SEC는 원문 접근에 이름·이메일이 담긴 User-Agent를 요구해서, .env에 SEC_USER_AGENT를 넣어야 켜집니다. 지금은 공시 목록, 실적 발표일, 임상 시험 변경만 자동입니다.</div>'}
       <ul class="bio-list">
-        ${earn ? `<li><span class="d">${earn.date}</span><span class="bio-tag">실적</span> 다음 실적 발표 ${dday(earn.date)} · 컨센서스 매출 ${usd(earn.rev_avg)}, EPS ${earn.eps_avg != null ? '$' + earn.eps_avg.toFixed(2) : '–'} <span class="muted">${esc(earn.src)}</span></li>` : ''}
-        ${ev.map(e => `<li><span class="d">${e.date}</span><span class="bio-tag">${KIND_KO[e.kind] || e.kind}</span>${newTag(e)} <b>${esc(e.date_text)}</b> · ${esc(e.sentence)} <a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.src)}</a></li>`).join('')}
         ${tc.map(x => `<li><span class="bio-tag">임상</span> <a href="https://clinicaltrials.gov/study/${x.id}" target="_blank" rel="noopener">${x.id}</a> ${esc(x.change)} ${x.before || ''} → ${x.after || ''} <span class="muted">${esc(x.title.slice(0, 60))}</span></li>`).join('')}
-        ${!earn && !ev.length && !tc.length ? '<li class="muted">새로 찾은 일정 없음</li>' : ''}
+        ${!tc.length ? '<li class="muted">임상 시험 변경 없음 (일정은 위 타임라인)</li>' : ''}
       </ul>
       <div class="bio-sub">최근 60일 SEC 공시</div><ul class="bio-list">
         ${fl.length ? fl.map(f => `<li><span class="d">${f.filed}</span><b>${f.form}</b>${newTag(f)} ${esc(f.labels.join(' · '))} <a href="${esc(f.url)}" target="_blank" rel="noopener">원문</a></li>`).join('') : '<li class="muted">없음</li>'}</ul>`;
@@ -242,6 +240,51 @@
       <p class="bio-pad muted small">누적 PoS는 모델에 넣은 자산만 계산합니다(단계별 PoS의 곱, 가정치). '미반영'은 가치 계산에 넣지 않은 프로그램입니다. 시험은 ClinicalTrials.gov에서 약물 이름과 적응증이 둘 다 맞는 진행 중 2·3상만 붙였습니다.</p>`;
   }
 
+  const LANES = [['regulatory', '허가·규제'], ['readout', '임상 결과'], ['earnings', '실적'], ['milestone', '개발 단계'], ['trial', '임상 완료 예정']];
+
+  function timelineHtml(c) {
+    const T = c.timeline || [];
+    if (!T.length) return '';
+    const t0 = today(), months = 27;
+    const t1 = new Date(t0); t1.setMonth(t1.getMonth() + months);
+    const W = 760, lane = 26, pl = 92, pr = 12, pt = 18;
+    const H = pt + LANES.length * lane + 22;
+    const X = ds => { const d = new Date(ds + 'T00:00:00'); return pl + Math.min(1, Math.max(0, (d - t0) / (t1 - t0))) * (W - pl - pr); };
+    const ticks = [];
+    for (let m = 0; m <= months; m += 3) { const d = new Date(t0.getFullYear(), t0.getMonth() + m, 1); if (d >= t0) ticks.push(d); }
+    const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const inRange = T.filter(i => new Date(i.date + 'T00:00:00') <= t1);
+    const marks = inRange.map(i => {
+      const li = Math.max(0, LANES.findIndex(l => l[0] === i.kind));
+      const x = X(i.date), y = pt + li * lane + lane / 2;
+      const tip = `${i.date} · ${i.text}${i.auto ? ' (자동)' : ''}`;
+      return i.auto
+        ? `<circle cx="${x}" cy="${y}" r="5" class="tl-auto"><title>${esc(tip)}</title></circle>`
+        : `<path d="M${x},${y - 7}L${x + 7},${y}L${x},${y + 7}L${x - 7},${y}Z" class="tl-conf${i.confirmed_by ? ' both' : ''}"><title>${esc(tip)}</title></path>`;
+    }).join('');
+    const later = T.length - inRange.length;
+    return `<div class="bio-sub">일정 타임라인 <span class="muted small">앞으로 ${months}개월 · 마름모 = 직접 확인한 일정(테두리 = 공시로도 확인), 동그라미 = 자동 수집(검토 필요)</span></div>
+      <div class="bio-pad"><svg class="bio-tl" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(c.ticker)} 일정 타임라인">
+        ${LANES.map(([, l], i) => `<text x="${pl - 8}" y="${pt + i * lane + lane / 2 + 4}" text-anchor="end">${l}</text><line x1="${pl}" x2="${W - pr}" y1="${pt + i * lane + lane / 2}" y2="${pt + i * lane + lane / 2}" class="lane"/>`).join('')}
+        ${ticks.map(d => `<line x1="${X(iso(d))}" x2="${X(iso(d))}" y1="${pt - 4}" y2="${H - 18}" class="tick"/><text x="${X(iso(d))}" y="${H - 4}" text-anchor="middle">${String(d.getFullYear()).slice(2)}.${d.getMonth() + 1}</text>`).join('')}
+        <line x1="${pl}" x2="${pl}" y1="${pt - 8}" y2="${H - 18}" class="now"/><text x="${pl + 3}" y="${pt - 8}" class="nowt">오늘</text>
+        ${marks}
+      </svg></div>
+      <ul class="bio-list">${T.map(i => `<li><span class="d">${i.date}</span><span class="bio-tag">${(LANES.find(l => l[0] === i.kind) || [, i.kind])[1]}</span>
+        ${i.auto ? '<span class="bio-tag">자동·검토 필요</span>' : (i.confirmed_by ? '<span class="bio-tag go">공시로도 확인</span>' : '')}
+        ${esc(i.text)} ${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.src)}</a>` : `<span class="muted">${esc(i.src)}</span>`}
+        ${i.confirmed_by ? `<small class="muted">공시 문장: ${esc((i.confirmed_by.sentence || '').slice(0, 180))} <a href="${esc(i.confirmed_by.url || '')}" target="_blank" rel="noopener">${esc(i.confirmed_by.src)}</a></small>` : ''}</li>`).join('')}</ul>
+      ${later ? `<p class="bio-pad muted small">${later}건은 ${months}개월 뒤라 시간축에서는 빠지고 목록에만 있습니다.</p>` : ''}`;
+  }
+
+  function irHtml(c) {
+    const ir = (c.auto && c.auto.ir) || [];
+    if (!ir.length) return '';
+    return `<div class="bio-sub">IR 보도자료 <span class="muted small">최근 8-K 별첨 원문에서 제목과 숫자·일정이 든 문장을 그대로 뽑음 (번역·요약 없음)</span></div>
+      <ul class="bio-list">${ir.map(r => `<li><span class="d">${r.filed}</span><b>${esc(r.title || '(제목 못 찾음)')}</b> <a href="${esc(r.url)}" target="_blank" rel="noopener">원문</a>
+        ${r.highlights.length ? `<details><summary class="muted small">핵심 문장 ${r.highlights.length}개</summary><ul class="ir-hl">${r.highlights.map(h => `<li>${esc(h)}</li>`).join('')}</ul></details>` : ''}</li>`).join('')}</ul>`;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -367,6 +410,8 @@
       h += assetsHtml(c) + commHtml(c);
     }
     h += trialsHtml(c);
+    h += timelineHtml(c);
+    h += irHtml(c);
     h += autoHtml(c);
     h += `<div class="bio-grid"><div><div class="bio-sub">확인한 사실 (원문 확인 여부 표시)</div><ul class="bio-list">
         ${c.facts.length ? c.facts.map(f => `<li><span class="d">${esc(f.date)}</span><span class="bio-tag ${f.verified ? 'go' : 'stop'}">${f.verified ? '원문 확인' : '원문 미확인'}</span> ${esc(f.text)} ${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src || '출처')}</a>` : `<span class="muted">${esc(f.src || '')}</span>`}</li>`).join('') : '<li class="muted">없음</li>'}</ul></div>

@@ -121,6 +121,32 @@ def sentences(text: str):
                 yield s
 
 
+HILITE = re.compile(r'\$\s?\d|\d+(?:\.\d+)?\s?%|PDUFA|top[- ]?line|approv|guidance|cash (?:and|position|runway)|'
+                    r'primary endpoint|met |did not|discontinu|initiat|enroll', re.I)
+
+
+def press_release(text: str, max_lines: int = 6) -> dict:
+    """보도자료 텍스트 → 제목(첫 'Announces/Reports/Provides…' 문장)과 숫자·일정이 든 핵심 문장 몇 개."""
+    title = None
+    for line in text.split('\n')[:60]:
+        line = line.strip()
+        if 20 <= len(line) <= 220 and re.search(r'\b(Announces?|Reports?|Provides?|Presents?|Receives?|Completes?|Enters?)\b', line):
+            title = line
+            break
+    out, seen = [], set()
+    for s in sentences(text):
+        if len(s) > 320 or not HILITE.search(s) or re.search(r'forward-looking|Securities Litigation|undue reliance|risk factors', s, re.I):
+            continue
+        k = s[:60]
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(s)
+        if len(out) >= max_lines:
+            break
+    return {'title': title, 'highlights': out}
+
+
 def extract_events(text: str, today: date | None = None) -> list:
     """원문 텍스트에서 '키워드 + 미래 날짜'가 함께 있는 문장을 일정 후보로 뽑는다."""
     today = today or date.today()
@@ -172,7 +198,7 @@ def company_filing_events(cik: int, cache: dict, today: date | None = None, fili
     docs = [(f['acc'], f['filed'], f['form'], f['primary']) for f in filings]
     events = []
     for acc, filed, form, primary in docs[:MAX_DOCS_PER_COMPANY]:
-        key = f'v5:{cik}:{acc}'   # v5: 별첨 이름 규칙·문단 분리·날짜 상한 수정 뒤 다시 읽기
+        key = f'v6:{cik}:{acc}'   # v6: 보도자료 제목·핵심 문장 추가
         if key not in cache:
             base = f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc.replace("-", "")}'
             urls = [f'{base}/{primary}']
@@ -182,7 +208,7 @@ def company_filing_events(cik: int, cache: dict, today: date | None = None, fili
                     urls += [f'{base}/{x["name"]}' for x in idx if re.search(r'ex(?:hibit)?[-_]?99', x['name'], re.I) and x['name'].endswith('.htm')]
                 except (requests.RequestException, ValueError, KeyError):
                     pass
-            found, failed = [], 0
+            found, failed, pr = [], 0, None
             for u in urls:
                 try:
                     txt = html_to_text(sec_get(u).text)
@@ -192,10 +218,12 @@ def company_filing_events(cik: int, cache: dict, today: date | None = None, fili
                     continue
                 for e in extract_events(txt, today=date(2000, 1, 1)):   # 캐시에는 과거 것까지 두고, 쓸 때 거른다
                     found.append({**e, 'url': u})
+                if re.search(r'ex(?:hibit)?[-_]?99', u, re.I) and pr is None:   # 첫 보도자료 별첨
+                    pr = {**press_release(txt), 'url': u}
             if failed:   # 하나라도 못 읽었으면 캐시에 남기지 않고 다음 실행에서 다시 읽는다
                 events += [{**e, 'filed': filed, 'form': form, 'src': f'SEC {form} ({filed})'} for e in found if e['date'] >= today.isoformat()]
                 continue
-            cache[key] = {'filed': filed, 'form': form, 'events': found}
+            cache[key] = {'filed': filed, 'form': form, 'events': found, 'pr': pr}
         for e in cache[key]['events']:
             if e['date'] >= today.isoformat():
                 events.append({**e, 'filed': cache[key]['filed'], 'form': cache[key]['form'], 'src': f'SEC {cache[key]["form"]} ({cache[key]["filed"]})'})
@@ -215,6 +243,16 @@ def company_filing_events(cik: int, cache: dict, today: date | None = None, fili
         uniq.append(e)
     uniq.sort(key=lambda e: e['date'])
     return uniq
+
+
+def company_ir(cik: int, cache: dict, filings: list) -> list:
+    """최근 8-K 보도자료: 제목과 핵심 문장 (company_filing_events 가 캐시에 남긴 것)."""
+    out = []
+    for f in filings:
+        c = cache.get(f'v6:{cik}:{f["acc"]}')
+        if c and c.get('pr') and (c['pr'].get('title') or c['pr'].get('highlights')):
+            out.append({'filed': f['filed'], 'form': f['form'], 'labels': f['labels'], **c['pr']})
+    return out
 
 
 def earnings_event(ticker: str):
@@ -274,7 +312,7 @@ def market_screen(cache: dict, days: int = 14, limit: int = 40, today: date | No
             hits.append({'kind': kind, 'adsh': adsh, 'file': fname, 'cik': cik, 'name': name, 'filed': src.get('file_date')})
     out, seen = [], set()
     for h in hits:
-        key = f'v5:{h["cik"]}:{h["adsh"]}:{h["file"]}'
+        key = f'v6:{h["cik"]}:{h["adsh"]}:{h["file"]}'
         if key in seen:
             continue
         seen.add(key)
