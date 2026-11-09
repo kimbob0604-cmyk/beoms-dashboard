@@ -120,14 +120,16 @@ def fetch_trials(spons: str):
     return out
 
 
-def scale_stages(stages, k):
-    return [{'t': s['t'], 'pos': min(0.99, s['pos'] * k), 'x': s['x'], 'name': s.get('name', '')} for s in stages]
+def scale_stages(stages, k, force=None):
+    """force 가 있으면 모든 단계의 PoS 를 그 값으로(성공 1.0, 실패 0.0). 아니면 k 배(최대 0.99)."""
+    return [{'t': s['t'], 'pos': force if force is not None else min(0.99, s['pos'] * k), 'x': s['x'], 'name': s.get('name', '')}
+            for s in stages]
 
 
 def value_asset(a, g, rf, scen):
     peak = a['peak_musd'] * scen['peak_mult']
     v0 = bv.launch_value(peak, a['margin'], g['tax'], g['wacc'], a['launch_in'], a['ramp_years'], a['exclusivity_years'])
-    stages = scale_stages(a['stages'], scen['pos_mult'])
+    stages = scale_stages(a['stages'], scen['pos_mult'], scen.get('pos_force'))
     tree, steps = bv.rnpv_tree(v0, rf, stages)
     rov = bv.option_value(v0, g['sigma'], rf, stages)
     forced = bv.rnpv_forced(v0, rf, stages)
@@ -151,7 +153,7 @@ def value_company(co, mk, g, rf, scen):
     if c:
         growth = [x * scen['growth_mult'] for x in c['growth']]
         comm_pv, rows = bv.dcf_commercial(c['run_rate_musd'], growth, c['margin_now'], c['margin_target'], c['margin_years'],
-                                          g['tax'], g['wacc'], c['loe_year_index'], c['erosion'])
+                                          g['tax'], g['wacc'], c['loe_year_index'], c['erosion'], years=c.get('years', 15))
         comm = {'name': c['name'], 'run_rate': c['run_rate_musd'], 'run_rate_note': c.get('run_rate_note', ''),
                 'pv': comm_pv, 'rows': rows, 'assumptions': c.get('assumptions', '')}
     ov = co.get('overrides', {})
@@ -170,6 +172,47 @@ def value_company(co, mk, g, rf, scen):
     return {'assets': assets, 'commercial': comm, 'equity': equity, 'per_share': per_share,
             'upside': (per_share / mk['price'] - 1) if per_share is not None and mk['price'] else None,
             'bridge': {'assets': total_assets, 'commercial': comm_pv, 'cash': cash, 'debt': debt, 'other': other, 'burn': burn}}
+
+
+BASE = {'pos_mult': 1.0, 'peak_mult': 1.0, 'growth_mult': 1.0}
+
+
+def payoffs(co, mk, g, rf, scenarios, base_ps):
+    """업사이드 사다리: 실패 / 기본(확률가중) / 성공 / 낙관 성공, 시장 내재 성공확률, 시장이 요구하는 규모 배수."""
+    price = mk['price']
+    if not mk.get('shares'):
+        return None
+    ok = {**BASE, 'pos_force': 1.0}
+    success = value_company(co, mk, g, rf, ok)
+    bull = scenarios['bull']
+    bull_ok = value_company(co, mk, g, rf, {**bull, 'pos_force': 1.0})
+    b = success['bridge']
+    # 실패: 임상 자산 가치 0. 임상 회사는 첫 발표 때까지만 현금을 쓰고 멈춘다고 본다.
+    fail_burn = 0.0
+    if co['kind'] == 'pipeline' and co.get('assets'):
+        ov = co.get('overrides', {})
+        annual = ov.get('annual_burn_musd')
+        if annual is None and mk.get('op_cf') is not None:
+            annual = max(0.0, -mk['op_cf'])
+        first_t = min(s['t'] for a in co['assets'] for s in a['stages'])
+        fail_burn = (annual or 0.0) * first_t
+    fail_eq = b['commercial'] + b['cash'] - b['debt'] - b['other'] - fail_burn
+    fail_ps = fail_eq / mk['shares']
+    p_imp = None
+    if success['per_share'] is not None and success['per_share'] > fail_ps:
+        p_imp = (price - fail_ps) / (success['per_share'] - fail_ps)
+
+    def at(k):
+        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': k, 'growth_mult': k})['per_share']
+    scale = None
+    lo, hi = 0.2, 12.0
+    if at(lo) <= price <= at(hi):
+        for _ in range(50):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if at(mid) < price else (lo, mid)
+        scale = (lo + hi) / 2
+    return {'fail': fail_ps, 'base': base_ps, 'success': success['per_share'], 'bull_success': bull_ok['per_share'],
+            'implied_p': p_imp, 'implied_scale': scale}
 
 
 def implied_pos_scale(co, mk, g, rf):
@@ -242,6 +285,7 @@ def build():
                 v = value_company(co, mk, g, rf, sc)
                 row['scenarios'][key] = {'label': sc['label'], 'per_share': v['per_share'], 'upside': v['upside'], 'equity': v['equity']}
             row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf)
+            row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
             if co.get('overrides'):
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)

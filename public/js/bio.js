@@ -21,23 +21,54 @@
 
   function renderOverview() {
     const row = c => {
-      const m = c.market, v = c.valuation, n = nextCat(c), cap = m.mcap_used || m.mcap;
-      const sc = c.scenarios;
+      const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
+      const pipe = v && v.assets.length > 0;
+      const up = x => x == null ? '–' : `<span class="${U.cls(x / m.price - 1)}">${pc(x / m.price - 1)}</span>`;
+      const top = p ? (pipe ? p.bull_success : c.scenarios.bull.per_share) : null;
       return `<tr data-c="${c.ticker}" class="${c.ticker === st.c ? 'on' : ''}">
         <td><b>${esc(c.ticker)}</b><small>${esc(c.name)}</small></td>
         <td class="num">${px(m.price)}<small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></td>
         <td class="num" title="${m.mcap_used ? '주당 가치와 같은 주식 수(희석 기준)로 계산' : 'yfinance 시총'}">${usd(cap)}</td>
-        <td>${KIND[c.kind]}</td>
-        <td class="num">${v ? px(v.per_share) : '–'}</td>
-        <td class="num ${v ? U.cls(v.upside) : ''}">${v ? pc(v.upside) : '–'}</td>
-        <td class="num">${sc ? `${px(sc.bear.per_share)} ~ ${px(sc.bull.per_share)}` : '–'}</td>
+        <td class="num">${pipe ? px(p.fail) : '–'}</td>
+        <td class="num"><b>${v ? px(v.per_share) : '–'}</b><small>${v ? up(v.per_share) : ''}</small></td>
+        <td class="num">${pipe ? px(p.success) : '–'}<small>${pipe ? up(p.success) : ''}</small></td>
+        <td class="num">${top != null ? px(top) : '–'}<small>${top != null ? up(top) : ''}</small></td>
+        <td class="num">${p && p.implied_scale != null ? `${p.implied_scale.toFixed(1)}배` : '–'}</td>
         <td>${n ? `${esc(n.text)}<small>${n.date} · ${dday(n.date)}</small>` : '<span class="muted">–</span>'}</td></tr>`;
     };
     $('overview').innerHTML = `<div class="col-head"><h3>${data.companies.length}종목 한눈에 <span class="muted">기준 시세 ${esc(data.companies[0].market.asof)}</span></h3>
-        <span class="muted small">가치는 가정치로 계산한 참고값 · 무위험이자율 ${(data.rf * 100).toFixed(2)}%${data.rf_stale ? ' (대체값)' : ''}</span></div>
-      <div class="tbl-wrap"><table class="tbl bio-ov"><thead><tr><th>종목</th><th class="num">주가</th><th class="num">시총</th><th>방법</th>
-        <th class="num">기본 가치/주</th><th class="num">대비</th><th class="num">보수 ~ 낙관</th><th>다음 일정</th></tr></thead>
-        <tbody>${data.companies.map(row).join('')}</tbody></table></div>`;
+        <span class="muted small">주당 가치는 가정치로 계산한 참고값 · 무위험이자율 ${(data.rf * 100).toFixed(2)}%${data.rf_stale ? ' (대체값)' : ''}</span></div>
+      <div class="tbl-wrap"><table class="tbl bio-ov"><thead><tr><th>종목</th><th class="num">주가</th><th class="num">시총</th>
+        <th class="num" title="임상 자산 가치 0, 첫 발표 때까지만 현금을 쓰고 멈춘다고 봄">실패 시</th>
+        <th class="num" title="단계별 PoS를 반영한 확률가중 값 (rNPV)">기본 (확률가중)</th>
+        <th class="num" title="모든 단계가 성공하는 경우, 피크매출은 가정치 그대로">성공 시</th>
+        <th class="num" title="성공 + 피크매출·성장 ×1.4~1.3">낙관 성공</th>
+        <th class="num" title="피크매출·성장을 가정치의 몇 배로 키워야 현재 주가가 설명되는가">필요 규모</th><th>다음 일정</th></tr></thead>
+        <tbody>${data.companies.map(row).join('')}</tbody></table></div>
+      <p class="bio-pad muted small">작은 글씨는 현재 주가 대비 %. 임상 자산이 없는 종목(LQDA)은 성공·실패가 없어 낙관 시나리오만 보여줍니다. 필요 규모가 1배보다 크면 시장이 내 가정보다 큰 시장을 가격에 넣고 있다는 뜻입니다.</p>`;
+  }
+
+  function ladderHtml(c) {
+    const p = c.payoffs, v = c.valuation, price = c.market.price;
+    if (!p) return '';
+    const pipe = v.assets.length > 0;
+    const pts = pipe
+      ? [['실패', p.fail], ['기본', p.base], ['성공', p.success], ['낙관 성공', p.bull_success]]
+      : [['보수', c.scenarios.bear.per_share], ['기본', c.scenarios.base.per_share], ['낙관', c.scenarios.bull.per_share]];
+    const max = Math.max(price, ...pts.map(x => x[1])) * 1.1;
+    const pos = x => `${Math.max(1, Math.min(99, x / max * 100)).toFixed(1)}%`;
+    const marks = pts.map(([l, x], i) => `<div class="lad-m ${i % 2 ? 'lo' : 'hi'}" style="left:${pos(x)}"><span>${l}<b>${px(x)}</b><i class="${U.cls(x / price - 1)}">${pc(x / price - 1)}</i></span></div>`).join('');
+    const verdict = p.implied_scale != null
+      ? `현재가 ${px(price)}를 설명하려면 피크매출·성장을 가정치의 <b>${p.implied_scale.toFixed(1)}배</b>로 키워야 합니다.`
+      : '현재가가 모델이 닿는 범위 밖입니다.';
+    const prob = pipe && p.implied_p != null
+      ? (p.implied_p <= 1 ? ` 가정한 성공 가치 기준으로 시장은 성공 확률을 <b>${(p.implied_p * 100).toFixed(0)}%</b>로 보고 있습니다.`
+        : ' 현재가가 가정한 성공 가치보다 높아, 가정한 시장 규모로는 성공해도 현재가가 정당화되지 않습니다.') : '';
+    return `<div class="bio-sub">업사이드 사다리 <span class="muted small">현재가 대비 %는 각 점 옆에 표시</span></div>
+      <div class="bio-pad"><div class="ladder" role="img" aria-label="실패, 기본, 성공, 낙관 성공 가치와 현재가 비교">
+        <div class="lad-line"></div>${marks}
+        <div class="lad-px" style="left:${pos(price)}"><span>현재가 ${px(price)}</span></div></div>
+        <p>${verdict}${prob}</p></div>`;
   }
 
   function bridgeHtml(c) {
@@ -99,6 +130,7 @@
     if (c.kind === 'excluded') {
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
+      h += ladderHtml(c);
       h += `<div class="bio-grid"><div>${bridgeHtml(c)}</div><div class="bio-pad">
         <p><b>시나리오</b> (보수: PoS ×0.8·피크 ×0.6·성장 ×0.6, 낙관: PoS ×1.1·피크 ×1.4·성장 ×1.3)</p>
         <p>${Object.values(c.scenarios).map(s => `${esc(s.label)} <b>${px(s.per_share)}</b> <span class="${U.cls(s.upside)}">${pc(s.upside)}</span>`).join(' · ')}</p>
