@@ -33,7 +33,7 @@
         <td class="num"><b>${v ? px(v.per_share) : '–'}</b><small>${v ? up(v.per_share) : ''}</small></td>
         <td class="num">${pipe ? px(p.success) : '–'}<small>${pipe ? up(p.success) : ''}</small></td>
         <td class="num">${top != null ? px(top) : '–'}<small>${top != null ? up(top) : ''}</small></td>
-        <td class="num">${p && p.implied_scale != null ? `${p.implied_scale.toFixed(1)}배` : '–'}</td>
+        <td class="num">${p && p.required_revenue != null ? usd(p.required_revenue) : '–'}<small>가정 ${p ? usd(p.modeled_revenue) : '–'}</small></td>
         <td>${n ? `${esc(n.text)}<small>${n.date} · ${dday(n.date)}</small>` : '<span class="muted">–</span>'}</td></tr>`;
     };
     $('overview').innerHTML = `<div class="col-head"><h3>${data.companies.length}종목 한눈에 <span class="muted">기준 시세 ${esc(data.companies[0].market.asof)}</span></h3>
@@ -43,9 +43,9 @@
         <th class="num" title="단계별 PoS를 반영한 확률가중 값 (rNPV)">기본 (확률가중)</th>
         <th class="num" title="모든 단계가 성공하는 경우, 피크매출은 가정치 그대로">성공 시</th>
         <th class="num" title="성공 + 피크매출·성장 ×1.4~1.3">낙관 성공</th>
-        <th class="num" title="피크매출·성장을 가정치의 몇 배로 키워야 현재 주가가 설명되는가">필요 규모</th><th>다음 일정</th></tr></thead>
+        <th class="num" title="현재 주가를 설명하려면 필요한 매출 규모(피크매출 합 + 연환산 매출), 작은 글씨는 이 모델이 가정한 값">필요 매출</th><th>다음 일정</th></tr></thead>
         <tbody>${data.companies.map(row).join('')}</tbody></table></div>
-      <p class="bio-pad muted small">작은 글씨는 현재 주가 대비 %. 임상 자산이 없는 종목(LQDA)은 성공·실패가 없어 낙관 시나리오만 보여줍니다. 필요 규모가 1배보다 크면 시장이 내 가정보다 큰 시장을 가격에 넣고 있다는 뜻입니다.</p>`;
+      <p class="bio-pad muted small">작은 글씨는 현재 주가 대비 %. 임상 자산이 없는 종목(LQDA)은 성공·실패가 없어 낙관 시나리오만 보여줍니다. 필요 매출이 가정 매출보다 크면 시장이 내 가정보다 큰 시장을 가격에 넣고 있다는 뜻입니다.</p>`;
   }
 
   function ladderHtml(c) {
@@ -59,7 +59,7 @@
     const pos = x => `${Math.max(1, Math.min(99, x / max * 100)).toFixed(1)}%`;
     const marks = pts.map(([l, x], i) => `<div class="lad-m ${i % 2 ? 'lo' : 'hi'}" style="left:${pos(x)}"><span>${l}<b>${px(x)}</b><i class="${U.cls(x / price - 1)}">${pc(x / price - 1)}</i></span></div>`).join('');
     const verdict = p.implied_scale != null
-      ? `현재가 ${px(price)}를 설명하려면 피크매출·성장을 가정치의 <b>${p.implied_scale.toFixed(1)}배</b>로 키워야 합니다.`
+      ? `현재가 ${px(price)}를 설명하려면 매출 규모(피크매출 합·연환산 매출)가 <b>${usd(p.required_revenue)}</b>여야 합니다. 이 모델의 가정은 ${usd(p.modeled_revenue)}입니다.`
       : '현재가가 모델이 닿는 범위 밖입니다.';
     const prob = pipe && p.implied_p != null
       ? (p.implied_p <= 1 ? ` 가정한 성공 가치 기준으로 시장은 성공 확률을 <b>${(p.implied_p * 100).toFixed(0)}%</b>로 보고 있습니다.`
@@ -91,7 +91,7 @@
     if (!v.assets.length) return '';
     return `<div class="bio-sub">임상 자산 (방법: PoS는 노드에, V는 WACC로 한 번, 트리 안 할인은 Rf)</div>
       <div class="tbl-wrap"><table class="tbl"><thead><tr><th>자산</th><th class="num">출시 가치 V0</th><th class="num">rNPV</th><th class="num">옵션(ROV)</th><th class="num">진행 강제</th></tr></thead><tbody>
-      ${v.assets.map(a => `<tr><td><b>${esc(a.name)}</b><small>${esc(a.indication)} · ${esc(a.stage)} · 피크매출 가정 ${usd(a.peak)}</small></td>
+      ${v.assets.map(a => `<tr><td><b>${esc(a.name)}</b><small>${esc(a.indication)} · ${esc(a.stage)} · 피크매출 가정 ${usd(a.peak)}</small>${a.basis ? `<small>산출: ${esc(a.basis)}</small>` : ''}</td>
         <td class="num">${usd(a.v0)}</td><td class="num"><b>${usd(a.rnpv)}</b></td><td class="num">${usd(a.rov)}</td><td class="num">${usd(a.forced)}</td></tr>
         ${a.steps.map(s => `<tr><td colspan="5" class="muted small" style="padding-left:34px">${esc(s.name)} · PoS ${(s.pos * 100).toFixed(0)}% · 다음 단계 비용 ${usd(s.x)} ·
           <span class="bio-tag ${s.go ? 'go' : 'stop'}">${s.go ? '진행' : '포기'}</span>

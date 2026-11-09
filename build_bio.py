@@ -145,16 +145,16 @@ def value_company(co, mk, g, rf, scen):
     for a in co.get('assets', []):
         v = value_asset(a, g, rf, scen)
         assets.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'stage': a['stage'],
-                       'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'],
+                       'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'], 'basis': a.get('basis', ''),
                        'assumptions': a.get('assumptions', ''), **v})
         total_assets += v['value']
     comm, comm_pv = None, 0.0
     c = co.get('commercial')
     if c:
         growth = [x * scen['growth_mult'] for x in c['growth']]
-        comm_pv, rows = bv.dcf_commercial(c['run_rate_musd'], growth, c['margin_now'], c['margin_target'], c['margin_years'],
+        comm_pv, rows = bv.dcf_commercial(c['run_rate_musd'] * scen.get('rev_mult', 1.0), growth, c['margin_now'], c['margin_target'], c['margin_years'],
                                           g['tax'], g['wacc'], c['loe_year_index'], c['erosion'], years=c.get('years', 15))
-        comm = {'name': c['name'], 'run_rate': c['run_rate_musd'], 'run_rate_note': c.get('run_rate_note', ''),
+        comm = {'name': c['name'], 'run_rate': c['run_rate_musd'] * scen.get('rev_mult', 1.0), 'run_rate_note': c.get('run_rate_note', ''),
                 'pv': comm_pv, 'rows': rows, 'assumptions': c.get('assumptions', '')}
     ov = co.get('overrides', {})
     cash = ov.get('cash_musd', mk['cash'] or 0.0)
@@ -162,7 +162,7 @@ def value_company(co, mk, g, rf, scen):
     other = ov.get('other_liab_musd', 0.0)
     burn = 0.0
     if co['kind'] == 'pipeline' and co.get('assets'):
-        years = min(MAX_BURN_YEARS, max(a['launch_in'] for a in co['assets']))
+        years = min(MAX_BURN_YEARS, min(a['launch_in'] for a in co['assets']))   # 첫 출시 이후엔 매출이 비용을 댄다(회사: 현금은 GD 출시 가능 시점까지)
         annual = ov.get('annual_burn_musd')
         if annual is None and mk.get('op_cf') is not None:
             annual = max(0.0, -mk['op_cf'])
@@ -203,7 +203,7 @@ def payoffs(co, mk, g, rf, scenarios, base_ps):
         p_imp = (price - fail_ps) / (success['per_share'] - fail_ps)
 
     def at(k):
-        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': k, 'growth_mult': k})['per_share']
+        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': k, 'growth_mult': 1.0, 'rev_mult': k})['per_share']
     scale = None
     lo, hi = 0.2, 12.0
     if at(lo) <= price <= at(hi):
@@ -211,7 +211,9 @@ def payoffs(co, mk, g, rf, scenarios, base_ps):
             mid = (lo + hi) / 2
             lo, hi = (mid, hi) if at(mid) < price else (lo, mid)
         scale = (lo + hi) / 2
-    return {'fail': fail_ps, 'base': base_ps, 'success': success['per_share'], 'bull_success': bull_ok['per_share'],
+    modeled = sum(a['peak_musd'] for a in co.get('assets', [])) + (co['commercial']['run_rate_musd'] if co.get('commercial') else 0.0)
+    return {'modeled_revenue': modeled, 'required_revenue': modeled * scale if scale is not None else None,
+            'fail': fail_ps, 'base': base_ps, 'success': success['per_share'], 'bull_success': bull_ok['per_share'],
             'implied_p': p_imp, 'implied_scale': scale}
 
 
