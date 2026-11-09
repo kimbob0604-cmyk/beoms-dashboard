@@ -1,0 +1,412 @@
+{
+  "as_of": "2026-11-09",
+  "note": "가정치(assumption)는 직접 고치는 값입니다. 사실(facts)과 재무 수치에는 원문 확인 여부를 표시했습니다. '원문 확인'은 SEC 공시나 회사 IR 페이지를 직접 열어 대조한 것이고, '원문 미확인'은 검색 요약이라 열람하지 못한 것입니다.",
+  "global": {
+    "wacc": 0.1,
+    "tax": 0.21,
+    "sigma": 0.35,
+    "rf_fallback": 0.04
+  },
+  "scenarios": {
+    "bear": {
+      "label": "보수",
+      "pos_mult": 0.8,
+      "peak_mult": 0.6,
+      "growth_mult": 0.6
+    },
+    "base": {
+      "label": "기본",
+      "pos_mult": 1.0,
+      "peak_mult": 1.0,
+      "growth_mult": 1.0
+    },
+    "bull": {
+      "label": "낙관",
+      "pos_mult": 1.1,
+      "peak_mult": 1.4,
+      "growth_mult": 1.3
+    }
+  },
+  "companies": [
+    {
+      "ticker": "SVRA",
+      "name": "Savara",
+      "kind": "pipeline",
+      "ct": {
+        "spons": "Savara"
+      },
+      "not_modeled": "미국 밖 시장, 추가 적응증, 승인 뒤 라벨 확장. 반영한 것은 미국 aPAP 한 가지뿐.",
+      "summary": "자가면역 폐포단백증(aPAP) 흡입 molgramostim(MOLBREEVI 조건부 상품명) BLA 심사 중. 상업 매출 없음.",
+      "assets": [
+        {
+          "id": "svra-molgramostim",
+          "name": "molgramostim (MOLBREEVI)",
+          "indication": "자가면역 폐포단백증 (aPAP)",
+          "stage": "BLA 심사 (우선심사)",
+          "method": "rnpv",
+          "peak_musd": 450,
+          "margin": 0.6,
+          "ramp_years": 4,
+          "exclusivity_years": 12,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-11-22)",
+              "t": 0.04,
+              "pos": 0.85,
+              "x": 50,
+              "date": "2026-11-22"
+            }
+          ],
+          "launch_in": 0.04,
+          "assumptions": "피크매출·PoS·출시비용은 가정치. 허가 PoS는 BLA 심사 단계 기본율 수준(80%대 중후반)으로 둠. 미국 시장만 반영(EU·영국 승인 신청은 심사 중이지만 미반영). 승인 시 최대 약 1.5억 달러의 비희석 자금은 가치에 넣지 않음."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-08-11",
+          "verified": true,
+          "src": "회사 2분기 보도자료(IR 원문)",
+          "text": "MOLBREEVI BLA PDUFA 목표일 2026-11-22. EU(EMA)·영국(MHRA) 승인 신청도 심사 중이며 결정은 각각 2027년 1분기, 2026년 4분기 예상. 2026-06-30 현금·단기투자 약 1.73억 달러, 부채 약 3,010만 달러, 승인 시 최대 약 1.5억 달러의 비희석 자본 추가. 2분기 순손실 4,020만 달러(주당 0.16달러).",
+          "url": "https://investors.savarapharma.com/news/news-details/2026/Savara-Reports-Second-Quarter-2026-Financial-Results-and-Provides-Business-Update/default.aspx"
+        },
+        {
+          "date": "2026-08-11",
+          "verified": true,
+          "src": "SEC 10-Q (2026-06-30 분기)",
+          "text": "상반기 순손실 7,751만 달러, 영업활동 현금 사용 6,279만 달러. 표지 기준 보통주 205,460,015주(2026-08-11).",
+          "url": "https://www.sec.gov/Archives/edgar/data/1160308/000119312526344585/svra-20260630.htm"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-22",
+          "text": "molgramostim PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2026-12-31",
+          "text": "영국 MHRA 승인 결정 (2026년 4분기 예상)",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-03-31",
+          "text": "EU EMA 승인 결정 (2027년 1분기 예상)",
+          "kind": "regulatory"
+        }
+      ],
+      "overrides": {
+        "cash_musd": 173.0,
+        "cash_note": "2026-06-30 현금·단기투자 약 1.73억 달러 (회사 2분기 보도자료 원문 확인). 3분기 수치는 아직 없음",
+        "debt_musd": 30.1,
+        "debt_note": "2026-06-30 약 3,010만 달러 (회사 2분기 보도자료 원문 확인)",
+        "shares_m": 253.57,
+        "shares_note": "2026 2분기 가중평균 주식 수(보도자료). 표지의 보통주 205.46M보다 큰데 차이는 사전납입 워런트 등으로 추정(원문에 명시 없음). 주당 가치는 보수적으로 큰 쪽으로 나눔",
+        "annual_burn_musd": 125.6,
+        "burn_note": "2026년 상반기 영업활동 현금 사용 6,279만 달러 × 2 (10-Q 원문, 연환산 추정)"
+      }
+    },
+    {
+      "ticker": "IMVT",
+      "name": "Immunovant",
+      "kind": "pipeline",
+      "ct": {
+        "spons": "Immunovant"
+      },
+      "not_modeled": "D2T RA(2기 1차 평가변수 충족, FDA와 올해 안에 경로 협의 예정), CIDP(2028년 탑라인), 쇼그렌(더 진행하지 않을 가능성 높다고 밝힘), batoclimab 잔여 가치. GD와 MG 두 적응증만 반영해 시총보다 크게 낮게 나올 수 있음.",
+      "summary": "FcRn 억제 항체. batoclimab은 갑상선안병증(TED) 3상 실패(2026-04)로 임상을 정리 중이고, IMVT-1402는 CLE 개념증명 실패(2026-09)로 CLE를 중단했습니다. Graves병·중증근무력증 3상 탑라인은 2027년입니다.",
+      "assets": [
+        {
+          "id": "imvt-gd",
+          "name": "IMVT-1402",
+          "indication": "Graves병 (GD)",
+          "stage": "3상 (등록 가능성 있는 시험)",
+          "method": "rnpv",
+          "peak_musd": 1500,
+          "margin": 0.55,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "stages": [
+            {
+              "name": "GD 3상 탑라인 (2027)",
+              "t": 1.0,
+              "pos": 0.55,
+              "x": 120,
+              "date": "2027-06-30"
+            },
+            {
+              "name": "허가 판정",
+              "t": 2.5,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 2.5,
+          "assumptions": "피크매출·PoS·허가 신청 비용은 가정치. batoclimab TED 실패(2026-04)와 IMVT-1402 CLE 실패(2026-09)로 적응증마다 결과가 갈릴 수 있어 3상 PoS를 중간(55%)으로 둠. 탑라인 시점은 '2027년'이라고만 공시돼 2027-06-30은 임의 지정."
+        },
+        {
+          "id": "imvt-mg",
+          "name": "IMVT-1402",
+          "indication": "중증근무력증 (MG)",
+          "stage": "3상 (등록 가능성 있는 시험)",
+          "method": "rnpv",
+          "peak_musd": 1000,
+          "margin": 0.55,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "stages": [
+            {
+              "name": "MG 3상 탑라인 (2027)",
+              "t": 1.0,
+              "pos": 0.7,
+              "x": 100,
+              "date": "2027-06-30"
+            },
+            {
+              "name": "허가 판정",
+              "t": 2.5,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 2.5,
+          "assumptions": "같은 계열(FcRn) 약물이 MG에서 이미 허가돼 3상 PoS를 높게 둠(가정치). 탑라인은 '2027년'이라고만 공시돼 시점은 임의 지정."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-11-09",
+          "verified": true,
+          "src": "회사 분기 보고(2026-09-30 분기)",
+          "text": "현금 7.223억 달러, 순손실 9,720만 달러(주당 0.47달러), R&D 8,500만 달러. 현금은 운영 계획상 'GD 출시 가능 시점까지' 간다고 설명하면서 '추가 자본이 필요할 것'이라는 문구도 있음.",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial"
+        },
+        {
+          "date": "2026-11-09",
+          "verified": true,
+          "src": "회사 분기 보고",
+          "text": "IMVT-1402 탑라인: Graves병·중증근무력증 2027년, CIDP 2028년. 쇼그렌은 진행 중인 2상 이후 더 진행하지 않을 가능성이 높다고 함. D2T RA는 2기 1차 평가변수를 충족했고 FDA와 올해 안에 경로를 협의 예정. batoclimab 임상은 종료(wind-down).",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial"
+        },
+        {
+          "date": "2026-09-23",
+          "verified": true,
+          "src": "회사 보도자료",
+          "text": "IMVT-1402 CLE 개념증명(57명): 12주 CLASI-A 변화율 1차 평가변수가 통계적 유의성에 못 미침. 회사는 CLE 개발을 중단할 계획.",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/86/immunovant-announces-topline-results-from-proof-of-concept"
+        },
+        {
+          "date": "2026-04-02",
+          "verified": true,
+          "src": "회사 보도자료",
+          "text": "batoclimab TED 3상 2건 모두 1차 평가변수(24주 안구돌출 2mm 이상 반응률) 미달. IMVT-1402 Graves병 탑라인은 2027년으로 안내.",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/81/immunovant-announces-phase-3-study-results-for-batoclimab"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-12-31",
+          "text": "D2T RA: FDA와 향후 개발 경로 협의 (회사: 올해 안)",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-12-31",
+          "text": "IMVT-1402 Graves병·MG 탑라인 (2027년)",
+          "kind": "readout"
+        },
+        {
+          "date": "2028-12-31",
+          "text": "IMVT-1402 CIDP 탑라인 (2028년)",
+          "kind": "readout"
+        }
+      ],
+      "overrides": {
+        "cash_musd": 722.3,
+        "cash_note": "2026-09-30, 회사 분기 보고 (원문 확인)",
+        "shares_m": 206.786,
+        "shares_note": "2026-09-30 발행주식 수, 회사 분기 보고 (원문 확인)",
+        "annual_burn_musd": 388.8,
+        "burn_note": "2026-09 분기 순손실 9,720만 달러 × 4 (순손실 기준 추정, 현금흐름표 아님)"
+      }
+    },
+    {
+      "ticker": "AXSM",
+      "name": "Axsome",
+      "kind": "commercial+pipeline",
+      "ct": {
+        "spons": "Axsome"
+      },
+      "not_modeled": "솔리암페톨(폭식장애·교대근무장애·ADHD·MDD), AXS-14, AXS-05 금연, AXS-17·AXS-20 등 다른 파이프라인, 미국 밖 판매.",
+      "summary": "Auvelity·Sunosi·Symbravo 상업화 중. Auvelity는 2026년 4월 알츠하이머 초조 적응증이 추가됨.",
+      "commercial": {
+        "name": "Auvelity·Sunosi·Symbravo (상업 제품 합산)",
+        "run_rate_musd": 1004.8,
+        "run_rate_note": "2026년 3분기 순제품매출 2.597억 달러에서 Sunosi 마일스톤 매출 850만 달러를 뺀 값 × 4 (일회성 제외)",
+        "growth": [
+          0.3,
+          0.22,
+          0.15,
+          0.1,
+          0.06
+        ],
+        "margin_now": 0.0,
+        "margin_target": 0.35,
+        "margin_years": 4,
+        "loe_year_index": 11,
+        "erosion": 0.3,
+        "assumptions": "성장률·마진은 가정치. 특허 만료 시점은 확인하지 못해 10년 안에는 침식이 없다고 두고, 영구가치(TV)는 쓰지 않음. 3분기 매출에 포함된 Sunosi 로열티 120만 달러는 그대로 둠."
+      },
+      "assets": [
+        {
+          "id": "axsm-axs12",
+          "name": "AXS-12 (reboxetine)",
+          "indication": "기면증 탈력발작",
+          "stage": "NDA 심사 (PDUFA 2027-05-01)",
+          "method": "rnpv",
+          "peak_musd": 400,
+          "margin": 0.55,
+          "ramp_years": 4,
+          "exclusivity_years": 10,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2027-05-01)",
+              "t": 0.47,
+              "pos": 0.85,
+              "x": 40,
+              "date": "2027-05-01"
+            }
+          ],
+          "launch_in": 0.47,
+          "assumptions": "피크매출·출시비용은 가정치. PDUFA 일자는 회사 보도자료 기준."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-11-02",
+          "verified": true,
+          "src": "회사 3분기 보도자료",
+          "text": "3분기 순제품매출 2.597억 달러(+52%): Auvelity 2.076억(+53%), Sunosi 4,820만(+47%, 이 중 순매출 3,850만·로열티 120만·마일스톤 850만), Symbravo 390만(+88%). 순손실 1,290만 달러(주당 0.25달러), 현금 3.139억 달러.",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311"
+        },
+        {
+          "date": "2026-11-02",
+          "verified": true,
+          "src": "회사 3분기 보도자료",
+          "text": "AXS-12(기면증 탈력발작) NDA 심사 중, PDUFA 2027-05-01. 솔리암페톨 폭식장애 3상 탑라인 2027년 1분기. AXS-14(섬유근육통)는 3상 등록 완료 2027년 3분기이고 NDA는 아직 제출 전. 현금은 운영 계획상 '현금흐름 흑자'까지 간다고 설명.",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311"
+        },
+        {
+          "date": "2026-11-02",
+          "verified": false,
+          "src": "검색 요약",
+          "text": "Auvelity 알츠하이머 초조 적응증은 2026년 4월 허가로 알려졌지만, 3분기 보도자료는 허가일을 적지 않고 이미 허가된 적응증으로만 서술해 날짜는 원문으로 확인하지 못함.",
+          "url": null
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2027-03-31",
+          "text": "솔리암페톨 폭식장애(ENGAGE) 3상 탑라인 (2027년 1분기)",
+          "kind": "readout"
+        },
+        {
+          "date": "2027-05-01",
+          "text": "AXS-12 PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-09-30",
+          "text": "AXS-14 FORWARD 3상 등록 완료 (2027년 3분기)",
+          "kind": "milestone"
+        },
+        {
+          "date": "2027-12-31",
+          "text": "AXS-05 금연·솔리암페톨 교대근무장애·ADHD 탑라인 (2027년 하반기)",
+          "kind": "readout"
+        }
+      ],
+      "overrides": {
+        "cash_musd": 313.9,
+        "cash_note": "2026-09-30, 회사 보도자료 (원문 확인)",
+        "debt_musd": 197.3,
+        "debt_note": "단기차입 70.0 + 장기대출 118.1 + 금융리스 9.2, 2026-09-30, 회사 보도자료 (원문 확인)",
+        "shares_m": 52.577,
+        "shares_note": "2026-09-30 발행주식 수 52,576,839주, 회사 3분기 보도자료 (원문 확인)"
+      }
+    },
+    {
+      "ticker": "LQDA",
+      "name": "Liquidia",
+      "kind": "commercial+pipeline",
+      "ct": {
+        "spons": "Liquidia"
+      },
+      "not_modeled": "L606(개방형 시험과 PH-ILD pivotal 시험 Re-Spire 등록 시작 단계라 가치 0), PH-ILD 적응증 삭제의 매출 영향, 합의 뒤 소송 위험 해소의 가치.",
+      "summary": "Yutrepia(트레프로스티닐 흡입 분말) 상업화 중. 2026년 10월 유나이티드 테라퓨틱스(UTHR)와 합의로 소송을 모두 끝냈고, Yutrepia 라벨에서 PH-ILD 적응증을 빼는 보충신청을 제출했습니다.",
+      "commercial": {
+        "name": "Yutrepia",
+        "run_rate_musd": 890.8,
+        "run_rate_note": "2026년 3분기 잠정 매출 2.227억 달러 × 4 (미감사)",
+        "growth": [
+          0.2,
+          0.12,
+          0.06,
+          0.03
+        ],
+        "margin_now": 0.5,
+        "margin_target": 0.45,
+        "margin_years": 3,
+        "loe_year_index": 11,
+        "erosion": 0.3,
+        "assumptions": "성장률은 가정치. 현재 영업이익률 50%는 2026년 2분기 영업이익 8,552만 ÷ 총매출 1억 7,168만 달러(원문), 목표 45%는 판관비·L606 투자 증가를 가정한 값. PH-ILD 적응증 삭제·판촉 중단의 매출 영향은 크기를 몰라 기본 시나리오에 반영하지 않고, 보수 시나리오로만 일부(성장률 ×0.6) 반영. 11-10 실적 발표에서 확인할 항목."
+      },
+      "overrides": {
+        "cash_musd": 396.1,
+        "cash_note": "2026-09-30 잠정치, 미감사 (SEC 8-K 원문 확인)",
+        "other_liab_musd": 380.7,
+        "other_liab_note": "UTHR 합의금 순액 전액. 합의금은 모두 9/30 이후 지급(순 1.75억 달러는 30영업일 안에, 6,030만 달러는 2026년 10월, 1.454억 달러는 2027-01-31·04-30)이라 9/30 현금에서 전액 빼는 것이 맞음 (SEC 8-K 원문 확인)",
+        "debt_musd": 176.1,
+        "debt_note": "2026-06-30 장기차입 5,395만(유동) + 1.222억(비유동) 달러, 10-Q 원문 확인. 9/30 수치는 아직 없어 현금(9/30)과 시점이 다름",
+        "shares_m": 101.397,
+        "shares_note": "2026 2분기 희석 가중평균 주식 수(실적 보도자료 원문 확인). 표지의 보통주는 89.509M(2026-07-29)이라 주당 가치는 희석 기준으로 보수적으로 계산"
+      },
+      "assets": [],
+      "facts": [
+        {
+          "date": "2026-10-14",
+          "verified": true,
+          "src": "SEC 8-K 2026-10-14 Ex.99.1",
+          "text": "UTHR와 합의로 소송을 모두 종결. 순 3.807억 달러를 2026~2027년에 분납: 30영업일 안에 순 1.75억 달러, 2027-01-31과 04-30에 각 7,270만 달러(합계 1.454억), 2026년 10월에 반독점 관련 제3자에 6,030만 달러. 합의는 PAH 외 적응증과 새 트레프로스티닐 제품에는 적용되지 않음.",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm"
+        },
+        {
+          "date": "2026-10-14",
+          "verified": true,
+          "src": "SEC 8-K 2026-10-14 Ex.99.1",
+          "text": "3분기 YUTREPIA 순제품매출 2.227억 달러(잠정, 미감사), 2026-09-30 현금 3.961억 달러. 외부 감사인이 검토하지 않은 수치.",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm"
+        },
+        {
+          "date": "2026-10-14",
+          "verified": true,
+          "src": "SEC 8-K 2026-10-14 Ex.99.1",
+          "text": "Yutrepia 라벨에서 PH-ILD 적응증을 빼는 보충신청을 제출했고 PH-ILD 판촉은 중단. L606(트레프로스티닐 서방형, 하루 2회, 차세대 네뷸라이저)은 PAH·PH-ILD 적응증을 뒷받침할 pivotal 시험을 기존 계획대로 진행.",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm"
+        },
+        {
+          "date": "2026-08-12",
+          "verified": true,
+          "src": "SEC 8-K 2026-08-12 Ex.99.1",
+          "text": "2분기 YUTREPIA 순제품매출 1억 7,038만 달러(전분기 대비 +31%), 영업이익 8,552만 달러, 순이익 7,472만 달러, 2026-06-30 현금 2.842억 달러. L606은 개방형 시험을 하고 PH-ILD 대상 pivotal 시험 Re-Spire 등록을 시작.",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926094411/tm2622888d1_ex99-1.htm"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-10",
+          "text": "3분기 실적 발표 (8:30 ET) · PH-ILD 영향 확인",
+          "kind": "earnings"
+        }
+      ]
+    }
+  ]
+}
