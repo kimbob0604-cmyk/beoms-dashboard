@@ -19,6 +19,75 @@
     return (c.catalysts || []).filter(x => days(x.date) >= 0).sort((a, b) => a.date.localeCompare(b.date))[0];
   }
 
+  const KIND_KO = { regulatory: '허가·규제', readout: '임상 결과', milestone: '개발 단계', earnings: '실적' };
+  const todayIso = () => { const d = today(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const newTag = x => x && x.new ? ' <span class="bio-tag go">새로</span>' : '';
+
+  function previewHtml(c) {
+    const p = c.earnings_preview;
+    if (!p) return '';
+    const e = p.est, q2 = p.q2, cs = p.consensus || {};
+    const row = (l, a, b, note = '') => `<tr><td>${l}${note ? `<small>${note}</small>` : ''}</td><td class="num">${a}</td><td class="num">${b}</td></tr>`;
+    const m = v => usd(v);
+    const eps = v => v == null ? '–' : `$${v.toFixed(2)}`;
+    const be = (v, l) => v == null ? `${l}: 범위 밖` : `${l} <b>${usd(v)}</b> (연환산 ${usd(v * 4)})`;
+    const q2op = q2.product_sales + q2.service_rev - q2.cogs_product - q2.cogs_service - q2.rnd - q2.sga;
+    return `<div class="bio-sub">${esc(p.quarter)} 실적 분해 · 발표 ${p.report_date} ${days(p.report_date) >= 0 ? dday(p.report_date) : '(발표됨, 원문 대조 필요)'}</div>
+      <div class="bio-grid"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>항목 (백만 달러)</th><th class="num">2분기 실제</th><th class="num">3분기 추정</th></tr></thead><tbody>
+        ${row('YUTREPIA 순매출', m(q2.product_sales), `<b>${m(e.product_sales)}</b>`, '3분기는 회사 잠정치 (원문 확인)')}
+        ${row('서비스 매출', m(q2.service_rev), m(e.service_rev), 'Sandoz 판촉 계약 10월 종료 가정')}
+        ${row('제품 원가', m(-q2.cogs_product), m(-e.cogs_product), '2분기 원가율 유지 가정')}
+        ${row('R&D', m(-q2.rnd), m(-e.rnd), 'L606 pivotal 진행으로 +10% 가정')}
+        ${row('판관비', m(-q2.sga), m(-e.sga), '+8% 가정')}
+        ${row('영업이익', m(q2op), `<b>${m(e.op_income)}</b>`)}
+        ${row('순이익', m(q2.net_income), m(e.net_income), `유효세율 ${(e.tax_rate * 100).toFixed(1)}% (2분기와 같게)`)}
+        ${row('희석 EPS', eps(q2.eps_diluted), `<b>${eps(e.eps_diluted)}</b>`, `희석 주식 ${q2.shares_diluted.toFixed(1)}M`)}
+      </tbody></table><p class="bio-pad muted small">2분기 실제: <a href="${esc(q2.url)}" target="_blank" rel="noopener">${esc(q2.src)}</a> · 3분기 잠정: <a href="${esc(p.known.url)}" target="_blank" rel="noopener">${esc(p.known.src)}</a></p></div><div class="bio-pad">
+        <p><b>컨센서스</b> (yfinance, 원문 아님) 매출 ${m(cs.rev_avg)} (범위 ${m(cs.rev_low)}~${m(cs.rev_high)}), EPS ${eps(cs.eps_avg)} (범위 ${eps(cs.eps_low)}~${eps(cs.eps_high)}).
+          회사 잠정 매출 ${m(p.known.product_sales)}는 컨센서스 평균 대비 ${cs.rev_avg ? pc(p.known.product_sales / cs.rev_avg - 1) : '–'}.</p>
+        <p class="muted">주의: UTHR 합의(10월 체결)가 3분기 손익에 비용으로 잡히면 GAAP EPS가 위 추정과 크게 달라집니다. 발표 원문의 합의 회계 처리를 먼저 보세요.</p>
+        <p><b>분기 순매출이 얼마면 현재가 ${px(p.price)}가 정당화되나</b><br>
+          ${be(p.breakeven_base, '기본 성장 경로')}<br>${be(p.breakeven_bull, `낙관 성장 경로 (성장률 ×${p.bull_growth_mult})`)}<br>
+          <span class="muted">3분기 잠정 ${m(p.known.product_sales)}는 기본 경로 기준점의 ${p.breakeven_base ? ((p.known.product_sales / p.breakeven_base) * 100).toFixed(0) + '%' : '–'}, 낙관 경로 기준점의 ${p.breakeven_bull ? ((p.known.product_sales / p.breakeven_bull) * 100).toFixed(0) + '%' : '–'}입니다. 다음 분기 매출이 낙관 기준점에 다가가면 낙관 시나리오로 옮길 근거가 됩니다.</span></p>
+      </div></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>분기 순매출</th>${p.grid.map(r => `<th class="num">${usd(r.q)}</th>`).join('')}</tr></thead><tbody>
+        <tr><td>주당 가치 (기본 성장)</td>${p.grid.map(r => `<td class="num ${r.base >= p.price ? 'up' : ''}">${px(r.base)}</td>`).join('')}</tr>
+        <tr><td>주당 가치 (낙관 성장)</td>${p.grid.map(r => `<td class="num ${r.bull >= p.price ? 'up' : ''}">${px(r.bull)}</td>`).join('')}</tr>
+      </tbody></table></div><p class="bio-pad muted small">색이 바뀐 칸부터 현재가 이상. 분기 매출 × 4를 시작 매출로 놓고, 마진·성장률·주식 수·합의금 같은 나머지 가정은 그대로 둔 계산입니다.</p>`;
+  }
+
+  function autoHtml(c) {
+    const a = c.auto;
+    if (!a) return '';
+    const t = todayIso();
+    const ev = a.events || [];
+    const earn = a.earnings && a.earnings.date >= t ? a.earnings : null;
+    const fl = a.filings || [];
+    const tc = a.trial_changes || [];
+    return `<div class="bio-sub">자동 수집 <span class="muted small">검토 필요 · 가치 계산에는 넣지 않음</span></div>
+      ${a.archive_ok ? '' : '<div class="bio-warn">공시 원문에서 날짜를 뽑는 기능이 꺼져 있습니다. SEC는 원문 접근에 이름·이메일이 담긴 User-Agent를 요구해서, .env에 SEC_USER_AGENT를 넣어야 켜집니다. 지금은 공시 목록, 실적 발표일, 임상 시험 변경만 자동입니다.</div>'}
+      <ul class="bio-list">
+        ${earn ? `<li><span class="d">${earn.date}</span><span class="bio-tag">실적</span> 다음 실적 발표 ${dday(earn.date)} · 컨센서스 매출 ${usd(earn.rev_avg)}, EPS ${earn.eps_avg != null ? '$' + earn.eps_avg.toFixed(2) : '–'} <span class="muted">${esc(earn.src)}</span></li>` : ''}
+        ${ev.map(e => `<li><span class="d">${e.date}</span><span class="bio-tag">${KIND_KO[e.kind] || e.kind}</span>${newTag(e)} <b>${esc(e.date_text)}</b> · ${esc(e.sentence)} <a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.src)}</a></li>`).join('')}
+        ${tc.map(x => `<li><span class="bio-tag">임상</span> <a href="https://clinicaltrials.gov/study/${x.id}" target="_blank" rel="noopener">${x.id}</a> ${esc(x.change)} ${x.before || ''} → ${x.after || ''} <span class="muted">${esc(x.title.slice(0, 60))}</span></li>`).join('')}
+        ${!earn && !ev.length && !tc.length ? '<li class="muted">새로 찾은 일정 없음</li>' : ''}
+      </ul>
+      <div class="bio-sub">최근 60일 SEC 공시</div><ul class="bio-list">
+        ${fl.length ? fl.map(f => `<li><span class="d">${f.filed}</span><b>${f.form}</b>${newTag(f)} ${esc(f.labels.join(' · '))} <a href="${esc(f.url)}" target="_blank" rel="noopener">원문</a></li>`).join('') : '<li class="muted">없음</li>'}</ul>`;
+  }
+
+  function renderScreen() {
+    const s = data.market_screen;
+    if (!s) { $('screen').innerHTML = ''; return; }
+    $('screen').innerHTML = `<div class="col-head"><h3>시장 스크리닝 <span class="muted">최근 14일 8-K·6-K 중 PDUFA·탑라인 언급</span></h3>
+        <span class="muted small">EDGAR 전문 검색 · ${data.archive_ok ? '원문에서 뽑은 날짜' : '날짜는 원문을 열어야 확인 (SEC_USER_AGENT 필요)'}</span></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>회사</th><th>공시일</th><th>종류</th><th>찾은 날짜</th><th>문장</th></tr></thead><tbody>
+      ${s.slice(0, 40).map(e => `<tr><td><b>${esc(e.ticker || '')}</b><small>${esc(e.company)}</small></td><td>${esc(e.filed || '')}</td><td>${KIND_KO[e.kind] || e.kind}</td>
+        <td>${e.date ? `${e.date}<small>${esc(e.date_text)}</small>` : '<span class="muted">–</span>'}</td>
+        <td style="white-space:normal">${e.sentence ? esc(e.sentence.slice(0, 160)) + ' ' : ''}<a href="${esc(e.url)}" target="_blank" rel="noopener">원문</a></td></tr>`).join('')}
+      </tbody></table></div>`;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -131,6 +200,7 @@
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
+      h += previewHtml(c);
       h += `<div class="bio-grid"><div>${bridgeHtml(c)}</div><div class="bio-pad">
         <p><b>시나리오</b> (보수: PoS ×0.8·피크 ×0.6·성장 ×0.6, 낙관: PoS ×1.1·피크 ×1.4·성장 ×1.3)</p>
         <p>${Object.values(c.scenarios).map(s => `${esc(s.label)} <b>${px(s.per_share)}</b> <span class="${U.cls(s.upside)}">${pc(s.upside)}</span>`).join(' · ')}</p>
@@ -140,6 +210,7 @@
       h += assetsHtml(c) + commHtml(c);
     }
     h += trialsHtml(c);
+    h += autoHtml(c);
     h += `<div class="bio-grid"><div><div class="bio-sub">확인한 사실 (원문 확인 여부 표시)</div><ul class="bio-list">
         ${c.facts.length ? c.facts.map(f => `<li><span class="d">${esc(f.date)}</span><span class="bio-tag ${f.verified ? 'go' : 'stop'}">${f.verified ? '원문 확인' : '원문 미확인'}</span> ${esc(f.text)} ${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.src || '출처')}</a>` : `<span class="muted">${esc(f.src || '')}</span>`}</li>`).join('') : '<li class="muted">없음</li>'}</ul></div>
       <div><div class="bio-sub">최근 뉴스</div><ul class="bio-list">
@@ -148,9 +219,15 @@
   }
 
   function renderCal() {
-    const ev = data.companies.flatMap(c => (c.catalysts || []).map(x => ({ ...x, t: c.ticker }))).sort((a, b) => a.date.localeCompare(b.date));
+    const t0 = todayIso();
+    const ev = data.companies.flatMap(c => [
+      ...(c.catalysts || []).map(x => ({ ...x, t: c.ticker })),
+      ...(c.auto && c.auto.earnings && c.auto.earnings.date >= t0 && !(c.catalysts || []).some(x => x.date === c.auto.earnings.date)
+        ? [{ date: c.auto.earnings.date, text: '실적 발표 (자동: yfinance)', t: c.ticker, auto: true }] : []),
+      ...((c.auto && c.auto.events) || []).map(x => ({ date: x.date, text: `${KIND_KO[x.kind] || x.kind}: ${x.date_text} (자동: ${x.src})`, t: c.ticker, auto: true, new: x.new })),
+    ]).sort((a, b) => a.date.localeCompare(b.date));
     $('cal').innerHTML = `<div class="col-head"><h3>일정 <span class="muted">다가오는 순</span></h3><span class="muted small">날짜가 분기·반기 단위인 항목은 마지막 날로 적었습니다</span></div>
-      <ul class="bio-list">${ev.map(e => `<li><span class="d">${e.date}</span><b>${esc(e.t)}</b> ${esc(e.text)} <span class="bio-tag">${days(e.date) >= 0 ? dday(e.date) : '지남'}</span></li>`).join('')}</ul>`;
+      <ul class="bio-list">${ev.map(e => `<li><span class="d">${e.date}</span><b>${esc(e.t)}</b> ${esc(e.text)} <span class="bio-tag">${days(e.date) >= 0 ? dday(e.date) : '지남'}</span>${e.auto ? ' <span class="bio-tag">자동·검토 필요</span>' : ''}${newTag(e)}</li>`).join('')}</ul>`;
   }
 
   function renderMethod() {
@@ -171,7 +248,7 @@
   }
 
   function render() {
-    renderOverview(); renderDetail(); renderCal(); renderMethod(); renderFoot();
+    renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
   }
 
   $('overview').addEventListener('click', e => {

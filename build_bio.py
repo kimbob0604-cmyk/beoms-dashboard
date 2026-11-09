@@ -19,6 +19,7 @@ from pathlib import Path
 
 import requests
 
+import bio_events as be
 import bio_valuation as bv
 
 ROOT = Path(__file__).resolve().parent
@@ -217,6 +218,44 @@ def payoffs(co, mk, g, rf, scenarios, base_ps):
             'implied_p': p_imp, 'implied_scale': scale}
 
 
+def earnings_preview(co, mk, g, rf, cfg, consensus):
+    """실적 분해: 2분기 실제(원문) → 3분기 추정(알려진 잠정 매출 + 비용 가정), 컨센서스와 비교,
+    그리고 '분기 매출이 얼마면 현재가가 정당화되나'를 기본·낙관 성장 경로로 찾는다."""
+    ep = co.get('earnings_preview')
+    if not ep or not co.get('commercial'):
+        return None
+    q2, kn, a = ep['q2_actual'], ep['q3_known'], ep['q3_assumptions']
+    sales = kn['product_sales']
+    cogs = sales * q2['cogs_product'] / q2['product_sales']
+    rnd = q2['rnd'] * (1 + a['rnd_growth'])
+    sga = q2['sga'] * (1 + a['sga_growth'])
+    pretax = sales + a['service_rev'] - cogs - q2['cogs_service'] - rnd - sga + q2['other_net']
+    tax_rate = q2['tax'] / (q2['net_income'] + q2['tax'])
+    net = pretax * (1 - tax_rate)
+    est = {'product_sales': sales, 'service_rev': a['service_rev'], 'cogs_product': cogs, 'cogs_service': q2['cogs_service'],
+           'rnd': rnd, 'sga': sga, 'other_net': q2['other_net'], 'pretax': pretax, 'tax_rate': tax_rate, 'net_income': net,
+           'eps_diluted': net / q2['shares_diluted'], 'op_income': sales + a['service_rev'] - cogs - q2['cogs_service'] - rnd - sga}
+    run = co['commercial']['run_rate_musd']
+
+    def ps(q, growth_mult):
+        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': 1.0, 'growth_mult': growth_mult,
+                                             'rev_mult': q * 4 / run})['per_share']
+
+    def solve(growth_mult):
+        lo, hi = 50.0, 2000.0
+        if ps(hi, growth_mult) < mk['price']:
+            return None
+        for _ in range(50):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if ps(mid, growth_mult) < mk['price'] else (lo, mid)
+        return (lo + hi) / 2
+    bull = cfg['scenarios']['bull']['growth_mult']
+    grid = [{'q': q, 'base': ps(q, 1.0), 'bull': ps(q, bull)} for q in range(180, 381, 20)]
+    return {'quarter': ep['quarter'], 'report_date': ep['report_date'], 'q2': q2, 'known': kn, 'assumptions': a, 'est': est,
+            'consensus': consensus, 'breakeven_base': solve(1.0), 'breakeven_bull': solve(bull), 'bull_growth_mult': bull,
+            'grid': grid, 'price': mk['price']}
+
+
 def implied_pos_scale(co, mk, g, rf):
     """시총이 요구하는 PoS 배수 (임상 자산만). 상업 부분·현금·부채는 그대로 두고 남는 자산 가치를 맞춘다."""
     mcap = mk.get('mcap_used') or mk.get('mcap')
@@ -247,6 +286,7 @@ def build():
     rf, rf_stale = fetch_rf(g['rf_fallback'])
     print(f'무위험이자율 {rf:.2%}{" (대체값)" if rf_stale else ""}')
     companies, problems = [], []
+    cache = be.load_cache()
     for co in cfg['companies']:
         t = co['ticker']
         old = prev.get(t, {})
@@ -267,6 +307,28 @@ def build():
             except Exception as e:
                 print(f'  뉴스 RSS 실패: {e}', file=sys.stderr)
                 news = old.get('news', [])
+        # 자동 수집: 실적 발표일·컨센서스(yfinance), 최근 SEC 공시 목록, 공시 원문 속 일정 후보, 임상 시험 변경
+        auto = {'archive_ok': be.ARCHIVE_OK, 'earnings': None, 'filings': [], 'events': [], 'trial_changes': []}
+        try:
+            auto['earnings'] = be.earnings_event(t)
+        except Exception as e:
+            print(f'  실적일 실패: {e}', file=sys.stderr)
+        if co.get('cik'):
+            try:
+                auto['filings'] = be.recent_filings(co['cik'], days=60)
+                auto['events'] = be.company_filing_events(co['cik'], cache, filings=be.recent_filings(co['cik']))
+            except Exception as e:
+                print(f'  SEC 공시 실패: {e}', file=sys.stderr)
+                auto['filings'] = (old.get('auto') or {}).get('filings', [])
+                auto['events'] = (old.get('auto') or {}).get('events', [])
+                stale.append('sec')
+        seen = {(e['date'], e['kind'], (e.get('sentence') or '')[:60]) for e in (old.get('auto') or {}).get('events', [])}
+        first = not old.get('auto')
+        for e in auto['events']:
+            e['new'] = not first and (e['date'], e['kind'], (e.get('sentence') or '')[:60]) not in seen
+        old_acc = {f['acc'] for f in (old.get('auto') or {}).get('filings', [])}
+        for f in auto['filings']:
+            f['new'] = not first and f['acc'] not in old_acc
         if co.get('overrides', {}).get('shares_m'):      # 원문(공시)의 주식 수가 yfinance 보다 우선
             sh = co['overrides']['shares_m']
             mk = {**mk, 'shares': sh, 'mcap_used': mk['price'] * sh}   # 시총도 같은 주식 수로 다시 계산 (내재 PoS 역산용)
@@ -277,8 +339,9 @@ def build():
             except Exception as e:
                 print(f'  임상 시험 실패: {e}', file=sys.stderr)
                 stale.append('trials')
+        auto['trial_changes'] = be.trial_changes(old.get('trials', []), trials)
         row = {'ticker': t, 'name': co['name'], 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''), 'market': mk, 'news': news,
-               'trials': trials, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
+               'trials': trials, 'auto': auto, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
                'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
         if co['kind'] != 'excluded':
             row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
@@ -288,10 +351,17 @@ def build():
                 row['scenarios'][key] = {'label': sc['label'], 'per_share': v['per_share'], 'upside': v['upside'], 'equity': v['equity']}
             row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf)
             row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
+            row['earnings_preview'] = earnings_preview(co, mk, g, rf, cfg, auto['earnings'])
             if co.get('overrides'):
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)
-    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
+    try:
+        screen = be.market_screen(cache)
+    except Exception as e:
+        print(f'  시장 스크리닝 실패: {e}', file=sys.stderr)
+        screen = None
+    be.save_cache(cache)
+    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'market_screen': screen, 'archive_ok': be.ARCHIVE_OK, 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
            'params': g, 'scenarios': {k: v['label'] for k, v in cfg['scenarios'].items()}, 'note': cfg['note'], 'companies': companies}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
