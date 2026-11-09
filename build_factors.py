@@ -22,6 +22,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta
 
 import db
+from adjust import adjusted_series
 from build_home import latest_json
 from build_naver import DATA, market_info, public, write_json
 
@@ -33,10 +34,7 @@ SHR_DAYS = 90
 
 def price_factors(conn, codes):
     """{code: {'mom': .., 'vol': ..}} — ohlc_daily 종가로"""
-    closes = defaultdict(list)
-    for code, c in conn.execute('SELECT code, close FROM ohlc_daily WHERE close IS NOT NULL ORDER BY code, date'):
-        if code in codes:
-            closes[code].append(c)
+    closes = adjusted_series(conn, codes=codes)   # 수정주가 (분할·권리락 날 급락이 모멘텀·변동성에 안 섞이게)
     out = {}
     for code, xs in closes.items():
         f = {}

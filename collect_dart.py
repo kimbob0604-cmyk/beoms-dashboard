@@ -4,6 +4,7 @@ DART 공시 수집 → dart_filing, 분기 컨센서스 스냅샷 → cns_quarte
   python3 collect_dart.py              # 오늘·어제 공시 (처음 보는 공시만 원문을 받는다)
   python3 collect_dart.py --days 14    # 최근 14일 백필
   python3 collect_dart.py cns          # 컨센서스 있는 종목의 분기 추정치 스냅샷 (하루 한 번이면 충분)
+  python3 collect_dart.py events --days 370   # 이벤트 스터디용 공시 목록만 백필 (원문 없이, 날마다 목록 몇 쪽)
 
 잠정실적이 들어오면 그 종목의 분기 추정치를 바로 한 번 더 받아 둔다(네이버가 발표 뒤에도 하루쯤 추정 열을 남겨 둔다).
 종료 코드: 0 정상, 1 오류가 많음, 3 DART 응답 없음
@@ -37,6 +38,17 @@ def key() -> str:
     return k
 
 
+def safe(e) -> str:
+    """오류 메시지 속 요청 주소에 들어간 API 키를 가린다 (로그에 평문으로 남지 않게)"""
+    import os
+    import re
+    msg = str(e)
+    k = os.environ.get('DART_API_KEY')
+    if k:
+        msg = msg.replace(k, '***')
+    return re.sub(r'crtfc_key=[0-9a-fA-F]+', 'crtfc_key=***', msg)
+
+
 def now() -> str:
     return datetime.now().isoformat(timespec='seconds')
 
@@ -48,8 +60,35 @@ def save_cns(conn, code, cns: dict, as_of: str):
             [(as_of, code, p, v.get('sales'), v.get('op'), v.get('np'), v.get('cnp')) for p, v in cns.items()])
 
 
+def save_events(conn, rows, d: date):
+    """목록에서 종류가 정해지는 공시를 dart_event 에 (이벤트 스터디용, 원문 없이)"""
+    ev = [(r['rcept_no'], d.isoformat(), r['stock_code'], r['corp_name'], MARKET[r['corp_cls']], kind,
+           ' '.join(r['report_nm'].split()))
+          for r in rows if (kind := dart.kind_of(r['report_nm']))]
+    with conn:
+        conn.executemany('INSERT OR REPLACE INTO dart_event VALUES (?, ?, ?, ?, ?, ?, ?)', ev)
+    return len(ev)
+
+
+def collect_events(conn, session, k: str, days: int) -> int:
+    """과거 N일 공시 목록만 받아 dart_event 를 채운다 (이미 있는 날은 건너뜀)"""
+    have = {r[0] for r in conn.execute('SELECT DISTINCT date FROM dart_event')}
+    n = 0
+    for i in range(days, 0, -1):
+        d = date.today() - timedelta(days=i)
+        if d.weekday() >= 5 or d.isoformat() in have:
+            continue
+        n += save_events(conn, dart.fetch_list(session, k, d.strftime('%Y%m%d')), d)
+        time.sleep(DELAY)
+        if i % 30 == 0:
+            log.info('%s까지 이벤트 %d건', d, n)
+    log.info('이벤트 목록 %d건 저장', n)
+    return 0
+
+
 def collect_day(conn, session, k: str, d: date) -> int:
     rows = dart.fetch_list(session, k, d.strftime('%Y%m%d'))
+    save_events(conn, rows, d)
     have = {r[0] for r in conn.execute('SELECT rcept_no FROM dart_filing WHERE date = ? AND data IS NOT NULL',
                                        (d.isoformat(),))}
     errors, fails, new = 0, 0, 0
@@ -64,19 +103,19 @@ def collect_day(conn, session, k: str, d: date) -> int:
         except requests.RequestException as e:
             errors += 1
             fails += 1
-            log.warning('%s %s 원문 실패: %s', r['corp_name'], r['report_nm'].strip(), e)
+            log.warning('%s %s 원문 실패: %s', r['corp_name'], r['report_nm'].strip(), safe(e))
             if fails >= MAX_FAILS:
                 raise
         except Exception as e:   # 양식이 달라 못 읽은 공시는 제목만 남긴다
             errors += 1
-            log.warning('%s %s 파싱 실패: %s', r['corp_name'], r['report_nm'].strip(), e)
+            log.warning('%s %s 파싱 실패: %s', r['corp_name'], r['report_nm'].strip(), safe(e))
             data = {}
         if kind == 'earn':
             data['basis'] = '연결' if '연결' in r['report_nm'] else '별도'
             try:
                 save_cns(conn, r['stock_code'], dart.fetch_quarter_cns(session, r['stock_code']), date.today().isoformat())
             except Exception as e:
-                log.warning('%s 분기 컨센서스 실패: %s', r['corp_name'], e)
+                log.warning('%s 분기 컨센서스 실패: %s', r['corp_name'], safe(e))
         with conn:
             conn.execute(
                 """INSERT OR REPLACE INTO dart_filing (rcept_no, date, code, name, market, kind, title, fixed, data, fetched_at)
@@ -118,7 +157,7 @@ def collect_cns(conn, session) -> int:
 
 def main():
     ap = argparse.ArgumentParser(description='DART 공시 수집')
-    ap.add_argument('what', nargs='?', default='filings', choices=['filings', 'cns'])
+    ap.add_argument('what', nargs='?', default='filings', choices=['filings', 'cns', 'events'])
     ap.add_argument('--days', type=int, default=1, help='오늘부터 N일 전까지')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
@@ -128,6 +167,8 @@ def main():
     try:
         if args.what == 'cns':
             errors += collect_cns(conn, session)
+        elif args.what == 'events':
+            errors += collect_events(conn, session, key(), args.days)
         else:
             k = key()
             for i in range(args.days, -1, -1):
@@ -135,7 +176,7 @@ def main():
                 if d.weekday() < 5:
                     errors += collect_day(conn, session, k, d)
     except requests.RequestException as e:
-        log.error('응답 없음, 중단: %s', e)
+        log.error('응답 없음, 중단: %s', safe(e))
         sys.exit(EXIT_UNREACHABLE)
     sys.exit(1 if errors > 20 else 0)
 

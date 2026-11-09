@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 평일 06:00~22:05 맥 잠자기 막기 (Beom's Dashboard 장중 갱신용).
+     로그인하자마자 실행하고 5분마다 다시 확인해, 늦게 로그인한 날이나 caffeinate 가 끝난 뒤에도 다시 건다.
+     한계: 덮개를 닫으면(특히 배터리) 막지 못한다. 장중에는 덮개를 연 채 전원을 연결해 두어야 한다. -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.kbj.awake</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/sh</string><string>-c</string>
+    <string>[ "$(date +%u)" -le 5 ] || exit 0; now=$(date +%s); s=$(date -j -v6H -v0M -v0S +%s); e=$(date -j -v22H -v5M -v0S +%s); [ "$now" -ge "$s" ] &amp;&amp; [ "$now" -lt "$e" ] || exit 0; exec /usr/bin/caffeinate -i -s -t $((e-now))</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>300</integer>
+  <key>StandardOutPath</key><string>/Users/beomjun/Library/Logs/com.kbj.awake.log</string>
+  <key>StandardErrorPath</key><string>/Users/beomjun/Library/Logs/com.kbj.awake.log</string>
+</dict></plist>

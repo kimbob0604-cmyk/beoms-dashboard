@@ -1,7 +1,7 @@
 // 탭 공통: 숫자 포맷, 테마, JSON 로딩
 const U = (() => {
   const DOW = '일월화수목금토';
-  const cache = {};
+  const cache = {}, last = {};
 
   const num = (v, nd = 0) => v.toLocaleString('ko-KR', { minimumFractionDigits: nd, maximumFractionDigits: nd });
 
@@ -44,16 +44,33 @@ const U = (() => {
     esc(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     },
+    // GitHub Pages 는 CDN 이 10분 캐시하고 브라우저의 'no-cache' 요청도 무시한다(2026-11-09 확인).
+    // 주소에 1분 단위 숫자를 붙여 CDN 을 우회한다 → 새로고침하면 1분 안의 최신 데이터.
+    bust(url, every = 60000) {
+      return `${url}${url.includes('?') ? '&' : '?'}t=${Math.floor(Date.now() / every)}`;
+    },
     async json(url) {
       if (!cache[url]) {
-        // no-cache: 매번 서버에 바뀌었는지 확인(바뀌지 않았으면 304로 가볍게). 새로고침하면 바로 최신 데이터.
-        cache[url] = fetch(url, { cache: 'no-cache' }).then(r => {
+        cache[url] = fetch(U.bust(url), { cache: 'no-store' }).then(async r => {
           if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-          return r.json();
+          const text = await r.text();
+          last[url] = text;
+          return JSON.parse(text);
         });
         cache[url].catch(() => delete cache[url]);
       }
       return cache[url];
+    },
+    // 지금 서버 것을 다시 받아, 내용이 바뀌었으면 새 데이터를(캐시도 바꿈), 그대로면 null 을 돌려준다
+    async fresh(url) {
+      const r = await fetch(U.bust(url, 1), { cache: 'no-store' });
+      if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+      const text = await r.text();
+      if (text === last[url]) return null;
+      last[url] = text;
+      const data = JSON.parse(text);
+      cache[url] = Promise.resolve(data);
+      return data;
     },
     // 2026-11-03 → 11.03 (리포트 날짜처럼 짧게)
     md(d) {
@@ -121,7 +138,13 @@ const U = (() => {
       if (!ds.includes(pg.state.date)) pg.state.date = ds[0];
       sel.innerHTML = ds.map(d => `<option value="${d}"${d === pg.state.date ? ' selected' : ''}>${U.dateLabel(d)} 기준</option>`).join('');
       sel.addEventListener('change', e => { pg.state.date = e.target.value; pg.write(); onPick(e.target.value); });
-      U.watch(folder, ds[0]);
+      // 보고 있는 날짜가 최신이면 같은 날 장중 갱신(신고가·수급·공시 등)도 받아 다시 그린다
+      U.watch(folder, ds[0], async () => {
+        if (pg.state.date !== ds[0]) return;
+        try {
+          if (await U.fresh(`data/${folder}/${ds[0]}.json`)) onPick(ds[0]);
+        } catch (e) { /* 다음 확인 때 */ }
+      });
       return pg.state.date;
     },
     // 열어 둔 화면: 5분마다, 그리고 탭으로 돌아올 때 더 새 날짜가 올라왔는지 보고 알려 준다
@@ -129,7 +152,7 @@ const U = (() => {
       const check = async () => {
         if (document.hidden) return;
         try {
-          const ds = await (await fetch(`data/${folder}/dates.json`, { cache: 'no-cache' })).json();
+          const ds = await (await fetch(U.bust(`data/${folder}/dates.json`, 1), { cache: 'no-store' })).json();
           if (ds[0] && ds[0] > latest) {
             U.toast(`${U.dateLabel(ds[0])} 데이터가 새로 올라왔습니다`, '보기', () => {
               const q = new URLSearchParams(location.search);
@@ -139,7 +162,7 @@ const U = (() => {
           } else if (onSame) onSame();
         } catch (e) { /* 다음 확인 때 */ }
       };
-      setInterval(check, 300000);
+      setInterval(() => { if (U.busyHours()) check(); }, 180000);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
     },
     toast(msg, label, onClick) {
@@ -160,10 +183,18 @@ const U = (() => {
       const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
       return { dow: k.getDay(), min: k.getHours() * 60 + k.getMinutes() };
     },
-    // 맥이 새 데이터를 올리는 시간대 (평일 07:00~20:00): 이때만 열어 둔 화면을 자주 확인한다
+    // 맥이 새 데이터를 올리는 시간대 (평일 07:00~21:30, 저녁 20:40 실행 포함): 이때만 열어 둔 화면을 자주 확인한다
     busyHours() {
       const { dow, min } = U.kst();
-      return dow > 0 && dow < 6 && min >= 420 && min <= 1200;
+      return dow > 0 && dow < 6 && min >= 420 && min <= 1290;
+    },
+    // 'YYYY-MM-DDTHH:MM:SS'(한국 시각) → 지금으로부터 몇 분 전
+    minsAgo(ts) {
+      const { min } = U.kst();
+      const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
+      const today = `${k.getFullYear()}-${String(k.getMonth() + 1).padStart(2, '0')}-${String(k.getDate()).padStart(2, '0')}`;
+      if (!ts || ts.slice(0, 10) !== today) return Infinity;
+      return min - (+ts.slice(11, 13) * 60 + +ts.slice(14, 16));
     },
     // 한국 시간 평일 08:50~15:40 (NXT 프리·애프터는 제외). 차트 이미지 자동 갱신에 쓴다
     marketHours() {

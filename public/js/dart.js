@@ -188,8 +188,8 @@
   async function refreshSame() {
     if (!data || !U.busyHours()) return;
     try {
-      const d = await (await fetch(`data/dart/${data.date}.json`, { cache: 'no-cache' })).json();
-      if (d.built !== data.built) { data = d; renderBody(); }
+      const d = await U.fresh(`data/dart/${data.date}.json`);   // 바뀌었을 때만 (캐시도 같이 바뀜)
+      if (d && d.date === data.date) { data = d; renderBody(); }
     } catch (e) { /* 다음 때 */ }
   }
   setInterval(refreshSame, 120000);

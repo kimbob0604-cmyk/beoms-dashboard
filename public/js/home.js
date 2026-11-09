@@ -72,6 +72,7 @@
     if (!w.dataset.orig) w.dataset.orig = w.textContent;
     w.textContent = v == null ? w.dataset.orig : when;
     card.classList.toggle('hovering', v != null);
+    if (v == null) setTimeout(applyPending, 0);
   }
 
   function drawIntraday(card, x) {
@@ -320,7 +321,7 @@
   async function loadQuotes() {
     if (!Stock.watchList().length) return;
     try {
-      quotes = await (await fetch('data/quotes.json', { cache: 'no-cache' })).json();
+      quotes = await (await fetch(U.bust('data/quotes.json', 1), { cache: 'no-store' })).json();
     } catch (e) { quotes = {}; }
     const el = document.querySelector('[data-card="watch"]');
     if (el) el.outerHTML = watchCard();
@@ -410,10 +411,21 @@
       <p>목표가·리포트: 네이버 증권 리서치(증권사 제공). 수급 금액은 순매수 수량 × 종가 어림. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
   }
 
+  // 위쪽 기준 시각. 장중인데 20분 넘게 새 시세가 없으면(맥이 꺼짐·잠듦 등) 지연이라고 분명히 보여 준다
+  const STALE_MIN = 20;
   function stamp() {
-    $('asof').innerHTML = isLive()
-      ? `<span class="live-dot"></span>장중 ${hm(data.live)} 시세 · 10분마다 갱신`
-      : `${U.dateLabel(data.date)} 종가 기준 · ${U.timeLabel(data.built)} 갱신`;
+    const ago = U.minsAgo(data.live);
+    let html;
+    if (U.marketHours() && ago <= STALE_MIN) {
+      html = `<span class="live-dot"></span>장중 ${hm(data.live)} 시세 · 10분마다 갱신`;
+    } else if (U.marketHours()) {
+      html = `<span class="stale">⚠ 갱신 지연</span> 마지막 ${data.live ? U.timeLabel(data.live) : U.timeLabel(data.built)}`;
+    } else if (data.live && data.live.slice(0, 10) > data.date) {
+      html = `${U.timeLabel(data.live)} 장중 시세 <span class="muted">(그날 종가 반영 전)</span>`;
+    } else {
+      html = `${U.dateLabel(data.date)} 종가 기준 · ${U.timeLabel(data.built)} 갱신`;
+    }
+    $('asof').innerHTML = html;
   }
 
   function renderAll() {
@@ -425,7 +437,8 @@
   }
 
   async function fetchHome() {
-    const r = await fetch('data/home.json', { cache: 'no-cache' });
+    // CDN 10분 캐시를 피하려고 주소에 시각을 붙인다
+    const r = await fetch(U.bust('data/home.json', 1), { cache: 'no-store' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
   }
@@ -441,12 +454,20 @@
     renderAll();
   }
 
-  // 장중: 새로 올라왔으면 다시 그린다 (차트에 마우스를 올려 둔 중이면 다음 확인 때)
+  // 새로 올라왔으면 다시 그린다. 차트에 마우스를 올려 둔 중이면 받아만 두고, 마우스를 떼면 바로 그린다
+  let pending = null;
+  function applyPending() {
+    if (!pending || document.querySelector('.hm-ix.hovering')) return;
+    data = pending;
+    pending = null;
+    renderAll();
+  }
   async function poll(force) {
-    if (document.hidden || (!force && !U.busyHours()) || document.querySelector('.hm-ix.hovering')) return;
+    stamp();   // 시간이 흐르면 '갱신 지연' 표시가 바뀌므로 매번
+    if (document.hidden || (!force && !U.busyHours())) return;
     try {
       const d = await fetchHome();
-      if (d.built !== data.built) { data = d; renderAll(); }
+      if (d.built !== data.built) { pending = d; applyPending(); }
     } catch (e) { /* 다음 확인 때 */ }
   }
 

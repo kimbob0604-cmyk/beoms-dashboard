@@ -18,8 +18,9 @@
     <key>StartInterval</key>
     <integer>600</integer>
 
+    <!-- 로그인(재부팅) 직후 10분 기다리지 않고 바로 한 번 -->
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
 
     <key>StandardOutPath</key>
     <string>/Users/beomjun/Beom's Dashboard/logs/launchd.live.out.log</string>

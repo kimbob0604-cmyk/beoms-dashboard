@@ -30,8 +30,8 @@ PREOPEN = dtime(8, 0)         # 넥스트레이드 프리마켓 시작. 이 뒤�
 NAVER_MIN_ROWS = 2000         # 이보다 적으면 목록이 덜 온 것으로 보고 쓰지 않음
 
 
-OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume)
-              VALUES (:date, :code, :open, :high, :low, :close, :volume)"""
+OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume, chg)
+              VALUES (:date, :code, :open, :high, :low, :close, :volume, :change_pct)"""
 
 
 def collect_date(conn, session, d: date, ohlc_only: bool = False) -> int:
@@ -136,7 +136,7 @@ def main():
         sys.exit(0 if n else 1)
 
     if args.ohlc_days:
-        have = {r[0] for r in conn.execute('SELECT DISTINCT date FROM ohlc_daily WHERE open IS NOT NULL')}
+        have = {r[0] for r in conn.execute('SELECT DISTINCT date FROM ohlc_daily WHERE open IS NOT NULL AND chg IS NOT NULL')}
         for i in range(args.ohlc_days, 0, -1):
             d = today - timedelta(days=i)
             if d.weekday() >= 5 or d.isoformat() in have:

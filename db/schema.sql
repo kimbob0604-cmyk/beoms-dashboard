@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS ohlc_daily (
     low         REAL,
     close       REAL,
     volume      REAL,                 -- 주
+    chg         REAL,                 -- 등락률(%). KRX 기준가(권리락·분할 반영) 대비라 이어 붙이면 수정주가 수익률
     PRIMARY KEY (date, code)
 );
 
@@ -218,3 +219,15 @@ CREATE TABLE IF NOT EXISTS cns_quarter (
     cnp         REAL,
     PRIMARY KEY (as_of, code, period)
 );
+
+-- 공시 이벤트 (이벤트 스터디용). DART 목록의 제목만으로 종류를 정한다 — 원문을 받지 않아 1년치도 가볍다
+CREATE TABLE IF NOT EXISTS dart_event (
+    rcept_no    TEXT PRIMARY KEY,
+    date        TEXT NOT NULL,
+    code        TEXT NOT NULL,
+    name        TEXT,
+    market      TEXT,
+    kind        TEXT NOT NULL,
+    title       TEXT
+);
+CREATE INDEX IF NOT EXISTS dart_event_kind ON dart_event (kind, date);

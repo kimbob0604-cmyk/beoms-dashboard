@@ -26,7 +26,7 @@ PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'chart', 'reports')   # 최신 파일만
-FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json')   # 최신 단일 파일
+FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json', 'events.json')   # 최신 단일 파일
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
@@ -88,6 +88,22 @@ def ensure_repo(remote: str):
     subprocess.run(['git', 'fetch', '-q', '--depth', '1', 'origin', BRANCH], cwd=REPO, capture_output=True)
 
 
+def last_deploy_failed(remote: str, commit: str) -> bool:
+    """원격 gh-pages 의 지금 커밋으로 돈 GitHub Pages 배포가 실패·취소로 끝났으면 True.
+    배포가 'syncing_files' 타임아웃으로 실패하면 사이트는 옛 상태로 남는데, 내용이 같으면 다시 올리지 않아
+    그대로 굳는 문제가 있었다(2026-11-09 11:38). gh 가 없거나 확인이 안 되면 False."""
+    m = re.search(r'github\.com[:/]([^/]+/[^/.]+)', remote)
+    if not m or not commit:
+        return False
+    try:
+        r = subprocess.run(['gh', 'run', 'list', '-R', m.group(1), '--workflow', 'pages-build-deployment', '-L', '5',
+                            '--json', 'status,conclusion,headSha'], capture_output=True, text=True, timeout=30)
+        runs = [x for x in json.loads(r.stdout or '[]') if x.get('headSha') == commit]
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return False
+    return bool(runs) and runs[0]['status'] == 'completed' and runs[0]['conclusion'] in ('failure', 'cancelled', 'timed_out')
+
+
 def main() -> int:
     remote = git('remote', 'get-url', 'origin', cwd=ROOT)
     name = git('config', 'user.name', cwd=ROOT)
@@ -104,8 +120,12 @@ def main() -> int:
     remote_tree = subprocess.run(['git', 'rev-parse', f'refs/remotes/origin/{BRANCH}^{{tree}}'], cwd=REPO,
                                  capture_output=True, text=True).stdout.strip()
     if tree == remote_tree and '--always' not in sys.argv:
-        print('바뀐 파일 없음, 배포 건너뜀')
-        return 0
+        head = subprocess.run(['git', 'rev-parse', f'refs/remotes/origin/{BRANCH}'], cwd=REPO,
+                              capture_output=True, text=True).stdout.strip()
+        if not last_deploy_failed(remote, head):
+            print('바뀐 파일 없음, 배포 건너뜀')
+            return 0
+        print('지난 배포가 실패해서 같은 내용을 다시 올림')
     env = {'GIT_AUTHOR_NAME': name, 'GIT_AUTHOR_EMAIL': email, 'GIT_COMMITTER_NAME': name, 'GIT_COMMITTER_EMAIL': email}
     commit = subprocess.run(['git', 'commit-tree', tree, '-m', f'데이터 갱신 {datetime.now():%Y-%m-%d %H:%M}'],
                             cwd=REPO, check=True, capture_output=True, text=True,
