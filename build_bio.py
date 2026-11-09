@@ -20,6 +20,7 @@ from pathlib import Path
 import requests
 
 import bio_events as be
+import bio_xbrl as bx
 import bio_valuation as bv
 
 ROOT = Path(__file__).resolve().parent
@@ -256,6 +257,38 @@ def earnings_preview(co, mk, g, rf, cfg, consensus):
             'grid': grid, 'price': mk['price']}
 
 
+def fetch_prices(ticker: str):
+    """주가 차트용: 최근 1년 일봉, 5년 주봉 종가 (yfinance)."""
+    import yfinance as yf
+    t = yf.Ticker(ticker)
+    d = t.history(period='1y')['Close'].dropna()
+    w = t.history(period='5y', interval='1wk')['Close'].dropna()
+    fmt = lambda s: [[i.strftime('%Y-%m-%d'), round(float(v), 4)] for i, v in s.items()]
+    return {'d': fmt(d), 'w': fmt(w)}
+
+
+def checks(row, fin):
+    """가치 계산에 쓴 값(수동 입력·yfinance)과 SEC XBRL 원문 수치를 나란히. 1% 넘게 다르면 표시."""
+    if not fin or not row.get('valuation'):
+        return []
+    b = row['valuation']['bridge']
+    notes = row.get('override_notes') or {}
+    out = []
+
+    def add(item, used, sec, sec_date, note):
+        if sec is None:
+            out.append({'item': item, 'used': used, 'sec': None, 'sec_date': sec_date, 'diff': None, 'note': note or 'SEC XBRL에 해당 항목 없음'})
+            return
+        diff = (used / sec - 1) if sec else None
+        out.append({'item': item, 'used': used, 'sec': sec, 'sec_date': sec_date, 'diff': diff, 'note': note})
+    bal = fin['balance']
+    add('현금·단기투자', b['cash'], bal['cash_total'], bal['end'], notes.get('cash_note', ''))
+    add('차입금', b['debt'], bal['debt'], bal['end'], notes.get('debt_note', ''))
+    if fin.get('shares'):
+        add('주식 수(백만)', row['market']['shares'], fin['shares']['value'], fin['shares']['date'], notes.get('shares_note', ''))
+    return out
+
+
 def card(co, row, today_iso):
     """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
     auto = row.get('auto') or {}
@@ -269,7 +302,10 @@ def card(co, row, today_iso):
     nxt = cands[0] if cands else None
     v = row.get('valuation')
     runway = None
-    if v and co['kind'] == 'pipeline':
+    fin = row.get('fin') or {}
+    if fin.get('runway_months'):
+        runway = {'months': fin['runway_months'], 'basis': f"SEC 원문: 현금·단기투자 {fin['balance']['cash_total']:.1f}M ({fin['balance']['end']}) ÷ 최근 2분기 평균 영업현금 유출 {fin['burn_quarter']:.1f}M/분기"}
+    elif v and co['kind'] == 'pipeline':
         ov = co.get('overrides', {})
         annual = ov.get('annual_burn_musd')
         if annual is None and row['market'].get('op_cf') is not None:
@@ -282,6 +318,7 @@ def card(co, row, today_iso):
     price = row['market']['price']
     return {'next': nxt, 'earnings_today': bool(e and e['date'] == today_iso),
             'runway': runway, 'commercial': co['kind'] != 'pipeline',
+            'cf_positive': bool(fin.get('quarters')) and fin.get('burn_quarter') is None,
             'base_up': v['upside'] if v else None, 'top_up': (top / price - 1) if top and price else None,
             'top_label': '낙관 성공' if pipe else '낙관'}
 
@@ -370,8 +407,21 @@ def build():
                 print(f'  임상 시험 실패: {e}', file=sys.stderr)
                 stale.append('trials')
         auto['trial_changes'] = be.trial_changes(old.get('trials', []), trials)
+        fin = old.get('fin')
+        if co.get('cik'):
+            try:
+                fin = bx.summarize(bx.fetch(co['cik']))
+                fin['filings_url'] = f"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={co['cik']}&type=10-Q"
+            except Exception as e:
+                print(f'  XBRL 실패: {e}', file=sys.stderr)
+                stale.append('xbrl')
+        try:
+            prices = fetch_prices(t)
+        except Exception as e:
+            print(f'  주가 이력 실패: {e}', file=sys.stderr)
+            prices = old.get('prices')
         row = {'ticker': t, 'name': co['name'], 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''), 'market': mk, 'news': news,
-               'trials': trials, 'auto': auto, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
+               'trials': trials, 'auto': auto, 'fin': fin, 'prices': prices, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
                'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
         if co['kind'] != 'excluded':
             row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
@@ -383,6 +433,7 @@ def build():
             row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
             row['earnings_preview'] = earnings_preview(co, mk, g, rf, cfg, auto['earnings'])
             row['card'] = card(co, row, date.today().isoformat())
+            row['checks'] = checks(row, fin)
             if co.get('overrides'):
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)

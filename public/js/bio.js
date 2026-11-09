@@ -92,7 +92,7 @@
     const chip = (v, l) => v == null ? '' : `<span class="bc-chip ${U.cls(v)}">${l} ${pc(v)}</span>`;
     $('cards').innerHTML = data.companies.map(c => {
       const m = c.market, k = c.card || {}, n = k.next;
-      const rw = k.runway ? `현금 약 ${Math.round(k.runway.months)}개월` : k.commercial ? '상업화 중' : '';
+      const rw = [k.commercial ? '상업화 중' : '', k.cf_positive ? '영업현금 흑자' : k.runway ? `현금 약 ${Math.round(k.runway.months)}개월` : ''].filter(Boolean).join(' · ');
       return `<button class="bc${c.ticker === st.c ? ' on' : ''}" data-c="${c.ticker}" type="button">
         <div class="bc-top"><b>${esc(c.ticker)}</b>${k.earnings_today ? '<span class="bc-badge">실적 오늘</span>' : ''}</div>
         <div class="bc-px">${px(m.price)} <small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></div>
@@ -101,6 +101,67 @@
         <div class="bc-chips">${chip(k.base_up, '기본')}${chip(k.top_up, k.top_label || '낙관')}</div>
       </button>`;
     }).join('');
+  }
+
+  const RANGES = [['1M', 'd', 21], ['6M', 'd', 126], ['1Y', 'd', 260], ['5Y', 'w', 270]];
+  let range = '1Y';
+
+  function priceSvg(c) {
+    const p = c.prices;
+    if (!p) return '<p class="muted small">주가 이력을 불러오지 못했습니다.</p>';
+    const [, key, n] = RANGES.find(r => r[0] === range);
+    const pts = p[key].slice(-n);
+    if (pts.length < 2) return '';
+    const W = 560, H = 180, padL = 44, padR = 8, padT = 10, padB = 22;
+    const vs = pts.map(x => x[1]);
+    let lo = Math.min(...vs), hi = Math.max(...vs);
+    const span = hi - lo || 1; lo -= span * 0.05; hi += span * 0.05;
+    const X = i => padL + (i / (pts.length - 1)) * (W - padL - padR);
+    const Y = v => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
+    const line = pts.map((x, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(x[1]).toFixed(1)}`).join('');
+    const area = `${line}L${X(pts.length - 1).toFixed(1)},${H - padB}L${padL},${H - padB}Z`;
+    const ticks = [0, 0.5, 1].map(f => lo + (hi - lo) * f);
+    const chg = vs[vs.length - 1] / vs[0] - 1;
+    const color = chg >= 0 ? 'var(--up)' : 'var(--down)';
+    const xl = [0, Math.floor((pts.length - 1) / 2), pts.length - 1];
+    return `<div class="bio-px-head"><span><b>${px(vs[vs.length - 1])}</b> <span class="${U.cls(chg)}">${pc(chg, 1)}</span> <span class="muted small">${pts[0][0]} ~ ${pts[pts.length - 1][0]}</span></span>
+        <span class="seg" role="group">${RANGES.map(r => `<button type="button" data-range="${r[0]}" class="${r[0] === range ? 'on' : ''}">${r[0]}</button>`).join('')}</span></div>
+      <svg class="bio-px" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(c.ticker)} 주가 ${range}">
+        ${ticks.map(t => `<line x1="${padL}" x2="${W - padR}" y1="${Y(t)}" y2="${Y(t)}" class="g"/><text x="${padL - 6}" y="${Y(t) + 4}" text-anchor="end">${t.toFixed(t < 10 ? 2 : 0)}</text>`).join('')}
+        <path d="${area}" fill="${color}" opacity="0.10"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.8"/>
+        <circle cx="${X(pts.length - 1)}" cy="${Y(vs[vs.length - 1])}" r="3" fill="${color}"/>
+        ${xl.map(i => `<text x="${X(i)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle'}">${pts[i][0].slice(2)}</text>`).join('')}
+      </svg><p class="muted small">yfinance 종가 (원문 아님)</p>`;
+  }
+
+  function finHtml(c) {
+    const f = c.fin;
+    if (!f) return '';
+    const b = f.balance, qs = f.quarters || [];
+    const ck = c.checks || [];
+    const has = k => qs.some(q => q[k] != null);
+    const rows = [['revenue', '매출'], ['rnd', 'R&D'], ['sga', '판관비'], ['op_income', '영업이익'], ['net_income', '순이익'], ['opcf', '영업현금흐름']].filter(([k]) => has(k));
+    const maxRev = Math.max(1, ...qs.map(q => Math.abs(q.revenue || 0)));
+    const cell = v => v == null ? '<td class="num muted">–</td>' : `<td class="num ${v < 0 ? 'down' : ''}">${usd(v)}</td>`;
+    return `<div class="bio-sub">재무 <span class="muted small">SEC XBRL 공시 원문 수치 · 마지막 제출 ${esc(f.last_filed || '')} · <a href="${esc(f.filings_url)}" target="_blank" rel="noopener">EDGAR 공시 목록</a></span></div>
+      <div class="bio-grid"><div class="bio-pad" id="pxbox">${priceSvg(c)}</div>
+      <div><table class="tbl"><tbody>
+        <tr><td>현금·단기투자 <small>${esc(b.end || '')} 기준${b.sti != null ? ` (현금 ${usd(b.cash)} + 단기투자 ${usd(b.sti)})` : ''}</small></td><td class="num"><b>${usd(b.cash_total)}</b></td></tr>
+        <tr><td>차입금 <small>장기차입 유동+비유동 항목만 (리스·매출연동 차입은 회사마다 달라 빠질 수 있음)</small></td><td class="num">${b.debt != null ? usd(b.debt) : '<span class="muted">항목 없음</span>'}</td></tr>
+        <tr><td>발행주식 <small>${f.shares ? `표지 기준 ${esc(f.shares.date)} (${esc(f.shares.form)})` : ''}</small></td><td class="num">${f.shares ? f.shares.value.toFixed(1) + 'M' : '–'}</td></tr>
+        <tr><td>분기 영업현금 유출 <small>최근 2분기 평균</small></td><td class="num">${f.burn_quarter != null ? usd(-f.burn_quarter) : '<span class="up">유입(흑자)</span>'}</td></tr>
+        <tr><td>현금 버티는 기간 <small>현금·단기투자 ÷ 분기 유출 × 3</small></td><td class="num"><b>${f.runway_months != null ? Math.round(f.runway_months) + '개월' : '–'}</b></td></tr>
+      </tbody></table>
+      ${ck.length ? `<div class="bio-sub">가치 계산 값 대 SEC 원문 <span class="muted small">1% 넘게 다르면 표시</span></div><table class="tbl"><thead><tr><th>항목</th><th class="num">가치 계산</th><th class="num">SEC</th><th class="num">차이</th></tr></thead><tbody>
+        ${ck.map(x => `<tr><td>${esc(x.item)}<small>${esc(x.note || '')}</small></td><td class="num">${x.item.includes('주식') ? (x.used != null ? x.used.toFixed(1) + 'M' : '–') : usd(x.used)}</td>
+          <td class="num">${x.sec == null ? '<span class="muted">없음</span>' : (x.item.includes('주식') ? x.sec.toFixed(1) + 'M' : usd(x.sec))}<small>${esc(x.sec_date || '')}</small></td>
+          <td class="num">${x.diff == null ? '–' : Math.abs(x.diff) > 0.01 ? `<span class="bio-tag stop">${pc(x.diff, 1)}</span>` : '<span class="bio-tag">일치</span>'}</td></tr>`).join('')}
+      </tbody></table>` : ''}</div></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>분기 (백만 달러)</th>${qs.map(q => `<th class="num">${esc(q.label)}</th>`).join('')}</tr></thead><tbody>
+        ${has('revenue') ? `<tr><td></td>${qs.map(q => `<td class="num"><span class="bio-bar" style="height:${Math.round(Math.abs(q.revenue || 0) / maxRev * 34)}px"></span></td>`).join('')}</tr>` : ''}
+        ${rows.map(([k, l]) => `<tr><td>${l}</td>${qs.map(q => cell(q[k])).join('')}</tr>`).join('')}
+      </tbody></table></div>
+      <p class="bio-pad muted small">분기 값이 공시에 없으면 같은 회계연도 누적 값의 차이로 계산 (예: 6개월 누적 − 3개월). 회계연도가 달라도 달력 분기로 표시. 사용한 XBRL 항목: ${esc(Object.entries(f.concepts).filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join(', '))}</p>`;
   }
 
   function renderOverview() {
@@ -215,6 +276,7 @@
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
+      h += finHtml(c);
       h += previewHtml(c);
       h += `<div class="bio-grid"><div>${bridgeHtml(c)}</div><div class="bio-pad">
         <p><b>시나리오</b> (보수: PoS ×0.8·피크 ×0.6·성장 ×0.6, 낙관: PoS ×1.1·피크 ×1.4·성장 ×1.3)</p>
@@ -266,6 +328,13 @@
     renderCards(); renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
   }
 
+  $('detail').addEventListener('click', e => {
+    const b = e.target.closest('[data-range]');
+    if (!b) return;
+    range = b.dataset.range;
+    const c = data.companies.find(x => x.ticker === st.c);
+    $('pxbox').innerHTML = priceSvg(c);
+  });
   $('cards').addEventListener('click', e => {
     const r = e.target.closest('[data-c]');
     if (r) pg.set({ c: r.dataset.c });
