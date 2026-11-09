@@ -256,6 +256,36 @@ def earnings_preview(co, mk, g, rf, cfg, consensus):
             'grid': grid, 'price': mk['price']}
 
 
+def card(co, row, today_iso):
+    """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
+    auto = row.get('auto') or {}
+    cands = [{'date': x['date'], 'text': x['text'], 'auto': False} for x in co.get('catalysts', []) if x['date'] >= today_iso]
+    e = auto.get('earnings')
+    if e and e['date'] >= today_iso:
+        cands.append({'date': e['date'], 'text': '실적 발표', 'auto': True})
+    for x in auto.get('events', []):
+        cands.append({'date': x['date'], 'text': f"{x['date_text']} 일정 (공시 자동 추출)", 'auto': True})
+    cands.sort(key=lambda x: (x['date'], x['auto']))
+    nxt = cands[0] if cands else None
+    v = row.get('valuation')
+    runway = None
+    if v and co['kind'] == 'pipeline':
+        ov = co.get('overrides', {})
+        annual = ov.get('annual_burn_musd')
+        if annual is None and row['market'].get('op_cf') is not None:
+            annual = max(0.0, -row['market']['op_cf'])
+        if annual:
+            runway = {'months': v['bridge']['cash'] / (annual / 12), 'basis': ov.get('burn_note', '최근 12개월 영업현금흐름 (yfinance)')}
+    p = row.get('payoffs') or {}
+    pipe = bool(v and v['assets'])
+    top = p.get('bull_success') if pipe else (row.get('scenarios') or {}).get('bull', {}).get('per_share')
+    price = row['market']['price']
+    return {'next': nxt, 'earnings_today': bool(e and e['date'] == today_iso),
+            'runway': runway, 'commercial': co['kind'] != 'pipeline',
+            'base_up': v['upside'] if v else None, 'top_up': (top / price - 1) if top and price else None,
+            'top_label': '낙관 성공' if pipe else '낙관'}
+
+
 def implied_pos_scale(co, mk, g, rf):
     """시총이 요구하는 PoS 배수 (임상 자산만). 상업 부분·현금·부채는 그대로 두고 남는 자산 가치를 맞춘다."""
     mcap = mk.get('mcap_used') or mk.get('mcap')
@@ -352,6 +382,7 @@ def build():
             row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf)
             row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
             row['earnings_preview'] = earnings_preview(co, mk, g, rf, cfg, auto['earnings'])
+            row['card'] = card(co, row, date.today().isoformat())
             if co.get('overrides'):
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)

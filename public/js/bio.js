@@ -88,6 +88,21 @@
       </tbody></table></div>`;
   }
 
+  function renderCards() {
+    const chip = (v, l) => v == null ? '' : `<span class="bc-chip ${U.cls(v)}">${l} ${pc(v)}</span>`;
+    $('cards').innerHTML = data.companies.map(c => {
+      const m = c.market, k = c.card || {}, n = k.next;
+      const rw = k.runway ? `현금 약 ${Math.round(k.runway.months)}개월` : k.commercial ? '상업화 중' : '';
+      return `<button class="bc${c.ticker === st.c ? ' on' : ''}" data-c="${c.ticker}" type="button">
+        <div class="bc-top"><b>${esc(c.ticker)}</b>${k.earnings_today ? '<span class="bc-badge">실적 오늘</span>' : ''}</div>
+        <div class="bc-px">${px(m.price)} <small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></div>
+        <div class="bc-next">${n ? `<span class="bc-d">${dday(n.date)}</span> ${esc(n.text)}${n.auto ? ' <i>자동</i>' : ''}` : '<span class="muted">예정 일정 없음</span>'}</div>
+        <div class="bc-meta" title="${k.runway ? esc('현금 ÷ 월 소진 추정. 근거: ' + k.runway.basis) : ''}">${esc(rw)}${k.runway ? ' (추정)' : ''}</div>
+        <div class="bc-chips">${chip(k.base_up, '기본')}${chip(k.top_up, k.top_label || '낙관')}</div>
+      </button>`;
+    }).join('');
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -248,9 +263,13 @@
   }
 
   function render() {
-    renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
+    renderCards(); renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
   }
 
+  $('cards').addEventListener('click', e => {
+    const r = e.target.closest('[data-c]');
+    if (r) pg.set({ c: r.dataset.c });
+  });
   $('overview').addEventListener('click', e => {
     const r = e.target.closest('[data-c]');
     if (r) pg.set({ c: r.dataset.c });
