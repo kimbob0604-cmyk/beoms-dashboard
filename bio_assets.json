@@ -119,7 +119,63 @@
         "annual_burn_musd": 125.6,
         "burn_note": "2026년 상반기 영업활동 현금 사용 6,279만 달러 × 2 (10-Q 원문, 연환산 추정)"
       },
-      "cik": 1160308
+      "cik": 1160308,
+      "pipeline": [
+        {
+          "drug": "MOLBREEVI (molgramostim)",
+          "indication": "자가면역 폐포단백증(aPAP), 미국",
+          "phase": 4,
+          "status": "BLA 우선심사",
+          "next": "PDUFA 2026-11-22",
+          "asset": "svra-molgramostim",
+          "ct_terms": [
+            "molgramostim"
+          ],
+          "src": "회사 2분기 보도자료",
+          "url": "https://investors.savarapharma.com/news/news-details/2026/Savara-Reports-Second-Quarter-2026-Financial-Results-and-Provides-Business-Update/default.aspx",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "proteinosis"
+          ]
+        },
+        {
+          "drug": "MOLBREEVI (molgramostim)",
+          "indication": "aPAP, EU·영국",
+          "phase": 4,
+          "status": "EMA·MHRA 승인 신청 심사 중",
+          "next": "MHRA 2026년 4분기, EMA 2027년 1분기",
+          "asset": null,
+          "ct_terms": [
+            "molgramostim"
+          ],
+          "src": "회사 2분기 보도자료",
+          "url": "https://investors.savarapharma.com/news/news-details/2026/Savara-Reports-Second-Quarter-2026-Financial-Results-and-Provides-Business-Update/default.aspx",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "proteinosis"
+          ]
+        },
+        {
+          "drug": "molgramostim",
+          "indication": "소아 aPAP",
+          "phase": 3,
+          "status": "3상 모집 중 (ClinicalTrials.gov NCT06431776)",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "molgramostim"
+          ],
+          "src": "ClinicalTrials.gov",
+          "url": "https://clinicaltrials.gov/study/NCT06431776",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "pediatric"
+          ]
+        }
+      ]
     },
     {
       "ticker": "IMVT",
@@ -129,13 +185,13 @@
         "spons": "Immunovant"
       },
       "not_modeled": "batoclimab 잔여 가치, 쇼그렌(더 진행하지 않을 가능성), 미국 밖 판매, HanAll 로열티 비용, 추가 적응증.",
-      "summary": "FcRn 억제 항체. batoclimab은 갑상선안병증(TED) 3상 실패(2026-04)로 임상을 정리 중이고, IMVT-1402는 CLE 개념증명 실패(2026-09)로 CLE를 중단했습니다. Graves병·중증근무력증 3상 탑라인은 2027년입니다.",
+      "summary": "FcRn 억제 항체. batoclimab은 갑상선안병증(TED) 3상 실패(2026-04)로 임상을 정리 중이고, IMVT-1402(국제일반명 imeroprubart)는 CLE 개념증명 실패(2026-09)로 CLE를 중단했습니다. Graves병·중증근무력증 탑라인은 2027년, CIDP는 2028년입니다.",
       "assets": [
         {
           "id": "imvt-gd",
           "name": "IMVT-1402",
           "indication": "Graves병 (GD)",
-          "stage": "3상 (등록 가능성 있는 시험)",
+          "stage": "2상 (CT.gov 등록 단계) · 회사는 '등록 가능성 있는 시험'이라 표현",
           "method": "rnpv",
           "peak_musd": 1815.0,
           "basis": "미국 유병 약 88만 명(회사 claims 분석) × 항갑상선제 재발·조절 실패·불내성 25~30%(중간 27.5%) = 약 242천 명 × 피크 점유 5% × 순가격 연 $150k",
@@ -144,7 +200,7 @@
           "exclusivity_years": 12,
           "stages": [
             {
-              "name": "GD 3상 탑라인 (2027)",
+              "name": "GD 등록 가능 시험 탑라인 (2027)",
               "t": 1.0,
               "pos": 0.55,
               "x": 150,
@@ -158,13 +214,13 @@
             }
           ],
           "launch_in": 2.5,
-          "assumptions": "점유율·순가격·PoS는 가정치. 유병·25~30% 비율은 회사 2024-09 자료(원문 확인 전, 회사 추정이라 독립 검증 아님). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
+          "assumptions": "점유율·순가격·PoS는 가정치. 유병·25~30% 비율은 회사 2024-09 자료(원문 확인 전, 회사 추정이라 독립 검증 아님). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음). CT.gov에는 2상으로 등록돼 있지만 회사가 등록 가능 시험이라 밝혀 허가로 이어질 수 있는 시험으로 보고 PoS를 둠(가정치)."
         },
         {
           "id": "imvt-mg",
           "name": "IMVT-1402",
           "indication": "중증근무력증 (MG)",
-          "stage": "3상 (등록 가능성 있는 시험)",
+          "stage": "3상 (CT.gov NCT07039916)",
           "method": "rnpv",
           "peak_musd": 827.1,
           "basis": "미국 MG 약 82,715명(2021, 인구 기반 추정 논문) × 피크 점유 5% × 순가격 연 $200k (VYVGART 출시 시 회사 설명 순가격 약 $225k를 참고)",
@@ -193,7 +249,7 @@
           "id": "imvt-cidp",
           "name": "IMVT-1402",
           "indication": "CIDP",
-          "stage": "3상 (등록 가능성 있는 시험)",
+          "stage": "2상 (CT.gov NCT07032662) · 회사는 '등록 가능성 있는 시험'이라 표현",
           "method": "rnpv",
           "peak_musd": 770.6,
           "basis": "미국 CIDP 약 77,058명(2023 claims 기반 추정, 논문마다 2.8~23.3/10만으로 편차가 큼) × 피크 점유 5% × 순가격 연 $200k",
@@ -202,7 +258,7 @@
           "exclusivity_years": 12,
           "stages": [
             {
-              "name": "CIDP 3상 탑라인 (2028)",
+              "name": "CIDP 등록 가능 시험 탑라인 (2028)",
               "t": 2.0,
               "pos": 0.6,
               "x": 80,
@@ -216,13 +272,13 @@
             }
           ],
           "launch_in": 3.5,
-          "assumptions": "VYVGART가 CIDP 허가를 받아 시장은 증명됐지만 IMVT-1402 3상은 아직. PoS·점유율·순가격은 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
+          "assumptions": "VYVGART가 CIDP 허가를 받아 시장은 증명됐지만 IMVT-1402 CIDP 시험은 CT.gov상 2상(회사: 등록 가능 시험). PoS·점유율·순가격은 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
         },
         {
           "id": "imvt-ra",
           "name": "IMVT-1402",
           "indication": "난치성 류마티스관절염 (D2T RA)",
-          "stage": "2기 1차 평가변수 충족, FDA 협의 전",
+          "stage": "2상 (CT.gov NCT06754462) · 2기 1차 평가변수 충족, FDA 협의 전",
           "method": "rnpv",
           "peak_musd": 585.0,
           "basis": "미국 RA 약 130만 명 × D2T 비율 10%(문헌 범위 5~22%) = 13만 명 × 피크 점유 3% × 순가격 연 $150k",
@@ -238,7 +294,7 @@
               "date": "2026-12-31"
             },
             {
-              "name": "RA 3상 탑라인",
+              "name": "RA 추가 3상 탑라인 (가정: FDA가 3상을 요구하는 경우)",
               "t": 3.0,
               "pos": 0.65,
               "x": 250,
@@ -361,7 +417,141 @@
         "debt_musd": 0.0,
         "debt_note": "2026-09-30 대차대조표에 차입금 없음(유동부채 1.04억 달러는 매입채무·미지급비용), 회사 분기 보고 (원문 확인)"
       },
-      "cik": 1764013
+      "cik": 1764013,
+      "pipeline": [
+        {
+          "drug": "IMVT-1402",
+          "indication": "Graves병",
+          "phase": 2,
+          "status": "CT.gov 2상, 회사는 '등록 가능성 있는 시험'이라 표현",
+          "next": "탑라인 2027년",
+          "asset": "imvt-gd",
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 분기 보고 (2026-11-09)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "graves"
+          ]
+        },
+        {
+          "drug": "IMVT-1402",
+          "indication": "중증근무력증",
+          "phase": 3,
+          "status": "3상 (CT.gov)",
+          "next": "탑라인 2027년",
+          "asset": "imvt-mg",
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 분기 보고 (2026-11-09)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "myasthenia"
+          ]
+        },
+        {
+          "drug": "IMVT-1402",
+          "indication": "난치성 류마티스관절염",
+          "phase": 2,
+          "status": "CT.gov 2상, 회사 표현 '등록 가능성 있는 시험', 2기 1차 평가변수 충족",
+          "next": "FDA 협의 (올해 안)",
+          "asset": "imvt-ra",
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 분기 보고 (2026-11-09)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "rheumatoid"
+          ]
+        },
+        {
+          "drug": "IMVT-1402",
+          "indication": "CIDP",
+          "phase": 2,
+          "status": "CT.gov 2상, 회사는 '등록 가능성 있는 시험'이라 표현",
+          "next": "탑라인 2028년",
+          "asset": "imvt-cidp",
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 분기 보고 (2026-11-09)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "demyelinating",
+            "cidp"
+          ]
+        },
+        {
+          "drug": "IMVT-1402",
+          "indication": "쇼그렌병",
+          "phase": 2,
+          "status": "2상 등록 완료, 이후 진행 가능성 낮다고 밝힘",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 분기 보고 (2026-11-09)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "sjögren",
+            "sjogren"
+          ]
+        },
+        {
+          "drug": "IMVT-1402",
+          "indication": "피부 루푸스(CLE)",
+          "phase": 2,
+          "status": "개념증명 1차 평가변수 미달, 개발 중단 계획",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "IMVT-1402",
+            "imeroprubart"
+          ],
+          "src": "회사 보도자료 (2026-09-23)",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/86/immunovant-announces-topline-results-from-proof-of-concept",
+          "stopped": true,
+          "verified": true,
+          "ct_cond": [
+            "lupus"
+          ]
+        },
+        {
+          "drug": "batoclimab",
+          "indication": "갑상선안병증 등",
+          "phase": 3,
+          "status": "TED 3상 2건 실패, 임상 정리 중",
+          "next": null,
+          "asset": null,
+          "ct_terms": [],
+          "src": "회사 보도자료 (2026-04-02)·분기 보고",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/81/immunovant-announces-phase-3-study-results-for-batoclimab",
+          "stopped": true,
+          "verified": true,
+          "ct_cond": [
+            "thyroid eye"
+          ]
+        }
+      ]
     },
     {
       "ticker": "AXSM",
@@ -470,7 +660,242 @@
         "shares_m": 52.577,
         "shares_note": "2026-09-30 발행주식 수 52,576,839주, 회사 3분기 보도자료 (원문 확인)"
       },
-      "cik": 1579428
+      "cik": 1579428,
+      "pipeline": [
+        {
+          "drug": "AUVELITY (AXS-05)",
+          "indication": "주요우울장애",
+          "phase": 5,
+          "status": "판매 중",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "AXS-05",
+            "Auvelity"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "depress"
+          ]
+        },
+        {
+          "drug": "AUVELITY (AXS-05)",
+          "indication": "알츠하이머 초조",
+          "phase": 5,
+          "status": "판매 중 (허가일은 원문 미확인)",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "AXS-05",
+            "Auvelity"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "alzheimer",
+            "agitation"
+          ]
+        },
+        {
+          "drug": "SUNOSI (solriamfetol)",
+          "indication": "기면증·수면무호흡 주간 졸림",
+          "phase": 5,
+          "status": "판매 중",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "solriamfetol",
+            "Sunosi"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "narcolepsy",
+            "apnea"
+          ]
+        },
+        {
+          "drug": "SYMBRAVO",
+          "indication": "편두통",
+          "phase": 5,
+          "status": "판매 중",
+          "next": null,
+          "asset": null,
+          "ct_terms": [],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "migraine"
+          ]
+        },
+        {
+          "drug": "AXS-12 (reboxetine)",
+          "indication": "기면증 탈력발작",
+          "phase": 4,
+          "status": "NDA 심사 중",
+          "next": "PDUFA 2027-05-01",
+          "asset": "axsm-axs12",
+          "ct_terms": [
+            "AXS-12"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "cataplexy",
+            "narcolepsy"
+          ]
+        },
+        {
+          "drug": "solriamfetol",
+          "indication": "폭식장애",
+          "phase": 3,
+          "status": "ENGAGE 3상, 목표 등록 완료",
+          "next": "탑라인 2027년 1분기",
+          "asset": null,
+          "ct_terms": [
+            "solriamfetol"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "binge"
+          ]
+        },
+        {
+          "drug": "solriamfetol",
+          "indication": "교대근무장애",
+          "phase": 3,
+          "status": "SUSTAIN 3상",
+          "next": "탑라인 2027년 하반기",
+          "asset": null,
+          "ct_terms": [
+            "solriamfetol"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "shift work"
+          ]
+        },
+        {
+          "drug": "solriamfetol",
+          "indication": "ADHD",
+          "phase": 3,
+          "status": "FOCUS-2·FOCUS-3 3상",
+          "next": "탑라인 2027년 하반기",
+          "asset": null,
+          "ct_terms": [
+            "solriamfetol"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "attention",
+            "adhd"
+          ]
+        },
+        {
+          "drug": "solriamfetol",
+          "indication": "과도한 졸림 동반 주요우울장애",
+          "phase": 3,
+          "status": "CLARITY 3상",
+          "next": "등록 완료 2027년 상반기",
+          "asset": null,
+          "ct_terms": [
+            "solriamfetol"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "depress"
+          ]
+        },
+        {
+          "drug": "AXS-14",
+          "indication": "섬유근육통",
+          "phase": 3,
+          "status": "FORWARD 3상, NDA 제출 전",
+          "next": "등록 완료 2027년 3분기",
+          "asset": null,
+          "ct_terms": [
+            "AXS-14"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "fibromyalgia"
+          ]
+        },
+        {
+          "drug": "AXS-05",
+          "indication": "금연",
+          "phase": 3,
+          "status": "SUMMIT 3상, 2026년 8월 시작",
+          "next": "탑라인 2027년 하반기",
+          "asset": null,
+          "ct_terms": [
+            "AXS-05"
+          ],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "smok",
+            "nicotine",
+            "tobacco"
+          ]
+        },
+        {
+          "drug": "AXS-20",
+          "indication": "조현병",
+          "phase": null,
+          "status": "3상 시작 예정",
+          "next": "3상 시작 2027년 상반기",
+          "asset": null,
+          "ct_terms": [],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": []
+        },
+        {
+          "drug": "AXS-17",
+          "indication": "뇌전증",
+          "phase": null,
+          "status": "임상 시작 예정 (단계 원문 미기재)",
+          "next": "시작 2027년 상반기",
+          "asset": null,
+          "ct_terms": [],
+          "src": "회사 3분기 보도자료",
+          "url": "https://www.axsome.com/news/axsome-therapeutics-reports-third-quarter-2026-financial-res-13311",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": []
+        }
+      ]
     },
     {
       "ticker": "LQDA",
@@ -579,7 +1004,87 @@
           "sga_growth": 0.08,
           "note": "서비스 매출은 Sandoz 판촉 계약이 10월에 끝나 2분기 수준 이하로, R&D는 L606 pivotal 진행으로 +10%, 판관비는 판매 확대로 +8%, 제품 원가율·기타손익·유효세율은 2분기와 같다고 가정"
         }
-      }
+      },
+      "pipeline": [
+        {
+          "drug": "YUTREPIA",
+          "indication": "폐동맥고혈압(PAH)",
+          "phase": 5,
+          "status": "판매 중",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "LIQ861",
+            "Yutrepia"
+          ],
+          "src": "SEC 8-K 2026-10-14 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "arterial"
+          ]
+        },
+        {
+          "drug": "YUTREPIA",
+          "indication": "간질성 폐질환 동반 폐고혈압(PH-ILD)",
+          "phase": 5,
+          "status": "라벨에서 삭제하는 보충신청 제출, 판촉 중단",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "LIQ861",
+            "Yutrepia"
+          ],
+          "src": "SEC 8-K 2026-10-14 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "interstitial",
+            "lung disease"
+          ]
+        },
+        {
+          "drug": "L606",
+          "indication": "PH-ILD",
+          "phase": 3,
+          "status": "pivotal 위약대조 시험 Re-Spire 등록 시작",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "L606"
+          ],
+          "src": "SEC 8-K 2026-08-12 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926094411/tm2622888d1_ex99-1.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "interstitial",
+            "lung disease"
+          ]
+        },
+        {
+          "drug": "L606",
+          "indication": "PAH·PH-ILD",
+          "phase": 3,
+          "status": "미국 개방형 시험 (CT.gov 3상 등록)",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "L606"
+          ],
+          "src": "SEC 8-K 2026-08-12 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926094411/tm2622888d1_ex99-1.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "arterial",
+            "interstitial",
+            "lung disease"
+          ]
+        }
+      ]
     }
   ]
 }

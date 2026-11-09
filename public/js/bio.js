@@ -221,6 +221,27 @@
       </tbody></table></div>` : ''}`;
   }
 
+  const PHASES = ['전임상', '1상', '2상', '3상', '허가 신청', '판매'];
+
+  function pipeHtml(c) {
+    const P = c.pipeline || [];
+    if (!P.length) return '';
+    const bar = r => `<div class="pp-bar${r.stopped ? ' stop' : ''}" role="img" aria-label="${r.phase == null ? '단계 미정' : PHASES[r.phase]}">${PHASES.map((_, i) =>
+      `<span class="${r.phase != null && i <= r.phase ? 'on' : ''}${r.phase === i ? ' cur' : ''}"></span>`).join('')}</div>`;
+    return `<div class="bio-sub">파이프라인 <span class="muted small">회사 원문 기준 · 막대는 ${PHASES.join(' → ')}</span></div>
+      <div class="tbl-wrap"><table class="tbl pp"><thead><tr><th>약물 · 적응증</th><th>단계</th><th>상태 · 다음</th><th class="num">누적 PoS</th><th class="num">rNPV</th><th>진행 중 시험</th><th>근거</th></tr></thead><tbody>
+      ${P.map(r => `<tr class="${r.stopped ? 'pp-stop' : ''}">
+        <td><b>${esc(r.drug)}</b><small>${esc(r.indication)}</small></td>
+        <td>${bar(r)}<small>${r.phase == null ? '단계 미정' : PHASES[r.phase]}${r.stopped ? ' · 중단' : ''}</small></td>
+        <td style="white-space:normal">${esc(r.status)}${r.next ? `<small>${esc(r.next)}</small>` : ''}</td>
+        <td class="num">${r.cum_pos != null ? `${(r.cum_pos * 100).toFixed(0)}%<small>가정치</small>` : '<span class="muted">미반영</span>'}</td>
+        <td class="num">${r.rnpv != null ? `${usd(r.rnpv)}<small>피크 ${usd(r.peak)}</small>` : '–'}</td>
+        <td>${r.trials.length ? r.trials.map(t => `<a href="https://clinicaltrials.gov/study/${t.id}" target="_blank" rel="noopener">${t.id}</a><small>${esc(t.phase)} · ${esc(t.status.replace(/_/g, ' ').toLowerCase())}${t.done ? ' · ' + esc(t.done) : ''}</small>`).join('') : '<span class="muted">–</span>'}</td>
+        <td>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.src || '원문')}</a>` : esc(r.src || '')}${r.verified ? '' : ' <span class="bio-tag stop">원문 미확인</span>'}</td></tr>`).join('')}
+      </tbody></table></div>
+      <p class="bio-pad muted small">누적 PoS는 모델에 넣은 자산만 계산합니다(단계별 PoS의 곱, 가정치). '미반영'은 가치 계산에 넣지 않은 프로그램입니다. 시험은 ClinicalTrials.gov에서 약물 이름과 적응증이 둘 다 맞는 진행 중 2·3상만 붙였습니다.</p>`;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -333,6 +354,7 @@
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
+      h += pipeHtml(c);
       h += finHtml(c);
       h += estHtml(c);
       h += previewHtml(c);

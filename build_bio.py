@@ -375,6 +375,29 @@ def estimates(co, row, cons):
             'eps_hist': (cons or {}).get('eps_hist', [])}
 
 
+def pipeline(co, row):
+    """파이프라인 표: 단계(0 전임상 ~ 5 판매), 모델에 넣은 자산이면 누적 PoS·rNPV, 관련 ClinicalTrials.gov 시험."""
+    vals = {a['id']: a for a in (row.get('valuation') or {}).get('assets', [])}
+    stages = {a['id']: a['stages'] for a in co.get('assets', [])}
+    out = []
+    for r in co.get('pipeline', []):
+        x = dict(r)
+        a = vals.get(r.get('asset'))
+        if a:
+            cum = 1.0
+            for s in stages[r['asset']]:
+                cum *= s['pos']
+            x.update({'cum_pos': cum, 'rnpv': a['rnpv'], 'peak': a['peak']})
+        terms = [t.lower() for t in r.get('ct_terms', [])]
+        conds = [t.lower() for t in r.get('ct_cond', [])]
+        # 약물 이름과 적응증(질환명·제목)이 둘 다 맞는 시험만. 약물만 보면 같은 약의 다른 적응증 시험까지 붙는다.
+        x['trials'] = [{'id': t['id'], 'phase': t['phase'], 'status': t['status'], 'done': t.get('done')} for t in row.get('trials', [])
+                       if terms and any(k in (t.get('drug', '') + ' ' + t.get('title', '')).lower() for k in terms)
+                       and (not conds or any(k in (t.get('cond', '') + ' ' + t.get('title', '')).lower() for k in conds))]
+        out.append(x)
+    return out
+
+
 def card(co, row, today_iso):
     """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
     auto = row.get('auto') or {}
@@ -520,6 +543,7 @@ def build():
             row['earnings_preview'] = earnings_preview(co, mk, g, rf, cfg, auto['earnings'])
             row['card'] = card(co, row, date.today().isoformat())
             row['checks'] = checks(row, fin)
+            row['pipeline'] = pipeline(co, row)
             try:
                 cons = fetch_consensus(t)
             except Exception as e:
