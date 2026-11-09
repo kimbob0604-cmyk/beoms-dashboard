@@ -5,6 +5,8 @@ DART 공시 수집 → dart_filing, 분기 컨센서스 스냅샷 → cns_quarte
   python3 collect_dart.py --days 14    # 최근 14일 백필
   python3 collect_dart.py cns          # 컨센서스 있는 종목의 분기 추정치 스냅샷 (하루 한 번이면 충분)
   python3 collect_dart.py events --days 370   # 이벤트 스터디용 공시 목록만 백필 (원문 없이, 날마다 목록 몇 쪽)
+  python3 collect_dart.py times --days 370    # KIND 공시 시각 백필 (종류별 검색) → dart_event.tm
+  python3 collect_dart.py times [--latest]    # 오늘 KIND 공시 시각 (장중엔 --latest: 최신 100건만)
 
 잠정실적이 들어오면 그 종목의 분기 추정치를 바로 한 번 더 받아 둔다(네이버가 발표 뒤에도 하루쯤 추정 열을 남겨 둔다).
 종료 코드: 0 정상, 1 오류가 많음, 3 DART 응답 없음
@@ -15,19 +17,90 @@ import json
 import logging
 import sys
 import time
+from collections import defaultdict
 from datetime import date, datetime, timedelta
 
 import requests
 
 import config  # noqa: F401  (.env 로딩)
 import db
-from collectors import dart
+from collectors import dart, kind
 
 log = logging.getLogger('collect_dart')
 DELAY = 0.15
 MAX_FAILS = 8
 MARKET = {'Y': 'KOSPI', 'K': 'KOSDAQ'}
 EXIT_UNREACHABLE = 3
+
+
+# 시각을 붙일 공시 종류의 KIND 검색어 (제목 일부, 띄어쓰기는 무시됨)
+KIND_TERMS = ['영업(잠정)실적', '단일판매', '주식소각', '자기주식취득', '사채권발행결정', '유상증자결정', '무상증자결정',
+              '최대주주변경', '타법인주식', '배당결정', '투자판단', '기업설명회', '결산실적공시']
+
+
+def save_kind(conn, rows):
+    with conn:
+        conn.executemany('INSERT OR REPLACE INTO kind_disc (acpt, dt, code, name, title) VALUES (?, ?, ?, ?, ?)',
+                         [(r['acpt'], r['dt'], r['code'], r['name'], r['title']) for r in rows])
+
+
+def match_times(conn, since: str) -> int:
+    """같은 종목·날짜·종류의 DART 이벤트와 KIND 공시를 접수 순서대로 짝지어 dart_event.tm 에 시각을 넣는다"""
+    kind_rows = defaultdict(list)
+    for r in conn.execute('SELECT * FROM kind_disc WHERE dt >= ? ORDER BY dt, acpt', (since,)):
+        k = dart.kind_of(r['title'])
+        if k:
+            kind_rows[(r['code'], r['dt'][:10], k)].append(r['dt'][11:16])
+    ev = defaultdict(list)
+    for r in conn.execute('SELECT rcept_no, code, date, kind FROM dart_event WHERE date >= ? ORDER BY rcept_no', (since[:10],)):
+        ev[(r['code'], r['date'], r['kind'])].append(r['rcept_no'])
+    upd = []
+    for key, nos in ev.items():
+        times = kind_rows.get(key)
+        if not times:
+            continue
+        for i, no in enumerate(nos):   # KIND 쪽이 모자라면 마지막 시각을 쓴다 (정정 공시 등)
+            upd.append((times[min(i, len(times) - 1)], no))
+    with conn:
+        conn.executemany('UPDATE dart_event SET tm = ? WHERE rcept_no = ?', upd)
+    return len(upd)
+
+
+def collect_times(conn, session, days: int = 0, latest_only: bool = False) -> int:
+    """KIND 공시 시각. days>0: 그 기간을 종류별 검색으로 (백필), 아니면 오늘 전체 목록
+    (latest_only 면 최신 100건 한 쪽만 — 장중 10분 갱신용)"""
+    today = date.today()
+    since = (today - timedelta(days=days)).isoformat()
+    n = 0
+    try:
+        if days:
+            for term in KIND_TERMS:
+                page = 1
+                while True:
+                    res = kind.search(session, term, since, today.isoformat(), page)
+                    save_kind(conn, res['rows'])
+                    n += len(res['rows'])
+                    if not res['rows'] or page * 100 >= res['total']:
+                        break
+                    page += 1
+                    time.sleep(0.4)
+                time.sleep(0.4)
+        else:
+            page = 1
+            while True:
+                res = kind.search(session, '', today.isoformat(), today.isoformat(), page)
+                save_kind(conn, res['rows'])
+                n += len(res['rows'])
+                if latest_only or not res['rows'] or page * 100 >= res['total']:
+                    break
+                page += 1
+                time.sleep(0.4)
+    except requests.RequestException as e:
+        log.warning('KIND 시각 실패: %s', e)
+        return 1
+    m = match_times(conn, since if days else today.isoformat())
+    log.info('KIND 공시 시각 %d건 받음 · 이벤트 %d건에 시각', n, m)
+    return 0
 
 
 def key() -> str:
@@ -157,7 +230,8 @@ def collect_cns(conn, session) -> int:
 
 def main():
     ap = argparse.ArgumentParser(description='DART 공시 수집')
-    ap.add_argument('what', nargs='?', default='filings', choices=['filings', 'cns', 'events'])
+    ap.add_argument('what', nargs='?', default='filings', choices=['filings', 'cns', 'events', 'times'])
+    ap.add_argument('--latest', action='store_true', help='times: 오늘 최신 100건만 (장중 갱신용)')
     ap.add_argument('--days', type=int, default=1, help='오늘부터 N일 전까지')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
@@ -169,6 +243,8 @@ def main():
             errors += collect_cns(conn, session)
         elif args.what == 'events':
             errors += collect_events(conn, session, key(), args.days)
+        elif args.what == 'times':
+            errors += collect_times(conn, session, args.days if args.days > 1 else 0, latest_only=args.latest)
         else:
             k = key()
             for i in range(args.days, -1, -1):

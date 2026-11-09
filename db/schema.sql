@@ -231,3 +231,13 @@ CREATE TABLE IF NOT EXISTS dart_event (
     title       TEXT
 );
 CREATE INDEX IF NOT EXISTS dart_event_kind ON dart_event (kind, date);
+
+-- KIND 공시 시각 (DART 이벤트에 시각을 붙이려고). acpt 는 KIND 접수번호(DART 와 다름)
+CREATE TABLE IF NOT EXISTS kind_disc (
+    acpt        TEXT PRIMARY KEY,
+    dt          TEXT NOT NULL,        -- YYYY-MM-DD HH:MM
+    code        TEXT,
+    name        TEXT,
+    title       TEXT
+);
+CREATE INDEX IF NOT EXISTS kind_disc_code ON kind_disc (code, dt);

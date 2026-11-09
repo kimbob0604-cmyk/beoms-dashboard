@@ -36,6 +36,19 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(rows[0]['close'], 229000)   # 정규장 종가
         self.assertEqual(rows[0]['frgn_ratio'], 46.16)
 
+    def test_flow_adds_nxt_and_skips_nxt_only_day(self):
+        payload = {'items': [
+            {'localTradedAt': '2026-11-10', 'foreignHoldingRatio': '46.1', 'krx': None,
+             'nxt': {'foreignNetVolume': '100', 'organizationNetVolume': '5', 'individualNetVolume': '-105'}},
+            {'localTradedAt': '2026-11-09', 'foreignHoldingRatio': '46.1',
+             'krx': {'foreignNetVolume': '-458714', 'organizationNetVolume': '1509865', 'individualNetVolume': '-1000000',
+                     'regularMarketClosingPrice': '201500'},
+             'nxt': {'foreignNetVolume': '306741', 'organizationNetVolume': '119090', 'individualNetVolume': '-400000'}}]}
+        rows = naver.parse_flow(payload, '005930')
+        self.assertEqual([r['date'] for r in rows], ['2026-11-09'])   # KRX 없는 날은 건너뜀
+        self.assertEqual((rows[0]['frgn'], rows[0]['org']), (-458714 + 306741, 1509865 + 119090))
+        self.assertEqual(rows[0]['close'], 201500)
+
     def test_high52_drops_etn(self):
         res = naver.parse_high52(load('naver_high52_kospi.json'), 'KOSPI')
         self.assertTrue(all(r['code'] != '520106' for r in res['rows']))

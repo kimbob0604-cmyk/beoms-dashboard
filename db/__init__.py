@@ -7,7 +7,7 @@ SCHEMA_PATH = DB_DIR / 'schema.sql'
 
 
 # 이미 있는 테이블에 나중에 더한 열 (CREATE TABLE IF NOT EXISTS 로는 안 생기므로)
-MIGRATIONS = [('ohlc_daily', 'chg', 'REAL')]
+MIGRATIONS = [('ohlc_daily', 'chg', 'REAL'), ('dart_event', 'tm', 'TEXT')]
 
 
 def connect(path: Path = DB_PATH) -> sqlite3.Connection:

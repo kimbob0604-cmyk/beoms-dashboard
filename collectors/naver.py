@@ -4,7 +4,7 @@
 사용하는 응답 (네이버 증권 웹·모바일 화면이 스스로 부르는 JSON과 동일)
 - m.stock.naver.com/api/research/company?page=&pageSize=     : 종목분석 리포트 목록 (최신순)
 - m.stock.naver.com/api/research/company/{id}                : 리포트 본문 요약·투자의견·목표주가
-- stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code} : 일별 외국인·기관·개인 순매수 수량
+- stock.naver.com/api/stockSecurity/investor-trend/v2/domestic/{code}?exchangeType=all : 일별 외국인·기관·개인 순매수 수량 (KRX + 넥스트레이드 합산)
 - m.stock.naver.com/api/stocks/high52week/{KOSPI|KOSDAQ}     : 그날 52주 신고가를 낸 종목
 - m.stock.naver.com/api/index/{KOSPI|KOSDAQ|FUT}/integration|price : 지수·코스피200 선물 일별 종가, 투자자별 순매수, 상승/하락 종목 수
 - m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
@@ -109,18 +109,26 @@ def fetch_research_detail(session, rid: int, timeout: float = 10) -> Dict:
 # ------------------------------------------------------------
 
 def parse_flow(payload: Dict, code: str) -> List[Dict]:
+    """
+    거래일별 외국인·기관·개인 순매수 수량 = KRX + 넥스트레이드(NXT).
+    exchangeType=krx 만 받으면 NXT 에서 거래된 분이 빠져 순매수가 작게(때로는 반대 부호로) 찍힌다(2026-11-10 확인).
+    KRX 분이 아직 안 올라온 날(NXT 만 있는 저녁)은 반쪽 숫자가 되므로 건너뛴다.
+    """
     items = payload.get('items')
     if items is None:
         raise ValueError('items 없음')
     out = []
     for it in items:
-        k = it.get('krx') or {}
+        k, n = it.get('krx') or {}, it.get('nxt') or {}
+        if not k:
+            continue
+        both = lambda f: None if to_num(k.get(f)) is None else to_num(k.get(f)) + (to_num(n.get(f)) or 0)
         out.append({
             'date': _date(it['localTradedAt']),
             'code': code,
-            'frgn': to_num(k.get('foreignNetVolume')),
-            'org': to_num(k.get('organizationNetVolume')),
-            'ind': to_num(k.get('individualNetVolume')),
+            'frgn': both('foreignNetVolume'),
+            'org': both('organizationNetVolume'),
+            'ind': both('individualNetVolume'),
             # 정규장 종가 (closingPrice 는 NXT 애프터마켓까지 반영된 값일 수 있음)
             'close': to_num(k.get('regularMarketClosingPrice')) or to_num(k.get('closingPrice')),
             'frgn_ratio': to_num(it.get('foreignHoldingRatio')),
@@ -129,8 +137,9 @@ def parse_flow(payload: Dict, code: str) -> List[Dict]:
 
 
 def fetch_flow(session, code: str, size: int = 5, timeout: float = 10) -> List[Dict]:
+    """KRX·NXT 를 함께 받는다 (exchangeType=all)"""
     r = session.get(f'{S_API}/investor-trend/v2/domestic/{code}',
-                    params={'exchangeType': 'krx', 'size': size}, timeout=timeout)
+                    params={'exchangeType': 'all', 'size': size}, timeout=timeout)
     r.raise_for_status()
     return parse_flow(r.json(), code)
 

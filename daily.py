@@ -94,6 +94,7 @@ def main() -> int:
         if run('DART 공시', ['collect_dart.py', '--days', '1'], log) not in (0, 1):
             problems.append('DART 응답 없음 — 다음 실행에서 이어 받음')
         run('분기 추정치', ['collect_dart.py', 'cns'], log)
+        run('공시 시각', ['collect_dart.py', 'times'], log)   # KIND 오늘 공시 시각 → 이벤트 스터디 반응일
         if run('공시 빌드', ['build_dart.py'], log) != 0:
             problems.append('공시 JSON 빌드 실패')
         if run('이벤트 빌드', ['build_events.py'], log) != 0:

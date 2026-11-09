@@ -67,11 +67,13 @@ def main() -> int:
             need_naver |= new_high
         if filings:
             ok |= got(run(['collect_dart.py'], log))
+            run(['collect_dart.py', 'times', '--latest'], log)   # KIND 최신 100건 공시 시각
             new_rep = got(run(['collect_naver.py', 'research', '--days', '2'], log))
             ok |= new_rep
             need_naver |= new_rep
             if run(['build_dart.py'], log) != 0:
                 return 1
+            run(['build_events.py'], log)   # 이벤트 스터디 기업 리스트에 새 공시 (1초)
         if need_naver and run(['build_naver.py'], log) != 0:
             return 1
         if need_naver:
