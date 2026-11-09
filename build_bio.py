@@ -251,9 +251,10 @@ def earnings_preview(co, mk, g, rf, cfg, consensus):
             lo, hi = (mid, hi) if ps(mid, growth_mult) < mk['price'] else (lo, mid)
         return (lo + hi) / 2
     bull = cfg['scenarios']['bull']['growth_mult']
+    th = thresholds(co, mk, g, rf, cfg)   # 실적 대 추정 차트와 같은 계산을 써서 숫자가 어긋나지 않게
     grid = [{'q': q, 'base': ps(q, 1.0), 'bull': ps(q, bull)} for q in range(180, 381, 20)]
     return {'quarter': ep['quarter'], 'report_date': ep['report_date'], 'q2': q2, 'known': kn, 'assumptions': a, 'est': est,
-            'consensus': consensus, 'breakeven_base': solve(1.0), 'breakeven_bull': solve(bull), 'bull_growth_mult': bull,
+            'consensus': consensus, 'breakeven_base': th['base'], 'breakeven_bull': th['bull'], 'bull_growth_mult': bull,
             'grid': grid, 'price': mk['price']}
 
 
@@ -287,6 +288,91 @@ def checks(row, fin):
     if fin.get('shares'):
         add('주식 수(백만)', row['market']['shares'], fin['shares']['value'], fin['shares']['date'], notes.get('shares_note', ''))
     return out
+
+
+def fetch_consensus(ticker: str):
+    """yfinance 추정치(원문 아님): 이번 분기(0q)·다음 분기(+1q)·올해·내년 매출(백만 달러)과 EPS, 과거 EPS 서프라이즈.
+    평균이 최저~최고 범위 밖이면 데이터 이상으로 표시한다."""
+    import yfinance as yf
+    t = yf.Ticker(ticker)
+    out = {}
+    for kind, df, scale in (('rev', t.revenue_estimate, 1e6), ('eps', t.earnings_estimate, 1.0)):
+        if df is None or df.empty:
+            continue
+        for per, r in df.iterrows():
+            avg, lo, hi = (None if r.get(k) != r.get(k) else float(r.get(k)) / scale for k in ('avg', 'low', 'high'))
+            n = r.get('numberOfAnalysts')
+            out.setdefault(per, {})[kind] = {'avg': avg, 'low': lo, 'high': hi, 'n': None if n != n else int(n),
+                                             'ok': None if None in (avg, lo, hi) else lo - 1e-9 <= avg <= hi + 1e-9}
+    hist = []
+    try:
+        ed = t.get_earnings_dates(limit=12)
+        for idx, r in ed.iterrows():
+            if r.get('Reported EPS') == r.get('Reported EPS'):
+                hist.append({'date': idx.strftime('%Y-%m-%d'), 'est': None if r['EPS Estimate'] != r['EPS Estimate'] else float(r['EPS Estimate']),
+                             'actual': float(r['Reported EPS'])})
+    except Exception:
+        pass
+    return {'periods': out, 'eps_hist': hist[:8]}
+
+
+def _next_q_end(end: str, k: int) -> str:
+    y, m = int(end[:4]), int(end[5:7])
+    m += 3 * k
+    y += (m - 1) // 12
+    m = (m - 1) % 12 + 1
+    last = {3: 31, 6: 30, 9: 30, 12: 31}[m]
+    return f'{y}-{m:02d}-{last}'
+
+
+def thresholds(co, mk, g, rf, cfg):
+    """상업화 종목: 분기 매출이 얼마면 현재가가 정당화되나 (기본·낙관 성장 경로)."""
+    if not co.get('commercial'):
+        return None
+    run = co['commercial']['run_rate_musd']
+    bull = cfg['scenarios']['bull']['growth_mult']
+
+    def ps(q, gm):
+        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': 1.0, 'growth_mult': gm, 'rev_mult': q * 4 / run})['per_share']
+
+    def solve(gm):
+        lo, hi = 20.0, 3000.0
+        if ps(hi, gm) < mk['price']:
+            return None
+        for _ in range(50):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if ps(mid, gm) < mk['price'] else (lo, mid)
+        return (lo + hi) / 2
+    return {'base': solve(1.0), 'bull': solve(bull), 'bull_growth_mult': bull}
+
+
+def estimates(co, row, cons):
+    """실제(SEC) 8분기 + 다음 2분기 컨센서스·내 모델. 다음 분기는 SEC 마지막 실적 분기 다음부터 센다."""
+    fin = row.get('fin') or {}
+    qs = fin.get('quarters') or []
+    if not qs:
+        return None
+    last = qs[-1]['end']
+    periods = (cons or {}).get('periods', {})
+    fut = []
+    c = co.get('commercial')
+    for k, per in ((1, '0q'), (2, '+1q')):
+        end = _next_q_end(last, k)
+        model = None
+        if c:
+            steps = (int(end[:4]) * 12 + int(end[5:7]) - int(c['run_rate_end'][:4]) * 12 - int(c['run_rate_end'][5:7])) // 3
+            if steps >= 0:
+                model = c['run_rate_musd'] / 4 * (1 + c['growth'][0]) ** (steps / 4)
+        fut.append({'end': end, 'label': bx.label(end), 'period': per, 'cons': periods.get(per, {}), 'model': model})
+    known = None
+    ep = co.get('earnings_preview')
+    if ep:
+        known = {'end': fut[0]['end'], 'revenue': ep['q3_known']['product_sales'], 'src': ep['q3_known']['src']}
+        if not known['end'].startswith(ep['q3_known'].get('end', known['end'])[:7]):
+            known = None
+    return {'actual': [{'end': q['end'], 'label': q['label'], 'revenue': q['revenue'], 'eps': q['eps']} for q in qs],
+            'future': fut, 'known': known, 'year': {k: periods.get(k, {}) for k in ('0y', '+1y')},
+            'eps_hist': (cons or {}).get('eps_hist', [])}
 
 
 def card(co, row, today_iso):
@@ -434,6 +520,15 @@ def build():
             row['earnings_preview'] = earnings_preview(co, mk, g, rf, cfg, auto['earnings'])
             row['card'] = card(co, row, date.today().isoformat())
             row['checks'] = checks(row, fin)
+            try:
+                cons = fetch_consensus(t)
+            except Exception as e:
+                print(f'  컨센서스 실패: {e}', file=sys.stderr)
+                cons = (old.get('estimates') or {}).get('_cons')
+            row['estimates'] = estimates(co, row, cons)
+            if row['estimates']:
+                row['estimates']['_cons'] = cons
+                row['estimates']['thresholds'] = thresholds(co, mk, g, rf, cfg)
             if co.get('overrides'):
                 row['override_notes'] = {k: v for k, v in co['overrides'].items() if k.endswith('_note')}
         companies.append(row)

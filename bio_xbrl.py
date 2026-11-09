@@ -26,6 +26,7 @@ INSTANT = {
     'debt_current': ['LongTermDebtCurrent'],
     'debt_noncurrent': ['LongTermDebtNoncurrent'],
 }
+EPS = ['EarningsPerShareDiluted', 'EarningsPerShareBasicAndDiluted', 'EarningsPerShareBasic']
 N_QUARTERS = 8
 
 
@@ -47,13 +48,16 @@ def _latest_by_period(facts: list) -> dict:
     return out
 
 
-def quarterly(facts: list) -> dict:
-    """기간 값 목록 → {분기 종료일: 값}. 분기(80~100일) 값 우선, 없으면 같은 시작일 누적 값의 차이."""
+def quarterly(facts: list, derive: bool = True) -> dict:
+    """기간 값 목록 → {분기 종료일: 값}. 분기(80~100일) 값 우선, 없으면 같은 시작일 누적 값의 차이.
+    주당순이익은 주식 수가 분기마다 달라 누적 값끼리 빼면 틀리므로 derive=False 로 분기 값만 쓴다."""
     per = _latest_by_period([f for f in facts if f.get('start')])
     q = {}
     for (s, e), f in per.items():
         if 80 <= _span(f) <= 100:
             q[e] = f['val']
+    if not derive:
+        return q
     by_start = {}
     for (s, e), f in per.items():
         by_start.setdefault(s, []).append((e, f['val']))
@@ -100,7 +104,11 @@ def summarize(facts: dict) -> dict:
         used[key] = n
         series[key] = quarterly(gaap[n]['units']['USD']) if n else {}
     ends = sorted(set().union(*[set(v) for v in series.values()]))[-N_QUARTERS:]
-    quarters = [{'end': e, 'label': label(e), **{k: (series[k][e] / 1e6 if e in series[k] else None) for k in FLOW}} for e in ends]
+    eps_name = next((n for n in EPS if gaap.get(n, {}).get('units', {}).get('USD/shares')), None)
+    used['eps'] = eps_name
+    eps = quarterly(gaap[eps_name]['units']['USD/shares'], derive=False) if eps_name else {}
+    quarters = [{'end': e, 'label': label(e), **{k: (series[k][e] / 1e6 if e in series[k] else None) for k in FLOW},
+                 'eps': eps.get(e)} for e in ends]
     inst, inst_used = {}, {}
     for key, names in INSTANT.items():
         n = pick(gaap, names)
@@ -116,7 +124,7 @@ def summarize(facts: dict) -> dict:
     recent_cf = [q['opcf'] for q in quarters if q['opcf'] is not None][-2:]
     burn_q = -sum(recent_cf) / len(recent_cf) if recent_cf and sum(recent_cf) < 0 else None
     cash_total = (g('cash') or 0) + (g('sti') or 0) if bal_end else None
-    filed = max((f.get('filed', '') for n in used.values() if n for f in gaap[n]['units']['USD']), default=None)
+    filed = max((f.get('filed', '') for n in used.values() if n for us in gaap[n]['units'].values() for f in us), default=None)
     return {
         'quarters': quarters, 'concepts': {**used, **inst_used},
         'balance': {'end': bal_end, 'cash': g('cash'), 'sti': g('sti'), 'cash_total': cash_total, 'debt': debt},

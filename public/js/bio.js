@@ -164,6 +164,63 @@
       <p class="bio-pad muted small">분기 값이 공시에 없으면 같은 회계연도 누적 값의 차이로 계산 (예: 6개월 누적 − 3개월). 회계연도가 달라도 달력 분기로 표시. 사용한 XBRL 항목: ${esc(Object.entries(f.concepts).filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join(', '))}</p>`;
   }
 
+  function estChart(e) {
+    const A = e.actual.filter(q => q.revenue != null), F = e.future, th = e.thresholds || {};
+    if (!A.length) return '';
+    const cols = [...A.map(q => ({ ...q, kind: 'a' })), ...F.map(q => ({ ...q, kind: 'f' }))];
+    const vals = [...A.map(q => q.revenue), ...F.flatMap(q => [q.cons.rev && q.cons.rev.high, q.model]), th.base, th.bull, e.known && e.known.revenue].filter(v => v != null);
+    const max = Math.max(...vals) * 1.08;
+    const W = 760, H = 230, pl = 46, pr = 120, pt = 10, pb = 24;
+    const bw = (W - pl - pr) / cols.length;
+    const X = i => pl + bw * i + bw / 2;
+    const Y = v => pt + (1 - v / max) * (H - pt - pb);
+    const grid = [0, 0.25, 0.5, 0.75, 1].map(f => max / 1.08 * f);
+    const hline = (v, l, cls) => v == null ? '' : `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" class="${cls}"/><text x="${W - pr + 4}" y="${Y(v) + 4}" class="tl">${l} ${usd(v)}</text>`;
+    return `<svg class="bio-est" viewBox="0 0 ${W} ${H}" role="img" aria-label="분기 매출 실제와 컨센서스">
+      ${grid.map(v => `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" class="g"/><text x="${pl - 6}" y="${Y(v) + 4}" text-anchor="end">${usd(v)}</text>`).join('')}
+      ${cols.map((q, i) => q.kind === 'a'
+        ? `<rect x="${X(i) - bw * 0.3}" y="${Y(q.revenue)}" width="${bw * 0.6}" height="${Y(0) - Y(q.revenue)}" class="act"><title>${q.label} 실제(SEC) ${usd(q.revenue)}</title></rect>`
+        : `${q.cons.rev && q.cons.rev.high != null ? `<line x1="${X(i)}" x2="${X(i)}" y1="${Y(q.cons.rev.low)}" y2="${Y(q.cons.rev.high)}" class="wh"/><line x1="${X(i) - 6}" x2="${X(i) + 6}" y1="${Y(q.cons.rev.low)}" y2="${Y(q.cons.rev.low)}" class="wh"/><line x1="${X(i) - 6}" x2="${X(i) + 6}" y1="${Y(q.cons.rev.high)}" y2="${Y(q.cons.rev.high)}" class="wh"/>` : ''}
+           ${q.cons.rev && q.cons.rev.avg != null ? `<circle cx="${X(i)}" cy="${Y(q.cons.rev.avg)}" r="5" class="cons"><title>${q.label} 컨센서스 평균 ${usd(q.cons.rev.avg)} (범위 ${usd(q.cons.rev.low)}~${usd(q.cons.rev.high)})</title></circle>` : ''}
+           ${q.model != null ? `<circle cx="${X(i) + 9}" cy="${Y(q.model)}" r="4.5" class="model"><title>${q.label} 내 모델 ${usd(q.model)}</title></circle>` : ''}
+           ${e.known && e.known.end === q.end ? `<rect x="${X(i) - 14}" y="${Y(e.known.revenue) - 5}" width="10" height="10" class="known"><title>${q.label} 회사 잠정 ${usd(e.known.revenue)}</title></rect>` : ''}`).join('')}
+      ${hline(th.bull, '낙관 기준', 'thb')}${hline(th.base, '기본 기준', 'tha')}
+      ${cols.map((q, i) => `<text x="${X(i)}" y="${H - 6}" text-anchor="middle" class="${q.kind === 'f' ? 'fut' : ''}">${q.label.replace('20', '').replace(' ', '')}</text>`).join('')}
+    </svg>
+    <p class="bio-legend"><span class="lg act"></span>실제 (SEC) <span class="lg cons"></span>컨센서스 평균·범위 (yfinance) <span class="lg model"></span>내 모델 (기본 성장)${e.known ? ' <span class="lg known"></span>회사 잠정' : ''} <span class="lg tha"></span>현재가 정당화 분기 매출</p>`;
+  }
+
+  function estHtml(c) {
+    const e = c.estimates;
+    if (!e) return '';
+    const rev = e.actual.some(q => q.revenue != null);
+    const all = [...e.actual.map(q => ({ ...q, kind: 'a' })), ...e.future.map(q => ({ ...q, kind: 'f' }))];
+    const eps = v => v == null ? '–' : `$${v.toFixed(2)}`;
+    const rng = (x, f) => x && x.avg != null ? `${f(x.avg)}<small>${f(x.low)}~${f(x.high)} · ${x.n ?? '–'}명${x.ok === false ? ' · <b class="down">평균이 범위 밖(데이터 이상)</b>' : ''}</small>` : '–';
+    const td = (q, fn) => `<td class="num${q.kind === 'f' ? ' fut' : ''}">${fn(q)}</td>`;
+    const rows = [
+      rev && ['매출 실제 (SEC)', q => q.kind === 'a' ? usd(q.revenue) : (e.known && e.known.end === q.end ? `<span class="muted">잠정 ${usd(e.known.revenue)}</span>` : '–')],
+      rev && ['매출 컨센서스', q => q.kind === 'f' ? rng(q.cons.rev, usd) : '–'],
+      rev && ['매출 내 모델', q => q.kind === 'f' && q.model != null ? usd(q.model) : '–'],
+      ['EPS 실제 (SEC)', q => q.kind === 'a' ? eps(q.eps) : '–'],
+      ['EPS 컨센서스', q => q.kind === 'f' ? rng(q.cons.eps, eps) : '–'],
+    ].filter(Boolean);
+    const th = e.thresholds;
+    const h = e.eps_hist || [];
+    return `<div class="bio-sub">실적 대 추정 <span class="muted small">실제는 SEC 원문, 추정은 yfinance(원문 아님)</span></div>
+      ${rev ? `<div class="bio-pad">${estChart(e)}</div>` : ''}
+      ${th ? `<p class="bio-pad">분기 매출이 <b>${usd(th.base)}</b>(기본 성장) 또는 <b>${usd(th.bull)}</b>(낙관 성장 ×${th.bull_growth_mult})를 넘으면 현재가 ${px(c.market.price)}가 정당화됩니다. 다음 분기 컨센서스 평균 ${usd(e.future[0].cons.rev && e.future[0].cons.rev.avg)}은 낙관 기준의 ${e.future[0].cons.rev && th.bull ? Math.round(e.future[0].cons.rev.avg / th.bull * 100) + '%' : '–'}입니다.</p>` : ''}
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th></th>${all.map(q => `<th class="num${q.kind === 'f' ? ' fut' : ''}">${esc(q.label)}${q.kind === 'f' ? '<small>추정</small>' : ''}</th>`).join('')}</tr></thead><tbody>
+        ${rows.map(([l, fn]) => `<tr><td>${l}</td>${all.map(q => td(q, fn)).join('')}</tr>`).join('')}
+      </tbody></table></div>
+      ${h.length ? `<div class="bio-sub">EPS 서프라이즈 <span class="muted small">yfinance 기준. 실제 EPS가 조정(비GAAP) 값일 수 있어 위 SEC 값과 다를 수 있음</span></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>발표일</th>${h.map(x => `<th class="num">${x.date}</th>`).join('')}</tr></thead><tbody>
+        <tr><td>추정</td>${h.map(x => `<td class="num">${eps(x.est)}</td>`).join('')}</tr>
+        <tr><td>실제</td>${h.map(x => `<td class="num">${eps(x.actual)}</td>`).join('')}</tr>
+        <tr><td>차이</td>${h.map(x => x.est == null ? '<td class="num">–</td>' : `<td class="num ${U.cls(x.actual - x.est)}">${x.actual - x.est > 0 ? '+' : ''}${(x.actual - x.est).toFixed(2)}</td>`).join('')}</tr>
+      </tbody></table></div>` : ''}`;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -277,6 +334,7 @@
     } else {
       h += ladderHtml(c);
       h += finHtml(c);
+      h += estHtml(c);
       h += previewHtml(c);
       h += `<div class="bio-grid"><div>${bridgeHtml(c)}</div><div class="bio-pad">
         <p><b>시나리오</b> (보수: PoS ×0.8·피크 ×0.6·성장 ×0.6, 낙관: PoS ×1.1·피크 ×1.4·성장 ×1.3)</p>
