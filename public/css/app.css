@@ -729,3 +729,33 @@ footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; 
 @media (max-width: 560px) {
   .deck .col, .deck .dt-items, .rp-deck { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ---------- 숫자 강조 ----------
+   글 속 숫자(U.num)는 진하게, 부호 있는 %는 오름·내림 색. 카드의 핵심 수치는 옅은 색 배경 배지로. */
+b.n { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+b.n.up { color: var(--up); }
+b.n.down { color: var(--down); }
+.rp-sum b.n, .rp-heads b.n, .dt-more b.n, .hm-dart-line b.n { color: var(--text); }
+.rp-sum b.n.up, .rp-heads b.n.up, .dt-more b.n.up, .hm-dart-line b.n.up { color: var(--up); }
+.rp-sum b.n.down, .rp-heads b.n.down, .dt-more b.n.down, .hm-dart-line b.n.down { color: var(--down); }
+.dt-kv span { color: var(--sub); }
+.dt-kv b.n { color: var(--text); }
+/* 카드 오른쪽 위 핵심 수치 → 배지 */
+.deck .r-growth b, .pill-ch {
+  display: inline-block; padding: 2px 9px; border-radius: 9px; background: var(--chip); font-weight: 800; letter-spacing: -0.02em;
+}
+.deck .r-growth b.up, .pill-ch.up { background: color-mix(in srgb, var(--up) 14%, transparent); color: var(--up); }
+.deck .r-growth b.down, .pill-ch.down { background: color-mix(in srgb, var(--down) 14%, transparent); color: var(--down); }
+.deck .r-growth b { font-size: 19px; margin-top: 2px; }
+/* 카드 본문 줄의 숫자 */
+.r-line b, .r-sub b, .r-series b, .r-rev b, .chip b, .st-kpis b { font-weight: 800; color: var(--text); }
+.r-line b.up, .r-sub b.up, .r-series b.up, .r-rev b.up, .chip b.up, .r-line .up, .r-sub .up, .r-rev .up { color: var(--up); font-weight: 700; }
+.r-line b.down, .r-sub b.down, .r-series b.down, .r-rev b.down, .chip b.down, .r-line .down, .r-sub .down, .r-rev .down { color: var(--down); font-weight: 700; }
+/* 리포트 카드: 목표가·상승여력 */
+.rp-goal b { font-size: 14px; font-weight: 800; }
+.rp-foot b.up, .rp-foot b.down { font-weight: 800; font-size: 13px; }
+.rp-px b { font-weight: 800; }
+.rp-px span.up, .rp-px span.down { font-weight: 700; }
+/* 요약 칸 큰 숫자 */
+.dt-kpis b, .bk b, .fl-sum b, .hm-ix-flow b { font-weight: 800; letter-spacing: -0.02em; }
+.hm-dart-line em { font-style: normal; color: var(--muted); }

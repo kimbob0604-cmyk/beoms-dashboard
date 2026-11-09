@@ -157,7 +157,16 @@ const DartFmt = (() => {
     return out.join('\n');
   }
 
+  // 한 줄 'A : 값 / B : 값' → HTML. 금액·비율·가격만 숫자 강조 (상대방·주소·날짜 속 숫자는 그대로)
+  const PLAIN = /상대|내용|지역|투자자|대상|변경 전|변경 후|사유|목적|기간|납입일|예정일|기준일|방법|방식|기관/;
+  function hl(line) {
+    return line.split(' / ').map(p => {
+      const m = p.match(/^([^:]{1,12}) : (.*)$/);
+      return m ? `<em>${U.esc(m[1])}</em> ${PLAIN.test(m[1]) ? U.esc(m[2]) : U.num(m[2])}` : U.num(p);
+    }).join(' / ');
+  }
+
   const dartUrl = no => `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${no}`;
 
-  return { SECTIONS, KIND_LABEL, body, head, tags, digest, eok, won, md, dartUrl, pct };
+  return { SECTIONS, KIND_LABEL, body, head, tags, digest, eok, won, md, dartUrl, pct, hl, PLAIN };
 })();

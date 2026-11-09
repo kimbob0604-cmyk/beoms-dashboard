@@ -374,7 +374,7 @@
     const rows = t.items.map(x => `<li ${Stock.hintAttr(x)}>
       <div class="hm-it-main"><div class="dt-name">${Stock.link(x)}<small class="muted">${F.KIND_LABEL[x.k]}</small>
         ${F.tags(x).filter(g => g !== '정정').map(g => `<span class="dt-tag ${g === '서프' ? 'up' : g === '쇼크' ? 'down' : ''}">${g}</span>`).join('')}</div>
-        <small class="muted hm-dart-line">${U.esc(F.body(x).split('\n')[0])}</small></div>
+        <small class="muted hm-dart-line">${F.hl(F.body(x).split('\n')[0])}</small></div>
     </li>`);
     const next = t.next.length ? `<p class="small hm-dart-next"><b>${F.md(t.next[0].date)} 실적발표 예정</b>
       ${t.next.filter(e => e.date === t.next[0].date).slice(0, 12).map(e => `<span ${Stock.hintAttr(e)}>${Stock.link(e)}</span>`).join(' · ')}</p>` : '';

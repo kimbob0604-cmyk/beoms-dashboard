@@ -79,11 +79,13 @@
   }
 
   // ---------- 섹션 ----------
+  const PLAIN = F.PLAIN;
   function kv(text) {
-    return text.split('\n').map((line, i) => (i ? `<p class="dt-more">${U.esc(line)}</p>`
+    return text.split('\n').map((line, i) => (i ? `<p class="dt-more">${U.num(line)}</p>`
       : `<p class="dt-kv">${line.split(' / ').map(p => {
         const m = p.match(/^([^:]{1,12}) : (.*)$/);
-        return m ? `<span><em>${U.esc(m[1])}</em>${U.esc(m[2])}</span>` : `<span>${U.esc(p)}</span>`;
+        // 금액·비율·가격만 숫자 강조 (주소의 번지·날짜·상대방 이름 속 숫자는 그대로)
+        return m ? `<span><em>${U.esc(m[1])}</em>${PLAIN.test(m[1]) ? U.esc(m[2]) : U.num(m[2])}</span>` : `<span>${U.num(p)}</span>`;
       }).join('')}</p>`)).join('');
   }
 

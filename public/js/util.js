@@ -41,6 +41,15 @@ const U = (() => {
     cls(v) {
       return v > 0 ? 'up' : v < 0 ? 'down' : '';
     },
+    // 글 속 숫자 강조: 원문을 이스케이프한 뒤 금액·비율·배수 같은 숫자를 <b class="n">로 감싼다.
+    // 부호 있는 %(+12%, -3.5%)는 오름·내림 색까지. HTML 엔티티(&#39; 등) 속 숫자는 건드리지 않는다.
+    num(s) {
+      return U.esc(s).replace(/(?<![#\w&.])([+\-−]?\d[\d,]*(?:\.\d+)?)(?:(\s?(?:조|억|만|천|원|%p|%|배|주|건|명|년|분기|개월|일|bp))|(?![\w.]))/g, (m, n, u = '') => {
+        const signed = /^[+\-−]/.test(n) && /%/.test(u);
+        const cls = signed ? (n.startsWith('+') ? ' up' : ' down') : '';
+        return `<b class="n${cls}">${n}${u}</b>`;
+      });
+    },
     esc(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     },

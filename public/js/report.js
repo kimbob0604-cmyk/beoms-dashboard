@@ -89,8 +89,8 @@
         ${r.init ? '<span class="dt-tag up">첫 커버</span>' : ''}
         <span class="rp-goal">${goalHtml(r)}</span></div>
       <a class="rp-title" href="${researchUrl(r.id)}" target="_blank" rel="noopener">${U.esc(r.t)}</a>
-      ${r.h.length ? `<ul class="rp-heads">${r.h.map(h => `<li>${U.esc(h)}</li>`).join('')}</ul>` : ''}
-      ${r.s ? `<p class="rp-sum">${U.esc(r.s)}</p>` : ''}
+      ${r.h.length ? `<ul class="rp-heads">${r.h.map(h => `<li>${U.num(h)}</li>`).join('')}</ul>` : ''}
+      ${r.s ? `<p class="rp-sum">${U.num(r.s)}</p>` : ''}
       <div class="rp-foot">${r.kw.map(k => `<button class="tag" data-k="kw" data-v="${U.esc(k)}">${U.esc(k)}</button>`).join('')}
         ${up != null ? `<span class="muted small">상승여력 <b class="${U.cls(up)}">${U.pct(up, 0)}</b></span>` : ''}
         ${r.pdf ? `<a class="muted small" href="${r.pdf}" target="_blank" rel="noopener">PDF ↗</a>` : ''}</div>
