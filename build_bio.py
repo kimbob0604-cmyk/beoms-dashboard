@@ -439,6 +439,31 @@ def timeline(co, row, today_iso):
     return items
 
 
+POS_MULTS = [0.6, 0.8, 1.0, 1.2, 1.4]
+PEAK_MULTS = [0.5, 0.75, 1.0, 1.5, 2.0]
+REV_MULTS = [0.8, 0.9, 1.0, 1.15, 1.3]
+GROWTH_MULTS = [0.6, 0.8, 1.0, 1.3, 1.6]
+WACCS = [0.08, 0.09, 0.10, 0.11, 0.12]
+
+
+def sensitivity(co, mk, g, rf):
+    """주당 가치 민감도. 임상 자산이 있으면 PoS × 피크매출, 상업 제품이 있으면 시작 매출 × 성장률, 그리고 WACC 한 줄.
+    나머지 가정은 기본값 그대로. PoS 는 단계마다 곱한 뒤 99%에서 자른다."""
+    base = {'pos_mult': 1.0, 'peak_mult': 1.0, 'growth_mult': 1.0, 'rev_mult': 1.0}
+    ps = lambda sc, gg=g: value_company(co, mk, gg, rf, {**base, **sc})['per_share']
+    out = {'price': mk['price']}
+    if co.get('assets'):
+        peak = sum(a['peak_musd'] for a in co['assets'])
+        out['pos_peak'] = {'rows': POS_MULTS, 'cols': PEAK_MULTS, 'peak_total': peak,
+                           'cells': [[ps({'pos_mult': pm, 'peak_mult': km}) for km in PEAK_MULTS] for pm in POS_MULTS]}
+    if co.get('commercial'):
+        c = co['commercial']
+        out['rev_growth'] = {'rows': GROWTH_MULTS, 'cols': REV_MULTS, 'run_rate': c['run_rate_musd'], 'growth1': c['growth'][0],
+                             'cells': [[ps({'growth_mult': gm, 'rev_mult': rm}) for rm in REV_MULTS] for gm in GROWTH_MULTS]}
+    out['wacc'] = [{'wacc': w, 'per_share': ps({}, {**g, 'wacc': w})} for w in WACCS]
+    return out
+
+
 def card(co, row, today_iso):
     """대시보드 카드: 다음 일정(확정 우선, 자동은 표시), 실적 발표 당일 여부, 현금 버티는 기간, 업사이드."""
     auto = row.get('auto') or {}
@@ -588,6 +613,7 @@ def build():
             row['checks'] = checks(row, fin)
             row['pipeline'] = pipeline(co, row)
             row['timeline'] = timeline(co, row, date.today().isoformat())
+            row['sensitivity'] = sensitivity(co, mk, g, rf)
             try:
                 cons = fetch_consensus(t)
             except Exception as e:

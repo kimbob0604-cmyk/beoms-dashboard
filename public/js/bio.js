@@ -285,6 +285,39 @@
         ${r.highlights.length ? `<details><summary class="muted small">핵심 문장 ${r.highlights.length}개</summary><ul class="ir-hl">${r.highlights.map(h => `<li>${esc(h)}</li>`).join('')}</ul></details>` : ''}</li>`).join('')}</ul>`;
   }
 
+  function heat(grid, price, rowLabel, colLabel, baseR, baseC) {
+    const all = grid.cells.flat();
+    const lo = Math.min(...all), hi = Math.max(...all);
+    const tint = v => {
+      if (v >= price) { const a = 0.12 + 0.38 * Math.min(1, (v - price) / Math.max(1e-9, hi - price)); return `background: color-mix(in srgb, var(--up) ${(a * 100).toFixed(0)}%, transparent)`; }
+      const a = 0.08 + 0.32 * Math.min(1, (price - v) / Math.max(1e-9, price - lo)); return `background: color-mix(in srgb, var(--down) ${(a * 100).toFixed(0)}%, transparent)`;
+    };
+    return `<div class="tbl-wrap"><table class="tbl sens"><thead><tr><th>${rowLabel} ＼ ${colLabel.title}</th>${grid.cols.map(cv => `<th class="num">${colLabel.fmt(cv)}</th>`).join('')}</tr></thead><tbody>
+      ${grid.rows.map((rv, i) => `<tr><td>${rowLabel === 'PoS' ? `×${rv}` : colLabel.rowFmt(rv)}</td>${grid.cells[i].map((v, k) =>
+        `<td class="num${i === baseR && k === baseC ? ' base' : ''}" style="${tint(v)}">${px(v)}<small>${pc(v / price - 1)}</small></td>`).join('')}</tr>`).join('')}
+      </tbody></table></div>`;
+  }
+
+  function sensHtml(c) {
+    const s = c.sensitivity;
+    if (!s) return '';
+    let h = `<div class="bio-sub">민감도 <span class="muted small">주당 가치 · 현재가 ${px(s.price)} 이상은 붉게, 아래는 푸르게 · 테두리 칸이 기본 가정</span></div>`;
+    if (s.pos_peak) {
+      const g = s.pos_peak;
+      h += `<p class="bio-pad muted small">임상 자산: 모든 단계 PoS에 곱하는 배수(행) × 피크매출 배수(열, 합계 ${usd(g.peak_total)} 기준). PoS는 단계마다 99%에서 잘리므로 높은 배수에서는 값이 더 오르지 않습니다.</p>`;
+      h += heat(g, s.price, 'PoS', { title: '피크매출', fmt: v => `×${v}<small>${usd(g.peak_total * v)}</small>` }, g.rows.indexOf(1), g.cols.indexOf(1));
+    }
+    if (s.rev_growth) {
+      const g = s.rev_growth;
+      h += `<p class="bio-pad muted small">상업 제품: 1년차 이후 성장률 배수(행, 기본 1년차 ${(g.growth1 * 100).toFixed(0)}%) × 시작 매출 배수(열, 연환산 ${usd(g.run_rate)} 기준).</p>`;
+      h += heat(g, s.price, '성장', { title: '시작 매출', fmt: v => `×${v}<small>${usd(g.run_rate * v)}</small>`, rowFmt: v => `×${v}<small>1년차 ${(g.growth1 * v * 100).toFixed(0)}%</small>` }, g.rows.indexOf(1), g.cols.indexOf(1));
+    }
+    h += `<div class="bio-pad"><table class="tbl"><thead><tr><th>WACC</th>${s.wacc.map(w => `<th class="num">${(w.wacc * 100).toFixed(0)}%</th>`).join('')}</tr></thead><tbody>
+      <tr><td>주당 가치</td>${s.wacc.map(w => `<td class="num${Math.abs(w.wacc - data.params.wacc) < 1e-9 ? ' base' : ''}">${px(w.per_share)}<small class="${U.cls(w.per_share / s.price - 1)}">${pc(w.per_share / s.price - 1)}</small></td>`).join('')}</tr>
+      </tbody></table></div>`;
+    return h;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -408,6 +441,7 @@
           : c.valuation.assets.length ? '<p><b>시장 내재 PoS</b> PoS를 최대로 올려도 시총에 닿지 않습니다. 이 모델이 반영하지 못한 가치가 있다는 뜻입니다.</p>' : ''}
         ${c.not_modeled ? `<p class="muted"><b>반영하지 않은 것</b> ${esc(c.not_modeled)}</p>` : ''}</div></div>`;
       h += assetsHtml(c) + commHtml(c);
+      h += sensHtml(c);
     }
     h += trialsHtml(c);
     h += timelineHtml(c);
