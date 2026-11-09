@@ -136,12 +136,21 @@ def parse_flow(payload: Dict, code: str) -> List[Dict]:
     return out
 
 
-def fetch_flow(session, code: str, size: int = 5, timeout: float = 10) -> List[Dict]:
-    """KRX·NXT 를 함께 받는다 (exchangeType=all)"""
-    r = session.get(f'{S_API}/investor-trend/v2/domestic/{code}',
-                    params={'exchangeType': 'all', 'size': size}, timeout=timeout)
-    r.raise_for_status()
-    return parse_flow(r.json(), code)
+def fetch_flow(session, code: str, size: int = 5, timeout: float = 10, pages: int = 1) -> List[Dict]:
+    """KRX·NXT 를 함께 받는다 (exchangeType=all). 한 번에 최대 200거래일, pages>1 이면 cursor 로 더 과거까지"""
+    out, cursor = [], None
+    for _ in range(pages):
+        params = {'exchangeType': 'all', 'size': min(size, 200)}
+        if cursor:
+            params['cursor'] = cursor
+        r = session.get(f'{S_API}/investor-trend/v2/domestic/{code}', params=params, timeout=timeout)
+        r.raise_for_status()
+        j = r.json()
+        out += parse_flow(j, code)
+        cursor = j.get('cursor')
+        if not j.get('hasNext') or not cursor:
+            break
+    return out
 
 
 # ------------------------------------------------------------

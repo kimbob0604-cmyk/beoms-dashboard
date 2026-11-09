@@ -835,3 +835,45 @@ table.tbl thead th.sorted[data-dir="asc"]::after { content: " ▲"; font-size: 1
 .ev-spark polyline.up { stroke: var(--up); } .ev-spark polyline.dn { stroke: var(--down); }
 .ev-spark .z { stroke: var(--line); stroke-dasharray: 2 2; }
 .ev-spark .t0 { stroke: var(--muted); opacity: .5; }
+
+/* 퀀트 하위 탭 · 조건 백테스트 */
+.subtabs { display: inline-flex; gap: 4px; margin-top: 10px; padding: 3px; border-radius: 12px; background: var(--chip); }
+.subtabs a { padding: 6px 14px; border-radius: 9px; color: var(--sub); font-weight: 600; font-size: 13px; }
+.subtabs a:hover { text-decoration: none; color: var(--text); }
+.subtabs a.on { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.bt-conds { gap: 6px; }
+.bt-cond { border: 1px solid var(--line); background: var(--card); color: var(--sub); padding: 7px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; }
+.bt-cond:hover { color: var(--text); border-color: var(--muted); }
+.bt-cond.on { background: var(--text); color: var(--card); border-color: var(--text); font-weight: 700; }
+.bt-main { padding: 18px 20px 16px; margin: 16px 0; }
+.bt-kpis { flex-wrap: wrap; margin: 4px 0 12px; }
+.bt-kpis > div { min-width: 96px; }
+.bt-kpis b { font-size: 18px; }
+.bt-legend { margin-bottom: 4px; font-size: 12px; color: var(--muted); }
+.bt-now { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.bt-now h3 { margin: 0 0 8px; font-size: 14px; }
+.bt-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bt-chips .chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; }
+.bt-chips a[data-code] { font-weight: 600; }
+.bt-rhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.bt-rtools { display: flex; gap: 8px; flex-wrap: wrap; }
+.bt-rwrap { max-height: 560px; overflow-y: auto; }
+.bt-rank tbody tr { cursor: pointer; }
+.bt-rank tr.on { background: color-mix(in srgb, var(--accent) 10%, transparent) !important; }
+.bt-cond small { margin-left: 5px; font-size: 10px; font-weight: 600; opacity: .65; }
+.flabel { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 4px; }
+.bt-help { margin: 8px 2px 0; }
+.bt-kpis small { font-size: 11px; color: var(--muted); font-weight: 500; }
+.bt-h3 { margin: 18px 0 8px; font-size: 14px; }
+.bt-years { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 5px; }
+.bt-year { display: flex; flex-direction: column; align-items: center; padding: 5px 2px; border-radius: 9px; background: var(--hover); border: 1.5px solid transparent; line-height: 1.25; }
+.bt-year.win { border-color: color-mix(in srgb, #16a34a 55%, transparent); }
+.bt-year span { font-size: 11px; color: var(--muted); }
+.bt-year b { font-size: 13px; font-weight: 800; }
+.bt-year small { font-size: 10px; color: var(--muted); }
+.bt-ev > div { background: transparent; border: 1px solid var(--line); }
+.bt-chips .chip small { margin-left: 4px; font-size: 11px; }
+@media (max-width: 640px) { .bt-main { padding: 14px 12px; } .bt-kpis > div { min-width: 86px; padding: 7px 10px; } .bt-kpis b { font-size: 16px; } }
+.bt-filters { position: static !important; }
+.bt-rank td:nth-child(2) { white-space: normal; min-width: 200px; max-width: 340px; line-height: 1.35; }
+.bt-rank td, .bt-rank th { padding-left: 8px; padding-right: 8px; }

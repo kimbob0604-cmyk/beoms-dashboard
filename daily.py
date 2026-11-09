@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·홈·종목 차트) → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·홈·종목 차트) → GitHub Pages 배포(publish.py)
 장중 10분 간격 홈 갱신은 live.py 가 따로 한다.
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
@@ -101,6 +101,14 @@ def main() -> int:
             problems.append('이벤트 스터디 JSON 빌드 실패')
         if run('팩터 빌드', ['build_factors.py'], log) != 0:
             problems.append('퀀트 팩터 JSON 빌드 실패')
+        # 조건 백테스트(20년): 과거 DB(history.db)에 어제까지의 확정 가격을 복사. 다시 계산은 아침 실행에서만 (약 8분)
+        run('백테스트 과거 가격', ['collect_history.py', 'sync'], log)
+        if datetime.now().hour < 12:
+            run('백테스트 수급', ['collect_history.py', 'flow', '--recent', '10'], log)
+            if datetime.now().weekday() == 5:      # 분기 실적은 토요일에만 다시 받는다
+                run('백테스트 실적', ['collect_history.py', 'fin'], log)
+            if run('백테스트 빌드', ['build_backtest.py'], log) != 0:
+                problems.append('조건 백테스트 JSON 빌드 실패')
         # 홈은 위 두 빌드의 결과 JSON 을 모으므로 마지막에
         if run('홈 빌드', ['build_home.py'], log) != 0:
             problems.append('홈 JSON 빌드 실패')

@@ -150,7 +150,7 @@ def flow_is_new(conn, session) -> bool:
     return bool(rows) and rows[0]['date'] > have
 
 
-def collect_flow(conn, session, refill: bool = False) -> int:
+def collect_flow(conn, session, refill: bool = False, history: bool = False) -> int:
     """refill: 이미 받은 종목도 60거래일을 다시 받는다 (계산 방식이 바뀌었을 때)"""
     codes = flow_targets(conn)
     have = {r[0] for r in conn.execute('SELECT DISTINCT code FROM flow_daily')}
@@ -158,7 +158,10 @@ def collect_flow(conn, session, refill: bool = False) -> int:
     guard = Guard()
     for i, code in enumerate(codes, 1):
         try:
-            rows = naver.fetch_flow(session, code, FLOW_DAILY if code in have and not refill else FLOW_BACKFILL)
+            if history:   # 백테스트용 1년 반치 (200거래일 × 2쪽)
+                rows = naver.fetch_flow(session, code, 200, pages=2)
+            else:
+                rows = naver.fetch_flow(session, code, FLOW_DAILY if code in have and not refill else FLOW_BACKFILL)
             guard.ok()
         except Exception as e:
             guard.fail(f'수급 {code}', e)
@@ -260,7 +263,7 @@ def collect_index_chart(conn, session, rows) -> int:
             continue
         last = mine[-1]
         try:
-            ohlc = naver.fetch_index_ohlc(session, code)
+            ohlc = naver.fetch_index_ohlc(session, code, 520)   # 2년 (퀀트 백테스트 기간 + 계산 기간)
             time.sleep(DELAY)
             minute = naver.fetch_index_minute(session, code, last['date'])
             guard.ok()
@@ -326,6 +329,7 @@ def main():
     ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'quotes', 'all'])
     ap.add_argument('--days', type=int, default=14, help='리포트 목록을 거슬러 볼 일수')
     ap.add_argument('--refill', action='store_true', help='flow: 전 종목 60거래일을 다시 받는다')
+    ap.add_argument('--history', action='store_true', help='flow: 전 종목 약 400거래일 (백테스트용, 한 번)')
     ap.add_argument('--if-new', action='store_true',
                     help='flow: 네이버에 새 거래일 수급이 올라왔을 때만 받는다 (없으면 종료 코드 10)')
     args = ap.parse_args()
@@ -345,7 +349,7 @@ def main():
             log.info('새 거래일 수급 아직 없음')
             sys.exit(NO_NEW)
         if args.what in ('flow', 'all'):
-            errors += collect_flow(conn, session, refill=args.refill)
+            errors += collect_flow(conn, session, refill=args.refill, history=args.history)
         if args.what == 'quotes':
             errors += collect_quotes(conn, session)
     except Unreachable as e:
