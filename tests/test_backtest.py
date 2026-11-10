@@ -118,3 +118,21 @@ class ParseTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class YearlyTest(unittest.TestCase):
+    def test_counted_years_and_excess(self):
+        D = 1600                                            # 2006-11-09 ~ 약 2013
+        P = (1.001 ** np.arange(D))[:, None]                # 매일 +0.1%, 대상 평균은 0 (대상이 이 종목 하나라 같다)
+        sim = make_sim(P)
+        S = np.zeros((sim.T, 1), bool)
+        i08 = sim.yfirst[sim.years.index(2008)]
+        S[i08 + 40:] = True                                 # 2008년 중간에 처음 매수 → 2008 은 세지 않는다
+        r = sim.run(S, 'h120')
+        yc = dict(zip(sim.years, r['yc']))
+        self.assertEqual((yc[2006], yc[2007], yc[2008], yc[2009], yc[2010]), (0, 0, 0, 1, 1))
+        n, mean, wins, t, lo, a, b, med = r['m']['ex']['all']['u']
+        self.assertEqual(n, sum(r['yc']))
+        self.assertAlmostEqual(mean, 0, delta=0.6)           # 대상 평균 = 이 종목 → 초과는 비용만큼만
+        k = r['m']['ex']['all']['k'][1]                      # 코스피(여기선 변동 없음) 대비 초과 = 연 약 +28%
+        self.assertGreater(k, 20)

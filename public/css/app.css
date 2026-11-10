@@ -944,3 +944,13 @@ tr.scr-mine td { background: var(--hover); }
 .bt-filters { position: static !important; }
 .bt-rank td:nth-child(2) { white-space: normal; min-width: 200px; max-width: 340px; line-height: 1.35; }
 .bt-rank td, .bt-rank th { padding-left: 8px; padding-right: 8px; }
+.bt-exbar { width: 100%; height: 90px; display: block; margin: 4px 0 6px; }
+.bt-exbar line { stroke: var(--line); stroke-width: 1; }
+.bt-exbar rect.up { fill: var(--up); opacity: .8; }
+.bt-exbar rect.dn { fill: var(--down); opacity: .8; }
+.bt-years { gap: 3px !important; }
+.bt-year { padding: 4px 0 !important; min-width: 0; }
+.bt-year small { font-size: 9.5px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bt-year.off { opacity: .45; }
+.bt-yk > div { border: 1px solid var(--line); }
+@media (max-width: 640px) { .bt-years { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; } .bt-exbar { height: 70px; } }

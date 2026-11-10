@@ -327,6 +327,12 @@ class Sim:
         self.year = np.array([int(d[:4]) for d in self.days])
         self.years = sorted(set(self.year.tolist()))
         self.half = self.T // 2
+        # 연도별 BM: 대상 전체 동일가중(u), 코스피(k), 코스닥(q). 표본이 120거래일 미만인 해(2006년 11~12월)는 연도 검증에서 뺀다
+        self.ymask = [self.year == y for y in self.years]
+        self.yfirst = [int(np.argmax(mk)) for mk in self.ymask]
+        self.yfull = [int(mk.sum()) >= 120 for mk in self.ymask]
+        self.byr = {k: np.array([float(np.prod(1 + r[mk]) - 1) * 100 for mk in self.ymask])
+                    for k, r in (('u', self.bench), ('k', self.idx[0]), ('q', self.idx[1]))}
         self.q3 = self.half + (self.T - self.half) // 2
         self.i10 = next((i for i, d in enumerate(self.days) if d >= '2010-01-04'), 0)
         wk = [date.fromisoformat(d).isocalendar()[:2] for d in self.days]
@@ -374,6 +380,41 @@ class Sim:
             'sh2': round(float(ret[h:].mean() / ret[h:].std()) * math.sqrt(250), 2) if ret[h:].std() > 0 else 0,
             'yw': int(sum(a > b for a, b in zip(yr, yb))),
         }, yr, nav
+
+    RECENT = 2017      # '최근 10년' 창의 첫 해 (후반 시작 2016-10 다음 해)
+
+    def yearly(self, ret, held):
+        """연도별 수익률과 BM 대비 초과(%p) 통계.
+        세는 해: 표본이 120거래일 이상이고, 전략이 이미 돌아가고 있던 해 (처음 산 해는 그 해 첫 20거래일 안에 샀을 때만).
+        → 조건을 계산할 과거 데이터가 없던 해(실적 조건의 2016년 전 등)를 '0% 수익'으로 세지 않는다.
+        통계 [세는 해 수, 평균 초과, 이긴 해 수, t값, 가장 나쁜 해, 앞 절반 평균, 뒤 절반 평균, 중간값]"""
+        yr = np.array([float(np.prod(1 + ret[mk]) - 1) * 100 for mk in self.ymask])
+        inv = np.flatnonzero(held > 0)
+        if not len(inv):
+            return yr, np.zeros(len(yr), bool), {}
+        f = int(inv[0])
+        fy = self.years.index(int(self.year[f]))
+        counted = np.array([full and (i > fy or (i == fy and f - self.yfirst[i] < 20))
+                            for i, full in enumerate(self.yfull)])
+        ys = np.array(self.years)
+        out = {}
+        for win, lo in (('all', 0), ('r10', self.RECENT)):
+            c = counted & (ys >= lo)
+            if c.sum() < 3:
+                continue
+            yc = ys[c]
+            mid = (yc[0] + yc[-1]) / 2
+            for k, b in self.byr.items():
+                e = (yr - b)[c]
+                n = len(e)
+                sd = float(e.std(ddof=1))
+                a, z = e[yc <= mid], e[yc > mid]
+                out.setdefault(win, {})[k] = [
+                    n, round(float(e.mean()), 1), int((e > 0).sum()),
+                    round(float(e.mean()) / sd * math.sqrt(n), 2) if sd > 0 else 0,
+                    round(float(e.min()), 1), round(float(a.mean()), 1), round(float(z.mean()), 1),
+                    round(float(np.median(e)), 1)]
+        return yr, counted, out
 
     def run(self, S, mode, names=None, codes=None):
         """S: bool[T, N] (START 이후, 투자 대상 포함). → dict 또는 None"""
@@ -424,6 +465,9 @@ class Sim:
         sc, st = np.nonzero(startA.T)
         ec, et = np.nonzero(endA.T)
         tr = Pc[et, ec] / Pc[st - 1, sc] * (1 - COST) ** 2 - 1
+        yr, counted, ex = self.yearly(ret, held)
+        m['ex'] = ex
+        m['yw'] = ex.get('all', {}).get('u', [0, 0, 0])[2]
         m.update({
             'capc': mc['cagr'], 'n': round(float(held[inv].mean()), 1) if inv.any() else 0,
             'inv': round(float(inv.mean()) * 100), 'tr': int(len(tr)),
@@ -431,7 +475,7 @@ class Sim:
             'med': round(float(np.median(tr)) * 100, 1), 'big': round(float((tr >= 1).mean()) * 100, 1),
             'hd': round(float((et - st + 1).mean())),
         })
-        out = {'m': m, 'yr': yr, 'nav': [int(round(math.log(v) * 1000)) for v in nav[self.widx]],
+        out = {'m': m, 'yr': [round(float(v), 1) for v in yr], 'yc': [int(v) for v in counted], 'nav': [int(round(math.log(v) * 1000)) for v in nav[self.widx]],
                'n': [int(v) for v in held[self.widx]]}
         if names is not None:           # 지금 들고 있는 종목 (마지막 날 판단 기준)
             on = np.flatnonzero(Hd[-1])
@@ -533,7 +577,8 @@ def build(threads=8, max_k=MAX_COMBO, use_cache=True, only=None):
         'exits': [{'k': k, 'l': l, 'd': d} for k, l, d in EXITS],
         'weeks': [sim.days[i] for i in sim.widx], 'years': sim.years,
         'bench': {'univ': lg(sim.bench), 'kospi': lg(sim.idx[0]), 'kosdaq': lg(sim.idx[1])},
-        'bench_m': bm, 'bench_yr': byr,
+        'bench_m': bm, 'bench_yr': byr, 'bm_yr': {k: [round(float(v), 1) for v in b] for k, b in sim.byr.items()},
+        'yfull': [int(v) for v in sim.yfull], 'recent': sim.RECENT,
         'idx_m': {k: sim.metrics(sim.idx[j])[0] for j, k in enumerate(('kospi', 'kosdaq'))},
         'idx_yr': {k: [round(float(np.prod(1 + sim.idx[j][sim.year == y]) - 1) * 100, 1) for y in sim.years]
                    for j, k in enumerate(('kospi', 'kosdaq'))},

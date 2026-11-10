@@ -306,6 +306,17 @@ def collect_fin(conn, first_year: int = 2015):
             log.info('재무 %s: %d행', tag, n)
 
 
+def collect_index(conn):
+    """코스피·코스닥 지수 일봉 (2005 ~)"""
+    s = requests.Session()
+    s.headers.update(UA)
+    for code in ('KOSPI', 'KOSDAQ'):
+        rows = fetch_sise(s, code, PRE_START, date.today().strftime('%Y%m%d'))
+        with conn:
+            conn.executemany('INSERT OR REPLACE INTO hidx VALUES (?,?,?)', [(code, r[0], r[4]) for r in rows])
+        log.info('%s 지수 %d일 (%s ~ %s)', code, len(rows), rows[0][0], rows[-1][0])
+
+
 def sync(conn):
     """화면용 DB에 있는 최근 날짜를 복사 (KRX 를 다시 부르지 않는다). 오늘 날짜는 장 마감 직후 잠정치일 수 있어 어제까지만."""
     import db
