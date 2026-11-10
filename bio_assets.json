@@ -2091,6 +2091,122 @@
           "ramp_years": 1,
           "exclusivity_years": 1,
           "assumptions": "실현 비율 15%와 평균 시점 4년은 가정치. 공시 금액은 옵션을 모두 행사하고 개발이 모두 성공할 때의 상한이라 그대로 더하면 과대. 판매 로열티는 넣지 않음."
+        },
+        {
+          "id": "alt-qlex",
+          "name": "Keytruda Qlex 로열티",
+          "indication": "MSD 키트루다 SC (ALT-B4)",
+          "stage": "판매 중 · 로열티 2029년부터 (리포트 가정)",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 206.4,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 10,
+          "launch_in": 2.14,
+          "stages": [
+            {
+              "name": "로열티 개시 (2029-01, 리포트 가정)",
+              "t": 2.14,
+              "pos": 0.95,
+              "x": 0
+            }
+          ],
+          "basis": "키트루다 패밀리 연매출 $34.4B (MSD 3분기 $8.6B × 4) × Qlex 전환율 30% × 로열티 2% = $206M",
+          "assumptions": "로열티율 2%와 2029년 개시는 대신·IBK 리포트 가정(계약상 비공개). 10년 지속·PoS 95%는 가정치. 기본 모델의 상업 DCF(회사 매출 연환산 × 성장)에 이미 일부 들어 있을 수 있어, 이 자산은 기본 가치에 더하지 않고 시나리오 비교로만 보여줌.",
+          "market": {
+            "kind": "product_royalty",
+            "region": "글로벌",
+            "product": "Keytruda 패밀리",
+            "base_sales_musd": 34400,
+            "base_src": "MSD 3분기 키트루다/Qlex 매출 $8.6B × 4 (8-K 원문)",
+            "base_url": "https://www.sec.gov/Archives/edgar/data/310158/000110465926119825/tm2628203d1_ex99-1.htm",
+            "rate": 0.02,
+            "rate_src": "대신·IBK 리포트 가정 2% (계약상 비공개)",
+            "current_share": 0.0965,
+            "current_src": "MSD 3분기 Qlex $830M ÷ $8.6B (8-K 원문)",
+            "cases": {
+              "bear": {
+                "share": 0.2,
+                "why": "IRA 협상가격·IV 바이오시밀러로 전환 정체, 전환율 20%"
+              },
+              "base": {
+                "share": 0.3,
+                "why": "전환율 30% (대신 '29년 로열티 추정 $208M과 같은 수준)"
+              },
+              "bull": {
+                "share": 0.5,
+                "why": "신한 가정 전환율 50%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "alt-share",
+                "name": "Qlex 전환율",
+                "kind": "proxy",
+                "proxy": "MSD 분기 실적 8-K의 키트루다/Qlex 매출 (매일 자동)",
+                "collector": {
+                  "type": "merck_qlex",
+                  "cik": 310158
+                },
+                "th": {
+                  "bear": "2027년 말 15% 미만",
+                  "base": "2027년 말 15~25%",
+                  "bull": "2027년 말 25% 넘게"
+                }
+              },
+              {
+                "id": "alt-ms",
+                "name": "판매 마일스톤 수령 공시",
+                "kind": "trigger",
+                "proxy": "DART 투자판단 관련 주요경영사항의 'MSD 판매 마일스톤' 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "마일스톤"
+                  ],
+                  "since": "2026-09-01"
+                },
+                "th": {
+                  "bear": "2028년까지 일부만",
+                  "base": "2028년까지 총 10억 달러 (IBK)",
+                  "bull": "조기 달성"
+                }
+              },
+              {
+                "id": "alt-ira",
+                "name": "IRA 약가협상 대상 선정 (2027-02-01 목록)",
+                "kind": "trigger",
+                "proxy": "CMS 2029년 협상 대상 목록에 키트루다 포함 여부",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "선정 + 큰 폭 인하",
+                  "base": "선정, Qlex 매출 영향 10% 미만 (신한·대신)",
+                  "bull": "미선정"
+                }
+              },
+              {
+                "id": "alt-new",
+                "name": "신규 기술이전 (feed rate 프록시)",
+                "kind": "proxy",
+                "proxy": "DART의 ALT-B4 라이선스 계약 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "라이선스|기술이전"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "연 1건 이하",
+                  "base": "연 2~3건",
+                  "bull": "연 4건 이상"
+                }
+              }
+            ]
+          }
         }
       ],
       "facts": [
@@ -2562,11 +2678,11 @@
           "indication": "EGFR 변이 비소세포폐암 (C797S 등)",
           "stage": "1/2상 (글로벌, 391명)",
           "method": "rov",
-          "peak_musd": 800,
+          "peak_musd": 472.4,
           "margin": 0.45,
           "ramp_years": 5,
           "exclusivity_years": 12,
-          "basis": "피크매출 8억 달러는 가정치 (EGFR 표적치료 내성 이후 시장을 두고 정한 값, 하향식 근거 없음)",
+          "basis": "현대차증권 2026-09-18 보로노이 리포트 표2·표3: 미국 진행성 EGFR NSCLC 12,151명 × C797S 12%(표 1,458명) × 점유 60% × 연 $225k × (미국+해외 2.40) = $472.4M",
           "stages": [
             {
               "name": "1/2상 결과 (가정 2028년 말)",
@@ -2588,7 +2704,203 @@
             }
           ],
           "launch_in": 5.5,
-          "assumptions": "초기 단계라 실물옵션(이항모형)으로 평가. 다음 단계 비용(3상 2억 달러), PoS, 피크매출, 마진 45%(기술이전 시 몫 반영)는 모두 가정치."
+          "assumptions": "환자 수·약가·해외 비율은 현대차증권 리포트 입력값. 점유 60%와 PoS·시점은 가정치. 리포트 표 매출과 같은 값은 아님(입력값으로 다시 계산).",
+          "market": {
+            "region": "미국 + 해외 (리포트 비율)",
+            "tam_patients": 12151,
+            "tam_src": "현대차증권 2026-09-18 보로노이 리포트 표2·표3: 미국 진행성 EGFR classic 변이 NSCLC (2029F)",
+            "tam_verified": true,
+            "sam_label": "3세대 TKI 뒤 C797S 변이",
+            "sam_src": "리포트 표 1,458명 (표기 10%, 실제 12%)",
+            "som_label": "피크 점유 (리포트 상단 80%)",
+            "price_src": "리포트 연간 약가 $225k (2031F), 해외 매출 = 미국 × 1.40 (리포트 오시머티닙 비율)",
+            "global_mult": 2.4,
+            "cases": {
+              "bear": {
+                "sam": 0.12,
+                "pen": 0.3,
+                "price_k": 225,
+                "why": "경쟁 4세대 TKI와 나눠 점유 30%"
+              },
+              "base": {
+                "sam": 0.12,
+                "pen": 0.6,
+                "price_k": 225,
+                "why": "유일 치료 옵션으로 점유 60%"
+              },
+              "bull": {
+                "sam": 0.12,
+                "pen": 0.8,
+                "price_k": 225,
+                "why": "리포트 점유 상단 80%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "vrn-1b",
+                "name": "1b/2상 C797S 코호트 반응률",
+                "kind": "trigger",
+                "proxy": "학회·IR 발표 반응률 (1a상 160mg 이상 C797S 6명 모두 PR, mPFS 11개월 · 유안타·현대차 리포트)",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "반응률 30% 미만",
+                  "base": "30~50%",
+                  "bull": "50% 넘게"
+                },
+                "evidence": {
+                  "status": "live",
+                  "scenario": "bull",
+                  "date": "2026-09-17",
+                  "url": "https://stock.pstatic.net/stock-research/company/18/20260917_company_187971000.pdf",
+                  "note": "1a상: 160mg 이상 C797S 6명 전원 PR, mPFS 11개월 (리포트 인용, 소수 환자라 잠정)"
+                }
+              },
+              {
+                "id": "vrn-ct",
+                "name": "임상 계획 승인·변경",
+                "kind": "proxy",
+                "proxy": "DART 임상시험계획 승인·변경 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상시험계획"
+                  ],
+                  "since": "2026-09-01"
+                },
+                "th": {
+                  "bear": "취하·지연",
+                  "base": "국가 추가 승인",
+                  "bull": "가속승인 경로 합의"
+                }
+              },
+              {
+                "id": "vrn-lo",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART VRN11 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "VRN11|기술이전"
+                  ],
+                  "since": "2026-09-01"
+                },
+                "th": {
+                  "bear": "없음 (3상 자체 비용)",
+                  "base": "3상 전 이전",
+                  "bull": "대형 계약"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "vrn-11-1l",
+          "name": "VRN11 1차 (뇌전이)",
+          "indication": "EGFR 변이 비소세포폐암 1차",
+          "stage": "1/2상",
+          "method": "rov",
+          "peak_musd": 603.7,
+          "margin": 0.45,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "stages": [
+            {
+              "name": "1/2상 결과",
+              "t": 2.5,
+              "pos": 0.4,
+              "x": 250
+            },
+            {
+              "name": "3상 결과",
+              "t": 5.0,
+              "pos": 0.55,
+              "x": 30
+            },
+            {
+              "name": "허가 판정",
+              "t": 6.0,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 6.0,
+          "market": {
+            "region": "미국 + 해외 (리포트 비율)",
+            "tam_patients": 12151,
+            "tam_src": "현대차증권 2026-09-18 보로노이 리포트 표2·표3: 미국 진행성 EGFR classic 변이 NSCLC (2029F)",
+            "tam_verified": true,
+            "sam_label": "뇌전이 동반 환자",
+            "sam_src": "리포트 표 7,291명 (표기 50%, 실제 60%)",
+            "som_label": "1차 치료 점유 (리포트 2032F 15%)",
+            "price_src": "리포트 연간 약가 $230k (2032F), 해외 = 미국 × 1.40",
+            "global_mult": 2.4,
+            "cases": {
+              "bear": {
+                "sam": 0.6,
+                "pen": 0.05,
+                "price_k": 230,
+                "why": "타그리소 병용요법과 경쟁해 5%"
+              },
+              "base": {
+                "sam": 0.6,
+                "pen": 0.15,
+                "price_k": 230,
+                "why": "리포트 2032F 점유 15%"
+              },
+              "bull": {
+                "sam": 0.6,
+                "pen": 0.25,
+                "price_k": 230,
+                "why": "뇌전이 1차 표준으로 25%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "vrn1l-data",
+                "name": "1차(치료 이력 없는) 코호트 데이터",
+                "kind": "trigger",
+                "proxy": "1b/2상 치료 이력 없는 환자 코호트 반응률·두개내 반응 (학회·IR)",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "VRN11|임상"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "타그리소 수준 미만",
+                  "base": "타그리소와 비슷",
+                  "bull": "두개내 반응 우위"
+                }
+              },
+              {
+                "id": "vrn1l-cns",
+                "name": "뇌전이 환자 데이터 (1a상)",
+                "kind": "proxy",
+                "proxy": "1a상 뇌전이 환자 PFS·두개내 병변 (리포트 인용)",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "두개내 진행",
+                  "base": "안정 유지",
+                  "bull": "두개내 반응 우위"
+                },
+                "evidence": {
+                  "status": "live",
+                  "scenario": "base",
+                  "date": "2026-09-17",
+                  "url": "https://stock.pstatic.net/stock-research/company/18/20260917_company_187971000.pdf",
+                  "note": "160mg 이상 뇌전이 19명 iDCR 100%, mPFS 6.7개월, 두개내 mPFS 미도달 (유안타 리포트 인용, 잠정)"
+                }
+              }
+            ]
+          },
+          "basis": "현대차증권 2026-09-18 보로노이 리포트 표2·표3: 뇌전이 7,291명 × 점유 15% × 연 $230k × 2.40 = $603.7M",
+          "assumptions": "환자 수·점유·약가·해외 비율은 현대차증권 리포트 입력값. 단계 PoS(40%·55%·90%)와 비용·시점은 가정치(리포트는 성공확률 40% 한 번만 적용)."
         },
         {
           "id": "vrn-10",
@@ -2756,47 +3068,6 @@
           ]
         },
         {
-          "label": "VRN11 1차 치료(뇌전이) 적응증 추가: 피크 15억 달러 (가정치)",
-          "src": "현대차증권: 1L 뇌전이 가치 2.877조 원을 따로 매김 · 피크매출은 리포트에 없어 가정",
-          "ops": [
-            {
-              "op": "add_asset",
-              "asset": {
-                "id": "vrn-11-1l",
-                "name": "VRN11 1차 (뇌전이)",
-                "indication": "EGFR 변이 비소세포폐암 1차",
-                "stage": "1/2상",
-                "method": "rov",
-                "peak_musd": 1500,
-                "margin": 0.45,
-                "ramp_years": 5,
-                "exclusivity_years": 12,
-                "stages": [
-                  {
-                    "name": "1/2상 결과",
-                    "t": 2.5,
-                    "pos": 0.4,
-                    "x": 250
-                  },
-                  {
-                    "name": "3상 결과",
-                    "t": 5.0,
-                    "pos": 0.55,
-                    "x": 30
-                  },
-                  {
-                    "name": "허가 판정",
-                    "t": 6.0,
-                    "pos": 0.9,
-                    "x": 0
-                  }
-                ],
-                "launch_in": 6.0
-              }
-            }
-          ]
-        },
-        {
           "label": "현재 현금 소진 공제 제외 (3상부터 파트너 비용 가정, 리포트는 순현금만 반영)",
           "src": "현대차·유안타: 파이프라인 가치 ÷ 주식 수 방식",
           "ops": [
@@ -2852,7 +3123,85 @@
             }
           ],
           "launch_in": 0.41,
-          "assumptions": "승인 PoS 60%는 가정치(세 번의 CRL 사유가 효능이 아닌 제조시설 실사였고, 7월 Hengrui 시설 실사가 VAI로 종결됐다는 보도를 반영). 마진 40%는 캄렐리주맙 로열티 20.5%(항서제약), 리보세라닙 로열티 3.5~10%(Advenchen) 등 원문 로열티를 빼고 원가·판관비를 가정한 값."
+          "assumptions": "승인 PoS 60%는 가정치(세 번의 CRL 사유가 효능이 아닌 제조시설 실사였고, 7월 Hengrui 시설 실사가 VAI로 종결됐다는 보도를 반영). 마진 40%는 캄렐리주맙 로열티 20.5%(항서제약), 리보세라닙 로열티 3.5~10%(Advenchen) 등 원문 로열티를 빼고 원가·판관비를 가정한 값.",
+          "market": {
+            "kind": "triggers",
+            "region": "미국",
+            "note": "간암 환자 수·가격 원문을 아직 못 찾아 시장 원 없이 트리거만 추적",
+            "triggers": [
+              {
+                "id": "hlb-resub",
+                "name": "재제출 접수·PDUFA 지정",
+                "kind": "trigger",
+                "proxy": "FDA 접수 사실·PDUFA 날짜",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "접수 거부",
+                  "base": "Class 2 (6개월)",
+                  "bull": "Class 1 (2개월)"
+                },
+                "evidence": {
+                  "status": "done",
+                  "scenario": "base",
+                  "date": "2026-11-04",
+                  "url": "https://www.cancernetwork.com/view/fda-sets-pdufa-date-for-rivoceranib-camrelizumab-resubmission-after-third-crl-in-unresectable-hcc",
+                  "note": "PDUFA 2027-04-09 (Class 2), 보도 인용이라 원문 미확인"
+                }
+              },
+              {
+                "id": "hlb-insp",
+                "name": "제조시설 재실사",
+                "kind": "trigger",
+                "proxy": "DART 자율공시의 실사 결과",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "실사"
+                  ],
+                  "since": "2026-10-01"
+                },
+                "th": {
+                  "bear": "결함 재지적",
+                  "base": "VAI 종결",
+                  "bull": "NAI"
+                }
+              },
+              {
+                "id": "hlb-fda",
+                "name": "FDA 판정 (PDUFA 2027-04-09)",
+                "kind": "trigger",
+                "proxy": "DART 공시의 승인 또는 보완요구서",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "승인|보완요구|CRL"
+                  ],
+                  "since": "2027-01-01"
+                },
+                "th": {
+                  "bear": "4번째 CRL",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "hlb-cam",
+                "name": "캄렐리주맙 BLA (항서제약) 통합 심사",
+                "kind": "trigger",
+                "proxy": "병용 상대 약물의 심사 결과",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "캄렐리주맙 CRL",
+                  "base": "함께 승인",
+                  "bull": "함께 승인"
+                }
+              }
+            ]
+          }
         }
       ],
       "facts": [

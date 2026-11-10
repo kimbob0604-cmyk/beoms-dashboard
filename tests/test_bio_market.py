@@ -12,7 +12,7 @@ class Market(unittest.TestCase):
         n = 0
         for c in CFG['companies']:
             for a in c.get('assets', []):
-                if a.get('market') and a['market'].get('kind') != 'royalty':
+                if a.get('market') and a['market'].get('kind') in (None, 'pipeline'):
                     n += 1
                     self.assertAlmostEqual(bm.peak_of(a['market'], 'base'), a['peak_musd'], delta=0.5, msg=a['id'])
                     pk = [bm.peak_of(a['market'], k) for k in bm.CASES]
@@ -23,7 +23,7 @@ class Market(unittest.TestCase):
         for c in CFG['companies']:
             for a in c.get('assets', []):
                 for t in (a.get('market') or {}).get('triggers', []):
-                    self.assertIn(t['collector']['type'], ('ctgov', 'sec', 'revenue', 'manual'), t['id'])
+                    self.assertIn(t['collector']['type'], ('ctgov', 'sec', 'dart', 'revenue', 'manual', 'merck_qlex'), t['id'])
                     self.assertEqual(set(t['th']), set(bm.CASES), t['id'])
                     ev = t.get('evidence')
                     if ev:

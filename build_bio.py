@@ -8,6 +8,7 @@
 - 가져오기에 실패한 부분은 직전 bio.json 값을 그대로 두고 stale 로 표시한다.
 
   python3 build_bio.py
+  python3 build_bio.py --live   # 장중: 국장 종목 가격과 가격에 걸린 값만 다시 (live.py 가 10분마다)
 """
 
 import copy
@@ -155,6 +156,8 @@ def value_asset(a, g, rf, scen):
 def value_company(co, mk, g, rf, scen):
     assets, total_assets = [], 0.0
     for a in co.get('assets', []):
+        if a.get('display_only'):   # 시나리오 비교용 자산: 기본 가치에 더하지 않음
+            continue
         v = value_asset(a, g, rf, scen)
         assets.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'stage': a['stage'],
                        'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'] * g.get('conv', 1.0),
@@ -183,7 +186,8 @@ def value_company(co, mk, g, rf, scen):
             annual = max(0.0, -mk['op_cf'])
         burn = (annual or 0.0) * years
     equity = total_assets + comm_pv + cash - debt - other - burn
-    per_share = equity / mk['shares'] if mk.get('shares') else None
+    # 주주 유한책임: 자산 가치가 부채·소진 현금보다 작으면 주당 0 (equity 는 음수 그대로 남겨 원인을 보여줌)
+    per_share = max(0.0, equity) / mk['shares'] if mk.get('shares') else None
     return {'assets': assets, 'commercial': comm, 'equity': equity, 'per_share': per_share,
             'upside': (per_share / mk['price'] - 1) if per_share is not None and mk['price'] else None,
             'bridge': {'assets': total_assets, 'commercial': comm_pv, 'cash': cash, 'debt': debt, 'other': other, 'burn': burn}}
@@ -626,6 +630,73 @@ def fetch_fx(fallback: float):
         return fallback, True
 
 
+def kr_price_values(co, row, mk, g, rf, cfg):
+    """국장: 현재가에 걸린 값 (상승여력·내재 PoS·회수 구간·카드·민감도). 네트워크 없이 계산만 — 장중 다시 계산(reprice_live)에도 쓴다."""
+    row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
+    row['scenarios'] = {}
+    for key, sc in cfg['scenarios'].items():
+        v = value_company(co, mk, g, rf, sc)
+        row['scenarios'][key] = {'label': sc['label'], 'per_share': v['per_share'], 'upside': v['upside'], 'equity': v['equity']}
+    row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf) if co.get('assets') else None
+    row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
+    row['card'] = card(co, row, date.today().isoformat())
+    row['pipeline'] = pipeline(co, row)
+    row['timeline'] = timeline(co, row, date.today().isoformat())
+    row['sensitivity'] = sensitivity(co, mk, g, rf)
+
+
+def reprice_live() -> int:
+    """장중 (live.py 가 10분마다): 국장 종목의 가격·등락률·시총을 quote_live 장중 시세로 바꾸고,
+    현재가에 걸린 값만 다시 계산한다. 재무·공시·리포트·임상은 그대로 (하루 한 번 build() 가 다시 받는다). 네트워크 없음."""
+    if not OUT.exists():
+        return 0
+    import db
+    out = json.loads(OUT.read_text(encoding='utf-8'))
+    cfg = json.loads(ASSETS.read_text(encoding='utf-8'))
+    cos = {c['ticker']: c for c in cfg['companies']}
+    conn = db.connect()
+    n = 0
+    for row in out['companies']:
+        co, mk = cos.get(row['ticker']), row['market']
+        if row.get('market_code') != 'KR' or not co:
+            continue
+        close_asof = mk.get('close_asof') or mk['asof']   # 하루 한 번 빌드한 종가의 날짜
+        q = conn.execute('SELECT date, close, change_pct, at FROM quote_live WHERE code = ? AND date > ?',
+                         (row['ticker'], close_asof)).fetchone()
+        if not q or not q[1]:
+            continue
+        mcap = q[1] * mk['shares'] if mk.get('shares') else mk['mcap'] * q[1] / mk['price']   # 원 × 억주 = 억원
+        mk = {**mk, 'price': q[1], 'change_pct': q[2], 'mcap': mcap, 'asof': q[0], 'close_asof': close_asof, 'live': q[3]}
+        row['market'] = mk
+        d = (row.get('prices') or {}).get('d')
+        if d:   # 주가 차트 끝에 오늘 장중 가격 (이미 붙였으면 바꾼다)
+            if d[-1][0] == q[0]:
+                d[-1] = [q[0], q[1]]
+            elif d[-1][0] < q[0]:
+                d.append([q[0], q[1]])
+        if co['kind'] == 'excluded' or 'valuation' not in row:
+            n += 1
+            continue
+        g = {**cfg['global_kr'], 'conv': row['fx'] / 100}
+        rf = out['rf_kr']
+        kr_price_values(co, row, mk, g, rf, cfg)
+        if row.get('estimates'):
+            row['estimates']['thresholds'] = thresholds(co, mk, g, rf, cfg)
+        up = lambda ps: ps / q[1] - 1 if ps is not None else None
+        if row.get('bull_bridge'):
+            row['bull_bridge']['bull_up'] = up(row['bull_bridge']['bull'])
+        for m in row.get('markets') or []:   # 시장(TAM→SOM) 시나리오: 주당 가치는 가격과 무관, 상승여력만 다시
+            for c in (m.get('cases') or {}).values():
+                if 'per_share' in c:
+                    c['upside'] = up(c['per_share'])
+        n += 1
+    if n:
+        out['live'] = max(r['market'].get('live') or '' for r in out['companies']) or None
+        OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    print(f'바이오 장중 시세: 국장 {n}종목')
+    return 0
+
+
 def build_kr(co, old, cfg, fx, rf):
     """국장 종목: KRX 가격 DB + DART 재무·공시. 금액은 억원, 주식 수는 억주."""
     t = co['ticker']
@@ -669,18 +740,8 @@ def build_kr(co, old, cfg, fx, rf):
     row = {'ticker': t, 'name': co['name'], 'market_code': 'KR', 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''),
            'market': mk, 'news': news, 'trials': trials, 'auto': auto, 'fin': fin, 'prices': bk.prices(t), 'facts': co.get('facts', []),
            'catalysts': co.get('catalysts', []), 'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
-    row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
-    row['scenarios'] = {}
-    for key, sc in cfg['scenarios'].items():
-        v = value_company(co, mk, g, rf, sc)
-        row['scenarios'][key] = {'label': sc['label'], 'per_share': v['per_share'], 'upside': v['upside'], 'equity': v['equity']}
-    row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf) if co.get('assets') else None
-    row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
-    row['card'] = card(co, row, date.today().isoformat())
+    kr_price_values(co, row, mk, g, rf, cfg)
     row['checks'] = checks(row, fin)
-    row['pipeline'] = pipeline(co, row)
-    row['timeline'] = timeline(co, row, date.today().isoformat())
-    row['sensitivity'] = sensitivity(co, mk, g, rf)
     row['estimates'] = estimates(co, row, None)
     if row['estimates']:
         row['estimates']['thresholds'] = thresholds(co, mk, g, rf, cfg)
@@ -849,4 +910,4 @@ def build():
 
 
 if __name__ == '__main__':
-    sys.exit(build())
+    sys.exit(reprice_live() if '--live' in sys.argv else build())

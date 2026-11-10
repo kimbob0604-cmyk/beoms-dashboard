@@ -24,7 +24,7 @@ _ct_cache = {}
 def peak_of(m: dict, case: str) -> float:
     """백만 달러."""
     c = m['cases'][case]
-    return m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6
+    return m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6 * m.get('global_mult', 1.0)
 
 
 def ct_study(nct: str):
@@ -72,6 +72,9 @@ def sec_hits(row: dict, terms, since):
             texts.append((x.get('filed'), h, x.get('url')))
     for e in auto.get('events', []):
         texts.append((e.get('filed'), e.get('sentence') or '', e.get('url')))
+    for f in auto.get('filings', []):
+        for lb in f.get('labels') or []:
+            texts.append((f.get('filed'), lb, f.get('url')))
     out, seen = [], set()
     for d, t, u in texts:
         if since and (d or '') < since:
@@ -98,14 +101,23 @@ def collect(trig: dict, row: dict, asset: dict, m: dict, today: str):
         if col.get('due') and s.get('pcd') and s['pcd'][:7] != col['due']:
             prog += f" (기준 {col['due']})"
         t.update(status=st, scenario=sc, tentative=st == 'live', progress=prog, date=s.get('updated'), data=s)
-    elif col['type'] == 'sec':
+    elif col['type'] in ('sec', 'dart'):
         hits = sec_hits(row, col['terms'], col.get('since'))
         if trig.get('evidence'):
             t.update(_evidence(trig['evidence']))
         elif hits:
-            t.update(status='hit', progress='새 원문 문장이 나왔습니다. 읽고 판정해야 합니다.', hits=hits, date=hits[0]['date'])
+            t.update(status='hit', progress=f"새 원문 {len(hits)}건. 읽고 판정해야 합니다.", hits=hits, date=hits[0]['date'])
         else:
             t.update(status='wait', progress=f"{col.get('since') or ''} 이후 해당 문장 없음 (단어: {' + '.join(w.replace('|', ' 또는 ') for w in col['terms'])})")
+    elif col['type'] == 'merck_qlex':
+        try:
+            q = merck_qlex(col['cik'])
+        except Exception as e:
+            q = None
+            t.update(status='error', progress=f'MSD 공시 읽기 실패: {str(e)[:60]}')
+        if q:
+            t.update(status='live', scenario=None, date=q['filed'], evidence_url=q['url'],
+                     progress=f"{q['filed']} 8-K: Qlex ${q['qlex']:,.0f}M ÷ 키트루다 패밀리 ${q['family']:,.0f}M = 전환율 {q['share'] * 100:.1f}% (2027년 말에 판정)")
     elif col['type'] == 'qgrowth':
         qs = [q for q in ((row.get('fin') or {}).get('quarters') or []) if q.get('revenue')]
         base_q = (1 + col['base_annual']) ** 0.25 - 1
@@ -139,6 +151,38 @@ def collect(trig: dict, row: dict, asset: dict, m: dict, today: str):
     return t
 
 
+_mrk = {}
+
+
+def merck_qlex(cik):
+    """MSD 최신 실적 8-K(Ex.99)에서 키트루다 패밀리·Qlex 분기 매출(백만 달러)."""
+    import re, html as H
+    import bio_events as be
+    if cik in _mrk:
+        return _mrk[cik]
+    sub = be.sec_get(f'https://data.sec.gov/submissions/CIK{cik:010d}.json').json()['filings']['recent']
+    for k, form in enumerate(sub['form']):
+        if form != '8-K' or '2.02' not in (sub.get('items') or [''] * len(sub['form']))[k]:
+            continue
+        acc = sub['accessionNumber'][k].replace('-', '')
+        idx = be.sec_get(f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json').json()
+        ex = [x['name'] for x in idx['directory']['item'] if re.search(r'ex-?99', x['name'], re.I) and x['name'].endswith('.htm')]
+        if not ex:
+            continue
+        url = f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{ex[0]}'
+        t = re.sub(r'\s+', ' ', H.unescape(re.sub(r'<[^>]+>', ' ', be.sec_get(url).text)))
+        fam = re.search(r'KEYTRUDA/KEYTRUDA QLEX\s*\d?\s*Sales Were \$([\d.]+) (Billion|Million)', t)
+        ql = re.search(r'Sales of KEYTRUDA QLEX were \$([\d,.]+) (billion|million)', t, re.I)
+        if not (fam and ql):
+            continue
+        f = float(fam.group(1)) * (1000 if fam.group(2) == 'Billion' else 1)
+        qv = float(ql.group(1).replace(',', '')) * (1000 if ql.group(2).lower() == 'billion' else 1)
+        _mrk[cik] = {'filed': sub['filingDate'][k], 'url': url, 'family': f, 'qlex': qv, 'share': qv / f}
+        return _mrk[cik]
+    _mrk[cik] = None
+    return None
+
+
 def _evidence(ev):
     return {'status': ev.get('status', 'done'), 'scenario': ev.get('scenario'), 'progress': ev.get('note', ''), 'date': ev.get('date'),
             'evidence_url': ev.get('url')}
@@ -161,7 +205,7 @@ def _market_cases(m, value_case, price):
     cases = {}
     for k in CASES:
         c = m['cases'][k]
-        pk = m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6
+        pk = m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6 * m.get('global_mult', 1.0)
         ps = value_case(k, pk)
         sam_n = m['tam_patients'] * c['sam']
         cases[k] = {**c, 'peak': pk, 'per_share': ps, 'upside': ps / price - 1 if ps is not None and price else None,
@@ -189,6 +233,15 @@ def asset_markets(co, row, mk, g, rf, value_company, scen_base):
     for a in co.get('assets', []):
         m = a.get('market')
         if not m:
+            continue
+        if m.get('kind') == 'triggers':
+            trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
+            track, n = tracking(trigs)
+            out.append({'id': a['id'], 'kind': 'triggers', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'note': m.get('note', ''),
+                        'triggers': trigs, 'tracking': track, 'judged': n})
+            continue
+        if m.get('kind') == 'product_royalty':
+            out.append(product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today))
             continue
         if m.get('kind') == 'royalty':
             links = [REG[x] for x in m['links'] if x in REG]
@@ -265,3 +318,27 @@ def commercial_market(co, row, mk, g, rf, value_company, scen_base, cm, today):
     return {'id': 'commercial', 'kind': 'commercial', 'name': m['product'], 'indication': f"{m['product']} (상업)", **_head(m),
             'cases': cases, 'current': current, 'share': share, 'share_note': m.get('share_note', ''),
             'triggers': trigs, 'tracking': track, 'judged': n}
+
+
+def product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today):
+    """파트너 제품 매출 × 전환율 × 로열티율. display_only 자산이면 기본 가치에 더한 값을 시나리오별로 보여준다."""
+    price = mk['price']
+    cases = {}
+    for k in CASES:
+        c = m['cases'][k]
+        sales = m['base_sales_musd'] * c['share']
+        roy = sales * m['rate']
+        c2 = copy.deepcopy(co)
+        x = next(y for y in c2['assets'] if y['id'] == a['id'])
+        x['peak_musd'] = roy
+        x.pop('display_only', None)
+        ps = value_company(c2, mk, g, rf, scen_base)['per_share']
+        cases[k] = {**c, 'tam_usd': m['base_sales_musd'], 'sam_usd': m['base_sales_musd'], 'peak': sales, 'royalty': roy, 'rate': m['rate'],
+                    'per_share': ps, 'upside': ps / price - 1 if ps is not None and price else None}
+    trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
+    track, n = tracking(trigs)
+    return {'id': a['id'], 'kind': 'product_royalty', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'product': m['product'],
+            'tam_src': m['base_src'], 'tam_url': m.get('base_url'), 'tam_verified': True, 'sam_label': 'SC 전환 대상 매출', 'sam_src': '키트루다 패밀리 전체',
+            'som_label': f"Qlex 매출 × 로열티 {m['rate'] * 100:.0f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
+            'current_share': m.get('current_share'), 'current_src': m.get('current_src'), 'display_only': bool(a.get('display_only')),
+            'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n}
