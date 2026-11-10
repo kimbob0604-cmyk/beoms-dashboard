@@ -374,14 +374,16 @@
   const MK = { a: 0, s: 'base' };
   const CASE_KO = { bear: 'Bear', base: 'Base', bull: 'Bull' };
   const bn = v => v >= 10000 ? `$${(v / 1000).toFixed(0)}B` : v >= 1000 ? `$${(v / 1000).toFixed(2)}B` : `$${v.toFixed(0)}M`;
-  const ppl = n => n >= 10000 ? `${+(n / 10000).toFixed(1)}만 명` : `${Math.round(n).toLocaleString('ko-KR')}명`;
+  const ppl = n => n >= 10000 ? `${(+(n / 10000).toFixed(1)).toLocaleString('ko-KR')}만 명` : `${Math.round(n).toLocaleString('ko-KR')}명`;
   const TST = { done: ['판정', 'ok', '✓'], live: ['진행 중', 'acc', '◐'], hit: ['새 원문 · 판정 필요', 'warn', '!'],
     wait: ['대기', 'mute', '○'], error: ['수집 실패', 'bad', '×'] };
   const SRC_KO = { ctgov: 'CT.gov · 매일', sec: 'SEC 8-K·10-Q · 매일', revenue: 'XBRL 10-Q', manual: '원문 판정 (수동)' };
 
   function marketSvg(m, k) {
     const c = m.cases[k];
-    const pct = v => `${+(v * 100).toFixed(1)}%`;
+    const pct = v => `${+(v * 100).toFixed(v < 0.01 ? 2 : 1)}%`;
+    const pk = x => m.kind === 'royalty' ? x.royalty : x.peak;
+    const prc = v => `$${v >= 100 ? v.toFixed(0) : v.toFixed(1)}k`;
     return `<svg class="mk-svg" viewBox="0 0 680 400" role="img" aria-label="${esc(m.indication)} TAM ${bn(c.tam_usd)}, SAM ${bn(c.sam_usd)}, SOM ${bn(c.peak)}">
       <circle cx="190" cy="205" r="185" fill="#EEEDFE" stroke="#AFA9EC"/>
       <circle cx="190" cy="263" r="127" fill="#B5D4F4" stroke="#85B7EB"/>
@@ -393,24 +395,24 @@
       <text x="190" y="194" text-anchor="middle" class="mk-s" fill="#0C447C">${esc(m.sam_label.length > 16 ? m.sam_label.slice(0, 15) + '…' : m.sam_label)}</text>
       <rect x="130" y="203" width="120" height="28" rx="14" fill="#185FA5"/><text x="190" y="222" text-anchor="middle" class="mk-v" fill="#fff">${bn(c.sam_usd)}</text>
       <text x="190" y="304" text-anchor="middle" class="mk-h" fill="#fff">SOM</text>
-      <text x="190" y="321" text-anchor="middle" class="mk-s" fill="#CECBF6">피크매출</text>
-      <rect x="140" y="330" width="100" height="28" rx="14" fill="#fff"/><text x="190" y="349" text-anchor="middle" class="mk-v" fill="#3C3489">${bn(c.peak)}</text>
+      <text x="190" y="321" text-anchor="middle" class="mk-s" fill="#CECBF6">${m.kind === 'royalty' ? '로열티' : '피크매출'}</text>
+      <rect x="140" y="330" width="100" height="28" rx="14" fill="#fff"/><text x="190" y="349" text-anchor="middle" class="mk-v" fill="#3C3489">${bn(pk(c))}</text>
       <g fill="none" stroke-width="1.2"><polyline points="300,58 340,36 400,36" stroke="#7F77DD"/><polyline points="290,190 330,160 400,160" stroke="#378ADD"/><polyline points="245,284 400,284" stroke="#534AB7"/></g>
       <circle cx="300" cy="58" r="5" fill="#fff" stroke="#7F77DD" stroke-width="2"/><circle cx="290" cy="190" r="5" fill="#fff" stroke="#378ADD" stroke-width="2"/><circle cx="245" cy="284" r="5" fill="#fff" stroke="#534AB7" stroke-width="2"/>
       <rect x="400" y="0" width="276" height="96" rx="14" fill="#EEEDFE"/><rect x="414" y="18" width="3" height="60" rx="1.5" fill="#7F77DD"/>
       <text x="428" y="30" class="mk-ct" fill="#26215C">TAM <tspan class="mk-s" fill="#534AB7">전체 환자 시장</tspan></text>
-      <text x="428" y="54" class="mk-cb" fill="#3C3489">${ppl(m.tam_patients)} × 연 $${c.price_k}k</text>
+      <text x="428" y="54" class="mk-cb" fill="#3C3489">${m.kind === 'royalty' ? `${ppl(m.tam_patients)} · ${bn(c.tam_usd)}` : `${ppl(m.tam_patients)} × 연 ${prc(c.price_k)}`}</text>
       <text x="428" y="76" class="mk-s" fill="#534AB7">${esc(m.tam_src.slice(0, 26))}${m.tam_verified ? ' · 원문 확인' : ' · 원문 미확인'}</text>
       <rect x="400" y="114" width="276" height="96" rx="14" fill="#E6F1FB"/><rect x="414" y="132" width="3" height="60" rx="1.5" fill="#378ADD"/>
       <text x="428" y="144" class="mk-ct" fill="#042C53">SAM <tspan class="mk-s" fill="#185FA5">표적 환자</tspan></text>
-      <text x="428" y="168" class="mk-cb" fill="#0C447C">${ppl(c.sam_n)} (TAM의 ${pct(c.sam)})</text>
+      <text x="428" y="168" class="mk-cb" fill="#0C447C">${ppl(c.sam_n)} (TAM의 ${pct(c.sam != null ? c.sam : c.sam_n / m.tam_patients)})</text>
       <text x="428" y="190" class="mk-s" fill="#185FA5">${esc(m.sam_src.slice(0, 28))}</text>
       <rect x="400" y="228" width="276" height="96" rx="14" fill="#EEEDFE"/><rect x="414" y="246" width="3" height="60" rx="1.5" fill="#534AB7"/>
       <text x="428" y="258" class="mk-ct" fill="#26215C">SOM <tspan class="mk-s" fill="#534AB7">피크 점유</tspan></text>
-      <text x="428" y="282" class="mk-cb" fill="#3C3489">${ppl(c.som_n)} (SAM의 ${pct(c.pen)})</text>
+      <text x="428" y="282" class="mk-cb" fill="#3C3489">${m.kind === 'royalty' ? `파트너 피크 ${bn(c.peak)} × ${pct(c.rate)}` : `${ppl(c.som_n)} (SAM의 ${pct(c.pen)})${m.current && m.current.pen != null ? ` · 현재 ${pct(m.current.pen)}` : ''}`}</text>
       <text x="428" y="304" class="mk-s" fill="#534AB7">${esc(m.som_label.slice(0, 28))}</text>
       <rect x="400" y="342" width="276" height="54" rx="14" fill="none" stroke="#AFA9EC"/>
-      <text x="414" y="364" class="mk-s" fill="#534AB7">주당 가치 (이 자산만 ${CASE_KO[k]})</text>
+      <text x="414" y="364" class="mk-s" fill="#534AB7">주당 가치 (${m.kind === 'commercial' ? '상업 매출만' : '이 자산만'} ${CASE_KO[k]})</text>
       <text x="414" y="386" class="mk-ct" fill="#26215C">${px(c.per_share)} · 현재가 ${px(curPrice)} (${pc(c.upside)})</text>
     </svg>`;
   }
@@ -439,11 +441,12 @@
         <div class="mk-st"><span class="mk-pill ${z[1]}">${z[0]}</span><small class="muted">${SRC_KO[t.source] || ''}</small></div></div>`;
     }).join('');
     const nDone = m.triggers.filter(t => t.status === 'done').length;
-    return `<div class="bio-sub">시장과 시나리오 트리거 <span class="muted small">${esc(m.name)} · ${esc(m.indication)} (${esc(m.region)}) · 피크매출 = 유병 환자 × 표적 비율 × 침투율 × 순가격</span></div>
+    return `<div class="bio-sub">시장과 시나리오 트리거 <span class="muted small">${esc(m.name)} · ${esc(m.indication)} (${esc(m.region)}) · ${m.kind === 'royalty' ? '로열티 = 파트너 피크매출 × 로열티율' : m.kind === 'commercial' ? '피크매출 = 환자 × 표적 비율 × 침투율 × 환자당 순매출, 현재 침투율은 실적 원문으로 계산' : '피크매출 = 유병 환자 × 표적 비율 × 침투율 × 순가격'}</span></div>
       <div class="bio-pad mk-bar">${tabs}${segS}<span class="muted small">● 지금 추적 중인 시나리오 (판정 ${m.judged}건 기준)</span></div>
       <div class="bio-pad">${marketSvg(m, k)}
         <p class="muted small">${CASE_KO[k]} 가정: ${esc(cs.why)} · 가격 근거: ${esc(m.price_src)}</p>
-        <div class="mk-sum">${['bear', 'base', 'bull'].map(s => `<span class="${s === k ? 'on' : ''}">${CASE_KO[s]} <b>${bn(m.cases[s].peak)}</b> ${px(m.cases[s].per_share)}</span>`).join('<em class="muted">›</em>')}</div></div>
+        ${m.kind === 'commercial' ? `<p class="muted small">현재: ${esc(m.current.src)}${m.current.url ? ` · <a href="${esc(m.current.url)}" target="_blank" rel="noopener">원문</a>` : ''} · 연환산 매출 ${bn(m.current.revenue)}. ${esc(m.share_note || '')} 시나리오 피크에 맞춰 상업 DCF 성장률을 다시 풀어 주당 가치를 계산합니다 (영구가치 없음).</p>` : ''}
+        <div class="mk-sum">${['bear', 'base', 'bull'].map(s => `<span class="${s === k ? 'on' : ''}">${CASE_KO[s]} <b>${bn(m.kind === 'royalty' ? m.cases[s].royalty : m.cases[s].peak)}</b> ${px(m.cases[s].per_share)}</span>`).join('<em class="muted">›</em>')}</div></div>
       <div class="bio-sub">트리거와 프록시 <span class="muted small">완료 ${nDone}/${m.triggers.length} · 각 단계의 Bear·Base·Bull 판정 기준을 미리 적어 두고, 수집된 원문이 어느 기준에 걸리는지 표시</span></div>
       <div class="bio-pad">${trig}</div>`;
   }

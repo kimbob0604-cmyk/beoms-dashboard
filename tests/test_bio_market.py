@@ -12,7 +12,7 @@ class Market(unittest.TestCase):
         n = 0
         for c in CFG['companies']:
             for a in c.get('assets', []):
-                if a.get('market'):
+                if a.get('market') and a['market'].get('kind') != 'royalty':
                     n += 1
                     self.assertAlmostEqual(bm.peak_of(a['market'], 'base'), a['peak_musd'], delta=0.5, msg=a['id'])
                     pk = [bm.peak_of(a['market'], k) for k in bm.CASES]

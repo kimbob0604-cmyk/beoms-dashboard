@@ -1216,7 +1216,129 @@
         "erosion": 0.3,
         "assumptions": "성장률·마진은 가정치. 시작 매출은 3분기 연환산(일회성 제외). 3분기 Auvelity 순매출 2.076억 달러가 2분기 1.803억 대비 약 +15%(2분기 값은 검색 요약이라 원문 미확인)여서 1년차 +30%는 이 증가세가 둔화하는 걸 가정한 값. 회사가 말하는 Auvelity '연 최소 $8B 피크'(검색 요약, 원문 미확인)는 홍보성 목표라 기본 가정에 쓰지 않음. 특허 만료는 확인 못 해 11년차부터 매년 30% 침식을 임의 지정, 영구가치(TV) 없음.",
         "years": 15,
-        "run_rate_end": "2026-09-30"
+        "run_rate_end": "2026-09-30",
+        "market": {
+          "kind": "commercial",
+          "product": "Auvelity",
+          "region": "미국",
+          "tam_patients": 28000000,
+          "tam_src": "MDD 2,100만 명 + 알츠하이머 700만 명 (10-K)",
+          "tam_verified": true,
+          "tam_url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526064267/axsm-20251231.htm",
+          "sam_label": "MDD + 알츠하이머 초조",
+          "sam_src": "초조는 알츠하이머의 최대 76% (10-K)",
+          "som_label": "Auvelity 치료 환자",
+          "price_k": 8.249,
+          "price_src": "3분기 Auvelity 순매출 $207.6M ÷ 처방 30.2만 건 = 건당 $687 × 12개월 (30일 처방 가정)",
+          "current": {
+            "patients": 100667,
+            "src": "3분기 처방 30.2만 건 ÷ 3개월 (30일 처방 가정, 8-K)",
+            "url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526442628/axsm-ex99_1.htm"
+          },
+          "product_share": 0.8264,
+          "share_note": "상업 DCF는 Auvelity·Sunosi·Symbravo 합산. Auvelity가 3분기 순매출(마일스톤 제외)의 82.6%이고, 나머지 제품도 같은 비율로 움직인다고 가정",
+          "cases": {
+            "bear": {
+              "sam": 0.94,
+              "pen": 0.006,
+              "price_k": 8.249,
+              "why": "제네릭 항우울제와 경쟁, 점유 0.6%"
+            },
+            "base": {
+              "sam": 0.94,
+              "pen": "model",
+              "price_k": 8.249,
+              "why": "모델 기본 성장 경로가 닿는 피크"
+            },
+            "bull": {
+              "sam": 0.94,
+              "pen": 0.02,
+              "price_k": 8.249,
+              "why": "알츠하이머 초조 처방 확대로 점유 2%"
+            }
+          },
+          "triggers": [
+            {
+              "id": "ax-qg",
+              "name": "분기 매출 성장",
+              "kind": "proxy",
+              "proxy": "최근 분기 매출의 전분기 대비 성장률 (XBRL) · 기본 경로 1년차 +30%는 분기 약 +6.8%",
+              "collector": {
+                "type": "qgrowth",
+                "base_annual": 0.3
+              },
+              "th": {
+                "bear": "전분기 대비 감소",
+                "base": "기본 경로 ±절반",
+                "bull": "기본 경로의 1.5배 넘게"
+              }
+            },
+            {
+              "id": "ax-trx",
+              "name": "Auvelity 분기 처방 건수",
+              "kind": "proxy",
+              "proxy": "실적 보도자료의 총처방(TRx)·신규처방 증가율",
+              "collector": {
+                "type": "sec",
+                "terms": [
+                  "prescriptions were written for AUVELITY"
+                ],
+                "since": "2026-11-01"
+              },
+              "th": {
+                "bear": "전년 대비 +20% 미만",
+                "base": "+20~40%",
+                "bull": "+40% 넘게"
+              },
+              "evidence": {
+                "status": "done",
+                "scenario": "bull",
+                "date": "2026-11-02",
+                "url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526442628/axsm-ex99_1.htm",
+                "note": "3분기 TRx 약 30.2만 건, 전년 대비 +40%·전분기 대비 +14% (8-K 원문)"
+              }
+            },
+            {
+              "id": "ax-ad",
+              "name": "알츠하이머 초조 처방 확대",
+              "kind": "proxy",
+              "proxy": "65세 이상 신규처방 증가율 (실적 보도자료)",
+              "collector": {
+                "type": "manual"
+              },
+              "th": {
+                "bear": "증가 정체",
+                "base": "전분기 대비 증가",
+                "bull": "전분기 대비 2배 가까이"
+              },
+              "evidence": {
+                "status": "done",
+                "scenario": "bull",
+                "date": "2026-11-02",
+                "url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526442628/axsm-ex99_1.htm",
+                "note": "65세 이상 신규처방 전분기 대비 +99%, 전년 대비 +211% (8-K 원문)"
+              }
+            },
+            {
+              "id": "ax-p4",
+              "name": "제네릭 도전 (Paragraph IV)",
+              "kind": "trigger",
+              "proxy": "8-K·10-Q의 Paragraph IV 통지·소송 문장 (신약 독점은 2025-08-18 만료, 10-K)",
+              "collector": {
+                "type": "sec",
+                "terms": [
+                  "Paragraph IV|ANDA"
+                ],
+                "since": "2026-01-01"
+              },
+              "th": {
+                "bear": "조기 제네릭 진입",
+                "base": "특허로 방어",
+                "bull": "도전 없음"
+              }
+            }
+          ]
+        }
       },
       "assets": [
         {
@@ -1576,9 +1698,164 @@
         "margin_years": 3,
         "loe_year_index": 11,
         "erosion": 0.3,
-        "assumptions": "성장률은 가정치. 현재 영업이익률 50%는 2026년 2분기 영업이익 8,552만 ÷ 총매출 1억 7,168만 달러(원문), 목표 45%는 판관비·L606 투자 증가를 가정한 값. PH-ILD 적응증 삭제·판촉 중단의 매출 영향은 크기를 몰라 기본 시나리오에 반영하지 않고, 보수 시나리오로만 일부(성장률 ×0.6) 반영. 11-10 실적 발표에서 확인할 항목. 현금흐름은 15년까지 세고, 11년차부터 매년 30%씩 줄어드는 침식을 가정(특허 만료 시점을 확인하지 못해 임의 지정). 영구가치(TV)는 쓰지 않음. 2분기 1.704억 달러에서 3분기 2.227억 달러(잠정)로 전분기 대비 약 +31%(원문 확인)라서 성장률 20%는 보수적이지만, PH-ILD 적응증 삭제·판촉 중단의 매출 영향을 모르는 상태라 그대로 둠.",
+        "assumptions": "성장률은 가정치. 현재 영업이익률 50%는 2026년 2분기 영업이익 8,552만 ÷ 총매출 1억 7,168만 달러(원문), 목표 45%는 판관비·L606 투자 증가를 가정한 값. PH-ILD 적응증 삭제·판촉 중단의 매출 영향은 크기를 몰라 기본 시나리오에 반영하지 않고, 보수 시나리오로만 일부(성장률 ×0.6) 반영. 11-10 실적 발표에서 확인할 항목. 현금흐름은 15년까지 세고, 11년차(2037년, 10-K의 가장 늦은 특허 만료)부터 매년 30%씩 줄어드는 침식을 가정. 영구가치(TV)는 쓰지 않음. 2분기 1.704억 달러에서 3분기 2.227억 달러(잠정)로 전분기 대비 약 +31%(원문 확인)라서 성장률 20%는 보수적이지만, PH-ILD 적응증 삭제·판촉 중단의 매출 영향을 모르는 상태라 그대로 둠.",
         "years": 15,
-        "run_rate_end": "2026-09-30"
+        "run_rate_end": "2026-09-30",
+        "market": {
+          "kind": "commercial",
+          "product": "Yutrepia",
+          "region": "미국",
+          "tam_patients": 45000,
+          "tam_src": "PAH 진단·치료 환자 (10-K·8-K)",
+          "tam_verified": true,
+          "tam_url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926023804/lqda-20251231x10k.htm",
+          "sam_label": "PAH 진단·치료 환자 전체",
+          "sam_src": "PH-ILD는 라벨 삭제 신청으로 제외",
+          "som_label": "Yutrepia 치료 환자",
+          "price_k": 178.16,
+          "price_src": "연환산 매출 $890.8M ÷ 누적 치료 환자 5,000명(원문) = 환자당 최소 $178k (유지 환자가 더 적으면 실제 단가는 더 높음)",
+          "current": {
+            "patients": 5000,
+            "src": "2026-07-31까지 누적 치료 환자 5,000명 이상 (8-K)",
+            "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926094411/tm2622888d1_ex99-1.htm"
+          },
+          "product_share": 1.0,
+          "cases": {
+            "bear": {
+              "sam": 1.0,
+              "pen": 0.13,
+              "price_k": 178.16,
+              "why": "PH-ILD 판촉 중단 뒤 성장 둔화, PAH 점유 13%"
+            },
+            "base": {
+              "sam": 1.0,
+              "pen": "model",
+              "price_k": 178.16,
+              "why": "모델 기본 성장 경로가 닿는 피크"
+            },
+            "bull": {
+              "sam": 1.0,
+              "pen": 0.3,
+              "price_k": 178.16,
+              "why": "Tyvaso 계열 전환이 이어져 PAH 점유 30%"
+            }
+          },
+          "triggers": [
+            {
+              "id": "lq-qg",
+              "name": "분기 매출 성장",
+              "kind": "proxy",
+              "proxy": "최근 분기 매출의 전분기 대비 성장률 (XBRL) · 기본 경로 1년차 +20%는 분기 약 +4.7%",
+              "collector": {
+                "type": "qgrowth",
+                "base_annual": 0.2
+              },
+              "th": {
+                "bear": "전분기 대비 감소",
+                "base": "기본 경로 ±절반",
+                "bull": "기본 경로의 1.5배 넘게"
+              }
+            },
+            {
+              "id": "lq-pts",
+              "name": "누적 치료 환자 수",
+              "kind": "proxy",
+              "proxy": "실적 보도자료의 치료 환자·처방 환자 수",
+              "collector": {
+                "type": "sec",
+                "terms": [
+                  "patients treated|unique patient"
+                ],
+                "since": "2026-11-01"
+              },
+              "th": {
+                "bear": "증가 정체",
+                "base": "분기마다 증가",
+                "bull": "증가 가속"
+              }
+            },
+            {
+              "id": "lq-ild",
+              "name": "PH-ILD 라벨 삭제 영향",
+              "kind": "trigger",
+              "proxy": "4분기 매출 (PH-ILD 판촉 중단 후 첫 분기)",
+              "collector": {
+                "type": "manual"
+              },
+              "th": {
+                "bear": "매출 감소",
+                "base": "성장 둔화",
+                "bull": "영향 미미"
+              },
+              "evidence": {
+                "status": "live",
+                "scenario": null,
+                "date": "2026-10-14",
+                "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
+                "note": "보충신청 제출·판촉 중단 (8-K). 매출 영향은 4분기 실적으로 판정"
+              }
+            },
+            {
+              "id": "lq-uthr",
+              "name": "UTHR 소송",
+              "kind": "trigger",
+              "proxy": "합의 내용 (8-K)",
+              "collector": {
+                "type": "manual"
+              },
+              "th": {
+                "bear": "판매 금지",
+                "base": "합의·PAH 판매 유지",
+                "bull": "무조건 승소"
+              },
+              "evidence": {
+                "status": "done",
+                "scenario": "base",
+                "date": "2026-10-14",
+                "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
+                "note": "6건 모두 합의, 순 3.807억 달러 분납, PAH 판매 유지 (8-K 원문)"
+              }
+            },
+            {
+              "id": "lq-pat",
+              "name": "독점 기간",
+              "kind": "trigger",
+              "proxy": "Yutrepia 특허 만료 (10-K)",
+              "collector": {
+                "type": "manual"
+              },
+              "th": {
+                "bear": "2030년대 초 제네릭",
+                "base": "2037년",
+                "bull": "2037년 이후"
+              },
+              "evidence": {
+                "status": "done",
+                "scenario": "base",
+                "date": "2026-03-05",
+                "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926023804/lqda-20251231x10k.htm",
+                "note": "미국 특허 16건, 가장 늦은 만료 2037년 (10-K 원문). 모델은 11년차(2037년)부터 침식"
+              }
+            },
+            {
+              "id": "lq-l606",
+              "name": "L606 PH-ILD 3상",
+              "kind": "proxy",
+              "proxy": "CT.gov NCT07285655 상태·1차 완료 예정일 (PH-ILD 재진입 경로)",
+              "collector": {
+                "type": "ctgov",
+                "nct": "NCT07285655",
+                "due": "2029-07"
+              },
+              "th": {
+                "bear": "예정일보다 3개월 넘게 지연·중단",
+                "base": "예정대로 (±3개월)",
+                "bull": "2개월 넘게 앞당김"
+              },
+              "url": "https://clinicaltrials.gov/study/NCT07285655"
+            }
+          ]
+        }
       },
       "overrides": {
         "cash_musd": 396.1,
@@ -2061,7 +2338,18 @@
             }
           ],
           "launch_in": 2.5,
-          "assumptions": "로열티율은 계약상 비공개라 8%는 가정치. 로열티는 비용이 거의 없어 마진 100%로 둠. PoS는 IMVT 모델의 GD(55%)·MG(75%) 중간값."
+          "assumptions": "로열티율은 계약상 비공개라 8%는 가정치. 로열티는 비용이 거의 없어 마진 100%로 둠. PoS는 IMVT 모델의 GD(55%)·MG(75%) 중간값.",
+          "market": {
+            "kind": "royalty",
+            "region": "미국",
+            "links": [
+              "imvt-gd",
+              "imvt-mg"
+            ],
+            "rate": 0.08,
+            "rate_src": "계약상 비공개, 8%는 가정치",
+            "partner": "Immunovant IMVT-1402"
+          }
         },
         {
           "id": "hanall-roy2",
@@ -2089,7 +2377,18 @@
             }
           ],
           "launch_in": 4.0,
-          "assumptions": "로열티율 8%는 가정치. PoS 45%는 IMVT 모델의 CIDP(60%)·RA(경로 합의 60% × 3상 65%) 중간값."
+          "assumptions": "로열티율 8%는 가정치. PoS 45%는 IMVT 모델의 CIDP(60%)·RA(경로 합의 60% × 3상 65%) 중간값.",
+          "market": {
+            "kind": "royalty",
+            "region": "미국",
+            "links": [
+              "imvt-cidp",
+              "imvt-ra"
+            ],
+            "rate": 0.08,
+            "rate_src": "계약상 비공개, 8%는 가정치",
+            "partner": "Immunovant IMVT-1402"
+          }
         },
         {
           "id": "hanall-ms",

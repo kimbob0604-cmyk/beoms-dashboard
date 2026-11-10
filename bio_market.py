@@ -106,6 +106,17 @@ def collect(trig: dict, row: dict, asset: dict, m: dict, today: str):
             t.update(status='hit', progress='새 원문 문장이 나왔습니다. 읽고 판정해야 합니다.', hits=hits, date=hits[0]['date'])
         else:
             t.update(status='wait', progress=f"{col.get('since') or ''} 이후 해당 문장 없음 (단어: {' + '.join(w.replace('|', ' 또는 ') for w in col['terms'])})")
+    elif col['type'] == 'qgrowth':
+        qs = [q for q in ((row.get('fin') or {}).get('quarters') or []) if q.get('revenue')]
+        base_q = (1 + col['base_annual']) ** 0.25 - 1
+        if len(qs) < 2:
+            t.update(status='wait', progress='분기 매출 2개 이상 필요')
+        else:
+            a, b = qs[-2], qs[-1]
+            gr = b['revenue'] / a['revenue'] - 1
+            sc = 'bear' if gr < 0 else 'bull' if gr > base_q * 1.5 else 'base'
+            t.update(status='done', scenario=sc, date=b['end'],
+                     progress=f"{b['label']} 매출 ${b['revenue']:.1f}M, 전분기 ${a['revenue']:.1f}M 대비 {gr * 100:+.1f}% (기본 경로 분기 {base_q * 100:+.1f}%)")
     elif col['type'] == 'revenue':
         launch = col.get('launch')
         qs = [q for q in ((row.get('fin') or {}).get('quarters') or []) if launch and q['end'] > launch and q.get('revenue')]
@@ -143,28 +154,114 @@ def tracking(trigs):
     return ('bull' if sc.count('bull') > sc.count('base') else 'base'), len(sc)
 
 
+REG = {}   # 자산 id → 계산된 시장 (로열티 자산이 파트너 시장을 끌어다 씀). 설정 순서대로 미장 → 국장이라 파트너가 먼저 계산된다.
+
+
+def _market_cases(m, value_case, price):
+    cases = {}
+    for k in CASES:
+        c = m['cases'][k]
+        pk = m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6
+        ps = value_case(k, pk)
+        sam_n = m['tam_patients'] * c['sam']
+        cases[k] = {**c, 'peak': pk, 'per_share': ps, 'upside': ps / price - 1 if ps is not None and price else None,
+                    'tam_usd': m['tam_patients'] * c['price_k'] * 1000 / 1e6, 'sam_n': sam_n, 'sam_usd': sam_n * c['price_k'] * 1000 / 1e6,
+                    'som_n': sam_n * c['pen']}
+    return cases
+
+
+def _head(m):
+    return {k: m.get(k) for k in ('region', 'tam_patients', 'tam_src', 'tam_verified', 'tam_url', 'sam_label', 'sam_src', 'som_label', 'price_src')}
+
+
 def asset_markets(co, row, mk, g, rf, value_company, scen_base):
     today = date.today().isoformat()
     out = []
+    price = mk['price']
+
+    def asset_value(aid):
+        def f(k, pk):
+            c2 = copy.deepcopy(co)
+            next(x for x in c2['assets'] if x['id'] == aid)['peak_musd'] = pk
+            return value_company(c2, mk, g, rf, scen_base)['per_share']
+        return f
+
     for a in co.get('assets', []):
         m = a.get('market')
         if not m:
             continue
-        cases = {}
-        for k in CASES:
-            pk = peak_of(m, k)
-            c2 = copy.deepcopy(co)
-            next(x for x in c2['assets'] if x['id'] == a['id'])['peak_musd'] = pk
-            ps = value_company(c2, mk, g, rf, scen_base)['per_share']
-            c = m['cases'][k]
-            sam_n = m['tam_patients'] * c['sam']
-            cases[k] = {**c, 'peak': pk, 'per_share': ps, 'upside': ps / mk['price'] - 1 if ps is not None and mk['price'] else None,
-                        'tam_usd': m['tam_patients'] * c['price_k'] * 1000 / 1e6, 'sam_n': sam_n, 'sam_usd': sam_n * c['price_k'] * 1000 / 1e6,
-                        'som_n': sam_n * c['pen']}
+        if m.get('kind') == 'royalty':
+            links = [REG[x] for x in m['links'] if x in REG]
+            if len(links) != len(m['links']):
+                continue
+            f = asset_value(a['id'])
+            cases = {}
+            for k in CASES:
+                agg = {x: sum(l['cases'][k][x] for l in links) for x in ('tam_usd', 'sam_n', 'sam_usd', 'som_n', 'peak')}
+                roy = agg['peak'] * m['rate']
+                ps = f(k, roy)
+                cases[k] = {**agg, 'royalty': roy, 'rate': m['rate'], 'per_share': ps, 'upside': ps / price - 1 if ps is not None and price else None,
+                            'why': ' / '.join(f"{l['indication']}: {l['cases'][k]['why']}" for l in links)}
+            trigs = [{**t, 'name': f"[{l['indication']}] {t['name']}"} for l in links for t in l['triggers']]
+            track, n = tracking(trigs)
+            out.append({'id': a['id'], 'kind': 'royalty', 'name': a['name'], 'indication': ' + '.join(l['indication'] for l in links), 'region': m['region'],
+                        'tam_patients': sum(l['tam_patients'] for l in links), 'tam_src': f"파트너 {m['partner']} 시장 합산",
+                        'tam_verified': all(l['tam_verified'] for l in links), 'sam_label': '파트너 표적 환자 합산', 'sam_src': '적응증별 표적 비율',
+                        'som_label': f"파트너 피크매출 × 로열티 {m['rate'] * 100:.0f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
+                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
+            continue
+        cases = _market_cases(m, asset_value(a['id']), price)
         trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
         track, n = tracking(trigs)
-        out.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'region': m['region'],
-                     'tam_patients': m['tam_patients'], 'tam_src': m['tam_src'], 'tam_verified': m['tam_verified'],
-                     'sam_label': m['sam_label'], 'sam_src': m['sam_src'], 'som_label': m['som_label'], 'price_src': m['price_src'],
-                     'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
+        r = {'id': a['id'], 'kind': 'pipeline', 'name': a['name'], 'indication': a['indication'], **_head(m),
+             'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n}
+        REG[a['id']] = r
+        out.append(r)
+
+    cm = (co.get('commercial') or {}).get('market')
+    if cm:
+        out.insert(0, commercial_market(co, row, mk, g, rf, value_company, scen_base, cm, today))
     return out
+
+
+def _dcf_peak(co, g, gm):
+    import bio_valuation as bv
+    c = co['commercial']
+    _, rows = bv.dcf_commercial(c['run_rate_musd'], [x * gm for x in c['growth']], c['margin_now'], c['margin_target'], c['margin_years'],
+                                g['tax'], g['wacc'], c['loe_year_index'], c['erosion'], years=c.get('years', 15))
+    return max(r['rev'] for r in rows)
+
+
+def solve_growth(co, g, total_peak):
+    """상업 DCF 최고 매출이 total_peak 가 되는 성장률 배수(이분법). 시작 매출보다 낮은 피크는 성장 0 근처로 잘린다."""
+    lo, hi = -1.0, 20.0
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if _dcf_peak(co, g, mid) < total_peak else (lo, mid)
+    return (lo + hi) / 2
+
+
+def commercial_market(co, row, mk, g, rf, value_company, scen_base, cm, today):
+    m = copy.deepcopy(cm)
+    share = m.get('product_share', 1.0)
+    base_total = _dcf_peak(co, g, 1.0)
+    bc = m['cases']['base']
+    if bc['pen'] == 'model':
+        bc['pen'] = base_total * share * 1e6 / (m['tam_patients'] * bc['sam'] * bc['price_k'] * 1000)
+
+    def value_case(k, pk):
+        gm = 1.0 if k == 'base' else solve_growth(co, g, pk / share)
+        return value_company(co, mk, g, rf, {**scen_base, 'growth_mult': gm})['per_share']
+
+    cases = _market_cases(m, value_case, mk['price'])
+    for k in CASES:
+        cases[k]['total_peak'] = cases[k]['peak'] / share
+    cur = m.get('current') or {}
+    sam_n = m['tam_patients'] * bc['sam']
+    current = {**cur, 'pen': cur['patients'] / sam_n if cur.get('patients') else None,
+               'revenue': co['commercial']['run_rate_musd'] * share}
+    trigs = [collect(t, row, {'ramp_years': 5}, m, today) for t in m.get('triggers', [])]
+    track, n = tracking(trigs)
+    return {'id': 'commercial', 'kind': 'commercial', 'name': m['product'], 'indication': f"{m['product']} (상업)", **_head(m),
+            'cases': cases, 'current': current, 'share': share, 'share_note': m.get('share_note', ''),
+            'triggers': trigs, 'tracking': track, 'judged': n}
