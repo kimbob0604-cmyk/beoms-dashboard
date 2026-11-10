@@ -23,7 +23,7 @@ class Market(unittest.TestCase):
         for c in CFG['companies']:
             for a in c.get('assets', []):
                 for t in (a.get('market') or {}).get('triggers', []):
-                    self.assertIn(t['collector']['type'], ('ctgov', 'sec', 'dart', 'revenue', 'manual', 'merck_qlex'), t['id'])
+                    self.assertIn(t['collector']['type'], ('ctgov', 'sec', 'dart', 'revenue', 'manual', 'merck_qlex', 'qgrowth'), t['id'])
                     self.assertEqual(set(t['th']), set(bm.CASES), t['id'])
                     ev = t.get('evidence')
                     if ev:

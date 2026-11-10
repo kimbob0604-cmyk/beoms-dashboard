@@ -24,6 +24,8 @@ _ct_cache = {}
 def peak_of(m: dict, case: str) -> float:
     """백만 달러."""
     c = m['cases'][case]
+    if m.get('kind') == 'dollar':
+        return m['tam_usd'] * c['sam'] * c['pen']
     return m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6 * m.get('global_mult', 1.0)
 
 
@@ -215,7 +217,7 @@ def _market_cases(m, value_case, price):
 
 
 def _head(m):
-    return {k: m.get(k) for k in ('region', 'tam_patients', 'tam_src', 'tam_verified', 'tam_url', 'sam_label', 'sam_src', 'som_label', 'price_src')}
+    return {k: m.get(k) for k in ('region', 'tam_usd', 'tam_patients', 'tam_src', 'tam_verified', 'tam_url', 'sam_label', 'sam_src', 'som_label', 'price_src')}
 
 
 def asset_markets(co, row, mk, g, rf, value_company, scen_base):
@@ -239,6 +241,20 @@ def asset_markets(co, row, mk, g, rf, value_company, scen_base):
             track, n = tracking(trigs)
             out.append({'id': a['id'], 'kind': 'triggers', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'note': m.get('note', ''),
                         'triggers': trigs, 'tracking': track, 'judged': n})
+            continue
+        if m.get('kind') == 'dollar':   # 회사가 시장을 금액으로만 밝힌 경우: 시장 금액 × 표적 비율 × 점유
+            f = asset_value(a['id'])
+            cases = {}
+            for k in CASES:
+                c = m['cases'][k]
+                pk = m['tam_usd'] * c['sam'] * c['pen']
+                ps = f(k, pk)
+                cases[k] = {**c, 'tam_usd': m['tam_usd'], 'sam_usd': m['tam_usd'] * c['sam'], 'peak': pk, 'per_share': ps,
+                            'upside': ps / price - 1 if ps is not None and price else None}
+            trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
+            track, n = tracking(trigs)
+            out.append({'id': a['id'], 'kind': 'dollar', 'name': a['name'], 'indication': a['indication'], **_head(m),
+                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
             continue
         if m.get('kind') == 'product_royalty':
             out.append(product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today))

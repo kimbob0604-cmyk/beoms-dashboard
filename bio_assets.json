@@ -2038,6 +2038,1309 @@
       ]
     },
     {
+      "ticker": "SMMT",
+      "name": "Summit Therapeutics",
+      "market": "US",
+      "kind": "pipeline",
+      "cik": 1599298,
+      "ct": {
+        "spons": "Summit Therapeutics"
+      },
+      "summary": "PD-1×VEGF 이중항체 ivonescimab(Akeso 도입, 미국·유럽·일본 등 권리). EGFR 변이 폐암 2차 BLA 심사 중(PDUFA 2026-11-14), 1차 폐암 3상(HARMONi-3·7) 진행 중. 상업 매출 없음.",
+      "not_modeled": "HARMONi-3·7 외 다른 적응증(대장암·담도암 등 30여 개 시험), 미국 밖 매출, AstraZeneca와의 협력 조건.",
+      "burn_years": 2.2,
+      "burn_years_note": "HARMONi-3 결과(1차 완료 2028-12, CT.gov)까지만 현재 소진을 빼고 그 뒤 비용은 단계 비용으로",
+      "overrides": {
+        "cash_musd": 2629.8,
+        "cash_note": "2026-09-30 현금·단기투자 $629.8M(10-Q) + 2026-10-05 AstraZeneca 우선주 투자 총 $2.0B (10-Q 후속사건, 발행비용 차감 전)",
+        "shares_m": 908.72,
+        "shares_note": "보통주 799,763,918주(10-Q 표지 2026-10-30) + AZ 전환우선주의 전환 주식 108,955,369주(전환가 $18.3561, 10-Q) = 908.72M",
+        "annual_burn_musd": 639.3,
+        "burn_note": "2026년 3분기 영업현금 유출 $159.8M × 4 (XBRL)"
+      },
+      "facts": [
+        {
+          "date": "2026-11-04",
+          "verified": true,
+          "src": "SEC 10-Q (2026-09-30)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1599298/000159929826000090/smmt-20260930.htm",
+          "text": "EGFR 변이 비편평 NSCLC(TKI 이후) ivonescimab+항암 BLA, PDUFA 2026-11-14. 2026-09-30 현금 $150.8M + 단기투자 $479.0M. AZ가 Class A 전환우선주 108,955주를 주당 $18,356.14에 인수(보통주 108,955,369주로 전환, 전환가 $18.3561), 2026-10-05 종결·총 $2.0B 수령."
+        },
+        {
+          "date": "2026-02-23",
+          "verified": true,
+          "src": "SEC 10-K (2025)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1599298/000159929826000015/smmt-20251231.htm",
+          "text": "ivonescimab 특허 만료 2039~2040년. HARMONi(EGFR 변이 2차) 탑라인 2025-05 발표."
+        },
+        {
+          "date": "2026-11-04",
+          "verified": true,
+          "src": "SEC 10-Q (2026-09-30)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1599298/000159929826000090/smmt-20260930.htm",
+          "text": "HARMONi-3: 1차 편평 약 600명·비편평 약 1,000명, PFS·OS 이중 1차 평가변수. HARMONi-7: 약 780명, PFS·OS."
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-14",
+          "text": "ivonescimab EGFR 변이 NSCLC PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2028-04-30",
+          "text": "HARMONi-7 1차 완료 예정 (CT.gov NCT06767514)",
+          "kind": "readout"
+        },
+        {
+          "date": "2028-12-31",
+          "text": "HARMONi-3 1차 완료 예정 (CT.gov NCT05899608)",
+          "kind": "readout"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "ivonescimab",
+          "indication": "EGFR 변이 NSCLC 2차 (TKI 이후)",
+          "phase": 4,
+          "status": "BLA 심사",
+          "next": "PDUFA 2026-11-14",
+          "asset": "smmt-egfr",
+          "ct_terms": [
+            "ivonescimab"
+          ],
+          "src": "SEC 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1599298/000159929826000090/smmt-20260930.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "egfr"
+          ]
+        },
+        {
+          "drug": "ivonescimab",
+          "indication": "1차 NSCLC (HARMONi-3·7)",
+          "phase": 3,
+          "status": "3상 진행",
+          "next": "1차 완료 2028",
+          "asset": "smmt-1l",
+          "ct_terms": [
+            "ivonescimab"
+          ],
+          "src": "SEC 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1599298/000159929826000090/smmt-20260930.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "lung"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "id": "smmt-egfr",
+          "name": "ivonescimab",
+          "indication": "EGFR 변이 NSCLC 2차",
+          "stage": "BLA 심사 (PDUFA 2026-11-14)",
+          "method": "rnpv",
+          "peak_musd": 291.6,
+          "margin": 0.5,
+          "ramp_years": 4,
+          "exclusivity_years": 13,
+          "launch_in": 0.05,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-11-14)",
+              "t": 0.01,
+              "pos": 0.5,
+              "x": 0,
+              "date": "2026-11-14"
+            }
+          ],
+          "basis": "현대차증권 2026-09-18 보로노이 리포트 표2: 미국 진행성 EGFR classic 변이 NSCLC 12,151명 × 점유 20% × 환자당 $120k(연 $200k × 약 7개월 치료, 가정) = $292M",
+          "assumptions": "환자 수는 현대차증권 리포트(2029F) 값. 점유·가격·치료 기간은 가정치. 승인 PoS 50%는 HARMONi에서 OS가 통계적으로 유의하지 않았던 점을 반영한 가정. 미국만 반영.",
+          "market": {
+            "region": "미국",
+            "tam_patients": 12151,
+            "tam_src": "현대차증권 2026-09-18 보로노이 리포트 표2: 미국 진행성 EGFR classic NSCLC",
+            "tam_verified": true,
+            "sam_label": "3세대 TKI 이후 진행 환자",
+            "sam_src": "진행 환자 전체로 둠 (가정)",
+            "som_label": "2차 점유 (가정치)",
+            "price_src": "환자당 $120k = 연 $200k × 약 7개월 (가정)",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.1,
+                "price_k": 120,
+                "why": "아미반타맙·Dato-DXd와 경쟁해 10%"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.2,
+                "price_k": 120,
+                "why": "점유 20%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.3,
+                "price_k": 120,
+                "why": "PFS 우위로 30%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "smmt-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-11-14)",
+                "kind": "trigger",
+                "proxy": "8-K·보도자료의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "ivonescimab",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "smmt-label",
+                "name": "라벨 범위",
+                "kind": "trigger",
+                "proxy": "승인 라벨의 대상 환자·OS 문구",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "제한적 라벨",
+                  "base": "TKI 이후 비편평 전체",
+                  "bull": "OS 이점 문구 포함"
+                }
+              },
+              {
+                "id": "smmt-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2026-11-14"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "smmt-1l",
+          "name": "ivonescimab",
+          "indication": "1차 NSCLC (HARMONi-3·7)",
+          "stage": "3상",
+          "method": "rov",
+          "peak_musd": 2390.8,
+          "margin": 0.5,
+          "ramp_years": 5,
+          "exclusivity_years": 10,
+          "launch_in": 3.1,
+          "stages": [
+            {
+              "name": "HARMONi-3 결과 (1차 완료 2028-12)",
+              "t": 2.1,
+              "pos": 0.5,
+              "x": 300,
+              "date": "2028-12-31"
+            },
+            {
+              "name": "허가 판정",
+              "t": 3.1,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "basis": "현대차증권 2026-09-18 보로노이 리포트 표2의 비율(NSCLC 85%·진행성 70%)을 미국 폐암 신규 236,361명에 적용한 진행성 NSCLC 140,635명 × 면역항암 대상 85%(가정) × 점유 10% × 연 $200k = $2.39B",
+          "assumptions": "리포트 비율을 전체 NSCLC로 넓혀 쓴 것과 대상 비율·점유·가격·PoS(50%: 중국 HARMONi-2에서 펨브롤리주맙 대비 PFS 우위, 글로벌 3상은 진행 중)는 가정치. 비용 3억 달러는 가정.",
+          "market": {
+            "region": "미국",
+            "tam_patients": 140635,
+            "tam_src": "현대차증권 2026-09-18 보로노이 리포트 표2 비율로 계산한 미국 진행성 NSCLC (가정 포함)",
+            "tam_verified": false,
+            "sam_label": "면역항암 1차 대상",
+            "sam_src": "가정 85%",
+            "som_label": "1차 점유 (가정치)",
+            "price_src": "연 $200k (가정)",
+            "cases": {
+              "bear": {
+                "sam": 0.85,
+                "pen": 0.04,
+                "price_k": 200,
+                "why": "OS 우위 미입증으로 4%"
+              },
+              "base": {
+                "sam": 0.85,
+                "pen": 0.1,
+                "price_k": 200,
+                "why": "점유 10%"
+              },
+              "bull": {
+                "sam": 0.85,
+                "pen": 0.2,
+                "price_k": 200,
+                "why": "펨브롤리주맙 대비 OS 우위로 20%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "smmt-h3",
+                "name": "HARMONi-3 진행",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT05899608 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT05899608",
+                  "due": "2028-12"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT05899608"
+              },
+              {
+                "id": "smmt-h7",
+                "name": "HARMONi-7 진행",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT06767514 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT06767514",
+                  "due": "2028-04"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT06767514"
+              },
+              {
+                "id": "smmt-1ltop",
+                "name": "HARMONi-3 탑라인",
+                "kind": "trigger",
+                "proxy": "8-K의 HARMONi-3 결과 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "HARMONi-3",
+                    "top-line|topline|primary endpoint"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 유의성 미달",
+                  "base": "1차 평가변수 충족",
+                  "bull": "충족 + 2차 평가변수·지속성까지 우위"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "BBIO",
+      "name": "BridgeBio Pharma",
+      "market": "US",
+      "kind": "commercial+pipeline",
+      "cik": 1743881,
+      "ct": {
+        "spons": "BridgeBio"
+      },
+      "summary": "ATTR-CM 치료제 Attruby(acoramidis) 판매 중, 유럽·일본은 BEYONTTRA 로열티. LGMD2I(BBP-418, PDUFA 2026-11-27)·연골무형성증(infigratinib, 2027-02-04)·ADH1(encaleret, 2027-05-08) 신약 세 개가 심사 중.",
+      "not_modeled": "encaleret(ADH1 환자 수 원문 미확인)과 만성 부갑상선기능저하증 확장, infigratinib 연골저형성증, 라이선스 일회성 수익.",
+      "overrides": {
+        "cash_musd": 1538.9,
+        "cash_note": "2026-09-30 현금·시장성증권 $1,538.9M (XBRL·8-K '$1.5B')",
+        "debt_musd": 2477.3,
+        "debt_note": "전환사채 장부가: 2027 $548.4M + 2029 $742.4M + 2031 $566.0M + 2033 $620.5M (10-Q 2026-09-30)",
+        "other_liab_musd": 1884.1,
+        "other_note": "로열티 유동화 부채 $884.1M + 2026-07 전환우선주 $1.0B (주식 전환 대신 부채처럼 차감, 10-Q)",
+        "shares_m": 194.8,
+        "shares_note": "보통주 194,800,782주 (10-Q 표지 2026-10-22). 전환사채·우선주 전환 주식은 넣지 않고 부채로 뺌"
+      },
+      "commercial": {
+        "name": "Attruby + BEYONTTRA 로열티",
+        "run_rate_musd": 1095.4,
+        "run_rate_note": "3분기 순제품매출 $253.3M + 로열티 $20.5M = $273.9M × 4 (라이선스 일회성 $79.3M 제외, 8-K 원문)",
+        "growth": [
+          0.35,
+          0.25,
+          0.15,
+          0.08,
+          0.05
+        ],
+        "margin_now": 0.1,
+        "margin_target": 0.5,
+        "margin_years": 4,
+        "loe_year_index": 11,
+        "erosion": 0.3,
+        "years": 15,
+        "run_rate_end": "2026-09-30",
+        "assumptions": "성장률·마진·특허 만료(11년차 침식)는 가정치. 3분기 Attruby 순매출은 전분기 대비 약 $31M 증가(8-K). 영구가치 없음.",
+        "market": {
+          "kind": "commercial",
+          "product": "Attruby",
+          "region": "미국",
+          "tam_patients": 240000,
+          "tam_src": "미국 ATTR-CM 약 24만 명 (10-K, 회사 추정)",
+          "tam_verified": true,
+          "tam_url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000009/bbio-20251231.htm",
+          "sam_label": "진단된 ATTR-CM",
+          "sam_src": "2025년 진단 환자 5만 명 이상 (10-K)",
+          "som_label": "Attruby 치료 환자",
+          "price_k": 257.3,
+          "price_src": "목록가 28일분 $19,790 × 13 = 연 $257k (10-K, 순가격은 더 낮음)",
+          "current": {
+            "patients": 3937,
+            "src": "3분기 순제품매출 $253.3M × 4 ÷ 목록가 $257k = 약 3,900명 (순가격이 낮으니 실제 환자는 더 많음)",
+            "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000033/bbio-20260930xex991.htm"
+          },
+          "product_share": 0.925,
+          "share_note": "상업 DCF는 Attruby 순매출 + BEYONTTRA 로열티 합산. Attruby가 92.5%.",
+          "cases": {
+            "bear": {
+              "sam": 0.2083,
+              "pen": 0.15,
+              "price_k": 257.3,
+              "why": "tafamidis 제네릭·경쟁으로 15%"
+            },
+            "base": {
+              "sam": 0.2083,
+              "pen": "model",
+              "price_k": 257.3,
+              "why": "모델 기본 성장 경로가 닿는 피크"
+            },
+            "bull": {
+              "sam": 0.2083,
+              "pen": 0.35,
+              "price_k": 257.3,
+              "why": "진단 증가 속 점유 35%"
+            }
+          },
+          "triggers": [
+            {
+              "id": "bb-qg",
+              "name": "분기 매출 성장",
+              "kind": "proxy",
+              "proxy": "최근 분기 매출의 전분기 대비 성장률 (XBRL) · 기본 경로 1년차 +35%는 분기 약 +7.8%",
+              "collector": {
+                "type": "qgrowth",
+                "base_annual": 0.35
+              },
+              "th": {
+                "bear": "전분기 대비 감소",
+                "base": "기본 경로 ±절반",
+                "bull": "기본 경로의 1.5배 넘게"
+              }
+            },
+            {
+              "id": "bb-attr",
+              "name": "Attruby 매출·처방",
+              "kind": "proxy",
+              "proxy": "실적 보도자료의 Attruby 매출 증가 문장",
+              "collector": {
+                "type": "sec",
+                "terms": [
+                  "Attruby net product revenue"
+                ],
+                "since": "2026-11-01"
+              },
+              "th": {
+                "bear": "전분기 대비 감소",
+                "base": "증가",
+                "bull": "증가 가속"
+              }
+            }
+          ]
+        }
+      },
+      "facts": [
+        {
+          "date": "2026-10-29",
+          "verified": true,
+          "src": "SEC 8-K 2026-10-29 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000033/bbio-20260930xex991.htm",
+          "text": "3분기 총매출 $353.2M: 순제품매출 $253.3M, 라이선스·용역 $79.3M, 로열티 $20.5M. BBP-418 PDUFA 2026-11-27(우선심사), LGMD2I 미국 환자 500명 이상 확인. 현금·시장성증권 $1.5B."
+        },
+        {
+          "date": "2026-10-29",
+          "verified": true,
+          "src": "SEC 10-Q (2026-09-30)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000034/bbio-20260930.htm",
+          "text": "전환사채 장부가 2027 $548.4M·2029 $742.4M·2031 $566.0M·2033 $620.5M, 로열티 유동화 부채 $884.1M. 우선주 전환가 $137.79(5년 뒤 $153.10)."
+        },
+        {
+          "date": "2026-02-24",
+          "verified": true,
+          "src": "SEC 10-K (2025)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000009/bbio-20251231.htm",
+          "text": "미국 ATTR-CM 약 24만 명(전 세계 약 50만), 진단 환자 2019년 5천 명 미만 → 2025년 5만 명 이상. Attruby 목록가 28일분 $19,790(2026-01). LGMD2I 미국·유럽 약 7,000명."
+        },
+        {
+          "date": "2026-10-13",
+          "verified": true,
+          "src": "SEC 8-K 2026-10-13 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000114036126039334/ef20083591_ex99-1.htm",
+          "text": "infigratinib 연골무형성증 PDUFA 2027-02-04(우선심사). 연골무형성증 미국·EU 약 55,000명, 성장판 열린 소아·청소년 최대 1만 명."
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-27",
+          "text": "BBP-418 LGMD2I PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-02-04",
+          "text": "infigratinib 연골무형성증 PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-05-08",
+          "text": "encaleret ADH1 PDUFA",
+          "kind": "regulatory"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "BBP-418",
+          "indication": "LGMD2I/R9",
+          "phase": 4,
+          "status": "NDA 우선심사",
+          "next": "PDUFA 2026-11-27",
+          "asset": "bb-418",
+          "ct_terms": [
+            "BBP-418"
+          ],
+          "src": "SEC 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000033/bbio-20260930xex991.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "muscular"
+          ]
+        },
+        {
+          "drug": "infigratinib",
+          "indication": "연골무형성증",
+          "phase": 4,
+          "status": "NDA 우선심사",
+          "next": "PDUFA 2027-02-04",
+          "asset": "bb-infig",
+          "ct_terms": [
+            "infigratinib"
+          ],
+          "src": "SEC 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000114036126039334/ef20083591_ex99-1.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "achondroplasia"
+          ]
+        },
+        {
+          "drug": "encaleret",
+          "indication": "ADH1",
+          "phase": 4,
+          "status": "NDA 우선심사",
+          "next": "PDUFA 2027-05-08",
+          "asset": null,
+          "ct_terms": [
+            "encaleret"
+          ],
+          "src": "SEC 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1743881/000174388126000033/bbio-20260930xex991.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "hypocalcemia"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "id": "bb-418",
+          "name": "BBP-418",
+          "indication": "LGMD2I/R9",
+          "stage": "NDA 우선심사 (PDUFA 2026-11-27)",
+          "method": "rnpv",
+          "peak_musd": 630.0,
+          "margin": 0.6,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "launch_in": 0.1,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-11-27)",
+              "t": 0.05,
+              "pos": 0.85,
+              "x": 0,
+              "date": "2026-11-27"
+            }
+          ],
+          "basis": "미국·유럽 LGMD2I 약 7,000명(10-K) × 점유 30% × 연 $300k(가정) = $630M",
+          "assumptions": "점유·가격은 가정치. PoS 85%는 우선심사 NDA 기본율 가정.",
+          "market": {
+            "region": "미국 + 유럽",
+            "tam_patients": 7000,
+            "tam_src": "미국·유럽 약 7,000명 (10-K)",
+            "tam_verified": true,
+            "sam_label": "LGMD2I/R9 전체",
+            "sam_src": "분리하지 않음 (미국 확인 환자 500명 이상, 8-K)",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "연 $300k (가정)",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.15,
+                "price_k": 250,
+                "why": "진단 지연으로 15%"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.3,
+                "price_k": 300,
+                "why": "점유 30%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.45,
+                "price_k": 350,
+                "why": "유일 치료제로 45%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "bb418-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-11-27)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "BBP-418",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-11-20"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "bb418-pts",
+                "name": "확인 환자 수",
+                "kind": "proxy",
+                "proxy": "8-K의 미국 확인 환자 수 (2026-10: 500명 이상)",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "unique patients",
+                    "LGMD2I"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "증가 정체",
+                  "base": "출시 후 증가",
+                  "bull": "빠른 증가"
+                }
+              },
+              {
+                "id": "bb418-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2026-11-27"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "bb-infig",
+          "name": "infigratinib (경구)",
+          "indication": "연골무형성증",
+          "stage": "NDA 우선심사 (PDUFA 2027-02-04)",
+          "method": "rnpv",
+          "peak_musd": 900.0,
+          "margin": 0.6,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "launch_in": 0.3,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2027-02-04)",
+              "t": 0.24,
+              "pos": 0.85,
+              "x": 0,
+              "date": "2027-02-04"
+            }
+          ],
+          "basis": "미국·EU 연골무형성증 약 55,000명 중 성장판 열린 소아·청소년 최대 1만 명(8-K) × 점유 30% × 연 $300k(가정) = $900M",
+          "assumptions": "점유·가격은 가정치. 주사제 vosoritide와 경쟁. PoS 85%는 가정.",
+          "market": {
+            "region": "미국 + EU",
+            "tam_patients": 55000,
+            "tam_src": "미국·EU 약 55,000명 (8-K)",
+            "tam_verified": true,
+            "sam_label": "성장판 열린 소아·청소년",
+            "sam_src": "최대 1만 명 (8-K)",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "연 $300k (가정)",
+            "cases": {
+              "bear": {
+                "sam": 0.1818,
+                "pen": 0.15,
+                "price_k": 250,
+                "why": "vosoritide 우세로 15%"
+              },
+              "base": {
+                "sam": 0.1818,
+                "pen": 0.3,
+                "price_k": 300,
+                "why": "경구 편의로 30%"
+              },
+              "bull": {
+                "sam": 0.1818,
+                "pen": 0.45,
+                "price_k": 330,
+                "why": "경구 1위 45%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "bbinf-pdufa",
+                "name": "FDA 판정 (PDUFA 2027-02-04)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "infigratinib",
+                    "approv|complete response"
+                  ],
+                  "since": "2027-01-15"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "bbinf-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2027-02-04"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "COGT",
+      "name": "Cogent Biosciences",
+      "market": "US",
+      "kind": "pipeline",
+      "cik": 1622229,
+      "ct": {
+        "spons": "Cogent Biosciences"
+      },
+      "summary": "KIT 저해제 bezuclastinib: GIST 2차(수니티닙 병용, PDUFA 2026-11-30)·비진행성 전신비만세포증(2026-12-30)·진행성(2027-06-29) NDA 세 개가 심사 중. 상업 매출 없음.",
+      "not_modeled": "다른 파이프라인(PI3Kα, KRAS, JAK2 V617F), 미국 밖 판매 구조.",
+      "burn_years": 1.0,
+      "burn_years_note": "출시 준비와 첫해 판매까지 1년만 현재 소진을 뺌 (그 뒤 매출이 비용을 댄다고 가정)",
+      "overrides": {
+        "cash_musd": 791.1,
+        "cash_note": "2026-09-30 현금·시장성증권 $791.1M (10-Q·8-K)",
+        "debt_musd": 230.0,
+        "debt_note": "전환사채 원금 $230.0M (10-Q). 신용한도 최대 $400M 중 인출액은 확인 못 해 넣지 않음",
+        "shares_m": 174.0,
+        "shares_note": "보통주 173,994,452주 (10-Q 표지 2026-11-03)",
+        "annual_burn_musd": 323.1,
+        "burn_note": "2026년 3분기 영업현금 유출 $80.8M × 4 (XBRL)"
+      },
+      "facts": [
+        {
+          "date": "2026-11-05",
+          "verified": true,
+          "src": "SEC 10-Q (2026-09-30)",
+          "url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+          "text": "PDUFA: GIST 2026-11-30, NonAdvSM 2026-12-30, AdvSM 2027-06-29. 회사 추정 전 세계 연간 시장: GIST 2차(수니티닙 병용) $4B 이상, NonAdvSM 약 $3.5B, AdvSM 약 $0.5B. SM 환자의 약 90%가 비진행성. 미국 특허 2033~2034년 만료. 전환사채 원금 $230.0M. 현금 2028년 말까지."
+        },
+        {
+          "date": "2026-11-05",
+          "verified": true,
+          "src": "SEC 8-K 2026-11-05 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449926/cogt-ex99_1.htm",
+          "text": "2026-09-30 현금·시장성증권 $791.1M (6월 말 $792.3M). GIST 출시 준비 중."
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-30",
+          "text": "bezuclastinib GIST PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2026-12-30",
+          "text": "bezuclastinib NonAdvSM PDUFA",
+          "kind": "regulatory"
+        },
+        {
+          "date": "2027-06-29",
+          "text": "bezuclastinib AdvSM PDUFA",
+          "kind": "regulatory"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "bezuclastinib",
+          "indication": "GIST 2차 (수니티닙 병용)",
+          "phase": 4,
+          "status": "NDA 심사",
+          "next": "PDUFA 2026-11-30",
+          "asset": "cg-gist",
+          "ct_terms": [
+            "bezuclastinib"
+          ],
+          "src": "SEC 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "gastrointestinal"
+          ]
+        },
+        {
+          "drug": "bezuclastinib",
+          "indication": "비진행성 전신비만세포증",
+          "phase": 4,
+          "status": "NDA 심사",
+          "next": "PDUFA 2026-12-30",
+          "asset": "cg-nasm",
+          "ct_terms": [
+            "bezuclastinib"
+          ],
+          "src": "SEC 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "mastocytosis"
+          ]
+        },
+        {
+          "drug": "bezuclastinib",
+          "indication": "진행성 전신비만세포증",
+          "phase": 4,
+          "status": "NDA 심사",
+          "next": "PDUFA 2027-06-29",
+          "asset": "cg-asm",
+          "ct_terms": [
+            "bezuclastinib"
+          ],
+          "src": "SEC 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "mastocytosis"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "id": "cg-gist",
+          "name": "bezuclastinib",
+          "indication": "GIST 2차 (수니티닙 병용)",
+          "stage": "NDA 심사 (PDUFA 2026-11-30)",
+          "method": "rnpv",
+          "peak_musd": 600.0,
+          "margin": 0.6,
+          "ramp_years": 5,
+          "exclusivity_years": 9,
+          "launch_in": 0.1,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-11-30)",
+              "t": 0.05,
+              "pos": 0.85,
+              "x": 0,
+              "date": "2026-11-30"
+            }
+          ],
+          "basis": "회사 추정 전 세계 연간 시장 $4.0B (10-Q) × 점유 15%(가정) = $600M",
+          "assumptions": "시장 크기는 회사 내부 분석·시장조사 추정(독립 검증 아님). 점유는 가정치. 특허 2033~2034년(10-Q)이라 독점 9년. PoS 85%는 가정.",
+          "market": {
+            "kind": "dollar",
+            "region": "글로벌 (회사 추정)",
+            "tam_usd": 4000,
+            "tam_src": "회사 추정 전 세계 연간 시장 (10-Q)",
+            "tam_verified": true,
+            "tam_url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+            "sam_label": "회사 추정 시장 전체",
+            "sam_src": "분리하지 않음",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "시장 크기에 가격 포함 (회사 추정)",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.08,
+                "why": "기존 2차 치료와 경쟁해 8%"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.15,
+                "why": "점유 15%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.25,
+                "why": "PEAK PFS 우위로 25%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "cg-gist-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-11-30)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "bezuclastinib",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-11-20"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "cg-gist-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2026-11-30"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "cg-nasm",
+          "name": "bezuclastinib",
+          "indication": "비진행성 전신비만세포증",
+          "stage": "NDA 심사 (PDUFA 2026-12-30)",
+          "method": "rnpv",
+          "peak_musd": 525.0,
+          "margin": 0.6,
+          "ramp_years": 5,
+          "exclusivity_years": 9,
+          "launch_in": 0.19,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-12-30)",
+              "t": 0.14,
+              "pos": 0.85,
+              "x": 0,
+              "date": "2026-12-30"
+            }
+          ],
+          "basis": "회사 추정 전 세계 연간 시장 $3.5B (10-Q) × 점유 15%(가정) = $525M",
+          "assumptions": "시장 크기는 회사 내부 분석·시장조사 추정(독립 검증 아님). 점유는 가정치. 특허 2033~2034년(10-Q)이라 독점 9년. PoS 85%는 가정.",
+          "market": {
+            "kind": "dollar",
+            "region": "글로벌 (회사 추정)",
+            "tam_usd": 3500,
+            "tam_src": "회사 추정 전 세계 연간 시장 (10-Q)",
+            "tam_verified": true,
+            "tam_url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+            "sam_label": "회사 추정 시장 전체",
+            "sam_src": "분리하지 않음",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "시장 크기에 가격 포함 (회사 추정)",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.08,
+                "why": "avapritinib 우세로 8%"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.15,
+                "why": "점유 15%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.25,
+                "why": "안전성 차별화로 25%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "cg-nasm-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-12-30)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "bezuclastinib",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-11-20"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "cg-nasm-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2026-12-30"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "cg-asm",
+          "name": "bezuclastinib",
+          "indication": "진행성 전신비만세포증",
+          "stage": "NDA 심사 (PDUFA 2027-06-29)",
+          "method": "rnpv",
+          "peak_musd": 100.0,
+          "margin": 0.6,
+          "ramp_years": 5,
+          "exclusivity_years": 9,
+          "launch_in": 0.68,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2027-06-29)",
+              "t": 0.63,
+              "pos": 0.85,
+              "x": 0,
+              "date": "2027-06-29"
+            }
+          ],
+          "basis": "회사 추정 전 세계 연간 시장 $0.5B (10-Q) × 점유 20%(가정) = $100M",
+          "assumptions": "시장 크기는 회사 내부 분석·시장조사 추정(독립 검증 아님). 점유는 가정치. 특허 2033~2034년(10-Q)이라 독점 9년. PoS 85%는 가정.",
+          "market": {
+            "kind": "dollar",
+            "region": "글로벌 (회사 추정)",
+            "tam_usd": 500,
+            "tam_src": "회사 추정 전 세계 연간 시장 (10-Q)",
+            "tam_verified": true,
+            "tam_url": "https://www.sec.gov/Archives/edgar/data/1622229/000119312526449963/cogt-20260930.htm",
+            "sam_label": "회사 추정 시장 전체",
+            "sam_src": "분리하지 않음",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "시장 크기에 가격 포함 (회사 추정)",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.1,
+                "why": "10%"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.2,
+                "why": "20%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.3,
+                "why": "30%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "cg-asm-pdufa",
+                "name": "FDA 판정 (PDUFA 2027-06-29)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "bezuclastinib",
+                    "approv|complete response"
+                  ],
+                  "since": "2027-06-01"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "cg-asm-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2027-06-29"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "CORT",
+      "name": "Corcept Therapeutics",
+      "market": "US",
+      "kind": "commercial+pipeline",
+      "cik": 1088856,
+      "ct": {
+        "spons": "Corcept Therapeutics"
+      },
+      "summary": "쿠싱증후군 치료제 Korlym(자체 제네릭 포함)과 백금저항성 난소암 Lifyorli(relacorilant, 2026-03 출시) 판매 중. relacorilant 쿠싱증후군 재신청 PDUFA 2026-12-17.",
+      "not_modeled": "miricorilant(MASH)·dazucorilant(ALS)·nenocorilant 등 다른 파이프라인, 미국 밖 판매.",
+      "overrides": {
+        "cash_musd": 662.3,
+        "cash_note": "2026-09-30 현금·투자 $662.3M (8-K)",
+        "debt_musd": 0.0,
+        "debt_note": "차입금 없음 (XBRL 부채 항목 없음)",
+        "shares_m": 109.44,
+        "shares_note": "보통주 109,443,109주 (10-Q 표지 2026-10-22)"
+      },
+      "commercial": {
+        "name": "Korlym + Lifyorli",
+        "run_rate_musd": 1361.9,
+        "run_rate_note": "3분기 매출 $340.5M × 4 (Korlym·자체 제네릭 $249.1M + Lifyorli $91.4M, 8-K 원문)",
+        "growth": [
+          0.15,
+          0.1,
+          0.06,
+          0.04,
+          0.03
+        ],
+        "margin_now": 0.35,
+        "margin_target": 0.4,
+        "margin_years": 3,
+        "loe_year_index": 9,
+        "erosion": 0.3,
+        "years": 15,
+        "run_rate_end": "2026-09-30",
+        "assumptions": "성장률·마진·특허(9년차 침식)는 가정치. 현재 마진 35%는 3분기 순이익 $126.8M ÷ 매출 $340.5M(XBRL, 37%)을 조금 낮춘 값. 2026년 매출 가이던스 $1.1~1.2B(8-K)는 연환산 $1.36B보다 낮아 1년차 성장은 보수적으로 15%. 영구가치 없음."
+      },
+      "facts": [
+        {
+          "date": "2026-11-03",
+          "verified": true,
+          "src": "SEC 8-K 2026-11-03 Ex.99.1",
+          "url": "https://www.sec.gov/Archives/edgar/data/1088856/000162828026069494/cort110326ex991pressrelease.htm",
+          "text": "3분기 매출 $340.5M(+64%): Korlym·자체 제네릭 $249.1M, Lifyorli $91.4M. 2026년 매출 가이던스 $1.1~1.2B 유지. relacorilant 쿠싱증후군 재신청 PDUFA 2026-12-17. 현금·투자 $662.3M. Lifyorli는 2026-03 백금저항성 난소암으로 출시."
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-12-17",
+          "text": "relacorilant 쿠싱증후군 PDUFA (재신청)",
+          "kind": "regulatory"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "relacorilant",
+          "indication": "쿠싱증후군",
+          "phase": 4,
+          "status": "NDA 재신청 심사",
+          "next": "PDUFA 2026-12-17",
+          "asset": "cort-rela",
+          "ct_terms": [
+            "relacorilant"
+          ],
+          "src": "SEC 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1088856/000162828026069494/cort110326ex991pressrelease.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "cushing"
+          ]
+        },
+        {
+          "drug": "Lifyorli (relacorilant)",
+          "indication": "백금저항성 난소암",
+          "phase": 4,
+          "status": "판매 중 (2026-03 출시)",
+          "next": null,
+          "asset": null,
+          "ct_terms": [
+            "relacorilant"
+          ],
+          "src": "SEC 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1088856/000162828026069494/cort110326ex991pressrelease.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "ovarian"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "id": "cort-rela",
+          "name": "relacorilant",
+          "indication": "쿠싱증후군",
+          "stage": "NDA 재신청 (PDUFA 2026-12-17)",
+          "method": "rnpv",
+          "peak_musd": 300.0,
+          "margin": 0.6,
+          "ramp_years": 4,
+          "exclusivity_years": 10,
+          "launch_in": 0.15,
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2026-12-17)",
+              "t": 0.1,
+              "pos": 0.6,
+              "x": 0,
+              "date": "2026-12-17"
+            }
+          ],
+          "basis": "Korlym(쿠싱증후군) 위에 더해지는 순증 매출 $300M (가정치, 환자 수·가격 원문 없음)",
+          "assumptions": "Korlym 매출을 대체할 수 있어 순증만 가정. PoS 60%는 이전 CRL 뒤 재신청이라 낮춘 가정. 시장 원은 원문 근거가 없어 트리거만 추적.",
+          "market": {
+            "kind": "triggers",
+            "region": "미국",
+            "note": "쿠싱증후군 환자 수·가격 원문을 못 찾아 시장 원 없이 트리거만 추적",
+            "triggers": [
+              {
+                "id": "cort-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-12-17)",
+                "kind": "trigger",
+                "proxy": "8-K 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "relacorilant",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-12-10"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "cort-qg",
+                "name": "분기 매출 성장",
+                "kind": "proxy",
+                "proxy": "최근 분기 매출의 전분기 대비 성장률 (XBRL) · 기본 경로 1년차 +15%는 분기 약 +3.6%",
+                "collector": {
+                  "type": "qgrowth",
+                  "base_annual": 0.15
+                },
+                "th": {
+                  "bear": "전분기 대비 감소",
+                  "base": "기본 경로 ±절반",
+                  "bull": "기본 경로의 1.5배 넘게"
+                }
+              },
+              {
+                "id": "cort-guid",
+                "name": "매출 가이던스",
+                "kind": "proxy",
+                "proxy": "실적 보도자료의 연간 매출 가이던스 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "revenue guidance"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "하향",
+                  "base": "유지",
+                  "bull": "상향"
+                },
+                "evidence": {
+                  "status": "done",
+                  "scenario": "base",
+                  "date": "2026-11-03",
+                  "url": "https://www.sec.gov/Archives/edgar/data/1088856/000162828026069494/cort110326ex991pressrelease.htm",
+                  "note": "3분기 실적에서 2026년 매출 가이던스 $1.1~1.2B 유지 (8-K 원문)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "ticker": "196170",
       "name": "알테오젠",
       "market": "KR",
