@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart', 'digest')   # 날짜별 JSON + dates.json
-CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt')   # 최신 파일만
+CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st')   # 최신 파일만
 FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json')   # 최신 단일 파일
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
@@ -66,6 +66,8 @@ def apply_hold(out: Path, hold: set):
         f = out / rel
         if f.is_file():
             f.unlink()
+        elif f.is_dir():      # 데이터 폴더째 보류 (예: data/st)
+            shutil.rmtree(f)
     pages = [h for h in hold if h.endswith('.html')]
     if not pages:
         return

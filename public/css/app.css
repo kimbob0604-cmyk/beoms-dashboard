@@ -989,3 +989,22 @@ tr.scr-mine td { background: var(--hover); }
 .mk-th span.cur { outline: 1px solid var(--accent); }
 .mk-th span.hit { background: #EEEDFE; color: #26215C; font-weight: 700; }
 @media (max-width: 640px) { .mk-tr { grid-template-columns: 22px minmax(0, 1fr); } .mk-st { grid-column: 2; align-items: flex-start; text-align: left; } .mk-th { grid-template-columns: 1fr; } }
+
+/* 전략 트래커 */
+.sg-legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
+.sg-leg { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.sg-leg.on, .sg-leg.static { color: var(--text); }
+.sg-leg.on { background: var(--chip); border-color: transparent; }
+.sg-leg.static { cursor: default; border-style: dashed; }
+.sg-leg i, .sg-dot { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); flex: none; }
+.sg-leg i.dash, .sg-dot.dash { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
+.sg-leg:not(.on):not(.static) i { opacity: .35; }
+.sg-dot { margin-right: 8px; vertical-align: middle; }
+.sg-board td:first-child { white-space: nowrap; }
+.sg-board tr.sg-short td { color: var(--sub); }
+.sg-win tr.on td, .sg-ev tr.sg-ls td { background: var(--hover); }
+.sg-win, .sg-ev { margin-top: 4px; }
+.sg-chg { margin: 8px 0 0; }
+.sg-docs { display: grid; gap: 2px; }
+.sg-docs a { display: block; padding: 5px 2px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg-docs a:hover { background: var(--hover); }

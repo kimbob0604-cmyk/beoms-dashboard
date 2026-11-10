@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·바이오·홈·종목 차트) → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·전략 트래커·바이오·홈·종목 차트) → GitHub Pages 배포(publish.py)
 장중 10분 간격 홈 갱신은 live.py 가 따로 한다.
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
@@ -109,6 +109,11 @@ def main() -> int:
                 run('백테스트 실적', ['collect_history.py', 'fin'], log)
             if run('백테스트 빌드', ['build_backtest.py'], log) != 0:
                 problems.append('조건 백테스트 JSON 빌드 실패')
+        # 전략 트래커: 증권사 전략 리포트·퀀트 채널의 새 글 → 종목 추출 → 따라 샀을 때 성과. 과거 가격 DB 를 쓰므로 위 sync 뒤에
+        if run('전략 수집', ['collect_strategy.py'], log) != 0:
+            problems.append('전략 리포트·채널 수집 일부 실패 — 다음 실행에서 이어 받음')
+        if run('전략 빌드', ['build_strategy.py'], log) != 0:
+            problems.append('전략 트래커 JSON 빌드 실패')
         # 바이오 탭: 미국 종목(yfinance·ClinicalTrials.gov)이라 위 한국 데이터와 독립. 실패해도 직전 값이 남는다
         if run('바이오 빌드', ['build_bio.py'], log) != 0:
             problems.append('바이오 JSON 빌드 실패')
