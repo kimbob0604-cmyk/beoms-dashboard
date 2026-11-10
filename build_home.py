@@ -16,7 +16,7 @@
 - mab      시장 폭: 20·60·120일 이동평균 위에 있는 종목 비율(%) 최근 120거래일 (코스피·코스닥)
 - spike    거래대금 급증: 20일 평균 대비 3배 이상 (시총 500억·평균 5억 이상). 장중이면 그때까지의 거래대금
 - sectors·big 의 w1·m1·m3: 1주·1개월·3개월 수익률(%) (업종은 시총 가중)
-- quotes.json 전 종목 [가격, 등락률] (관심종목 카드용)
+- quotes.json 전 종목 [가격, 등락률] + _d 시세 날짜·_t 장중 시각 (관심종목 카드·종목 패널 장중 시세용)
 - dart     최근 공시일의 눈에 띄는 공시 (잠정실적 서프·쇼크, 큰 수주, 최대주주 변경, 큰 자사주 소각·취득, 자금조달)
 
 build_growth.py · build_naver.py · build_dart.py 뒤에 돌린다.
@@ -294,7 +294,9 @@ def build(conn) -> dict:
     price_date = conn.execute('SELECT MAX(date) FROM quote_live').fetchone()[0] if live else pd
     rets = period_returns(conn, info, price_date or pd)
     info = {c: {**public(i), **rets.get(c, {})} for c, i in info.items()}
-    write_json(DATA / 'quotes.json', {c: [i['p'], i['ch']] for c, i in info.items() if i.get('p') is not None})
+    # _d: 시세 날짜, _t: 장중이면 받은 시각 (종목 패널이 하루 한 번 빌드한 종가보다 새 시세인지 가린다)
+    write_json(DATA / 'quotes.json', {'_d': price_date or pd, '_t': live,
+                                      **{c: [i['p'], i['ch']] for c, i in info.items() if i.get('p') is not None}})
     commons = [{'c': c, **i} for c, i in info.items() if i['mc'] and i['ch'] is not None]
     big = sorted(commons, key=lambda s: -s['mc'])[:BIG]
     movers = [s for s in commons if s['mc'] >= MOVER_MIN_MCAP]

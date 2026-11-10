@@ -82,6 +82,8 @@ def main() -> int:
             log.write('새로 받은 것 없음, 배포 건너뜀\n')
             return 0
         run(['build_factors.py'], log)   # 수급·공시·가격이 바뀌면 퀀트 팩터도 (0.5초)
+        if market:
+            run(['build_bio.py', '--live'], log)   # 바이오 탭 국장 종목도 장중 가격으로 (네트워크 없음)
         if run(['build_home.py'], log) != 0 or run(['publish.py'], log) != 0:
             return 1
     return 0

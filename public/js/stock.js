@@ -1,12 +1,15 @@
 // 종목 상세 패널: 종목 이름을 누르면 오른쪽에서 열린다 (모든 탭 공통)
 // - 차트: data/chart/{code}.json 일봉(최근 1년)을 직접 그려 마우스를 올린 날의 시가·고가·저가·종가·거래량을 보여준다
 // - 리포트·키워드·목표가·수급: data/stocks/{code}.json (맥에서 매일 빌드)
+// - 가격: 위 둘은 하루 한 번 빌드라 전날 종가에 머문다. 장중엔 data/quotes.json(10분마다 갱신)이 더 새로우면
+//   그 값으로 헤더 가격·등락률·시총을 바꾸고 차트 끝에 임시 봉(종가만)을 붙인다
 // 이름 링크는 네이버 증권 주소라서 Ctrl/⌘+클릭하면 네이버가 새 탭으로 열린다.
 const Stock = (() => {
   const CHARTS = [['3m', '3개월'], ['6m', '6개월'], ['1y', '1년'], ['w', '주봉']];
   const DAYS = { '3m': 63, '6m': 126, '1y': 260 };
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null, filings = null;
+  let live = null;   // 이 종목의 최신 시세 {d: 20261110, p, ch, t: 장중 받은 시각 | null}
 
   // ---------- 관심종목 (이 브라우저에만 저장) ----------
   const WKEY = 'watch';
@@ -53,7 +56,8 @@ const Stock = (() => {
       el.innerHTML = `<p class="muted st-loading">${cdata === undefined ? '차트 불러오는 중…' : '차트 데이터 없음'}</p>`;
       return;
     }
-    const all = chart === 'w' ? Plot.weekly(cdata) : cdata;
+    const day = withLive(cdata);
+    const all = chart === 'w' ? Plot.weekly(day) : day;
     const from = chart === 'w' ? 0 : Math.max(0, all.d.length - DAYS[chart]);
     const cut = k => all[k].slice(from);
     const d = cut('d'), c = cut('c'), o = cut('o'), h = cut('h'), l = cut('l'), v = cut('v');
@@ -61,10 +65,10 @@ const Stock = (() => {
     const prev = i => (from + i > 0 ? all.c[from + i - 1] : null);
     const pch = i => (prev(i) ? (c[i] / prev(i) - 1) * 100 : null);
     // 52주 위치 (최근 250거래일 고가·저가 대비 현재 종가)
-    const n52 = Math.max(0, cdata.d.length - 250);
-    const hi = Math.max(...cdata.h.slice(n52).map((x, i) => x ?? cdata.c[n52 + i]));
-    const lo = Math.min(...cdata.c.slice(n52).map((x, i) => cdata.l[n52 + i] ?? x));
-    const last = cdata.c[cdata.c.length - 1];
+    const n52 = Math.max(0, day.d.length - 250);
+    const hi = Math.max(...day.h.slice(n52).map((x, i) => x ?? day.c[n52 + i]));
+    const lo = Math.min(...day.c.slice(n52).map((x, i) => day.l[n52 + i] ?? x));
+    const last = day.c[day.c.length - 1];
     const pos = hi > lo ? (last - lo) / (hi - lo) : 0.5;
     const pos52 = panel.querySelector('.st-52');
     if (pos52) pos52.innerHTML = `<span class="muted">52주</span> 최저 <b>${num(lo)}</b>
@@ -81,9 +85,34 @@ const Stock = (() => {
       xTicks: Plot.monthTicks(d),
       tip: i => `<div class="tt-h">${Plot.dateStr(d[i])}${chart === 'w' ? ' 주' : ''}</div>
         <div class="tt-v">${num(c[i])} ${chHtml(pch(i))}</div>
-        ${o[i] == null ? '<div class="muted">KRX 공개 전 임시 종가</div>' : `<div class="tt-g"><span>시가</span><b>${num(o[i])}</b><span>고가</span><b>${num(h[i])}</b>
+        ${o[i] == null ? `<div class="muted">${liveDay(d[i]) ? `${liveLabel()} 시세 (임시)` : 'KRX 공개 전 임시 종가'}</div>` : `<div class="tt-g"><span>시가</span><b>${num(o[i])}</b><span>고가</span><b>${num(h[i])}</b>
           <span>저가</span><b>${num(l[i])}</b><span>거래량</span><b>${vol(v[i])}</b></div>`}`,
     });
+  }
+
+  // 장중 시세가 차트 마지막 날보다 새 날짜면 종가만 있는 임시 봉으로 붙인다 (주봉은 Plot.weekly 가 그 주에 합친다)
+  function withLive(x) {
+    if (!live || live.d <= x.d[x.d.length - 1]) return x;
+    return { ...x, d: [...x.d, live.d], o: [...x.o, null], h: [...x.h, null], l: [...x.l, null], c: [...x.c, live.p], v: [...x.v, null] };
+  }
+  const liveDay = d => live && d === live.d;
+  const liveLabel = () => (live?.t && U.marketHours() ? `장중 ${live.t.slice(11, 16)}` : '종가');
+
+  // data/quotes.json: {_d: 시세 날짜, _t: 장중 받은 시각, 코드: [가격, 등락률]} — 1분 안이면 받은 것을 다시 쓴다
+  let quotesP = null, quotesAt = 0;
+  function loadQuotes() {
+    if (!quotesP || Date.now() - quotesAt > 60000) {
+      quotesAt = Date.now();
+      quotesP = fetch(U.bust('data/quotes.json'), { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    }
+    return quotesP;
+  }
+
+  async function loadLive(c) {
+    const q = await loadQuotes();
+    const x = q?.[c];
+    if (code !== c || !q?._d || x?.[0] == null) return;
+    live = { d: +q._d.replace(/-/g, ''), p: x[0], ch: x[1], t: q._t || null };
   }
 
   async function loadChart(c) {
@@ -103,7 +132,7 @@ const Stock = (() => {
         <h2>${U.esc(s.n || code)} <small class="muted">${code}</small></h2>
         <p class="muted small">${[MARKETS[s.mk], s.w, s.mc != null ? `시총 ${U.eok(s.mc)}` : ''].filter(Boolean).map(U.esc).join(' · ')}</p>
       </div>
-      <div class="st-price">${s.p != null ? `<b>${U.price(s.p)}</b>${chHtml(s.ch)}<small class="muted">종가</small>` : ''}</div>
+      <div class="st-price">${s.p != null ? `<b>${U.price(s.p)}</b>${chHtml(s.ch)}<small class="muted">${s.pl || '종가'}</small>` : ''}</div>
       <button class="icon-btn st-star${isWatched(code) ? ' on' : ''}" aria-label="관심종목" title="관심종목 (홈에 모아 보기)">${isWatched(code) ? '★' : '☆'}</button>
       <button class="icon-btn st-close" aria-label="닫기" title="닫기 (Esc)">✕</button>
     </header>
@@ -122,7 +151,7 @@ const Stock = (() => {
       </div>
       <div class="st-plot"></div>
       <p class="small st-52"></p>
-      <p class="muted small">일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
+      <p class="muted small">일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가, 장중엔 10분마다 받는 장중 시세일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
     </section>`;
   }
 
@@ -243,6 +272,10 @@ const Stock = (() => {
 
   function render(d) {
     const s = { c: code, ...hint, ...(d || {}) };
+    if (live) {   // 하루 한 번 빌드한 종가보다 새 시세 (장중이면 10분마다)
+      if (s.mc && s.p) s.mc = s.mc * live.p / s.p;
+      Object.assign(s, { p: live.p, ch: live.ch, pl: liveLabel() });
+    }
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
         : `${growthHtml(s.gx)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
@@ -261,14 +294,15 @@ const Stock = (() => {
     document.body.classList.add('drawer-open');
     if (location.hash !== `#${c}`) history.pushState(null, '', `${location.pathname}${location.search}#${c}`);
     cdata = undefined;
+    live = null;
     render(undefined);
     panel.scrollTop = 0;
     loadChart(c);
     loadFilings(c);
-    let d = null;
-    try {
-      d = await U.json(`data/stocks/${c}.json`);
-    } catch (e) { /* 리포트·수급 데이터가 없는 종목 */ }
+    const [d] = await Promise.all([
+      U.json(`data/stocks/${c}.json`).catch(() => null),   // 리포트·수급 데이터가 없는 종목은 null
+      loadLive(c),
+    ]);
     if (code === c) render(d || null);
   }
 
