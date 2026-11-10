@@ -10,6 +10,7 @@
   python3 build_bio.py
 """
 
+import copy
 import json
 import sys
 import xml.etree.ElementTree as ET
@@ -552,6 +553,68 @@ def implied_pos_scale(co, mk, g, rf):
     return (lo + hi) / 2
 
 
+def apply_op(co, g, op):
+    """bull 단계 하나를 회사 설정(co)·전역 파라미터(g) 사본에 적용한다."""
+    k = op['op']
+    if k == 'set':
+        *head, last = op['path'].split('.')
+        tgt = co
+        for h in head:
+            tgt = tgt[h]
+        tgt[last] = op['value']
+    elif k == 'global':
+        g[op['key']] = op['value']
+    elif k == 'mult_peak':
+        for a in co.get('assets', []):
+            if (op.get('ids') is None or a['id'] in op['ids']) and a.get('peak_musd'):
+                a['peak_musd'] *= op['factor']
+    elif k == 'stage_pos':
+        a = next(a for a in co['assets'] if a['id'] == op['id'])
+        a['stages'][op['idx']]['pos'] = op['value']
+    elif k == 'add_asset':
+        co.setdefault('assets', []).append(copy.deepcopy(op['asset']))
+    else:
+        raise ValueError(f'모르는 bull 단계: {k}')
+
+
+def bull_bridge(co, mk, g, rf, cfg, base_ps, goal_avg):
+    """노션 방법론(rNPV·ROV·영구가치 없는 DCF) 안에서 가정만 bull 쪽으로 옮겨, 단계마다 주당 가치가 얼마나 오르는지 쌓는다.
+    회사별 단계(최신 실적·계약 범위·리포트의 PoS 등) 다음에 공통 단계(WACC·σ)를 적용한다.
+    마지막에 증권사 평균 목표가와 남은 차이를 '영구가치·멀티플(방법론 밖)'로 둔다."""
+    steps = (co.get('bull_steps') or []) + (cfg.get('bull_common') or [])
+    if not steps or not mk.get('shares') or base_ps is None:
+        return None
+    c2, g2 = copy.deepcopy(co), dict(g)
+    prev, out = base_ps, []
+    for st in steps:
+        for op in st['ops']:
+            apply_op(c2, g2, op)
+        ps = value_company(c2, mk, g2, rf, cfg['scenarios']['base'])['per_share']
+        out.append({'label': st['label'], 'src': st.get('src', ''), 'per_share': ps, 'delta': ps - prev})
+        prev = ps
+    price = mk['price']
+    res = {'base': base_ps, 'steps': out, 'bull': prev, 'bull_up': prev / price - 1 if price else None, 'goal_avg': goal_avg}
+    if goal_avg:
+        res['gap'] = goal_avg - prev
+        res['bull_vs_goal'] = prev / goal_avg
+        res['base_vs_goal'] = base_ps / goal_avg
+        res['implied_rev_scale'] = implied_rev_scale(c2, mk, g2, rf, goal_avg)
+    return res
+
+
+def implied_rev_scale(co, mk, g, rf, target):
+    """bull 가정 위에서 피크매출·로열티·마일스톤·상업 매출을 모두 k배 해야 목표가에 닿는 k (이분법). 50배로도 안 닿으면 None."""
+    def ps(k):
+        return value_company(co, mk, g, rf, {'pos_mult': 1.0, 'peak_mult': k, 'growth_mult': 1.0, 'rev_mult': k})['per_share']
+    lo, hi = 0.01, 50.0
+    if ps(hi) < target or ps(lo) > target:
+        return None
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if ps(mid) < target else (lo, mid)
+    return (lo + hi) / 2
+
+
 def fetch_fx(fallback: float):
     """원/달러 (yfinance KRW=X). 국장 자산의 달러 가정치를 억원으로 바꿀 때 쓴다."""
     try:
@@ -635,6 +698,8 @@ def build_kr(co, old, cfg, fx, rf):
     except Exception as e:
         print(f'  리포트 실패: {e}', file=sys.stderr)
         row['reports'] = old.get('reports')
+    row['bull_bridge'] = bull_bridge(co, mk, g, rf, cfg, row['valuation']['per_share'],
+                                     ((row.get('reports') or {}).get('summary') or {}).get('goal_avg'))
     return row
 
 
@@ -747,6 +812,8 @@ def build():
             except Exception as e:
                 print(f'  애널리스트 목표가 실패: {e}', file=sys.stderr)
                 row['reports'] = old.get('reports')
+            row['bull_bridge'] = bull_bridge(co, mk, g, rf, cfg, row['valuation']['per_share'],
+                                             ((row.get('reports') or {}).get('summary') or {}).get('goal_avg'))
             try:
                 cons = fetch_consensus(t)
             except Exception as e:

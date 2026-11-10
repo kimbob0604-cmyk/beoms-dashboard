@@ -956,3 +956,10 @@ tr.scr-mine td { background: var(--hover); }
 @media (max-width: 640px) { .bt-years { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; } .bt-exbar { height: 70px; } }
 
 .bio-mkt { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }
+
+.tbl.bb td:first-child { min-width: 220px; }
+.tbl.bb td:nth-child(2) { max-width: 320px; }
+.bb-bar { display: inline-block; width: 80px; height: 6px; border-radius: 3px; background: var(--chip); margin-right: 6px; vertical-align: middle; overflow: hidden; }
+.bb-bar i { display: block; height: 100%; background: var(--accent, #3b82f6); }
+.tbl.bb tr.bb-tot td { border-top: 2px solid var(--line, #ddd); }
+.tbl.bb tr.bb-gap td { color: var(--sub); }

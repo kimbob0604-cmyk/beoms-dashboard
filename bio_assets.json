@@ -176,7 +176,20 @@
           ]
         }
       ],
-      "market": "US"
+      "market": "US",
+      "bull_steps": [
+        {
+          "label": "EU·영국 출시 반영: 피크 × 1.4",
+          "src": "회사 2분기 보도자료: EMA·MHRA 심사 중, 유럽 약 5,200명 (발표자료)",
+          "ops": [
+            {
+              "op": "mult_peak",
+              "factor": 1.4,
+              "ids": null
+            }
+          ]
+        }
+      ]
     },
     {
       "ticker": "IMVT",
@@ -553,7 +566,20 @@
           ]
         }
       ],
-      "market": "US"
+      "market": "US",
+      "bull_steps": [
+        {
+          "label": "판매 지역을 계약 범위(미국+유럽 등)로: 피크 × 1.5",
+          "src": "Immunovant 권리 지역: 북미·유럽 등 (HanAll 사업보고서) · 이 모델은 미국 환자 수로만 계산",
+          "ops": [
+            {
+              "op": "mult_peak",
+              "factor": 1.5,
+              "ids": null
+            }
+          ]
+        }
+      ]
     },
     {
       "ticker": "AXSM",
@@ -898,7 +924,25 @@
           "ct_cond": []
         }
       ],
-      "market": "US"
+      "market": "US",
+      "bull_steps": [
+        {
+          "label": "상업 DCF 기간 20년 (16년차부터 침식, 영구가치 없음)",
+          "src": "노션: 침식률 모델 · 특허 만료일은 원문 미확인",
+          "ops": [
+            {
+              "op": "set",
+              "path": "commercial.years",
+              "value": 20
+            },
+            {
+              "op": "set",
+              "path": "commercial.loe_year_index",
+              "value": 16
+            }
+          ]
+        }
+      ]
     },
     {
       "ticker": "LQDA",
@@ -1088,7 +1132,25 @@
           ]
         }
       ],
-      "market": "US"
+      "market": "US",
+      "bull_steps": [
+        {
+          "label": "상업 DCF 기간 20년 (16년차부터 침식, 영구가치 없음)",
+          "src": "노션: 침식률 모델 · 특허 만료일은 원문 미확인",
+          "ops": [
+            {
+              "op": "set",
+              "path": "commercial.years",
+              "value": 20
+            },
+            {
+              "op": "set",
+              "path": "commercial.loe_year_index",
+              "value": 16
+            }
+          ]
+        }
+      ]
     },
     {
       "ticker": "196170",
@@ -1259,6 +1321,75 @@
           "verified": true,
           "ct_terms": [],
           "ct_cond": []
+        }
+      ],
+      "bull_steps": [
+        {
+          "label": "최신 실적: 3분기 잠정 매출 1,197.9억 × 4, 영업이익률 65.9%",
+          "src": "DART 잠정실적 2026-11-03 (원문)",
+          "ops": [
+            {
+              "op": "set",
+              "path": "commercial.run_rate_musd",
+              "value": 4791.6
+            },
+            {
+              "op": "set",
+              "path": "commercial.margin_now",
+              "value": 0.659
+            },
+            {
+              "op": "set",
+              "path": "commercial.margin_target",
+              "value": 0.66
+            }
+          ]
+        },
+        {
+          "label": "로열티 기간을 파트너 제품 독점 만료까지 20년으로 (16년차부터 침식, 영구가치 없음)",
+          "src": "노션: 상업화 제품은 침식률 모델 · 하나증권: '31년부터 듀피젠트·임핀지·엔허투 로열티",
+          "ops": [
+            {
+              "op": "set",
+              "path": "commercial.years",
+              "value": 20
+            },
+            {
+              "op": "set",
+              "path": "commercial.loe_year_index",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "label": "플랫폼 feed rate: 연 3건 × 5년, 건당 가치 9천만 달러 (계약금 3천만 + 마일스톤 4억 × 15%)",
+          "src": "노션: 플랫폼 기술은 feed rate 모델 · 2026년 실제 신규 계약 4건 (DART)",
+          "ops": [
+            {
+              "op": "add_asset",
+              "asset": {
+                "id": "alt-feed",
+                "name": "ALT-B4 신규 계약 (feed rate)",
+                "indication": "향후 5년 신규 파트너",
+                "stage": "플랫폼 feed rate",
+                "method": "rnpv",
+                "lump_musd": 1350,
+                "stages": [
+                  {
+                    "name": "신규 계약 가치 실현 (평균 3년)",
+                    "t": 3.0,
+                    "pos": 1.0,
+                    "x": 0
+                  }
+                ],
+                "launch_in": 3.0,
+                "peak_musd": 0,
+                "margin": 1,
+                "ramp_years": 1,
+                "exclusivity_years": 1
+              }
+            }
+          ]
         }
       ]
     },
@@ -1471,6 +1602,40 @@
           "ct_terms": [],
           "ct_cond": []
         }
+      ],
+      "bull_steps": [
+        {
+          "label": "로열티 대상 지역을 계약 범위(미국+유럽 등)로: 피크 × 1.5",
+          "src": "DART 사업보고서: Roivant 계약 지역은 북미·중남미·EU·영국·중동 등 · 이 모델은 미국만 넣었음",
+          "ops": [
+            {
+              "op": "mult_peak",
+              "factor": 1.5,
+              "ids": [
+                "hanall-roy1",
+                "hanall-roy2"
+              ]
+            }
+          ]
+        },
+        {
+          "label": "PoS를 리포트 판단 쪽으로: GD·MG 62→75%, CIDP·RA 45→55%",
+          "src": "신한투자증권 2026-11-10 '성공 확률은 매우 높다' · 노션 2상 갱신 규칙 범위 안",
+          "ops": [
+            {
+              "op": "stage_pos",
+              "id": "hanall-roy1",
+              "idx": 0,
+              "value": 0.75
+            },
+            {
+              "op": "stage_pos",
+              "id": "hanall-roy2",
+              "idx": 0,
+              "value": 0.55
+            }
+          ]
+        }
       ]
     },
     {
@@ -1669,7 +1834,84 @@
         }
       ],
       "burn_years": 2.0,
-      "burn_years_note": "VRN11 1/2상 결과(가정 2년 뒤)까지만 현재 소진을 빼고, 그 뒤 3상 비용은 단계 비용으로 반영"
+      "burn_years_note": "VRN11 1/2상 결과(가정 2년 뒤)까지만 현재 소진을 빼고, 그 뒤 3상 비용은 단계 비용으로 반영",
+      "bull_steps": [
+        {
+          "label": "VRN11 성공확률을 리포트 값 70%로 (1/2상 단계)",
+          "src": "현대차증권 2026-09-28: 경쟁 파이프라인 중 가장 유망, 성공확률 70% 적용",
+          "ops": [
+            {
+              "op": "stage_pos",
+              "id": "vrn-11",
+              "idx": 0,
+              "value": 0.7
+            }
+          ]
+        },
+        {
+          "label": "VRN11 1차 치료(뇌전이) 적응증 추가: 피크 15억 달러 (가정치)",
+          "src": "현대차증권: 1L 뇌전이 가치 2.877조 원을 따로 매김 · 피크매출은 리포트에 없어 가정",
+          "ops": [
+            {
+              "op": "add_asset",
+              "asset": {
+                "id": "vrn-11-1l",
+                "name": "VRN11 1차 (뇌전이)",
+                "indication": "EGFR 변이 비소세포폐암 1차",
+                "stage": "1/2상",
+                "method": "rov",
+                "peak_musd": 1500,
+                "margin": 0.45,
+                "ramp_years": 5,
+                "exclusivity_years": 12,
+                "stages": [
+                  {
+                    "name": "1/2상 결과",
+                    "t": 2.5,
+                    "pos": 0.4,
+                    "x": 250
+                  },
+                  {
+                    "name": "3상 결과",
+                    "t": 5.0,
+                    "pos": 0.55,
+                    "x": 30
+                  },
+                  {
+                    "name": "허가 판정",
+                    "t": 6.0,
+                    "pos": 0.9,
+                    "x": 0
+                  }
+                ],
+                "launch_in": 6.0
+              }
+            }
+          ]
+        },
+        {
+          "label": "현재 현금 소진 공제 제외 (3상부터 파트너 비용 가정, 리포트는 순현금만 반영)",
+          "src": "현대차·유안타: 파이프라인 가치 ÷ 주식 수 방식",
+          "ops": [
+            {
+              "op": "set",
+              "path": "burn_years",
+              "value": 0.0001
+            }
+          ]
+        },
+        {
+          "label": "σ 35% → 50% (ROV로 계산하는 초기 자산: 결과가 넓게 퍼질수록 중단 옵션 가치가 커짐)",
+          "src": "노션: 피크매출 σ 20~50%",
+          "ops": [
+            {
+              "op": "global",
+              "key": "sigma",
+              "value": 0.5
+            }
+          ]
+        }
+      ]
     },
     {
       "ticker": "028300",
@@ -1806,6 +2048,49 @@
           "ct_terms": [],
           "ct_cond": []
         }
+      ],
+      "bull_steps": [
+        {
+          "label": "Lyrfigtu(리라푸그라티닙) 판매 반영: 피크 1.5억 달러, 마진 35% (가정치)",
+          "src": "FDA 승인 2026-09-23 (보도) · 담관암 FGFR2 2차 이상",
+          "ops": [
+            {
+              "op": "add_asset",
+              "asset": {
+                "id": "hlb-lyr",
+                "name": "Lyrfigtu (리라푸그라티닙)",
+                "indication": "FGFR2 융합 담관암 (미국)",
+                "stage": "승인 (2026-09)",
+                "method": "rnpv",
+                "peak_musd": 150,
+                "margin": 0.35,
+                "ramp_years": 4,
+                "exclusivity_years": 10,
+                "stages": [
+                  {
+                    "name": "출시",
+                    "t": 0.01,
+                    "pos": 1.0,
+                    "x": 0
+                  }
+                ],
+                "launch_in": 0.01
+              }
+            }
+          ]
+        },
+        {
+          "label": "간암 승인 PoS 60→75% (제조시설 실사 VAI 종결 보도 반영)",
+          "src": "CancerNetwork 2026-11-05 (Elevar 보도자료 인용)",
+          "ops": [
+            {
+              "op": "stage_pos",
+              "id": "hlb-hcc",
+              "idx": 0,
+              "value": 0.75
+            }
+          ]
+        }
       ]
     }
   ],
@@ -1816,5 +2101,18 @@
     "fx_fallback": 1400,
     "rf": 0.03,
     "rf_note": "국고채 금리를 자동으로 받지 않아 3%로 고정한 가정치"
-  }
+  },
+  "bull_common": [
+    {
+      "label": "WACC 10% → 9%",
+      "src": "대신증권 알테오젠 WACC 9.26% · 노션 상업 WACC 8~12% 범위 안",
+      "ops": [
+        {
+          "op": "global",
+          "key": "wacc",
+          "value": 0.09
+        }
+      ]
+    }
+  ]
 }

@@ -349,6 +349,27 @@
     return h;
   }
 
+  function bullHtml(c) {
+    const b = c.bull_bridge;
+    if (!b) return '';
+    const price = c.market.price, goal = b.goal_avg;
+    const upc = v => `<small class="${U.cls(v / price - 1)}">${pc(v / price - 1)}</small>`;
+    const bar = v => goal ? `<span class="bb-bar"><i style="width:${Math.max(0, Math.min(100, v / goal * 100)).toFixed(1)}%"></i></span><small class="muted">${Math.round(v / goal * 100)}%</small>` : '';
+    const sgn = v => `${v >= 0 ? '+' : '-'}${px(Math.abs(v))}`;
+    const rows = [
+      `<tr class="bb-base"><td>이 모델의 기본 가치</td><td class="muted small">기본 시나리오 (WACC ${(data.params.wacc * 100).toFixed(0)}%, 영구가치 없음)</td><td class="num">–</td><td class="num">${px(b.base)} ${upc(b.base)}</td><td>${bar(b.base)}</td></tr>`,
+      ...b.steps.map(s => `<tr><td>${esc(s.label)}</td><td class="muted small">${esc(s.src)}</td><td class="num ${U.cls(s.delta)}">${sgn(s.delta)}</td><td class="num">${px(s.per_share)} ${upc(s.per_share)}</td><td>${bar(s.per_share)}</td></tr>`),
+      `<tr class="bb-tot"><td><b>방법론 안 bull</b></td><td class="muted small">위 단계를 모두 적용</td><td class="num ${U.cls(b.bull - b.base)}">${sgn(b.bull - b.base)}</td><td class="num"><b>${px(b.bull)}</b> ${upc(b.bull)}</td><td>${bar(b.bull)}</td></tr>`];
+    if (goal) rows.push(`<tr class="bb-gap"><td>남은 차이: 영구가치·멀티플</td><td class="muted small">증권사는 DCF 영구성장률·P/E·EV/EBIT 배수로 마지막 해 이후 가치를 넣음 (노션 방법론은 넣지 않음)</td><td class="num">${sgn(b.gap)}</td><td class="num"><b>${px(goal)}</b> ${upc(goal)}</td><td>${bar(goal)}</td></tr>`);
+    const k = b.implied_rev_scale;
+    const note = !goal ? '<p class="muted">증권사 목표가가 없어 bull 가치만 보여줍니다.</p>'
+      : b.gap <= 0 ? `<p>방법론 안 bull 가치가 증권사 평균을 넘습니다. 남은 차이가 없습니다.</p>`
+      : `<p>증권사 평균 목표가에 닿으려면, bull 가정 위에서 피크매출·로열티·마일스톤·상업 매출을 모두 <b>${k ? k.toFixed(1) + '배' : '50배 넘게'}</b> 키워야 합니다 (영구가치 없이). ${k && k <= 1.5 ? '가정 차이 안쪽이라 합의할 수 있는 범위입니다.' : k && k <= 3 ? '리포트의 영구가치를 받아들이거나 피크매출을 크게 잡아야 맞춰집니다.' : '이 정도면 차이는 가정이 아니라 방식(영구가치·멀티플)에서 나옵니다.'}</p>`;
+    return `<div class="bio-sub">증권사 목표가와 맞춰보기 <span class="muted small">노션 방법론(rNPV·ROV·영구가치 없는 DCF) 안에서 가정만 bull 쪽으로 옮긴 단계별 결과</span></div>
+      <div class="tbl-wrap"><table class="tbl bb"><thead><tr><th>단계</th><th>근거</th><th class="num">주당 변화</th><th class="num">누적 주당 가치</th><th>증권사 평균 대비</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+      <div class="bio-pad small">${note}<p class="muted">단계는 순서대로 쌓입니다. 각 단계 값은 앞 단계를 모두 적용한 뒤의 변화입니다. 근거에 '가정치'라고 쓴 숫자는 리포트·공시 원문에 없는 값입니다.</p></div>`;
+  }
+
   function reportsHtml(c) {
     const r = c.reports;
     if (!r) return '';
@@ -357,7 +378,7 @@
     const head = `<div class="bio-sub">증권사 리포트 <span class="muted small">${esc(s.source || '')} · 최근 6개월 ${s.n_reports || 0}건, 증권사 ${s.n_brokers || 0}곳</span></div>
       <div class="bio-pad rep-sum">
         ${s.goal_avg != null ? `<p>증권사 목표가 평균 <b>${px(s.goal_avg)}</b>${up(s.goal_avg)} · 범위 ${px(s.goal_min)} ~ ${px(s.goal_max)}</p>` : '<p class="muted">목표가 없음</p>'}
-        ${mine != null && s.goal_avg ? `<p class="bio-warn">이 모델의 기본 가치 ${px(mine)}는 증권사 평균 목표가의 ${Math.round(mine / s.goal_avg * 100)}%입니다. 차이는 대부분 피크매출·로열티·마일스톤·할인 방식 가정에서 나오니, 아래 리포트의 산정 근거와 이 모델의 가정치를 나란히 보세요.</p>` : ''}
+        ${mine != null && s.goal_avg ? `<p class="bio-warn">이 모델의 기본 가치 ${px(mine)}는 증권사 평균 목표가의 ${Math.round(mine / s.goal_avg * 100)}%입니다. 어디서 차이가 나는지는 아래 '증권사 목표가와 맞춰보기'에 단계별로 있습니다.</p>` : ''}
       </div>`;
     if (r.kind === 'us') {
       const it = r.items || [];
@@ -487,6 +508,7 @@
     } else {
       h += ladderHtml(c);
       h += reportsHtml(c);
+      h += bullHtml(c);
       h += pipeHtml(c);
       h += finHtml(c);
       h += estHtml(c);
