@@ -334,6 +334,31 @@ def fetch_consensus(ticker: str):
     return {'periods': out, 'eps_hist': hist[:8]}
 
 
+def kr_consensus(code: str, fin: dict):
+    """국장 컨센서스(대시보드가 모으는 cns_quarter·consensus_annual, 억원, 원문 아님)를 estimates 형식으로.
+    0q·+1q 는 DART 마지막 실적 분기 다음 두 분기, 0y·+1y 는 올해·내년."""
+    import db
+    qs = (fin or {}).get('quarters') or []
+    if not qs:
+        return None
+    conn = db.connect()
+    out = {}
+    for k, per in ((1, '0q'), (2, '+1q')):
+        end = _next_q_end(qs[-1]['end'], k)
+        r = conn.execute('SELECT as_of, sales, op, np FROM cns_quarter WHERE code=? AND period=? ORDER BY as_of DESC LIMIT 1',
+                         (code, end[:4] + end[5:7])).fetchone()
+        if r and r[1] is not None:
+            out[per] = {'rev': {'avg': r[1], 'low': None, 'high': None, 'n': None, 'ok': None}, 'op': r[2], 'as_of': r[0]}
+    y = date.today().year
+    for fy, per in ((y, '0y'), (y + 1, '+1y')):
+        r = conn.execute('SELECT as_of, revenue, op, eps FROM consensus_annual WHERE code=? AND fy=? AND is_estimate=1 ORDER BY as_of DESC LIMIT 1',
+                         (code, fy)).fetchone()
+        if r and r[1] is not None:
+            out[per] = {'rev': {'avg': r[1], 'low': None, 'high': None, 'n': None, 'ok': None},
+                        'eps': {'avg': r[3], 'low': None, 'high': None, 'n': None, 'ok': None}, 'op': r[2], 'as_of': r[0]}
+    return {'periods': out, 'eps_hist': [], 'src': '대시보드 컨센서스 수집 (FnGuide·네이버, 원문 아님)'} if out else None
+
+
 def _next_q_end(end: str, k: int) -> str:
     y, m = int(end[:4]), int(end[5:7])
     m += 3 * k
@@ -529,7 +554,7 @@ def card(co, row, today_iso):
     top = p.get('bull_success') if pipe else (row.get('scenarios') or {}).get('bull', {}).get('per_share')
     price = row['market']['price']
     return {'next': nxt, 'earnings_today': bool(e and e['date'] == today_iso),
-            'runway': runway, 'commercial': co['kind'] != 'pipeline',
+            'runway': runway, 'commercial': co['kind'] not in ('pipeline', 'watch'),
             'cf_positive': bool(fin.get('quarters')) and fin.get('burn_quarter') is None,
             'base_up': v['upside'] if v else None, 'top_up': (top / price - 1) if top and price else None,
             'top_label': '낙관 성공' if pipe else '낙관'}
@@ -697,6 +722,22 @@ def reprice_live() -> int:
     return 0
 
 
+def watch_row(co, row, mk, g, rf, cfg, old, get_reports):
+    """감시 종목(B등급·계약 조건 정리 전): 가치를 계산하지 않고 다음 일정·파이프라인·트리거·리포트만."""
+    today = date.today().isoformat()
+    row['card'] = card(co, row, today)
+    row['pipeline'] = pipeline(co, row)
+    row['timeline'] = timeline(co, row, today)
+    try:
+        row['reports'] = get_reports()
+    except Exception as e:
+        print(f'  리포트 실패: {e}', file=sys.stderr)
+        row['reports'] = old.get('reports')
+    row['markets'] = bmk.asset_markets(co, row, mk, g, rf, value_company, cfg['scenarios']['base'])
+    row['watch_note'] = co.get('watch_note', '')
+    return row
+
+
 def build_kr(co, old, cfg, fx, rf):
     """국장 종목: KRX 가격 DB + DART 재무·공시. 금액은 억원, 주식 수는 억주."""
     t = co['ticker']
@@ -740,10 +781,18 @@ def build_kr(co, old, cfg, fx, rf):
     row = {'ticker': t, 'name': co['name'], 'market_code': 'KR', 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''),
            'market': mk, 'news': news, 'trials': trials, 'auto': auto, 'fin': fin, 'prices': bk.prices(t), 'facts': co.get('facts', []),
            'catalysts': co.get('catalysts', []), 'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
+    if co['kind'] == 'watch':
+        return watch_row(co, row, mk, g, rf, cfg, old, lambda: br.kr_reports(t))
     kr_price_values(co, row, mk, g, rf, cfg)
     row['checks'] = checks(row, fin)
-    row['estimates'] = estimates(co, row, None)
+    try:
+        kc = kr_consensus(t, fin)
+    except Exception as e:
+        print(f'  국장 컨센서스 실패: {e}', file=sys.stderr)
+        kc = None
+    row['estimates'] = estimates(co, row, kc)
     if row['estimates']:
+        row['estimates']['cons_src'] = (kc or {}).get('src')
         row['estimates']['thresholds'] = thresholds(co, mk, g, rf, cfg)
     notes = {}
     if fin:
@@ -856,6 +905,9 @@ def build():
         row = {'ticker': t, 'name': co['name'], 'market_code': 'US', 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''), 'market': mk, 'news': news,
                'trials': trials, 'auto': auto, 'fin': fin, 'prices': prices, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
                'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
+        if co['kind'] == 'watch':
+            companies.append(watch_row(co, row, mk, g, rf, cfg, old, lambda: br.us_reports(t)))
+            continue
         if co['kind'] != 'excluded':
             row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
             row['scenarios'] = {}
@@ -901,7 +953,12 @@ def build():
     except Exception as e:
         print(f'  국장 스크리닝 실패: {e}', file=sys.stderr)
         screen_kr = None
-    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'market_screen': screen, 'market_screen_kr': screen_kr, 'fx': fx, 'rf_kr': rf_kr, 'archive_ok': be.ARCHIVE_OK, 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
+    try:
+        dig = bmk.digest(companies, ROOT / '.cache' / 'bio_triggers_hist.json')
+    except Exception as e:
+        print(f'  판정 대기함 실패: {e}', file=sys.stderr)
+        dig = None
+    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'digest': dig, 'market_screen': screen, 'market_screen_kr': screen_kr, 'fx': fx, 'rf_kr': rf_kr, 'archive_ok': be.ARCHIVE_OK, 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
            'params': g, 'scenarios': {k: v['label'] for k, v in cfg['scenarios'].items()}, 'note': cfg['note'], 'companies': companies}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')

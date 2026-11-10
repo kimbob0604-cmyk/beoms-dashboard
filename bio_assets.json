@@ -4086,7 +4086,7 @@
                 "collector": {
                   "type": "dart",
                   "terms": [
-                    "VRN11|기술이전"
+                    "기술이전|라이선스"
                   ],
                   "since": "2026-09-01"
                 },
@@ -4649,6 +4649,3141 @@
               "value": 0.75
             }
           ]
+        }
+      ]
+    },
+    {
+      "ticker": "000100",
+      "name": "유한양행",
+      "market": "KR",
+      "kind": "commercial+pipeline",
+      "ct": {
+        "spons": "Yuhan"
+      },
+      "summary": "제약·생활용품·CDMO 사업에 더해, J&J에 기술이전한 레이저티닙(라즈클루즈)이 아미반타맙(리브리반트)과 병용으로 판매돼 로열티를 받습니다.",
+      "not_modeled": "유한킴벌리 등 투자 지분 가치, YH35324(알레르기) 등 파이프라인, 레이저티닙 판매 마일스톤.",
+      "commercial": {
+        "name": "제약·생활용품 사업 (자체 매출)",
+        "run_rate_musd": 22497.0,
+        "run_rate_note": "2026년 상반기 연결 매출 11,662억 원에서 2분기 렉라자 유럽 출시 마일스톤 3,000만 달러(약 414억 원, 키움 리포트)를 뺀 11,248억 원 × 2 (DART)",
+        "growth": [
+          0.04,
+          0.04,
+          0.03,
+          0.03
+        ],
+        "margin_now": 0.03,
+        "margin_target": 0.05,
+        "margin_years": 4,
+        "loe_year_index": 16,
+        "erosion": 0.0,
+        "years": 15,
+        "run_rate_end": "2026-06-30",
+        "assumptions": "성장률·목표 마진은 가정치. 현재 영업이익률 3.0%는 상반기 영업이익 756.8억 원에서 마일스톤을 뺀 343억 원 ÷ 11,248억 원(DART). 매출에 현재 로열티(분기 약 100억 원)가 들어 있어 아래 로열티 자산과 일부 겹치지만 금액이 작아 그대로 둠. 금액 단위는 억원."
+      },
+      "facts": [
+        {
+          "date": "2026-10-13",
+          "verified": true,
+          "src": "J&J 8-K 2026-10-13 Ex.99.2 (제품별 매출)",
+          "url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000189/a2026q3exhibit992.htm",
+          "text": "RYBREVANT/LAZCLUZE 3분기 매출: 미국 $201M, 해외 $119M, 전 세계 $320M(전년 대비 +62.3%). 9개월 누적 전 세계 $866M."
+        },
+        {
+          "date": "2026-10-30",
+          "verified": true,
+          "src": "AstraZeneca 6-K 2026-10-30 (3분기 실적)",
+          "url": "https://www.sec.gov/Archives/edgar/data/901832/000165495426009256/a0835b.htm",
+          "text": "Tagrisso 3분기 매출 $2,087M, 9개월 누적 $5,862M. EGFR 변이 NSCLC 전 단계 표준(1차 FLAURA2 병용 포함)."
+        },
+        {
+          "date": "2026-10-16",
+          "verified": true,
+          "src": "IBK투자증권 2026-10-16 유한양행 리포트",
+          "url": "https://stock.pstatic.net/stock-research/company/40/20261016_company_516051000.pdf",
+          "text": "라즈클루즈 3분기 로열티 약 91억 원 추정(전분기 대비 +30%). 목표주가 SOTP: 제약·CDMO 2.6조, 라즈클루즈 로열티 4.0조, YH35324 5,760억 원."
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-16",
+          "text": "3분기 보고서 제출 기한 (법정)",
+          "kind": "earnings"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "레이저티닙 (라즈클루즈)",
+          "indication": "EGFR 변이 NSCLC 1차 (아미반타맙 병용)",
+          "phase": 4,
+          "status": "J&J 판매 중",
+          "next": null,
+          "asset": "yh-lazcluze",
+          "ct_terms": [
+            "lazertinib"
+          ],
+          "src": "J&J 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000189/a2026q3exhibit992.htm",
+          "stopped": false,
+          "verified": true,
+          "ct_cond": [
+            "lung"
+          ]
+        }
+      ],
+      "assets": [
+        {
+          "id": "yh-lazcluze",
+          "name": "라즈클루즈 로열티 (J&J)",
+          "indication": "EGFR 변이 NSCLC 1차 (병용)",
+          "stage": "판매 중",
+          "method": "rnpv",
+          "peak_musd": 60.7,
+          "margin": 1,
+          "ramp_years": 3,
+          "exclusivity_years": 10,
+          "launch_in": 0.01,
+          "stages": [
+            {
+              "name": "판매 중 (로열티 수취)",
+              "t": 0.01,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "타그리소 + 병용 연매출 $9.6B (AZ·J&J 3분기 원문 × 4) × 병용 점유 30% × 실효 로열티 2.1% = $60.7M",
+          "assumptions": "실효 로열티 2.1%는 IBK 3분기 로열티 추정 91억 원 ÷ 병용 매출 $320M(환율 1,347원)으로 계산한 값(계약 로열티율 비공개, 아미반타맙 매출에는 로열티 없음). 점유 30%·10년 지속은 가정치.",
+          "market": {
+            "kind": "product_royalty",
+            "region": "글로벌",
+            "product": "EGFR 표적 1차 (타그리소 + 병용)",
+            "base_sales_musd": 9628,
+            "base_src": "AZ 타그리소 $2,087M + J&J 병용 $320M (3분기, 원문) × 4",
+            "base_url": "https://www.sec.gov/Archives/edgar/data/200406/000020040626000189/a2026q3exhibit992.htm",
+            "rate": 0.021,
+            "rate_src": "실효 2.1% = IBK투자증권 2026-10-16 유한양행 리포트 로열티 추정 ÷ 병용 매출 (계약 비공개)",
+            "current_share": 0.133,
+            "current_src": "3분기 병용 $320M ÷ (타그리소 $2,087M + 병용 $320M) = 13.3% (J&J·AZ 원문)",
+            "sam_label": "EGFR 표적 치료 매출",
+            "sam_src": "타그리소 + 병용 합계",
+            "som_name": "병용",
+            "share_word": "점유",
+            "cases": {
+              "bear": {
+                "share": 0.2,
+                "why": "타그리소 병용(FLAURA2)과 나눠 20%"
+              },
+              "base": {
+                "share": 0.3,
+                "why": "OS 우위(MARIPOSA)로 30%"
+              },
+              "bull": {
+                "share": 0.45,
+                "why": "피하주사 제형 확산으로 45%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "yh-jnj",
+                "name": "병용 분기 매출·점유",
+                "kind": "proxy",
+                "proxy": "J&J 실적 8-K 제품별 매출표 (매일 자동), 타그리소는 AZ 3분기 $2,087M 기준",
+                "collector": {
+                  "type": "jnj_sales",
+                  "cik": 200406,
+                  "row": "RYBREVANT / LAZCLUZE",
+                  "rival_q": 2087,
+                  "rival_name": "타그리소"
+                },
+                "th": {
+                  "bear": "2027년 말 점유 15% 미만",
+                  "base": "15~25%",
+                  "bull": "25% 넘게"
+                }
+              },
+              {
+                "id": "yh-ms",
+                "name": "레이저티닙 마일스톤 공시",
+                "kind": "trigger",
+                "proxy": "DART 공시의 마일스톤 수령",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "마일스톤"
+                  ],
+                  "since": "2026-07-01"
+                },
+                "th": {
+                  "bear": "없음",
+                  "base": "지역 출시 마일스톤",
+                  "bull": "판매 마일스톤"
+                }
+              },
+              {
+                "id": "yh-lic",
+                "name": "신규 기술이전 (YH35324 등)",
+                "kind": "proxy",
+                "proxy": "DART 기술이전·라이선스 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "연 0건",
+                  "base": "연 1~2건",
+                  "bull": "연 3건 이상"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "141080",
+      "name": "리가켐바이오",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "ADC(항체-약물 접합체) 플랫폼 기술이전 회사. LCB14(HER2 ADC)는 중국 3상, 여러 글로벌 파트너에 플랫폼·후보물질을 이전했습니다.",
+      "watch_note": "기술이전 계약 총액·받은 금액·로열티를 DART 계약 공시 본문에서 정리한 뒤 마일스톤·feed rate 모델로 올릴 예정.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [
+        {
+          "date": "2026-07-09",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260709900108",
+          "text": "LCB97 관련 마일스톤 기술료 수령 공시."
+        },
+        {
+          "date": "2026-09-30",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260930900659",
+          "text": "iADC 플랫폼 공동연구 및 기술도입 계약 체결."
+        },
+        {
+          "date": "2026-08-05",
+          "verified": true,
+          "src": "하나증권 2026-08-05 리포트",
+          "url": "https://stock.pstatic.net/stock-research/company/57/20260805_company_35306000.pdf",
+          "text": "목표주가 220,000원. LCB14(IKS014/FS1502) '27년 중국 3상 종료·허가 신청 예상, 글로벌 1b상 후속 결과 12월 SABCS 기대."
+        }
+      ],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-141080",
+          "name": "리가켐바이오",
+          "indication": "계약·임상 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "계약 조건·자산별 시장 원문 정리 전이라 공시 트리거만 추적",
+            "triggers": [
+              {
+                "id": "141080-lic",
+                "name": "기술이전·플랫폼 계약",
+                "kind": "proxy",
+                "proxy": "DART 투자판단 관련 주요경영사항의 계약 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스|계약"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "연 0건",
+                  "base": "연 1~2건",
+                  "bull": "연 3건 이상"
+                }
+              },
+              {
+                "id": "141080-ms",
+                "name": "마일스톤 수령",
+                "kind": "trigger",
+                "proxy": "DART 마일스톤·기술료 수령 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "마일스톤|기술료"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "없음",
+                  "base": "임상 진입 마일스톤",
+                  "bull": "후기 임상·허가 마일스톤"
+                }
+              },
+              {
+                "id": "141080-ct",
+                "name": "임상 진입·변경",
+                "kind": "proxy",
+                "proxy": "DART 임상시험계획 승인·변경 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상시험계획"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "취하·중단",
+                  "base": "계획대로 승인",
+                  "bull": "후기 임상 진입"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "298380",
+      "name": "에이비엘바이오",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "이중항체 플랫폼(Grabody) 회사. 뇌혈관장벽 셔틀 Grabody-B를 여러 글로벌 제약사에 이전했고, givastomig(CLDN18.2×4-1BB)·ABL503 등을 임상 중입니다.",
+      "watch_note": "Grabody-B 계약 총액·로열티를 DART 계약 공시 본문에서 정리한 뒤 마일스톤·feed rate 모델로 올릴 예정.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [
+        {
+          "date": "2026-01-06",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항(기재정정)",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260106900191",
+          "text": "GrabodyB 플랫폼 기술이전 및 공동개발 계약 체결."
+        },
+        {
+          "date": "2025-11-12",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20251112900144",
+          "text": "Grabody-B 플랫폼 기술이전 및 공동개발 계약 체결."
+        },
+        {
+          "date": "2026-09-01",
+          "verified": true,
+          "src": "DS투자증권 2026-09-01 리포트",
+          "url": "https://stock.pstatic.net/stock-research/company/66/20260901_company_260206000.pdf",
+          "text": "givastomig: PD-L1 발현 무관 ORR 약 68.1%, mPFS 약 18.0개월 (CLDN18.2 1차, 리포트 인용)."
+        }
+      ],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-298380",
+          "name": "에이비엘바이오",
+          "indication": "계약·임상 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "계약 조건·자산별 시장 원문 정리 전이라 공시 트리거만 추적",
+            "triggers": [
+              {
+                "id": "298380-lic",
+                "name": "기술이전·플랫폼 계약",
+                "kind": "proxy",
+                "proxy": "DART 투자판단 관련 주요경영사항의 계약 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스|계약"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "연 0건",
+                  "base": "연 1~2건",
+                  "bull": "연 3건 이상"
+                }
+              },
+              {
+                "id": "298380-ms",
+                "name": "마일스톤 수령",
+                "kind": "trigger",
+                "proxy": "DART 마일스톤·기술료 수령 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "마일스톤|기술료"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "없음",
+                  "base": "임상 진입 마일스톤",
+                  "bull": "후기 임상·허가 마일스톤"
+                }
+              },
+              {
+                "id": "298380-ct",
+                "name": "임상 진입·변경",
+                "kind": "proxy",
+                "proxy": "DART 임상시험계획 승인·변경 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상시험계획"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "취하·중단",
+                  "base": "계획대로 승인",
+                  "bull": "후기 임상 진입"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "087010",
+      "name": "펩트론",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "약효 지속형 펩타이드 제형 플랫폼(SmartDepot) 회사. 글로벌 제약사와 플랫폼 기술 평가 계약을 맺고 PT403 등을 개발 중입니다.",
+      "watch_note": "평가 계약의 본계약 전환 여부가 핵심 트리거. 증권사 리포트가 없어 가치 모델은 보류.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [
+        {
+          "date": "2025-12-01",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항(기재정정)",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20251201900944",
+          "text": "플랫폼 기술 평가 계약 체결."
+        },
+        {
+          "date": "2026-08-25",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260825900548",
+          "text": "PT403 1상 임상시험계획 승인 신청."
+        }
+      ],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-087010",
+          "name": "펩트론",
+          "indication": "계약·임상 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "계약 조건·자산별 시장 원문 정리 전이라 공시 트리거만 추적",
+            "triggers": [
+              {
+                "id": "087010-lic",
+                "name": "기술이전·플랫폼 계약",
+                "kind": "proxy",
+                "proxy": "DART 투자판단 관련 주요경영사항의 계약 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스|계약"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "연 0건",
+                  "base": "연 1~2건",
+                  "bull": "연 3건 이상"
+                }
+              },
+              {
+                "id": "087010-ms",
+                "name": "마일스톤 수령",
+                "kind": "trigger",
+                "proxy": "DART 마일스톤·기술료 수령 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "마일스톤|기술료"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "없음",
+                  "base": "임상 진입 마일스톤",
+                  "bull": "후기 임상·허가 마일스톤"
+                }
+              },
+              {
+                "id": "087010-ct",
+                "name": "임상 진입·변경",
+                "kind": "proxy",
+                "proxy": "DART 임상시험계획 승인·변경 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상시험계획"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "취하·중단",
+                  "base": "계획대로 승인",
+                  "bull": "후기 임상 진입"
+                }
+              },
+              {
+                "id": "087010-main",
+                "name": "평가 계약 → 본계약 전환",
+                "kind": "trigger",
+                "proxy": "DART 기술이전·라이선스 본계약 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "본계약|라이선스 계약|기술이전 계약"
+                  ],
+                  "since": "2026-01-01"
+                },
+                "th": {
+                  "bear": "평가 종료·미전환",
+                  "base": "본계약 전환",
+                  "bull": "대형 본계약"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "ARGX",
+      "name": "ARGENX SE",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1697862,
+      "ct": {
+        "spons": "ARGENX"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (ARGENX SE).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-ARGX",
+          "name": "ARGENX SE",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "ARGX-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "ARGX-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "ARGX-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "INSM",
+      "name": "INSMED Inc",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1104506,
+      "ct": {
+        "spons": "INSMED"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (INSMED Inc).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-INSM",
+          "name": "INSMED Inc",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "INSM-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "INSM-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "INSM-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "EXEL",
+      "name": "EXELIXIS, INC.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 939767,
+      "ct": {
+        "spons": "EXELIXIS"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (EXELIXIS, INC.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-EXEL",
+          "name": "EXELIXIS, INC.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "EXEL-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "EXEL-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "EXEL-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "BMRN",
+      "name": "BIOMARIN PHARMACEUTICAL INC",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1048477,
+      "ct": {
+        "spons": "BIOMARIN PHARMACEUTICAL"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (BIOMARIN PHARMACEUTICAL INC).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-BMRN",
+          "name": "BIOMARIN PHARMACEUTICAL INC",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "BMRN-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "BMRN-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "BMRN-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "PRAX",
+      "name": "Praxis Precision Medicines, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1689548,
+      "ct": {
+        "spons": "Praxis Precision Medicines"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Praxis Precision Medicines, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-PRAX",
+          "name": "Praxis Precision Medicines, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "PRAX-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "PRAX-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "PRAX-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "DYN",
+      "name": "Dyne Therapeutics, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1818794,
+      "ct": {
+        "spons": "Dyne"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Dyne Therapeutics, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-DYN",
+          "name": "Dyne Therapeutics, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "DYN-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "DYN-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "DYN-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "PVLA",
+      "name": "PALVELLA THERAPEUTICS, INC.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1583648,
+      "ct": {
+        "spons": "PALVELLA"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (PALVELLA THERAPEUTICS, INC.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-PVLA",
+          "name": "PALVELLA THERAPEUTICS, INC.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "PVLA-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "PVLA-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "PVLA-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "IMNM",
+      "name": "Immunome Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1472012,
+      "ct": {
+        "spons": "Immunome"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Immunome Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-IMNM",
+          "name": "Immunome Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "IMNM-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "IMNM-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "IMNM-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "ZBIO",
+      "name": "Zenas BioPharma, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1953926,
+      "ct": {
+        "spons": "Zenas BioPharma"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Zenas BioPharma, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-ZBIO",
+          "name": "Zenas BioPharma, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "ZBIO-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "ZBIO-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "ZBIO-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "AGIO",
+      "name": "AGIOS PHARMACEUTICALS, INC.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1439222,
+      "ct": {
+        "spons": "AGIOS"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (AGIOS PHARMACEUTICALS, INC.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-AGIO",
+          "name": "AGIOS PHARMACEUTICALS, INC.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "AGIO-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "AGIO-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "AGIO-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "NTLA",
+      "name": "Intellia Therapeutics, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1652130,
+      "ct": {
+        "spons": "Intellia"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Intellia Therapeutics, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-NTLA",
+          "name": "Intellia Therapeutics, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "NTLA-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "NTLA-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "NTLA-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "QURE",
+      "name": "uniQure N.V.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1590560,
+      "ct": {
+        "spons": "uniQure N.V."
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (uniQure N.V.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-QURE",
+          "name": "uniQure N.V.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "QURE-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "QURE-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "QURE-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "MLYS",
+      "name": "Mineralys Therapeutics, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1933414,
+      "ct": {
+        "spons": "Mineralys"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Mineralys Therapeutics, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-MLYS",
+          "name": "Mineralys Therapeutics, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "MLYS-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "MLYS-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "MLYS-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "VSTM",
+      "name": "Verastem, Inc.",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1526119,
+      "ct": {
+        "spons": "Verastem"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (Verastem, Inc.).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-VSTM",
+          "name": "Verastem, Inc.",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "VSTM-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "VSTM-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "VSTM-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "MLTX",
+      "name": "MoonLake Immunotherapeutics",
+      "market": "US",
+      "kind": "watch",
+      "cik": 1821586,
+      "ct": {
+        "spons": "MoonLake Immunotherapeutics"
+      },
+      "summary": "B등급 감시 종목. 최근 8-K·6-K에서 허가·임상 일정이 자동으로 잡혀 추가했습니다 (MoonLake Immunotherapeutics).",
+      "watch_note": "SEC 공시에서 날짜가 있는 일정을 자동 추출하고, 승인·탑라인·증자 문장이 나오면 '판정 필요'로 표시합니다. 트리거가 Bull 쪽이거나 촉매가 90일 안이면 A등급 후보.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-MLTX",
+          "name": "MoonLake Immunotherapeutics",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "SEC 공시 문장 트리거만 추적",
+            "triggers": [
+              {
+                "id": "MLTX-fda",
+                "name": "FDA 판정",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "approv|complete response letter"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "MLTX-top",
+                "name": "탑라인 결과",
+                "kind": "trigger",
+                "proxy": "8-K·6-K의 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "MLTX-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "8-K의 증자·사모 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "underwritten|public offering|private placement"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "326030",
+      "name": "SK바이오팜",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-326030",
+          "name": "SK바이오팜",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "326030-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "326030-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "326030-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "326030-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "128940",
+      "name": "한미약품",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-128940",
+          "name": "한미약품",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "128940-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "128940-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "128940-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "128940-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "000250",
+      "name": "삼천당제약",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-000250",
+          "name": "삼천당제약",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "000250-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "000250-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "000250-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "000250-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "140410",
+      "name": "메지온",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-140410",
+          "name": "메지온",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "140410-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "140410-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "140410-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "140410-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "347850",
+      "name": "디앤디파마텍",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-347850",
+          "name": "디앤디파마텍",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "347850-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "347850-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "347850-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "347850-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "226950",
+      "name": "올릭스",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-226950",
+          "name": "올릭스",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "226950-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "226950-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "226950-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "226950-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "0009K0",
+      "name": "에임드바이오",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-0009K0",
+          "name": "에임드바이오",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "0009K0-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "0009K0-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "0009K0-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "0009K0-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "950260",
+      "name": "인제니아테라퓨틱스",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-950260",
+          "name": "인제니아테라퓨틱스",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "950260-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "950260-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "950260-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "950260-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "ticker": "456160",
+      "name": "지투지바이오",
+      "market": "KR",
+      "kind": "watch",
+      "summary": "B등급 감시 종목. 최근 DART 임상·허가·기술이전 공시가 잡혀 추가했습니다.",
+      "watch_note": "DART 공시 제목에서 허가·임상·기술이전·자금 조달을 자동으로 잡아 '판정 필요'로 표시합니다.",
+      "not_modeled": "가치 모델 없음 (감시 종목)",
+      "facts": [],
+      "catalysts": [],
+      "pipeline": [],
+      "assets": [
+        {
+          "id": "w-456160",
+          "name": "지투지바이오",
+          "indication": "자동 감시 트리거",
+          "stage": "감시",
+          "method": "rnpv",
+          "display_only": true,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "launch_in": 1.0,
+          "stages": [
+            {
+              "name": "감시",
+              "t": 1.0,
+              "pos": 1.0,
+              "x": 0
+            }
+          ],
+          "basis": "감시 종목: 가치 계산 없음",
+          "assumptions": "감시 종목: 가치 계산 없음",
+          "market": {
+            "kind": "triggers",
+            "region": "글로벌",
+            "note": "DART 공시 제목 트리거만 추적",
+            "triggers": [
+              {
+                "id": "456160-fda",
+                "name": "허가·승인",
+                "kind": "trigger",
+                "proxy": "DART 공시 제목의 허가·승인",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "허가|승인"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "CRL·지연",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "456160-ct",
+                "name": "임상 결과·진입",
+                "kind": "proxy",
+                "proxy": "DART 임상시험 관련 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "임상"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "1차 평가변수 미달",
+                  "base": "충족",
+                  "bull": "충족 + 2차까지 우위"
+                }
+              },
+              {
+                "id": "456160-lic",
+                "name": "기술이전",
+                "kind": "trigger",
+                "proxy": "DART 기술이전 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "기술이전|라이선스"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "해지·반환",
+                  "base": "계약 체결",
+                  "bull": "대형 계약"
+                }
+              },
+              {
+                "id": "456160-fin",
+                "name": "자금 조달",
+                "kind": "proxy",
+                "proxy": "DART 유상증자·전환사채 공시",
+                "collector": {
+                  "type": "dart",
+                  "terms": [
+                    "유상증자|전환사채"
+                  ],
+                  "since": "2026-11-10"
+                },
+                "th": {
+                  "bear": "주가 아래 대규모 증자",
+                  "base": "필요 범위 조달",
+                  "bull": "조달 불필요 (흑자·파트너 자금)"
+                }
+              }
+            ]
+          }
         }
       ]
     }

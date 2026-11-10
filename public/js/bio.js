@@ -20,7 +20,7 @@
   const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
   const days = ds => Math.round((new Date(ds + 'T00:00:00') - today()) / 86400000);
   const dday = ds => { const n = days(ds); return n === 0 ? 'D-day' : n > 0 ? `D-${n}` : `D+${-n}`; };
-  const KIND = { pipeline: '임상 자산 가치', 'commercial+pipeline': '상업 DCF + 임상', excluded: '비바이오' };
+  const KIND = { pipeline: '임상 자산 가치', 'commercial+pipeline': '상업 DCF + 임상', excluded: '비바이오', watch: '감시 (가치 계산 안 함)' };
 
   function nextCat(c) {
     return (c.catalysts || []).filter(x => days(x.date) >= 0).sort((a, b) => a.date.localeCompare(b.date))[0];
@@ -122,10 +122,10 @@
 
   function renderCards() {
     const chip = (v, l) => v == null ? '' : `<span class="bc-chip ${U.cls(v)}">${l} ${pc(v)}</span>`;
-    $('cards').innerHTML = LIST().map(c => {
+    $('cards').innerHTML = [...LIST()].sort((a, b) => (a.kind === 'watch') - (b.kind === 'watch')).map(c => {
       const m = c.market, k = c.card || {}, n = k.next;
       const rw = [k.commercial ? '상업화 중' : '', k.cf_positive ? '영업현금 흑자' : k.runway ? `현금 약 ${Math.round(k.runway.months)}개월` : ''].filter(Boolean).join(' · ');
-      return `<button class="bc${c.ticker === st.c ? ' on' : ''}" data-c="${c.ticker}" type="button">
+      return `<button class="bc${c.ticker === st.c ? ' on' : ''}${c.kind === 'watch' ? ' watch' : ''}" data-c="${c.ticker}" type="button">
         <div class="bc-top"><b>${esc(KR() ? c.name : c.ticker)}</b>${k.earnings_today ? '<span class="bc-badge">실적 오늘</span>' : ''}</div>
         <div class="bc-px">${px(m.price)} <small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></div>
         <div class="bc-next">${n ? `<span class="bc-d">${dday(n.date)}</span> ${esc(n.text)}${n.auto ? ' <i>자동</i>' : ''}` : '<span class="muted">예정 일정 없음</span>'}</div>
@@ -227,8 +227,8 @@
     if (!e) return '';
     const rev = e.actual.some(q => q.revenue != null);
     const all = [...e.actual.map(q => ({ ...q, kind: 'a' })), ...e.future.map(q => ({ ...q, kind: 'f' }))];
-    const eps = v => v == null ? '–' : `$${v.toFixed(2)}`;
-    const rng = (x, f) => x && x.avg != null ? `${f(x.avg)}<small>${f(x.low)}~${f(x.high)} · ${x.n ?? '–'}명${x.ok === false ? ' · <b class="down">평균이 범위 밖(데이터 이상)</b>' : ''}</small>` : '–';
+    const eps = v => v == null ? '–' : KR() ? `${Math.round(v).toLocaleString('ko-KR')}원` : `$${v.toFixed(2)}`;
+    const rng = (x, f) => x && x.avg != null && x.low == null ? f(x.avg) : x && x.avg != null ? `${f(x.avg)}<small>${f(x.low)}~${f(x.high)} · ${x.n ?? '–'}명${x.ok === false ? ' · <b class="down">평균이 범위 밖(데이터 이상)</b>' : ''}</small>` : '–';
     const td = (q, fn) => `<td class="num${q.kind === 'f' ? ' fut' : ''}">${fn(q)}</td>`;
     const rows = [
       rev && [`매출 실제 (${SRC()})`, q => q.kind === 'a' ? usd(q.revenue) : (e.known && e.known.end === q.end ? `<span class="muted">잠정 ${usd(e.known.revenue)}</span>` : '–')],
@@ -239,7 +239,7 @@
     ].filter(Boolean);
     const th = e.thresholds;
     const h = e.eps_hist || [];
-    return `<div class="bio-sub">실적 대 추정 <span class="muted small">실제는 ${SRC()} 원문${KR() ? ', 국장 컨센서스는 아직 연결 전' : ', 추정은 yfinance(원문 아님)'}</span></div>
+    return `<div class="bio-sub">실적 대 추정 <span class="muted small">실제는 ${SRC()} 원문${KR() ? `, 추정은 ${esc((c.estimates && c.estimates.cons_src) || '국장 컨센서스 없음')}` : ', 추정은 yfinance(원문 아님)'}</span></div>
       ${rev ? `<div class="bio-pad">${estChart(e)}</div>` : ''}
       ${th ? `<p class="bio-pad">분기 매출이 <b>${usd(th.base)}</b>(기본 성장) 또는 <b>${usd(th.bull)}</b>(낙관 성장 ×${th.bull_growth_mult})를 넘으면 현재가 ${px(c.market.price)}가 정당화됩니다. 다음 분기 컨센서스 평균 ${usd(e.future[0].cons.rev && e.future[0].cons.rev.avg)}은 낙관 기준의 ${e.future[0].cons.rev && th.bull ? Math.round(e.future[0].cons.rev.avg / th.bull * 100) + '%' : '–'}입니다.</p>` : ''}
       <div class="tbl-wrap"><table class="tbl"><thead><tr><th></th>${all.map(q => `<th class="num${q.kind === 'f' ? ' fut' : ''}">${esc(q.label)}${q.kind === 'f' ? '<small>추정</small>' : ''}</th>`).join('')}</tr></thead><tbody>
@@ -408,12 +408,12 @@
       <text x="428" y="54" class="mk-cb" fill="#3C3489">${PR || DL ? `연 ${bn(c.tam_usd)}` : m.kind === 'royalty' ? `${ppl(m.tam_patients)} · ${bn(c.tam_usd)}` : `${ppl(m.tam_patients)} × 연 ${prc(c.price_k)}`}</text>
       <text x="428" y="76" class="mk-s" fill="#534AB7">${esc(m.tam_src.slice(0, 26))}${m.tam_verified ? ' · 원문 확인' : ' · 원문 미확인'}</text>
       <rect x="400" y="114" width="276" height="96" rx="14" fill="#E6F1FB"/><rect x="414" y="132" width="3" height="60" rx="1.5" fill="#378ADD"/>
-      <text x="428" y="144" class="mk-ct" fill="#042C53">SAM <tspan class="mk-s" fill="#185FA5">${PR ? 'SC 전환 대상' : DL ? '표적 시장' : '표적 환자'}</tspan></text>
+      <text x="428" y="144" class="mk-ct" fill="#042C53">SAM <tspan class="mk-s" fill="#185FA5">${PR ? esc(m.sam_label) : DL ? '표적 시장' : '표적 환자'}</tspan></text>
       <text x="428" y="168" class="mk-cb" fill="#0C447C">${PR || DL ? `${bn(c.sam_usd)} (TAM의 ${pct(c.sam != null ? c.sam : 1)})` : `${ppl(c.sam_n)} (TAM의 ${pct(c.sam != null ? c.sam : c.sam_n / m.tam_patients)})`}</text>
       <text x="428" y="190" class="mk-s" fill="#185FA5">${esc(m.sam_src.slice(0, 28))}</text>
       <rect x="400" y="228" width="276" height="96" rx="14" fill="#EEEDFE"/><rect x="414" y="246" width="3" height="60" rx="1.5" fill="#534AB7"/>
       <text x="428" y="258" class="mk-ct" fill="#26215C">SOM <tspan class="mk-s" fill="#534AB7">${ROY ? '로열티' : '피크 점유'}</tspan></text>
-      <text x="428" y="282" class="mk-cb" fill="#3C3489">${DL ? `${bn(c.peak)} (SAM의 ${pct(c.pen)})` : PR ? `Qlex ${bn(c.peak)} (전환 ${pct(c.share)}, 현재 ${pct(m.current_share)}) × ${pct(c.rate)}` : m.kind === 'royalty' ? `파트너 피크 ${bn(c.peak)} × ${pct(c.rate)}` : `${ppl(c.som_n)} (SAM의 ${pct(c.pen)})${m.current && m.current.pen != null ? ` · 현재 ${pct(m.current.pen)}` : ''}`}</text>
+      <text x="428" y="282" class="mk-cb" fill="#3C3489">${DL ? `${bn(c.peak)} (SAM의 ${pct(c.pen)})` : PR ? `${esc(m.som_name || 'Qlex')} ${bn(c.peak)} (${esc(m.share_word || '전환')} ${pct(c.share)}, 현재 ${pct(m.current_share)}) × ${pct(c.rate)}` : m.kind === 'royalty' ? `파트너 피크 ${bn(c.peak)} × ${pct(c.rate)}` : `${ppl(c.som_n)} (SAM의 ${pct(c.pen)})${m.current && m.current.pen != null ? ` · 현재 ${pct(m.current.pen)}` : ''}`}</text>
       <text x="428" y="304" class="mk-s" fill="#534AB7">${esc(m.som_label.slice(0, 28))}</text>
       <rect x="400" y="342" width="276" height="54" rx="14" fill="none" stroke="#AFA9EC"/>
       <text x="414" y="364" class="mk-s" fill="#534AB7">주당 가치 (${m.kind === 'commercial' ? '상업 매출만' : m.display_only ? '기본 가치에 이 자산을 더할 때' : '이 자산만'} ${CASE_KO[k]})</text>
@@ -590,7 +590,10 @@
     let h = `<div class="col-head"><h3>${esc(c.ticker)} · ${esc(c.name)} <span class="muted">${px(m.price)}${m.live ? ` (${esc(pxWhen(m))})` : ''} · 시총 ${usd(m.mcap_used || m.mcap)}${m.mcap_used ? ' (주식 수 ' + shTxt(m.shares) + ' 기준)' : ''}</span></h3>
       <span class="muted small">${c.stale.length ? '일부 값은 직전 수집 결과 (' + c.stale.join(', ') + ')' : '방금 갱신된 값'}</span></div>
       <div class="bio-pad"><p>${esc(c.summary)}</p></div>`;
-    if (c.kind === 'excluded') {
+    if (c.kind === 'watch') {
+      h += `<div class="bio-warn">감시 종목: 가치 모델 없이 다음 일정·트리거·리포트·공시만 추적합니다. ${esc(c.watch_note || '')}</div>`;
+      h += marketHtml(c) + reportsHtml(c) + pipeHtml(c) + finHtml(c);
+    } else if (c.kind === 'excluded') {
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
@@ -657,12 +660,35 @@
       ${KR() ? `<span class="muted small">금액은 억원·원, 달러 가정치는 원/달러 ${data.fx ? data.fx.toFixed(1) : '–'}로 환산</span>` : '<span class="muted small">금액은 백만 달러·달러</span>'}`;
   }
 
+  // 판정 대기함: 전 종목에서 '새 원문 · 판정 필요' 트리거와 이번 주 바뀐 것
+  function renderInbox() {
+    const el = $('inbox');
+    const dg = data.digest;
+    if (!el || !dg) { if (el) el.innerHTML = ''; return; }
+    const mine = x => (x.market || 'US') === (KR() ? 'KR' : 'US');
+    const ib = (dg.inbox || []).filter(mine);
+    const tk = new Set(LIST().map(c => c.ticker));
+    const ch = (dg.changes || []).filter(x => tk.has(x.ticker));
+    el.innerHTML = `<h3>판정 대기함 <span class="muted">새 원문이 나와 읽고 판정해야 하는 트리거 ${ib.length}건</span></h3>
+      ${ib.length ? `<ul class="bio-list">${ib.map(x => `<li><span class="d">${esc(x.date || '')}</span><a href="#" data-goto="${esc(x.ticker)}"><b>${esc(KR() ? x.name : x.ticker)}</b></a>${x.kind === 'watch' ? ' <small class="muted">감시</small>' : ''} · ${esc(x.asset || '')} · ${esc(x.trigger)}
+        ${(x.hits || []).map(h => `<small><a href="${esc(h.url || '#')}" target="_blank" rel="noopener">${esc(h.text.slice(0, 140))}</a></small>`).join('')}</li>`).join('')}</ul>` : '<p class="bio-pad muted">판정할 새 원문 없음</p>'}
+      <div class="bio-sub">이번 주 바뀐 것 <span class="muted small">${dg.since ? `${esc(dg.since)} 기록과 비교` : '비교할 지난 기록이 아직 없음 (오늘부터 쌓임)'}</span></div>
+      ${ch.length ? `<ul class="bio-list">${ch.slice(0, 30).map(x => `<li><a href="#" data-goto="${esc(x.ticker)}"><b>${esc(KR() ? x.name : x.ticker)}</b></a> · ${esc(x.asset)} · ${esc(x.what)}: ${esc(x.from || '–')} → <b>${esc(x.to || '–')}</b></li>`).join('')}</ul>` : `<p class="bio-pad muted">${dg.since ? '바뀐 것 없음' : ''}</p>`}`;
+  }
+
   function render() {
     if (!LIST().some(c => c.ticker === st.c)) st.c = (LIST()[0] || {}).ticker || '';
     renderMarket();
-    renderCards(); renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
+    renderCards(); renderOverview(); renderDetail(); renderInbox(); renderCal(); renderScreen(); renderMethod(); renderFoot();
   }
 
+  $('inbox').addEventListener('click', e => {
+    const a = e.target.closest('[data-goto]');
+    if (!a) return;
+    e.preventDefault();
+    pg.set({ c: a.dataset.goto });
+    $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   $('detail').addEventListener('click', e => {
     const b = e.target.closest('[data-range]');
     if (!b) return;

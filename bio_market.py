@@ -11,6 +11,7 @@
 """
 
 import copy
+from pathlib import Path
 from datetime import date
 
 import requests
@@ -120,6 +121,17 @@ def collect(trig: dict, row: dict, asset: dict, m: dict, today: str):
         if q:
             t.update(status='live', scenario=None, date=q['filed'], evidence_url=q['url'],
                      progress=f"{q['filed']} 8-K: Qlex ${q['qlex']:,.0f}M ÷ 키트루다 패밀리 ${q['family']:,.0f}M = 전환율 {q['share'] * 100:.1f}% (2027년 말에 판정)")
+    elif col['type'] == 'jnj_sales':
+        try:
+            q = jnj_sales(col['cik'], col['row'])
+        except Exception as e:
+            q = None
+            t.update(status='error', progress=f'파트너 공시 읽기 실패: {str(e)[:60]}')
+        if q:
+            share = q['ww'] / (q['ww'] + col['rival_q']) if col.get('rival_q') else None
+            t.update(status='live', scenario=None, date=q['filed'], evidence_url=q['url'],
+                     progress=f"{q['filed']} 8-K: {col['row']} 분기 매출 전 세계 ${q['ww']:,.0f}M (미국 ${q['us']:,.0f}M)"
+                              + (f", {col['rival_name']} ${col['rival_q']:,.0f}M 대비 점유 {share * 100:.1f}%" if share else ''))
     elif col['type'] == 'qgrowth':
         qs = [q for q in ((row.get('fin') or {}).get('quarters') or []) if q.get('revenue')]
         base_q = (1 + col['base_annual']) ** 0.25 - 1
@@ -182,6 +194,36 @@ def merck_qlex(cik):
         _mrk[cik] = {'filed': sub['filingDate'][k], 'url': url, 'family': f, 'qlex': qv, 'share': qv / f}
         return _mrk[cik]
     _mrk[cik] = None
+    return None
+
+
+_jnj = {}
+
+
+def jnj_sales(cik, product):
+    """파트너 실적 8-K 제품별 매출표(Ex.99.2)에서 'PRODUCT | US | n | ... | WW | n' 을 읽는다 (J&J 형식, 백만 달러)."""
+    import re
+    import bio_events as be
+    key = (cik, product)
+    if key in _jnj:
+        return _jnj[key]
+    sub = be.sec_get(f'https://data.sec.gov/submissions/CIK{cik:010d}.json').json()['filings']['recent']
+    for k, form in enumerate(sub['form']):
+        if form != '8-K' or '2.02' not in (sub.get('items') or [''] * len(sub['form']))[k]:
+            continue
+        acc = sub['accessionNumber'][k].replace('-', '')
+        idx = be.sec_get(f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json').json()
+        for x in idx['directory']['item']:
+            if not re.search(r'ex(hibit)?-?99\.?2', x['name'], re.I) or not x['name'].endswith('.htm'):
+                continue
+            url = f'https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{x["name"]}'
+            t = be.html_to_text(be.sec_get(url).text).replace('\n', ' | ')
+            mm = re.search(re.escape(product) + r'\s*\|\s*US\s*\|\s*([\d,]+)\s*\|.*?WW\s*\|\s*([\d,]+)', t)
+            if mm:
+                _jnj[key] = {'filed': sub['filingDate'][k], 'url': url, 'us': float(mm.group(1).replace(',', '')), 'ww': float(mm.group(2).replace(',', ''))}
+                return _jnj[key]
+        break
+    _jnj[key] = None
     return None
 
 
@@ -354,7 +396,53 @@ def product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today):
     trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
     track, n = tracking(trigs)
     return {'id': a['id'], 'kind': 'product_royalty', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'product': m['product'],
-            'tam_src': m['base_src'], 'tam_url': m.get('base_url'), 'tam_verified': True, 'sam_label': 'SC 전환 대상 매출', 'sam_src': '키트루다 패밀리 전체',
-            'som_label': f"Qlex 매출 × 로열티 {m['rate'] * 100:.0f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
+            'tam_src': m['base_src'], 'tam_url': m.get('base_url'), 'tam_verified': True, 'sam_label': m.get('sam_label', 'SC 전환 대상 매출'),
+            'sam_src': m.get('sam_src', '키트루다 패밀리 전체'), 'som_name': m.get('som_name', 'Qlex'), 'share_word': m.get('share_word', '전환'),
+            'som_label': f"{m.get('som_name', 'Qlex')} 매출 × 로열티 {m['rate'] * 100:.1f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
             'current_share': m.get('current_share'), 'current_src': m.get('current_src'), 'display_only': bool(a.get('display_only')),
             'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n}
+
+
+def digest(companies: list, hist_path, today: str = None, keep_days: int = 21):
+    """판정 대기함(새 원문이 나와 읽어야 하는 트리거)과 이번 주 바뀐 것(추적 시나리오·트리거 판정·상태).
+    날마다 트리거 상태를 hist_path 에 남기고, 7일 전(없으면 가장 오래된) 기록과 비교한다."""
+    import json
+    from datetime import date as _d, timedelta
+    today = today or _d.today().isoformat()
+    inbox, snap = [], {}
+    for c in companies:
+        for m in c.get('markets') or []:
+            key = f"{c['ticker']}|{m['id']}"
+            snap[key] = {'tracking': m.get('tracking'), 'trig': {t['id']: [t.get('status'), t.get('scenario')] for t in m.get('triggers', [])}}
+            for t in m.get('triggers', []):
+                if t.get('status') == 'hit':
+                    inbox.append({'ticker': c['ticker'], 'name': c['name'], 'market': c.get('market_code', 'US'), 'kind': c.get('kind'),
+                                  'asset': m.get('indication') or m.get('name'), 'trigger': t['name'], 'date': t.get('date'), 'hits': t.get('hits', [])[:2]})
+    inbox.sort(key=lambda x: x.get('date') or '', reverse=True)
+    p = Path(hist_path)
+    hist = json.loads(p.read_text(encoding='utf-8')) if p.exists() else {}
+    hist[today] = snap
+    cut = (_d.fromisoformat(today) - timedelta(days=keep_days)).isoformat()
+    hist = {k: v for k, v in hist.items() if k >= cut}
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(hist, ensure_ascii=False), encoding='utf-8')
+    week = (_d.fromisoformat(today) - timedelta(days=7)).isoformat()
+    olds = sorted(k for k in hist if k < today)
+    base_day = max([k for k in olds if k <= week], default=olds[0] if olds else None)
+    changes = []
+    if base_day:
+        old = hist[base_day]
+        names = {c['ticker']: c['name'] for c in companies}
+        for key, now in snap.items():
+            prev = old.get(key)
+            tk, aid = key.split('|', 1)
+            if not prev:
+                changes.append({'ticker': tk, 'name': names.get(tk, tk), 'asset': aid, 'what': '새로 추적 시작', 'from': None, 'to': now['tracking']})
+                continue
+            if prev.get('tracking') != now['tracking']:
+                changes.append({'ticker': tk, 'name': names.get(tk, tk), 'asset': aid, 'what': '추적 시나리오', 'from': prev.get('tracking'), 'to': now['tracking']})
+            for tid, (st, sc) in now['trig'].items():
+                ps = prev['trig'].get(tid)
+                if ps and (ps[0] != st or ps[1] != sc):
+                    changes.append({'ticker': tk, 'name': names.get(tk, tk), 'asset': aid, 'what': f'트리거 {tid}', 'from': f'{ps[0]}·{ps[1] or "-"}', 'to': f'{st}·{sc or "-"}'})
+    return {'inbox': inbox, 'changes': changes, 'since': base_day, 'today': today}

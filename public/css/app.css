@@ -1027,3 +1027,6 @@ tr.scr-mine td { background: var(--hover); }
 .sg-card footer span:last-child { margin-left: auto; }
 .sg-about { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px 24px; margin: 0 0 14px; padding: 12px 14px; background: var(--hover); border-radius: 10px; }
 .sg-about p { margin: 2px 0 0; font-size: 13px; line-height: 1.55; }
+
+.bc.watch { opacity: .72; }
+.bc.watch .bc-top b::after { content: ' 감시'; font-size: 10px; font-weight: 400; color: var(--muted); }
