@@ -59,7 +59,141 @@
           ],
           "launch_in": 0.04,
           "assumptions": "피크 치료 비율 25%와 순가격은 가정치. 5,500명은 청구자료로 찾은 풀이라 전원이 항체양성·치료 대상은 아님. 승인 PoS 80%는 우선심사 BLA 기본율(80%대 후반)에서 심사 3개월 연장(제조 자료를 주요 보완으로 분류)을 반영해 낮춘 가정. 미국만 반영(EU·영국은 심사 중이나 미반영), 승인 시 최대 약 1.5억 달러 비희석 자본은 가치에 넣지 않음.",
-          "basis": "미국 aPAP 약 5,500명(회사 2025 claims 분석, SEC 8-K 자료 원문 확인) × 피크 치료 비율 25% × 순가격 연 $350k(회사 목표 가격 $400~500k에서 총·순 차이를 뺀 가정) = $481M"
+          "basis": "미국 aPAP 약 5,500명(회사 2025 claims 분석, SEC 8-K 자료 원문 확인) × 피크 치료 비율 25% × 순가격 연 $350k(회사 목표 가격 $400~500k에서 총·순 차이를 뺀 가정) = $481M",
+          "market": {
+            "region": "미국",
+            "tam_patients": 5500,
+            "tam_src": "회사 2025 claims 분석 (SEC 8-K 자료)",
+            "tam_verified": true,
+            "sam_label": "aPAP 진단 환자 (전원)",
+            "sam_src": "분리하지 않음 (항체양성 비율 미확인)",
+            "som_label": "피크 치료 비율 (가정치)",
+            "price_src": "회사 목표 가격 $400~500k에서 총·순 차이를 뺀 가정",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.15,
+                "price_k": 300,
+                "why": "흡입 투약 부담·진단 지연으로 15%, 순가격 $300k"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.25,
+                "price_k": 350,
+                "why": "치료 비율 25%, 순가격 $350k"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.35,
+                "price_k": 400,
+                "why": "유일 승인약으로 35%, 순가격 $400k"
+              }
+            },
+            "triggers": [
+              {
+                "id": "svra-pdufa",
+                "name": "FDA 판정 (PDUFA 2026-11-22)",
+                "kind": "trigger",
+                "proxy": "8-K·보도자료의 승인 또는 CRL 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "MOLBREEVI",
+                    "approv|complete response"
+                  ],
+                  "since": "2026-11-15"
+                },
+                "th": {
+                  "bear": "보완요구서(CRL)",
+                  "base": "승인",
+                  "bull": "승인 + 넓은 라벨"
+                }
+              },
+              {
+                "id": "svra-label",
+                "name": "라벨 범위",
+                "kind": "trigger",
+                "proxy": "승인 라벨의 대상 환자 문구",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "중증만",
+                  "base": "aPAP 성인",
+                  "bull": "aPAP 전반"
+                }
+              },
+              {
+                "id": "svra-price",
+                "name": "출시 가격 (WAC)",
+                "kind": "trigger",
+                "proxy": "출시 보도자료의 가격",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "MOLBREEVI",
+                    "WAC"
+                  ],
+                  "since": "2026-11-15"
+                },
+                "th": {
+                  "bear": "$350k 미만 (순 $300k)",
+                  "base": "$400~450k",
+                  "bull": "$500k 이상"
+                }
+              },
+              {
+                "id": "svra-mhra",
+                "name": "영국 MHRA 판정",
+                "kind": "trigger",
+                "proxy": "보도자료의 MHRA 승인 문장 (회사: 2026년 4분기)",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "MHRA"
+                  ],
+                  "since": "2026-11-15"
+                },
+                "th": {
+                  "bear": "지연·거절",
+                  "base": "승인",
+                  "bull": "승인 + 조기 출시"
+                }
+              },
+              {
+                "id": "svra-ped",
+                "name": "소아 3상 진행",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT06431776 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT06431776",
+                  "due": null
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT06431776"
+              },
+              {
+                "id": "svra-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": "2026-11-22"
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
         }
       ],
       "facts": [
@@ -228,7 +362,159 @@
             }
           ],
           "launch_in": 2.5,
-          "assumptions": "점유율·순가격·PoS는 가정치. 유병·25~30% 비율은 회사 2024-09 자료(원문 확인 전, 회사 추정이라 독립 검증 아님). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음). CT.gov에는 2상으로 등록돼 있지만 회사가 등록 가능 시험이라 밝혀 허가로 이어질 수 있는 시험으로 보고 PoS를 둠(가정치)."
+          "assumptions": "점유율·순가격·PoS는 가정치. 유병·25~30% 비율은 회사 2024-09 자료(원문 확인 전, 회사 추정이라 독립 검증 아님). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음). CT.gov에는 2상으로 등록돼 있지만 회사가 등록 가능 시험이라 밝혀 허가로 이어질 수 있는 시험으로 보고 PoS를 둠(가정치).",
+          "market": {
+            "region": "미국",
+            "tam_patients": 880000,
+            "tam_src": "회사 claims 분석 (2024-09 자료)",
+            "tam_verified": false,
+            "sam_label": "항갑상선제 재발·조절 실패·불내성",
+            "sam_src": "회사 자료 25~30%",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "순가격 가정치",
+            "cases": {
+              "bear": {
+                "sam": 0.25,
+                "pen": 0.03,
+                "price_k": 120,
+                "why": "회사 범위 하단 25%, 경쟁·처방 제한으로 3%, 가격 압박"
+              },
+              "base": {
+                "sam": 0.275,
+                "pen": 0.05,
+                "price_k": 150,
+                "why": "회사 범위 중간 27.5%, 점유 5%"
+              },
+              "bull": {
+                "sam": 0.3,
+                "pen": 0.1,
+                "price_k": 175,
+                "why": "회사 범위 상단 30%, 1차 FcRn 선택으로 10%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "gd-enr1",
+                "name": "등록 가능 시험 1 모집 완료",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT07018323 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT07018323",
+                  "due": "2027-05"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT07018323"
+              },
+              {
+                "id": "gd-enr2",
+                "name": "등록 가능 시험 2 모집 완료",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT06727604 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT06727604",
+                  "due": "2028-06"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT06727604"
+              },
+              {
+                "id": "gd-top",
+                "name": "탑라인: 1차 평가변수",
+                "kind": "trigger",
+                "proxy": "8-K·보도자료에서 Graves 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "Graves",
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "1차 평가변수 유의성 미달",
+                  "base": "1차 평가변수 충족",
+                  "bull": "충족 + 2차 평가변수·지속성까지 우위"
+                }
+              },
+              {
+                "id": "gd-safe",
+                "name": "안전성: LDL·알부민",
+                "kind": "trigger",
+                "proxy": "탑라인 보도자료의 LDL·알부민 수치 (FcRn 계열 공통 이슈)",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "Graves",
+                    "LDL"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "투약 제한 경고 수준",
+                  "base": "관리 가능",
+                  "bull": "계열 최고 수준"
+                }
+              },
+              {
+                "id": "gd-bla",
+                "name": "허가 신청·PDUFA",
+                "kind": "trigger",
+                "proxy": "BLA 제출·수용 8-K",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "Graves",
+                    "BLA"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "추가 시험 요구",
+                  "base": "BLA 제출·표준 심사",
+                  "bull": "우선 심사"
+                }
+              },
+              {
+                "id": "gd-label",
+                "name": "라벨 범위 = SAM 비율",
+                "kind": "trigger",
+                "proxy": "승인 적응증 문구",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "25% 이하 범위",
+                  "base": "27.5%",
+                  "bull": "30% 이상"
+                }
+              },
+              {
+                "id": "gd-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": null
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
         },
         {
           "id": "imvt-mg",
@@ -257,7 +543,123 @@
             }
           ],
           "launch_in": 2.5,
-          "assumptions": "같은 계열(FcRn)이 MG에서 이미 허가돼 PoS를 높게 둠(가정치). 점유율·순가격도 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
+          "assumptions": "같은 계열(FcRn)이 MG에서 이미 허가돼 PoS를 높게 둠(가정치). 점유율·순가격도 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음).",
+          "market": {
+            "region": "미국",
+            "tam_patients": 82715,
+            "tam_src": "2021 인구 기반 추정 논문",
+            "tam_verified": false,
+            "sam_label": "전체 MG (세부 분리 근거 없음)",
+            "sam_src": "분리하지 않음",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "VYVGART 출시 시 순가격 약 $225k 참고",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.03,
+                "price_k": 175,
+                "why": "승인 FcRn 약 다수와 경쟁, 가격 인하"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.05,
+                "price_k": 200,
+                "why": "점유 5%, 순가격 $200k"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.08,
+                "price_k": 225,
+                "why": "효능 차별화로 8%, VYVGART 수준 가격"
+              }
+            },
+            "triggers": [
+              {
+                "id": "mg-enr",
+                "name": "3상 모집 완료",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT07039916 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT07039916",
+                  "due": "2027-12"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT07039916"
+              },
+              {
+                "id": "mg-top",
+                "name": "탑라인: 1차 평가변수",
+                "kind": "trigger",
+                "proxy": "8-K·보도자료에서 MG 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "myasthenia",
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "1차 평가변수 유의성 미달",
+                  "base": "1차 평가변수 충족",
+                  "bull": "충족 + 2차 평가변수·지속성까지 우위"
+                }
+              },
+              {
+                "id": "mg-bla",
+                "name": "허가 신청·PDUFA",
+                "kind": "trigger",
+                "proxy": "BLA 제출·수용 8-K",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "myasthenia",
+                    "BLA"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "추가 시험 요구",
+                  "base": "BLA 제출·표준 심사",
+                  "bull": "우선 심사"
+                }
+              },
+              {
+                "id": "mg-comp",
+                "name": "경쟁 구도",
+                "kind": "trigger",
+                "proxy": "승인된 FcRn·보체 억제제 대비 차별점 (효능 깊이·투약 편의)",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "차별점 없음",
+                  "base": "투약 편의 우위",
+                  "bull": "효능 우위"
+                }
+              },
+              {
+                "id": "mg-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": null
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
         },
         {
           "id": "imvt-cidp",
@@ -286,7 +688,109 @@
             }
           ],
           "launch_in": 3.5,
-          "assumptions": "VYVGART가 CIDP 허가를 받아 시장은 증명됐지만 IMVT-1402 CIDP 시험은 CT.gov상 2상(회사: 등록 가능 시험). PoS·점유율·순가격은 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
+          "assumptions": "VYVGART가 CIDP 허가를 받아 시장은 증명됐지만 IMVT-1402 CIDP 시험은 CT.gov상 2상(회사: 등록 가능 시험). PoS·점유율·순가격은 가정치. 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음).",
+          "market": {
+            "region": "미국",
+            "tam_patients": 77058,
+            "tam_src": "2023 claims 기반 추정 (논문마다 2.8~23.3/10만)",
+            "tam_verified": false,
+            "sam_label": "전체 CIDP (세부 분리 근거 없음)",
+            "sam_src": "분리하지 않음",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "순가격 가정치",
+            "cases": {
+              "bear": {
+                "sam": 1.0,
+                "pen": 0.03,
+                "price_k": 175,
+                "why": "IVIg 대체 속도 느림"
+              },
+              "base": {
+                "sam": 1.0,
+                "pen": 0.05,
+                "price_k": 200,
+                "why": "점유 5%"
+              },
+              "bull": {
+                "sam": 1.0,
+                "pen": 0.08,
+                "price_k": 225,
+                "why": "IVIg 대체 빠름"
+              }
+            },
+            "triggers": [
+              {
+                "id": "cidp-enr",
+                "name": "시험 모집 완료",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT07032662 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT07032662",
+                  "due": "2028-08"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT07032662"
+              },
+              {
+                "id": "cidp-top",
+                "name": "탑라인: 1차 평가변수",
+                "kind": "trigger",
+                "proxy": "8-K·보도자료에서 CIDP 탑라인 문장",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "CIDP",
+                    "top-line|topline"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "1차 평가변수 유의성 미달",
+                  "base": "1차 평가변수 충족",
+                  "bull": "충족 + 2차 평가변수·지속성까지 우위"
+                }
+              },
+              {
+                "id": "cidp-bla",
+                "name": "허가 신청·PDUFA",
+                "kind": "trigger",
+                "proxy": "BLA 제출·수용 8-K",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "CIDP",
+                    "BLA"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "추가 시험 요구",
+                  "base": "BLA 제출·표준 심사",
+                  "bull": "우선 심사"
+                }
+              },
+              {
+                "id": "cidp-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": null
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
         },
         {
           "id": "imvt-ra",
@@ -322,7 +826,111 @@
             }
           ],
           "launch_in": 4.5,
-          "assumptions": "회사 원문: 2기 randomized withdrawal에서 600mg ACR20 92.5% 대 위약 75.6%(p=0.0139), 300mg은 위약과 차이 없음(75.0%), FDA와 등록 경로 협의 예정. 위약군 유지율이 75.6%로 높고 반응자만 대상이라 경로·PoS는 낮게 둠(가정치). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음)."
+          "assumptions": "회사 원문: 2기 randomized withdrawal에서 600mg ACR20 92.5% 대 위약 75.6%(p=0.0139), 300mg은 위약과 차이 없음(75.0%), FDA와 등록 경로 협의 예정. 위약군 유지율이 75.6%로 높고 반응자만 대상이라 경로·PoS는 낮게 둠(가정치). 영업이익률 50%는 가정치(HanAll 로열티율은 확인 못 해 따로 반영하지 않음).",
+          "market": {
+            "region": "미국",
+            "tam_patients": 1300000,
+            "tam_src": "미국 RA 유병 (문헌)",
+            "tam_verified": false,
+            "sam_label": "난치성(D2T) RA",
+            "sam_src": "문헌 범위 5~22%",
+            "som_label": "피크 점유 (가정치)",
+            "price_src": "순가격 가정치",
+            "cases": {
+              "bear": {
+                "sam": 0.05,
+                "pen": 0.03,
+                "price_k": 120,
+                "why": "D2T 비율 문헌 하단 5%"
+              },
+              "base": {
+                "sam": 0.1,
+                "pen": 0.03,
+                "price_k": 150,
+                "why": "D2T 10%, 점유 3%"
+              },
+              "bull": {
+                "sam": 0.22,
+                "pen": 0.03,
+                "price_k": 150,
+                "why": "D2T 비율 문헌 상단 22%"
+              }
+            },
+            "triggers": [
+              {
+                "id": "ra-p2",
+                "name": "등록 가능 시험 2기: 1차 평가변수",
+                "kind": "trigger",
+                "proxy": "ACR20 28주 (무작위 중단 설계)",
+                "collector": {
+                  "type": "manual"
+                },
+                "th": {
+                  "bear": "1차 평가변수 유의성 미달",
+                  "base": "1차 평가변수 충족",
+                  "bull": "충족 + 2차 평가변수·지속성까지 우위"
+                },
+                "evidence": {
+                  "status": "done",
+                  "scenario": "base",
+                  "date": "2026-11-09",
+                  "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+                  "note": "ACR20 92.5% 대 위약 75.6%, p=0.0139로 충족 (회사 보도자료 원문)"
+                }
+              },
+              {
+                "id": "ra-fda",
+                "name": "FDA와 개발 경로 협의",
+                "kind": "trigger",
+                "proxy": "8-K에서 RA·FDA 협의 결과 문장 (회사: 올해 안)",
+                "collector": {
+                  "type": "sec",
+                  "terms": [
+                    "rheumatoid",
+                    "FDA"
+                  ],
+                  "since": "2026-11-01"
+                },
+                "th": {
+                  "bear": "추가 3상 2건 요구",
+                  "base": "추가 3상 1건",
+                  "bull": "현 시험으로 신청 가능"
+                }
+              },
+              {
+                "id": "ra-enr",
+                "name": "시험 모집 완료",
+                "kind": "proxy",
+                "proxy": "CT.gov NCT06754462 상태·1차 완료 예정일",
+                "collector": {
+                  "type": "ctgov",
+                  "nct": "NCT06754462",
+                  "due": "2027-09"
+                },
+                "th": {
+                  "bear": "예정일보다 3개월 넘게 지연·중단",
+                  "base": "예정대로 (±3개월)",
+                  "bull": "2개월 넘게 앞당김"
+                },
+                "url": "https://clinicaltrials.gov/study/NCT06754462"
+              },
+              {
+                "id": "ra-rev",
+                "name": "출시 후 매출 궤적",
+                "kind": "trigger",
+                "proxy": "분기 제품 매출 (XBRL 10-Q) 대 시나리오 1년차 매출",
+                "collector": {
+                  "type": "revenue",
+                  "launch": null
+                },
+                "th": {
+                  "bear": "시나리오 경로 하회",
+                  "base": "경로",
+                  "bull": "경로 상회"
+                }
+              }
+            ]
+          }
         }
       ],
       "facts": [

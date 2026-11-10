@@ -1,0 +1,170 @@
+"""
+바이오 탭: 자산별 시장(TAM → SAM → SOM)과 시나리오 트리거.
+
+시장: 유병 환자(TAM) × 표적 비율(SAM) × 침투율(SOM) × 순가격 = 피크매출. bear·base·bull 은 이 세 값과 가격만 다르다.
+      base 의 피크매출은 bio_assets.json 의 peak_musd 와 같아야 한다(테스트로 확인).
+트리거: 시나리오를 가르는 사건과 그 진행을 보여주는 프록시. 각각 수집기가 있다.
+  ctgov   : ClinicalTrials.gov 시험 상태·1차 완료 예정일 (매일 자동)
+  sec     : 최근 8-K·보도자료·10-Q 문장에서 단어가 모두 나오면 '새 원문, 판정 필요' (결과를 자동으로 판정하지 않음)
+  revenue : 출시 뒤 분기 제품 매출을 시나리오별 1년차 분기 매출과 비교 (자동)
+  manual  : 원문을 읽고 설정에 적은 판정 (evidence: status·scenario·url)
+"""
+
+import copy
+from datetime import date
+
+import requests
+
+CASES = ('bear', 'base', 'bull')
+LIVE = {'RECRUITING', 'NOT_YET_RECRUITING', 'ENROLLING_BY_INVITATION'}
+STOPPED = {'TERMINATED', 'WITHDRAWN', 'SUSPENDED'}
+_ct_cache = {}
+
+
+def peak_of(m: dict, case: str) -> float:
+    """백만 달러."""
+    c = m['cases'][case]
+    return m['tam_patients'] * c['sam'] * c['pen'] * c['price_k'] * 1000 / 1e6
+
+
+def ct_study(nct: str):
+    if nct in _ct_cache:
+        return _ct_cache[nct]
+    r = requests.get(f'https://clinicaltrials.gov/api/v2/studies/{nct}', timeout=30,
+                     params={'fields': 'NCTId,OverallStatus,EnrollmentInfo,PrimaryCompletionDate,LastUpdatePostDate,Phase'})
+    r.raise_for_status()
+    p = r.json()['protocolSection']
+    st, de = p['statusModule'], p.get('designModule', {})
+    out = {'status': st['overallStatus'], 'pcd': (st.get('primaryCompletionDateStruct') or {}).get('date'),
+           'enroll': (de.get('enrollmentInfo') or {}).get('count'), 'enroll_type': (de.get('enrollmentInfo') or {}).get('type'),
+           'updated': (st.get('lastUpdatePostDateStruct') or {}).get('date'), 'phases': de.get('phases') or []}
+    _ct_cache[nct] = out
+    return out
+
+
+def _months(a: str, b: str) -> int:
+    """b − a 개월 (YYYY-MM[-DD])."""
+    ya, ma = int(a[:4]), int(a[5:7])
+    yb, mb = int(b[:4]), int(b[5:7])
+    return (yb - ya) * 12 + (mb - ma)
+
+
+def judge_ct(s: dict, due):
+    """(status, scenario). 모집 중이면 진행 중이고 시나리오는 일정으로 잠정 판단."""
+    if s['status'] in STOPPED:
+        return 'done', 'bear'
+    lean = 'base'
+    if due and s.get('pcd'):
+        d = _months(due, s['pcd'])
+        lean = 'bear' if d > 3 else 'bull' if d < -2 else 'base'
+    return ('live' if s['status'] in LIVE else 'done'), lean
+
+
+STATUS_KO = {'RECRUITING': '모집 중', 'NOT_YET_RECRUITING': '모집 전', 'ENROLLING_BY_INVITATION': '초청 모집 중', 'ACTIVE_NOT_RECRUITING': '모집 완료·진행 중',
+             'COMPLETED': '완료', 'TERMINATED': '중단', 'WITHDRAWN': '철회', 'SUSPENDED': '일시 중지'}
+
+
+def sec_hits(row: dict, terms, since):
+    auto = row.get('auto') or {}
+    texts = []
+    for x in auto.get('ir', []):
+        for h in [x.get('title') or ''] + list(x.get('highlights') or []):
+            texts.append((x.get('filed'), h, x.get('url')))
+    for e in auto.get('events', []):
+        texts.append((e.get('filed'), e.get('sentence') or '', e.get('url')))
+    out, seen = [], set()
+    for d, t, u in texts:
+        if since and (d or '') < since:
+            continue
+        low = t.lower()
+        if all(any(alt.lower() in low for alt in w.split('|')) for w in terms) and t not in seen:   # 'a|b' 는 둘 중 하나
+            seen.add(t)
+            out.append({'date': d, 'text': t[:300], 'url': u})
+    return out[:3]
+
+
+def collect(trig: dict, row: dict, asset: dict, m: dict, today: str):
+    col = trig['collector']
+    t = {k: v for k, v in trig.items() if k != 'collector'}
+    t['source'] = col['type']
+    if col['type'] == 'ctgov':
+        try:
+            s = ct_study(col['nct'])
+        except Exception as e:
+            t.update(status='error', note=f'CT.gov 실패: {str(e)[:60]}')
+            return t
+        st, sc = judge_ct(s, col.get('due'))
+        prog = f"{col['nct']} {STATUS_KO.get(s['status'], s['status'])} · {'목표' if s['enroll_type'] == 'ESTIMATED' else '실제'} {s['enroll'] or '–'}명 · 1차 완료 {s['pcd'] or '–'}"
+        if col.get('due') and s.get('pcd') and s['pcd'][:7] != col['due']:
+            prog += f" (기준 {col['due']})"
+        t.update(status=st, scenario=sc, tentative=st == 'live', progress=prog, date=s.get('updated'), data=s)
+    elif col['type'] == 'sec':
+        hits = sec_hits(row, col['terms'], col.get('since'))
+        if trig.get('evidence'):
+            t.update(_evidence(trig['evidence']))
+        elif hits:
+            t.update(status='hit', progress='새 원문 문장이 나왔습니다. 읽고 판정해야 합니다.', hits=hits, date=hits[0]['date'])
+        else:
+            t.update(status='wait', progress=f"{col.get('since') or ''} 이후 해당 문장 없음 (단어: {' + '.join(w.replace('|', ' 또는 ') for w in col['terms'])})")
+    elif col['type'] == 'revenue':
+        launch = col.get('launch')
+        qs = [q for q in ((row.get('fin') or {}).get('quarters') or []) if launch and q['end'] > launch and q.get('revenue')]
+        exp = {k: peak_of(m, k) / max(1, asset.get('ramp_years', 5)) / 4 for k in CASES}
+        t['expected_q1'] = exp
+        if not launch or launch > today:
+            t.update(status='wait', progress='출시 전')
+        elif not qs:
+            t.update(status='live', progress='출시 후 첫 분기 실적 대기', tentative=True, scenario=None)
+        else:
+            q = qs[-1]
+            sc = min(CASES, key=lambda k: abs(exp[k] - q['revenue']))
+            t.update(status='done', scenario=sc, progress=f"{q['label']} 매출 ${q['revenue']:.1f}M (1년차 분기 경로: bear ${exp['bear']:.0f}M · base ${exp['base']:.0f}M · bull ${exp['bull']:.0f}M)",
+                     date=q['end'])
+    else:
+        if trig.get('evidence'):
+            t.update(_evidence(trig['evidence']))
+        else:
+            t.update(status='wait', progress='판정 전')
+    return t
+
+
+def _evidence(ev):
+    return {'status': ev.get('status', 'done'), 'scenario': ev.get('scenario'), 'progress': ev.get('note', ''), 'date': ev.get('date'),
+            'evidence_url': ev.get('url')}
+
+
+def tracking(trigs):
+    """판정된(잠정 포함) 트리거로 지금 어느 시나리오를 지나는지. bear 가 하나라도 있으면 bear."""
+    sc = [t['scenario'] for t in trigs if t.get('scenario') and t['status'] in ('done', 'live')]
+    if not sc:
+        return 'base', 0
+    if 'bear' in sc:
+        return 'bear', len(sc)
+    return ('bull' if sc.count('bull') > sc.count('base') else 'base'), len(sc)
+
+
+def asset_markets(co, row, mk, g, rf, value_company, scen_base):
+    today = date.today().isoformat()
+    out = []
+    for a in co.get('assets', []):
+        m = a.get('market')
+        if not m:
+            continue
+        cases = {}
+        for k in CASES:
+            pk = peak_of(m, k)
+            c2 = copy.deepcopy(co)
+            next(x for x in c2['assets'] if x['id'] == a['id'])['peak_musd'] = pk
+            ps = value_company(c2, mk, g, rf, scen_base)['per_share']
+            c = m['cases'][k]
+            sam_n = m['tam_patients'] * c['sam']
+            cases[k] = {**c, 'peak': pk, 'per_share': ps, 'upside': ps / mk['price'] - 1 if ps is not None and mk['price'] else None,
+                        'tam_usd': m['tam_patients'] * c['price_k'] * 1000 / 1e6, 'sam_n': sam_n, 'sam_usd': sam_n * c['price_k'] * 1000 / 1e6,
+                        'som_n': sam_n * c['pen']}
+        trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
+        track, n = tracking(trigs)
+        out.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'region': m['region'],
+                     'tam_patients': m['tam_patients'], 'tam_src': m['tam_src'], 'tam_verified': m['tam_verified'],
+                     'sam_label': m['sam_label'], 'sam_src': m['sam_src'], 'som_label': m['som_label'], 'price_src': m['price_src'],
+                     'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
+    return out

@@ -963,3 +963,29 @@ tr.scr-mine td { background: var(--hover); }
 .bb-bar i { display: block; height: 100%; background: var(--accent, #3b82f6); }
 .tbl.bb tr.bb-tot td { border-top: 2px solid var(--line, #ddd); }
 .tbl.bb tr.bb-gap td { color: var(--sub); }
+
+.mk-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.mk-svg { width: 100%; max-width: 760px; display: block; margin: 4px auto 8px; font-family: inherit; }
+.mk-svg .mk-h { font-size: 24px; font-weight: 700; }
+.mk-svg .mk-s { font-size: 12px; font-weight: 400; }
+.mk-svg .mk-v { font-size: 15px; font-weight: 700; }
+.mk-svg .mk-ct { font-size: 15px; font-weight: 700; }
+.mk-svg .mk-cb { font-size: 13px; }
+.mk-sum { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; padding: 10px; border: 1px solid var(--line); border-radius: 12px; font-size: 13px; }
+.mk-sum span { padding: 3px 10px; border-radius: 999px; background: var(--chip); color: var(--sub); }
+.mk-sum span.on { background: #EEEDFE; color: #26215C; }
+.mk-sum b { margin: 0 4px; }
+.mk-tr { display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); }
+.mk-tn { font-weight: 700; font-size: 14px; }
+.mk-pg { margin-top: 4px; }
+.mk-i { font-size: 18px; margin-top: 1px; }
+.mk-i.ok, .mk-pill.ok { color: #0F6E56; } .mk-i.acc, .mk-pill.acc { color: var(--accent); } .mk-i.warn, .mk-pill.warn { color: #854F0B; }
+.mk-i.mute, .mk-pill.mute { color: var(--muted); } .mk-i.bad, .mk-pill.bad { color: #A32D2D; }
+.mk-st { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.mk-pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--chip); white-space: nowrap; }
+.mk-pill.ok { background: #E1F5EE; } .mk-pill.warn { background: #FAEEDA; } .mk-pill.bad { background: #FCEBEB; }
+.mk-th { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; font-size: 12px; }
+.mk-th span { background: var(--chip); border-radius: 6px; padding: 4px 8px; color: var(--sub); }
+.mk-th span.cur { outline: 1px solid var(--accent); }
+.mk-th span.hit { background: #EEEDFE; color: #26215C; font-weight: 700; }
+@media (max-width: 640px) { .mk-tr { grid-template-columns: 22px minmax(0, 1fr); } .mk-st { grid-column: 2; align-items: flex-start; text-align: left; } .mk-th { grid-template-columns: 1fr; } }

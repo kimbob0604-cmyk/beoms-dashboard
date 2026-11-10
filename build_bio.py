@@ -22,6 +22,7 @@ import requests
 
 import bio_events as be
 import bio_kr as bk
+import bio_market as bmk
 import bio_reports as br
 import bio_xbrl as bx
 import bio_valuation as bv
@@ -700,6 +701,7 @@ def build_kr(co, old, cfg, fx, rf):
         row['reports'] = old.get('reports')
     row['bull_bridge'] = bull_bridge(co, mk, g, rf, cfg, row['valuation']['per_share'],
                                      ((row.get('reports') or {}).get('summary') or {}).get('goal_avg'))
+    row['markets'] = bmk.asset_markets(co, row, mk, g, rf, value_company, cfg['scenarios']['base'])
     return row
 
 
@@ -814,6 +816,7 @@ def build():
                 row['reports'] = old.get('reports')
             row['bull_bridge'] = bull_bridge(co, mk, g, rf, cfg, row['valuation']['per_share'],
                                              ((row.get('reports') or {}).get('summary') or {}).get('goal_avg'))
+            row['markets'] = bmk.asset_markets(co, row, mk, g, rf, value_company, cfg['scenarios']['base'])
             try:
                 cons = fetch_consensus(t)
             except Exception as e:

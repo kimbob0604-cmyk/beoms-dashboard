@@ -370,6 +370,84 @@
       <div class="bio-pad small">${note}<p class="muted">단계는 순서대로 쌓입니다. 각 단계 값은 앞 단계를 모두 적용한 뒤의 변화입니다. 근거에 '가정치'라고 쓴 숫자는 리포트·공시 원문에 없는 값입니다.</p></div>`;
   }
 
+  // 시장(TAM → SAM → SOM)과 시나리오 트리거. 자산·시나리오 선택은 화면 안에서만 유지.
+  const MK = { a: 0, s: 'base' };
+  const CASE_KO = { bear: 'Bear', base: 'Base', bull: 'Bull' };
+  const bn = v => v >= 10000 ? `$${(v / 1000).toFixed(0)}B` : v >= 1000 ? `$${(v / 1000).toFixed(2)}B` : `$${v.toFixed(0)}M`;
+  const ppl = n => n >= 10000 ? `${+(n / 10000).toFixed(1)}만 명` : `${Math.round(n).toLocaleString('ko-KR')}명`;
+  const TST = { done: ['판정', 'ok', '✓'], live: ['진행 중', 'acc', '◐'], hit: ['새 원문 · 판정 필요', 'warn', '!'],
+    wait: ['대기', 'mute', '○'], error: ['수집 실패', 'bad', '×'] };
+  const SRC_KO = { ctgov: 'CT.gov · 매일', sec: 'SEC 8-K·10-Q · 매일', revenue: 'XBRL 10-Q', manual: '원문 판정 (수동)' };
+
+  function marketSvg(m, k) {
+    const c = m.cases[k];
+    const pct = v => `${+(v * 100).toFixed(1)}%`;
+    return `<svg class="mk-svg" viewBox="0 0 680 400" role="img" aria-label="${esc(m.indication)} TAM ${bn(c.tam_usd)}, SAM ${bn(c.sam_usd)}, SOM ${bn(c.peak)}">
+      <circle cx="190" cy="205" r="185" fill="#EEEDFE" stroke="#AFA9EC"/>
+      <circle cx="190" cy="263" r="127" fill="#B5D4F4" stroke="#85B7EB"/>
+      <circle cx="190" cy="318" r="72" fill="#534AB7"/>
+      <text x="190" y="62" text-anchor="middle" class="mk-h" fill="#26215C">TAM</text>
+      <text x="190" y="82" text-anchor="middle" class="mk-s" fill="#3C3489">유병 환자 × 순가격</text>
+      <rect x="125" y="92" width="130" height="30" rx="15" fill="#534AB7"/><text x="190" y="112" text-anchor="middle" class="mk-v" fill="#fff">${bn(c.tam_usd)}</text>
+      <text x="190" y="175" text-anchor="middle" class="mk-h" fill="#042C53">SAM</text>
+      <text x="190" y="194" text-anchor="middle" class="mk-s" fill="#0C447C">${esc(m.sam_label.length > 16 ? m.sam_label.slice(0, 15) + '…' : m.sam_label)}</text>
+      <rect x="130" y="203" width="120" height="28" rx="14" fill="#185FA5"/><text x="190" y="222" text-anchor="middle" class="mk-v" fill="#fff">${bn(c.sam_usd)}</text>
+      <text x="190" y="304" text-anchor="middle" class="mk-h" fill="#fff">SOM</text>
+      <text x="190" y="321" text-anchor="middle" class="mk-s" fill="#CECBF6">피크매출</text>
+      <rect x="140" y="330" width="100" height="28" rx="14" fill="#fff"/><text x="190" y="349" text-anchor="middle" class="mk-v" fill="#3C3489">${bn(c.peak)}</text>
+      <g fill="none" stroke-width="1.2"><polyline points="300,58 340,36 400,36" stroke="#7F77DD"/><polyline points="290,190 330,160 400,160" stroke="#378ADD"/><polyline points="245,284 400,284" stroke="#534AB7"/></g>
+      <circle cx="300" cy="58" r="5" fill="#fff" stroke="#7F77DD" stroke-width="2"/><circle cx="290" cy="190" r="5" fill="#fff" stroke="#378ADD" stroke-width="2"/><circle cx="245" cy="284" r="5" fill="#fff" stroke="#534AB7" stroke-width="2"/>
+      <rect x="400" y="0" width="276" height="96" rx="14" fill="#EEEDFE"/><rect x="414" y="18" width="3" height="60" rx="1.5" fill="#7F77DD"/>
+      <text x="428" y="30" class="mk-ct" fill="#26215C">TAM <tspan class="mk-s" fill="#534AB7">전체 환자 시장</tspan></text>
+      <text x="428" y="54" class="mk-cb" fill="#3C3489">${ppl(m.tam_patients)} × 연 $${c.price_k}k</text>
+      <text x="428" y="76" class="mk-s" fill="#534AB7">${esc(m.tam_src.slice(0, 26))}${m.tam_verified ? ' · 원문 확인' : ' · 원문 미확인'}</text>
+      <rect x="400" y="114" width="276" height="96" rx="14" fill="#E6F1FB"/><rect x="414" y="132" width="3" height="60" rx="1.5" fill="#378ADD"/>
+      <text x="428" y="144" class="mk-ct" fill="#042C53">SAM <tspan class="mk-s" fill="#185FA5">표적 환자</tspan></text>
+      <text x="428" y="168" class="mk-cb" fill="#0C447C">${ppl(c.sam_n)} (TAM의 ${pct(c.sam)})</text>
+      <text x="428" y="190" class="mk-s" fill="#185FA5">${esc(m.sam_src.slice(0, 28))}</text>
+      <rect x="400" y="228" width="276" height="96" rx="14" fill="#EEEDFE"/><rect x="414" y="246" width="3" height="60" rx="1.5" fill="#534AB7"/>
+      <text x="428" y="258" class="mk-ct" fill="#26215C">SOM <tspan class="mk-s" fill="#534AB7">피크 점유</tspan></text>
+      <text x="428" y="282" class="mk-cb" fill="#3C3489">${ppl(c.som_n)} (SAM의 ${pct(c.pen)})</text>
+      <text x="428" y="304" class="mk-s" fill="#534AB7">${esc(m.som_label.slice(0, 28))}</text>
+      <rect x="400" y="342" width="276" height="54" rx="14" fill="none" stroke="#AFA9EC"/>
+      <text x="414" y="364" class="mk-s" fill="#534AB7">주당 가치 (이 자산만 ${CASE_KO[k]})</text>
+      <text x="414" y="386" class="mk-ct" fill="#26215C">${px(c.per_share)} · 현재가 ${px(curPrice)} (${pc(c.upside)})</text>
+    </svg>`;
+  }
+  let curPrice = 0;
+
+  function marketHtml(c) {
+    const ms = c.markets || [];
+    if (!ms.length) return '';
+    if (MK.c !== c.ticker) { MK.c = c.ticker; MK.a = 0; MK.s = ms[0].tracking || 'base'; }
+    if (MK.a >= ms.length) MK.a = 0;
+    const m = ms[MK.a], k = MK.s, cs = m.cases[k];
+    curPrice = c.market.price;
+    const tabs = ms.length > 1 ? `<span class="seg" role="group" aria-label="자산">${ms.map((x, i) => `<button type="button" data-mka="${i}" class="${i === MK.a ? 'on' : ''}">${esc(x.indication)}</button>`).join('')}</span>` : '';
+    const segS = `<span class="seg" role="group" aria-label="시나리오">${['bear', 'base', 'bull'].map(s => `<button type="button" data-mks="${s}" class="${s === k ? 'on' : ''}">${CASE_KO[s]}${s === m.tracking ? ' ●' : ''}</button>`).join('')}</span>`;
+    const ix = ['bear', 'base', 'bull'].indexOf(k);
+    const trig = m.triggers.map(t => {
+      const z = TST[t.status] || TST.wait;
+      const th = t.th ? `<div class="mk-th">${['bear', 'base', 'bull'].map((s, i) => `<span class="${i === ix ? 'cur' : ''}${t.scenario === s ? ' hit' : ''}">${CASE_KO[s]}: ${esc(t.th[s] || '')}</span>`).join('')}</div>` : '';
+      const hits = (t.hits || []).map(h => `<li><span class="d">${esc(h.date || '')}</span><a href="${esc(h.url || '#')}" target="_blank" rel="noopener">${esc(h.text)}</a></li>`).join('');
+      const link = t.evidence_url || t.url;
+      return `<div class="mk-tr"><span class="mk-i ${z[1]}" aria-hidden="true">${z[2]}</span>
+        <div><div class="mk-tn">${esc(t.name)} <span class="muted small">${t.kind === 'proxy' ? '프록시' : '트리거'}</span></div>
+          <div class="muted small">${esc(t.proxy || '')}</div>
+          <div class="small mk-pg">${esc(t.progress || '')}${t.scenario ? ` → <b>${CASE_KO[t.scenario]}</b>${t.tentative ? ' (잠정)' : ''}` : ''}${link ? ` · <a href="${esc(link)}" target="_blank" rel="noopener">원문</a>` : ''}</div>
+          ${hits ? `<ul class="ir-hl">${hits}</ul>` : ''}${th}</div>
+        <div class="mk-st"><span class="mk-pill ${z[1]}">${z[0]}</span><small class="muted">${SRC_KO[t.source] || ''}</small></div></div>`;
+    }).join('');
+    const nDone = m.triggers.filter(t => t.status === 'done').length;
+    return `<div class="bio-sub">시장과 시나리오 트리거 <span class="muted small">${esc(m.name)} · ${esc(m.indication)} (${esc(m.region)}) · 피크매출 = 유병 환자 × 표적 비율 × 침투율 × 순가격</span></div>
+      <div class="bio-pad mk-bar">${tabs}${segS}<span class="muted small">● 지금 추적 중인 시나리오 (판정 ${m.judged}건 기준)</span></div>
+      <div class="bio-pad">${marketSvg(m, k)}
+        <p class="muted small">${CASE_KO[k]} 가정: ${esc(cs.why)} · 가격 근거: ${esc(m.price_src)}</p>
+        <div class="mk-sum">${['bear', 'base', 'bull'].map(s => `<span class="${s === k ? 'on' : ''}">${CASE_KO[s]} <b>${bn(m.cases[s].peak)}</b> ${px(m.cases[s].per_share)}</span>`).join('<em class="muted">›</em>')}</div></div>
+      <div class="bio-sub">트리거와 프록시 <span class="muted small">완료 ${nDone}/${m.triggers.length} · 각 단계의 Bear·Base·Bull 판정 기준을 미리 적어 두고, 수집된 원문이 어느 기준에 걸리는지 표시</span></div>
+      <div class="bio-pad">${trig}</div>`;
+  }
+
   function reportsHtml(c) {
     const r = c.reports;
     if (!r) return '';
@@ -507,6 +585,7 @@
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
+      h += marketHtml(c);
       h += reportsHtml(c);
       h += bullHtml(c);
       h += pipeHtml(c);
@@ -598,6 +677,11 @@
   document.addEventListener('click', e => {
     const b = e.target.closest('#mkt [data-m]');
     if (b && b.dataset.m !== st.m) { SF.kind = 'all'; SF.cap = '0'; pg.set({ m: b.dataset.m, c: '' }); }
+  });
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-mka]'), s = e.target.closest('[data-mks]');
+    if (a) { MK.a = +a.dataset.mka; render(); }
+    if (s) { MK.s = s.dataset.mks; render(); }
   });
   $('cards').addEventListener('click', e => {
     const r = e.target.closest('[data-c]');
