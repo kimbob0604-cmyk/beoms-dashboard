@@ -278,6 +278,7 @@ python3 build_dart.py
 - `build_strategy.py` → `public/data/st/`. 포트폴리오형은 다음 호까지 보유, 신호형은 20·60·120거래일 보유. 살 시점은 네이버 게시일 다음 거래일 종가(텔레그램 장중 글은 그날 종가). 비용 편도 0.3%.
 - 지금 추적: 하나 실전 퀀트 MP, 대신 국내 주식 10선, 대신 이번 주 포커스, 유안타 QWER, 다올 실적 판정(바텀업 채널), 다올 Active Quant(탑다운 채널).
 - 화면에는 종목·방향과 원문 링크만 싣는다. 리포트 본문은 옮기지 않는다.
+- 전략 카드의 "최근 호 요지"는 `strategy_notes.json`(문서 id → 직접 쓴 한두 문장)에서 온다. 예약 작업 `strategy-notes`(평일 13:30, Claude 앱)가 `strategy_notes.py pending` 으로 요지 없는 최근 호를 찾아 원문을 읽고 `strategy_notes.py add` 로 써 넣는다.
 
 ## 테이블
 

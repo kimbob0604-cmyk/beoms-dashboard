@@ -1,9 +1,13 @@
+import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
 import numpy as np
 
 import build_strategy as B
 import collect_strategy as C
+import strategy_notes as N
 import strategy_parse as P
 
 NAMES = P.NameIndex([
@@ -197,6 +201,46 @@ class CompositionTest(unittest.TestCase):
         c = B.composition('daol_bu', 'signal', [old, new], mine, '2026-10-13', self.name)
         self.assertEqual(c['stats'], {'all': 2, 'L': 0, 'S': 1})
         self.assertEqual((c['names'], c['short']), ([], ['나']))
+
+
+class NotesTest(unittest.TestCase):
+    def setUp(self):
+        self.conn = sqlite3.connect(':memory:')
+        self.conn.executescript(C.SCHEMA)
+        docs = [('nv1', 'hana_qmp', '2026-09-30', 34, None), ('nv2', 'hana_qmp', '2026-10-28', 34, None),
+                ('nv3', 'hana_qmp', '2026-11-04', 0, None),              # 종목이 없는 호(모델 포트폴리오가 아닌 리포트)는 건너뛴다
+                ('tgtd9', 'daol_aq', '2026-11-09', 0, None),             # 롱·숏이 하나도 없는 주간 표도 한 호다
+                ('tgtd8', 'daol_aq', '2026-11-10', 0, 'ValueError: 포지션 표 없음'),
+                ('tgbu5', 'daol_bu', '2026-11-09', 1, None)]
+        self.conn.executemany("INSERT INTO doc (id, src, series, date, title, url, n_pick, parsed_at, err) VALUES (?,'x',?,?,'제목','u',?,'t',?)", docs)
+        self.conn.execute("INSERT INTO pick VALUES ('nv2', 'hana_qmp', '005930', '삼성전자', 'L', 25.5, 'IT')")
+        self.conn.execute("INSERT INTO tgpost VALUES ('td', 9, '2026-11-09T01:05:00+00:00', '글 본문', '[]')")
+        self.tmp = tempfile.TemporaryDirectory()
+        self.old = N.NOTES
+        N.NOTES = Path(self.tmp.name) / 'notes.json'
+
+    def tearDown(self):
+        N.NOTES = self.old
+        self.tmp.cleanup()
+
+    def test_pending_is_latest_issue_without_note(self):
+        got = {p['id']: p for p in N.pending(self.conn, {})}
+        self.assertEqual(sorted(got), ['nv2', 'tgtd9'])                 # 실적 판정(daol_bu)·오류 난 글·종목 없는 호는 빠진다
+        self.assertEqual(got['nv2']['picks'], ['삼성전자(롱 25.5%, IT)'])
+        self.assertEqual(got['tgtd9']['post'], '글 본문')
+        self.assertEqual([p['id'] for p in N.pending(self.conn, {'nv2': '있음'})], ['tgtd9'])
+        self.assertEqual([p['id'] for p in N.pending(self.conn, {'nv1': '옛 호 요지'})], ['nv2', 'tgtd9'])     # 옛 호 요지는 최신 호를 대신하지 않는다
+
+    def test_add_validates_and_keeps_existing(self):
+        text = '11월 주도 업종으로 반도체와 에너지를 꼽았다. 순환매가 잦은 달이라 기관이 많이 판 종목이 유리하다고 봤다.'
+        N.add(self.conn, 'nv1', text)
+        N.add(self.conn, 'nv2', '  줄바꿈과\n공백은   한 칸으로 줄여서 저장한다. 스무 자가 넘어야 한다.  ')
+        notes = N.load()
+        self.assertEqual(notes['nv1'], text)
+        self.assertEqual(notes['nv2'], '줄바꿈과 공백은 한 칸으로 줄여서 저장한다. 스무 자가 넘어야 한다.')
+        for did, bad in (('nv9', text), ('nv1', '짧다'), ('nv1', '가' * 300), ('tgbu5', text)):
+            with self.assertRaises(ValueError):
+                N.add(self.conn, did, bad)
 
 
 if __name__ == '__main__':
