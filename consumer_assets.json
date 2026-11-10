@@ -1,0 +1,2215 @@
+{
+ "note": "소비재 탭 종목 설정. consumer_draft.py 가 만든 초안 — 흐름의 basis: channel=수출입 채널 기록 근거, hq=본사 소재지(검수 전), national=전국 업황. regions 는 \"시도코드:시군구\". 검수하면 reviewed 를 true 로.",
+ "chains": {
+  "화장품": [
+   "원료·소재",
+   "용기·부자재",
+   "ODM·OEM",
+   "브랜드",
+   "유통·플랫폼"
+  ],
+  "식음료": [
+   "원료·소재",
+   "라면",
+   "제과·빙과",
+   "종합식품",
+   "수산·김",
+   "음료·주류",
+   "담배",
+   "건강기능식품",
+   "외식"
+  ]
+ },
+ "stocks": [
+  {
+   "code": "090430",
+   "name": "아모레퍼시픽",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "color",
+    "cleanse"
+   ],
+   "memo": "",
+   "hq": "11:용산구",
+   "hq_addr": "서울특별시 용산구 한강대로 100 (한강로2가)",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:용산구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:용산구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-cleanse",
+     "kind": "sigungu",
+     "group": "cleanse",
+     "regions": [
+      "11:용산구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-cleanse",
+     "kind": "national",
+     "group": "cleanse",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "051900",
+   "name": "LG생활건강",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "cleanse",
+    "hair"
+   ],
+   "memo": "생활용품·음료 매출이 크다 — 수출이 설명하는 비중이 낮다",
+   "hq": "11:중구",
+   "hq_addr": "서울특별시 중구 후암로 98 LG서울역빌딩",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-cleanse",
+     "kind": "sigungu",
+     "group": "cleanse",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-cleanse",
+     "kind": "national",
+     "group": "cleanse",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-hair",
+     "kind": "sigungu",
+     "group": "hair",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-hair",
+     "kind": "national",
+     "group": "hair",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "278470",
+   "name": "에이피알",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "mask",
+    "device"
+   ],
+   "memo": "뷰티 디바이스 포함",
+   "hq": "11:송파구",
+   "hq_addr": "서울특별시 송파구 올림픽로 300 36층(신천동, 롯데월드타워앤드롯데월드몰)",
+   "flows": [
+    {
+     "id": "c-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:송파구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "c-mask",
+     "kind": "sigungu",
+     "group": "mask",
+     "regions": [
+      "11:송파구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-mask",
+     "kind": "national",
+     "group": "mask",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "c-device",
+     "kind": "sigungu",
+     "group": "device",
+     "regions": [
+      "11:송파구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-device",
+     "kind": "national",
+     "group": "device",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "483650",
+   "name": "달바글로벌",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "11:마포구",
+   "hq_addr": "서울특별시 마포구 마포대로 78 (도화동, 자람빌딩), 12층",
+   "flows": [
+    {
+     "id": "c-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:마포구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "018290",
+   "name": "브이티",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "mask"
+   ],
+   "memo": "",
+   "hq": "41:파주시",
+   "hq_addr": "경기도 파주시  산업단지길 139 (주)G.M.P",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "41:파주시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-mask",
+     "kind": "sigungu",
+     "group": "mask",
+     "regions": [
+      "41:파주시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-mask",
+     "kind": "national",
+     "group": "mask",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "114840",
+   "name": "아이패밀리에스씨",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "color"
+   ],
+   "memo": "",
+   "hq": "11:송파구",
+   "hq_addr": "서울특별시 송파구 동남로 122 문정동, COLLECTED 빌딩",
+   "flows": [
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:송파구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "237880",
+   "name": "클리오",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "color",
+    "skin"
+   ],
+   "memo": "",
+   "hq": "11:성동구",
+   "hq_addr": "서울특별시 성동구 왕십리로 66 -",
+   "flows": [
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:성동구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:성동구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "439090",
+   "name": "마녀공장",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "cleanse"
+   ],
+   "memo": "",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 테헤란로 124 삼원타워 4층",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-cleanse",
+     "kind": "sigungu",
+     "group": "cleanse",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-cleanse",
+     "kind": "national",
+     "group": "cleanse",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "214420",
+   "name": "토니모리",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "",
+   "hq": "11:서초구",
+   "hq_addr": "서울특별시 서초구 남부순환로 2557 토니모리 빌딩",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "078520",
+   "name": "에이블씨엔씨",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "",
+   "hq": "11:중구",
+   "hq_addr": "서울특별시 중구 남대문로 78 7층(명동1가, 타임워크명동빌딩)",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "451250",
+   "name": "삐아",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "color"
+   ],
+   "memo": "",
+   "hq": "28:연수구",
+   "hq_addr": "인천광역시 연수구 컨벤시아대로 165 32층",
+   "flows": [
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "28:연수구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "018250",
+   "name": "애경산업",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "color",
+    "skin",
+    "hair"
+   ],
+   "memo": "생활용품 매출이 크다",
+   "hq": "11:마포구",
+   "hq_addr": "서울특별시 마포구 양화로 188 -",
+   "flows": [
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "11:마포구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:마포구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-hair",
+     "kind": "sigungu",
+     "group": "hair",
+     "regions": [
+      "11:마포구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-hair",
+     "kind": "national",
+     "group": "hair",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "092730",
+   "name": "네오팜",
+   "sector": "화장품",
+   "stage": "브랜드",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "30:유성구",
+   "hq_addr": "대전 유성구 탑립동 928번지",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "30:유성구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "192820",
+   "name": "코스맥스",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "고객사가 수출 — 간접 수출. 해외 법인 생산은 한국 수출에 안 잡힌다",
+   "hq": "41:화성시",
+   "hq_addr": "경기도 화성시  향남읍 제약공단1길 27, 2길 46",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "41:화성시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "41:화성시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "161890",
+   "name": "한국콜마",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "고객사가 수출 — 간접 수출",
+   "hq": "36:세종특별자치시",
+   "hq_addr": "세종특별자치시  전의면 덕고개길 12-11",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "36:세종특별자치시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "36:세종특별자치시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "241710",
+   "name": "코스메카코리아",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "고객사가 수출 — 간접 수출. 미국 법인(잉글우드랩) 연결",
+   "hq": "43:음성군",
+   "hq_addr": "충청북도 음성군 대소면 대금로 196번길 17-12",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "43:음성군"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "43:음성군"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "352480",
+   "name": "씨앤씨인터내셔널",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "color"
+   ],
+   "memo": "색조 ODM",
+   "hq": "41:화성시",
+   "hq_addr": "경기도 화성시 삼성1로5길 39",
+   "flows": [
+    {
+     "id": "c-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "41:화성시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "003350",
+   "name": "한국화장품제조",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "11:종로구",
+   "hq_addr": "서울특별시 종로구 청계천로 35",
+   "flows": [
+    {
+     "id": "c-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "43:음성군"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "950140",
+   "name": "잉글우드랩",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "미국 법인 생산이 중심 — 한국 수출과의 관계가 약하다",
+   "hq": null,
+   "hq_addr": null,
+   "flows": [
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "123330",
+   "name": "제닉",
+   "sector": "화장품",
+   "stage": "ODM·OEM",
+   "groups": [
+    "mask"
+   ],
+   "memo": "마스크팩·패치 ODM",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 수정구 금토로 52 에프동 8층",
+   "flows": [
+    {
+     "id": "h-mask",
+     "kind": "sigungu",
+     "group": "mask",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-mask",
+     "kind": "national",
+     "group": "mask",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "257720",
+   "name": "실리콘투",
+   "sector": "화장품",
+   "stage": "유통·플랫폼",
+   "groups": [
+    "skin",
+    "color"
+   ],
+   "memo": "자기 이름으로 여러 브랜드를 수출",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 분당구 판교역로 231, 에스동 907호",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-color",
+     "kind": "sigungu",
+     "group": "color",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-color",
+     "kind": "national",
+     "group": "color",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "362320",
+   "name": "청담글로벌",
+   "sector": "화장품",
+   "stage": "유통·플랫폼",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 언주로 735 16층",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "251970",
+   "name": "펌텍코리아",
+   "sector": "화장품",
+   "stage": "용기·부자재",
+   "groups": [
+    "pack"
+   ],
+   "memo": "용기는 주로 국내 브랜드·ODM 에 납품 — 화장품 수출의 후행 지표로 본다",
+   "hq": "28:부평구",
+   "hq_addr": "인천광역시 부평구 부평대로329번길 46",
+   "flows": [
+    {
+     "id": "h-pack",
+     "kind": "sigungu",
+     "group": "pack",
+     "regions": [
+      "28:부평구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-pack",
+     "kind": "national",
+     "group": "pack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "460870",
+   "name": "에스엠씨지",
+   "sector": "화장품",
+   "stage": "용기·부자재",
+   "groups": [
+    "pack"
+   ],
+   "memo": "유리 용기",
+   "hq": "41:안성시",
+   "hq_addr": "경기도 안성시 양성면 양성로 134-13",
+   "flows": [
+    {
+     "id": "h-pack",
+     "kind": "sigungu",
+     "group": "pack",
+     "regions": [
+      "41:안성시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-pack",
+     "kind": "national",
+     "group": "pack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "086710",
+   "name": "선진뷰티사이언스",
+   "sector": "화장품",
+   "stage": "원료·소재",
+   "groups": [
+    "skin"
+   ],
+   "memo": "자외선 차단 소재 — 품목이 따로 분류돼 화장품 수출과 직접 맞지 않는다",
+   "hq": "11:금천구",
+   "hq_addr": "서울특별시 금천구 가산디지털2로 143 가산 어반워크2 16층",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:금천구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "265740",
+   "name": "엔에프씨",
+   "sector": "화장품",
+   "stage": "원료·소재",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "28:연수구",
+   "hq_addr": "인천광역시 연수구 갯벌로145번길 15-8 &nbsp",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "28:연수구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "052260",
+   "name": "현대바이오랜드",
+   "sector": "화장품",
+   "stage": "원료·소재",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "43:청주시",
+   "hq_addr": "충청북도 청주시 흥덕구 오송읍 오송생명2로 22 SK 바이오랜드 오송공장",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "43:청주시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "420570",
+   "name": "제이투케이바이오",
+   "sector": "화장품",
+   "stage": "원료·소재",
+   "groups": [
+    "skin"
+   ],
+   "memo": "",
+   "hq": "43:청주시",
+   "hq_addr": "충청북도 청주시 청원구  오창읍 두릉유리로 50-3",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "43:청주시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "003230",
+   "name": "삼양식품",
+   "sector": "식음료",
+   "stage": "라면",
+   "groups": [
+    "ramen",
+    "sauce"
+   ],
+   "memo": "",
+   "hq": "11:중구",
+   "hq_addr": "서울특별시 중구 퇴계로159 삼양라운드스퀘어엔타워",
+   "flows": [
+    {
+     "id": "c-ramen",
+     "kind": "sigungu",
+     "group": "ramen",
+     "regions": [
+      "48:밀양시",
+      "51:원주시",
+      "52:익산시",
+      "11:성북구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-ramen",
+     "kind": "national",
+     "group": "ramen",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "c-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "48:밀양시",
+      "51:원주시",
+      "52:익산시",
+      "11:성북구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "004370",
+   "name": "농심",
+   "sector": "식음료",
+   "stage": "라면",
+   "groups": [
+    "ramen",
+    "snack"
+   ],
+   "memo": "미국·중국 현지 공장 매출은 한국 수출에 안 잡힌다",
+   "hq": "11:동작구",
+   "hq_addr": "서울특별시 동작구  여의대방로 112",
+   "flows": [
+    {
+     "id": "h-ramen",
+     "kind": "sigungu",
+     "group": "ramen",
+     "regions": [
+      "11:동작구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-ramen",
+     "kind": "national",
+     "group": "ramen",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "11:동작구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "007310",
+   "name": "오뚜기",
+   "sector": "식음료",
+   "stage": "라면",
+   "groups": [
+    "ramen",
+    "sauce"
+   ],
+   "memo": "내수 비중이 크다",
+   "hq": "41:안양시",
+   "hq_addr": "경기도 안양시 동안구  흥안대로 405",
+   "flows": [
+    {
+     "id": "c-ramen",
+     "kind": "sigungu",
+     "group": "ramen",
+     "regions": [
+      "41:평택시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-ramen",
+     "kind": "national",
+     "group": "ramen",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "41:안양시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "271560",
+   "name": "오리온",
+   "sector": "식음료",
+   "stage": "제과·빙과",
+   "groups": [
+    "snack"
+   ],
+   "memo": "중국·베트남·러시아 현지 법인 매출이 대부분 — 한국 수출로는 설명되지 않는다",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 남부순환로 2745 -",
+   "flows": [
+    {
+     "id": "h-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "280360",
+   "name": "롯데웰푸드",
+   "sector": "식음료",
+   "stage": "제과·빙과",
+   "groups": [
+    "snack",
+    "ice"
+   ],
+   "memo": "인도 등 해외 법인 별도",
+   "hq": "11:영등포구",
+   "hq_addr": "서울특별시 영등포구 양평로21길 10",
+   "flows": [
+    {
+     "id": "c-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "11:영등포구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "c-ice",
+     "kind": "sigungu",
+     "group": "ice",
+     "regions": [
+      "11:영등포구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-ice",
+     "kind": "national",
+     "group": "ice",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "005180",
+   "name": "빙그레",
+   "sector": "식음료",
+   "stage": "제과·빙과",
+   "groups": [
+    "ice",
+    "drink"
+   ],
+   "memo": "",
+   "hq": "41:남양주시",
+   "hq_addr": "경기도 남양주시 미금로65번길 45 (도농동) (주)빙그레",
+   "flows": [
+    {
+     "id": "c-ice",
+     "kind": "sigungu",
+     "group": "ice",
+     "regions": [
+      "41:남양주시",
+      "47:경산시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-ice",
+     "kind": "national",
+     "group": "ice",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-drink",
+     "kind": "sigungu",
+     "group": "drink",
+     "regions": [
+      "41:남양주시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-drink",
+     "kind": "national",
+     "group": "drink",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "264900",
+   "name": "크라운제과",
+   "sector": "식음료",
+   "stage": "제과·빙과",
+   "groups": [
+    "snack"
+   ],
+   "memo": "",
+   "hq": "11:용산구",
+   "hq_addr": "서울특별시 용산구 한강대로72길 3(남영동)",
+   "flows": [
+    {
+     "id": "h-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "11:용산구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "101530",
+   "name": "해태제과식품",
+   "sector": "식음료",
+   "stage": "제과·빙과",
+   "groups": [
+    "snack",
+    "ice"
+   ],
+   "memo": "",
+   "hq": "44:천안시",
+   "hq_addr": "충청남도 천안시 서북구 성거읍 천흥8길 67-26",
+   "flows": [
+    {
+     "id": "h-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "44:천안시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-ice",
+     "kind": "sigungu",
+     "group": "ice",
+     "regions": [
+      "44:천안시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-ice",
+     "kind": "national",
+     "group": "ice",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "097950",
+   "name": "CJ제일제당",
+   "sector": "식음료",
+   "stage": "종합식품",
+   "groups": [
+    "kimchi",
+    "sauce",
+    "gim"
+   ],
+   "memo": "미국 등 해외 생산과 바이오·사료 사업이 크다",
+   "hq": "11:중구",
+   "hq_addr": "서울특별시 중구  동호로 330",
+   "flows": [
+    {
+     "id": "h-kimchi",
+     "kind": "sigungu",
+     "group": "kimchi",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-kimchi",
+     "kind": "national",
+     "group": "kimchi",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-gim",
+     "kind": "sigungu",
+     "group": "gim",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-gim",
+     "kind": "national",
+     "group": "gim",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "001680",
+   "name": "대상",
+   "sector": "식음료",
+   "stage": "종합식품",
+   "groups": [
+    "kimchi",
+    "sauce"
+   ],
+   "memo": "소재(전분당·라이신) 사업 포함",
+   "hq": "11:종로구",
+   "hq_addr": "서울특별시 종로구 창경궁로 120 종로플레이스",
+   "flows": [
+    {
+     "id": "h-kimchi",
+     "kind": "sigungu",
+     "group": "kimchi",
+     "regions": [
+      "11:종로구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-kimchi",
+     "kind": "national",
+     "group": "kimchi",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "11:종로구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "017810",
+   "name": "풀무원",
+   "sector": "식음료",
+   "stage": "종합식품",
+   "groups": [
+    "kimchi"
+   ],
+   "memo": "해외 현지 생산 비중이 크다",
+   "hq": "43:음성군",
+   "hq_addr": "충청북도 음성군 대소면 삼양로 730-27",
+   "flows": [
+    {
+     "id": "h-kimchi",
+     "kind": "sigungu",
+     "group": "kimchi",
+     "regions": [
+      "43:음성군"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-kimchi",
+     "kind": "national",
+     "group": "kimchi",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "248170",
+   "name": "샘표식품",
+   "sector": "식음료",
+   "stage": "종합식품",
+   "groups": [
+    "sauce"
+   ],
+   "memo": "",
+   "hq": "11:중구",
+   "hq_addr": "서울특별시 중구 충무로 2 8층 (필동1가, 매일경제빌딩)",
+   "flows": [
+    {
+     "id": "h-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "11:중구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "006040",
+   "name": "동원산업",
+   "sector": "식음료",
+   "stage": "수산·김",
+   "groups": [
+    "gim"
+   ],
+   "memo": "지주·수산·포장재가 섞여 있다",
+   "hq": "11:서초구",
+   "hq_addr": "서울특별시 서초구 마방로 68 (양재동)",
+   "flows": [
+    {
+     "id": "h-gim",
+     "kind": "sigungu",
+     "group": "gim",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-gim",
+     "kind": "national",
+     "group": "gim",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "011150",
+   "name": "CJ씨푸드",
+   "sector": "식음료",
+   "stage": "수산·김",
+   "groups": [
+    "gim"
+   ],
+   "memo": "",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 중원구  둔촌대로388번길 32 (상대원동)",
+   "flows": [
+    {
+     "id": "h-gim",
+     "kind": "sigungu",
+     "group": "gim",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-gim",
+     "kind": "national",
+     "group": "gim",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "014710",
+   "name": "사조씨푸드",
+   "sector": "식음료",
+   "stage": "수산·김",
+   "groups": [
+    "gim"
+   ],
+   "memo": "",
+   "hq": "11:서대문구",
+   "hq_addr": "서울특별시 서대문구 통일로 107-39 502(충정로2가, 사조빌딩)",
+   "flows": [
+    {
+     "id": "h-gim",
+     "kind": "sigungu",
+     "group": "gim",
+     "regions": [
+      "11:서대문구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-gim",
+     "kind": "national",
+     "group": "gim",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "003960",
+   "name": "사조대림",
+   "sector": "식음료",
+   "stage": "수산·김",
+   "groups": [
+    "gim",
+    "sauce"
+   ],
+   "memo": "",
+   "hq": "11:서초구",
+   "hq_addr": "서울특별시 서초구 남부순환로 2159",
+   "flows": [
+    {
+     "id": "h-gim",
+     "kind": "sigungu",
+     "group": "gim",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-gim",
+     "kind": "national",
+     "group": "gim",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "103840",
+   "name": "우양",
+   "sector": "식음료",
+   "stage": "원료·소재",
+   "groups": [
+    "snack"
+   ],
+   "memo": "핫도그·HMR 은 품목 사전에 없다 — 과자·베이커리 묶음은 참고용",
+   "hq": "44:서천군",
+   "hq_addr": "충청남도 서천군 장항읍 장산로 357",
+   "flows": [
+    {
+     "id": "h-snack",
+     "kind": "sigungu",
+     "group": "snack",
+     "regions": [
+      "44:서천군"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-snack",
+     "kind": "national",
+     "group": "snack",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "260970",
+   "name": "에스앤디",
+   "sector": "식음료",
+   "stage": "원료·소재",
+   "groups": [
+    "sauce"
+   ],
+   "memo": "삼양식품에 소스 원료를 공급 — 삼양식품 공장 지역의 소스 수출을 대신 본다(간접)",
+   "hq": "43:청주시",
+   "hq_addr": "충청북도 청주시 흥덕구 오송읍 오송생명4로 163",
+   "flows": [
+    {
+     "id": "c-sauce",
+     "kind": "sigungu",
+     "group": "sauce",
+     "regions": [
+      "48:밀양시",
+      "51:원주시",
+      "11:성북구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-sauce",
+     "kind": "national",
+     "group": "sauce",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "000080",
+   "name": "하이트진로",
+   "sector": "식음료",
+   "stage": "음료·주류",
+   "groups": [
+    "liquor"
+   ],
+   "memo": "",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 영동대로 714",
+   "flows": [
+    {
+     "id": "c-liquor",
+     "kind": "sigungu",
+     "group": "liquor",
+     "regions": [
+      "48:창원시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-liquor",
+     "kind": "national",
+     "group": "liquor",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "005300",
+   "name": "롯데칠성",
+   "sector": "식음료",
+   "stage": "음료·주류",
+   "groups": [
+    "liquor",
+    "drink"
+   ],
+   "memo": "",
+   "hq": "11:서초구",
+   "hq_addr": "서울특별시 서초구 서초대로70길 15",
+   "flows": [
+    {
+     "id": "c-liquor",
+     "kind": "sigungu",
+     "group": "liquor",
+     "regions": [
+      "51:강릉시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-liquor",
+     "kind": "national",
+     "group": "liquor",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-drink",
+     "kind": "sigungu",
+     "group": "drink",
+     "regions": [
+      "11:서초구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-drink",
+     "kind": "national",
+     "group": "drink",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "267980",
+   "name": "매일유업",
+   "sector": "식음료",
+   "stage": "음료·주류",
+   "groups": [
+    "drink"
+   ],
+   "memo": "",
+   "hq": "11:종로구",
+   "hq_addr": "서울특별시 종로구 종로1길 50 &nbsp",
+   "flows": [
+    {
+     "id": "h-drink",
+     "kind": "sigungu",
+     "group": "drink",
+     "regions": [
+      "11:종로구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-drink",
+     "kind": "national",
+     "group": "drink",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "033780",
+   "name": "KT&G",
+   "sector": "식음료",
+   "stage": "담배",
+   "groups": [
+    "tobacco"
+   ],
+   "memo": "해외 현지 생산·홍삼·부동산 별도",
+   "hq": "30:대덕구",
+   "hq_addr": "대전광역시 대덕구 벚꽃길 71 주식회사 케이티앤지",
+   "flows": [
+    {
+     "id": "c-tobacco",
+     "kind": "sigungu",
+     "group": "tobacco",
+     "regions": [
+      "30:대덕구",
+      "47:영주시",
+      "29:북구",
+      "12:북구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-tobacco",
+     "kind": "national",
+     "group": "tobacco",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "194700",
+   "name": "노바렉스",
+   "sector": "식음료",
+   "stage": "건강기능식품",
+   "groups": [
+    "health"
+   ],
+   "memo": "",
+   "hq": "43:청주시",
+   "hq_addr": "충청북도 청주시 흥덕구 오송읍 오송생명14로 80 노바렉스 오송공장",
+   "flows": [
+    {
+     "id": "c-health",
+     "kind": "sigungu",
+     "group": "health",
+     "regions": [
+      "43:청주시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-health",
+     "kind": "national",
+     "group": "health",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "008490",
+   "name": "서흥",
+   "sector": "식음료",
+   "stage": "건강기능식품",
+   "groups": [
+    "health"
+   ],
+   "memo": "캡슐 사업 포함",
+   "hq": "43:청주시",
+   "hq_addr": "충청북도 청주시 흥덕구 오송읍 오송생명로 61 -",
+   "flows": [
+    {
+     "id": "c-health",
+     "kind": "sigungu",
+     "group": "health",
+     "regions": [
+      "43:청주시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-health",
+     "kind": "national",
+     "group": "health",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "339770",
+   "name": "교촌에프앤비",
+   "sector": "식음료",
+   "stage": "외식",
+   "groups": [],
+   "memo": "수출 통계와 맞는 품목이 없다 — 밸류체인 표시만",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 수정구 금토로80번길 15-3 (금토동)",
+   "flows": [],
+   "reviewed": false
+  }
+ ]
+}
