@@ -660,6 +660,23 @@ footer { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 8px; 
 
 .stale { color: var(--down); font-weight: 700; }
 
+/* 바이오 탭 */
+.bio-ov tr[data-c] { cursor: pointer; }
+.bio-ov tr.on td { background: var(--hover); }
+.bio-ov small, .bio-detail small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+.bio-pad { padding: 4px 20px 14px; }
+.bio-pad p { margin: 6px 0; font-size: 13px; line-height: 1.6; }
+.bio-sub { padding: 14px 20px 4px; font-size: 13px; font-weight: 700; }
+.bio-warn { margin: 8px 20px 0; padding: 8px 12px; border-radius: 10px; background: var(--chip); font-size: 12px; color: var(--sub); line-height: 1.6; }
+.bio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 24px; }
+.bio-list { list-style: none; margin: 0; padding: 0 20px; }
+.bio-list li { padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.55; }
+.bio-list li:first-child { border-top: 0; }
+.bio-list .d { color: var(--muted); font-size: 11px; margin-right: 6px; }
+.bio-tag { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 11px; line-height: 18px; background: var(--chip); color: var(--sub); }
+.bio-tag.go { color: var(--up); }
+.bio-tag.stop { color: var(--down); }
+
 /* ---------- 카드덱 (신고가·컨센 리비전·수급·공시·리포트) ----------
    종목마다 카드 하나. 시장(코스피/코스닥)·종류별로 덱을 나눠 위에서 아래로 쌓는다. */
 .deck .cols { display: flex; flex-direction: column; align-items: stretch; gap: 22px; }
@@ -759,6 +776,8 @@ b.n.down { color: var(--down); }
 /* 요약 칸 큰 숫자 */
 .dt-kpis b, .bk b, .fl-sum b, .hm-ix-flow b { font-weight: 800; letter-spacing: -0.02em; }
 .hm-dart-line em { font-style: normal; color: var(--muted); }
+.bio-detail .tbl td { white-space: normal; }
+.bio-detail .tbl td.num { white-space: nowrap; }
 
 /* 리포트 탭: 날짜별·주간 핵심 */
 .rp-day { cursor: pointer; }
@@ -790,6 +809,7 @@ table.tbl thead th.sorted { color: var(--accent); }
 table.tbl thead th.sorted[data-dir="desc"]::after { content: " ▼"; font-size: 10px; }
 table.tbl thead th.sorted[data-dir="asc"]::after { content: " ▲"; font-size: 10px; }
 
+.bio-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 14px; }
 .bc { text-align: left; font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; box-shadow: var(--shadow); }
 .bc:hover { background: var(--hover); }
 .bc:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
@@ -805,7 +825,31 @@ table.tbl thead th.sorted[data-dir="asc"]::after { content: " ▲"; font-size: 1
 .bc-chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .bc-chip { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 8px; background: var(--chip); font-variant-numeric: tabular-nums; }
 
+.bio-px { width: 100%; height: auto; display: block; }
+.bio-px text { font-size: 10px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.bio-px line.g { stroke: var(--line); stroke-width: 1; }
+.bio-px-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; font-size: 13px; }
+.bio-bar { display: inline-block; width: 18px; background: var(--text); opacity: .35; border-radius: 3px 3px 0 0; vertical-align: bottom; }
 
+.bio-est { width: 100%; height: auto; display: block; }
+.bio-est text { font-size: 10px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.bio-est text.fut, .tbl .fut { color: var(--text); fill: var(--text); font-weight: 600; }
+.bio-est line.g { stroke: var(--line); }
+.bio-est rect.act { fill: var(--text); opacity: .35; }
+.bio-est line.wh { stroke: var(--sub); stroke-width: 1.5; }
+.bio-est circle.cons { fill: var(--sub); }
+.bio-est circle.model { fill: none; stroke: var(--up); stroke-width: 2; }
+.bio-est rect.known { fill: var(--down); }
+.bio-est line.tha { stroke: var(--text); stroke-dasharray: 5 4; }
+.bio-est line.thb { stroke: var(--up); stroke-dasharray: 2 4; }
+.bio-est text.tl { fill: var(--sub); font-size: 10px; }
+.bio-legend { font-size: 11px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 4px 0 0; }
+.bio-legend .lg { display: inline-block; width: 10px; height: 10px; margin-right: -6px; border-radius: 2px; }
+.bio-legend .lg.act { background: var(--text); opacity: .35; }
+.bio-legend .lg.cons { background: var(--sub); border-radius: 50%; }
+.bio-legend .lg.model { border: 2px solid var(--up); border-radius: 50%; }
+.bio-legend .lg.known { background: var(--down); }
+.bio-legend .lg.tha { border-top: 2px dashed var(--text); height: 0; }
 
 .pp-bar { display: inline-grid; grid-template-columns: repeat(6, 16px); gap: 2px; vertical-align: middle; }
 .pp-bar span { height: 8px; border-radius: 2px; background: var(--chip); }
@@ -835,6 +879,29 @@ table.tbl thead th.sorted[data-dir="asc"]::after { content: " ▲"; font-size: 1
 .ev-spark polyline.up { stroke: var(--up); } .ev-spark polyline.dn { stroke: var(--down); }
 .ev-spark .z { stroke: var(--line); stroke-dasharray: 2 2; }
 .ev-spark .t0 { stroke: var(--muted); opacity: .5; }
+
+.bio-tl { width: 100%; height: auto; display: block; }
+.bio-tl text { font-size: 10px; fill: var(--muted); }
+.bio-tl line.lane { stroke: var(--line); }
+.bio-tl line.tick { stroke: var(--grid, var(--line)); stroke-dasharray: 2 3; }
+.bio-tl line.now { stroke: var(--text); stroke-width: 1.5; }
+.bio-tl text.nowt { fill: var(--text); font-weight: 700; }
+.bio-tl .tl-conf { fill: var(--text); }
+.bio-tl .tl-conf.both { stroke: var(--up); stroke-width: 2; }
+.bio-tl .tl-auto { fill: var(--card); stroke: var(--sub); stroke-width: 1.8; }
+.bio-list li small { display: block; margin-top: 2px; }
+.ir-hl { margin: 4px 0 0; padding-left: 18px; font-size: 12px; color: var(--sub); }
+.ir-hl li { padding: 2px 0; border: 0; }
+
+.tbl.sens td, .tbl.sens th { text-align: right; }
+.tbl.sens td:first-child, .tbl.sens th:first-child { text-align: left; }
+.tbl.sens td small, .tbl.sens th small { display: block; font-size: 10px; color: var(--muted); font-weight: 400; }
+.tbl td.base { outline: 2px solid var(--text); outline-offset: -2px; font-weight: 700; }
+
+.scr-ctl { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.scr-q input { font: inherit; font-size: 13px; padding: 5px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); width: 140px; }
+.scr-q input:focus-visible { outline: 2px solid var(--text); outline-offset: 1px; }
+tr.scr-mine td { background: var(--hover); }
 
 /* 퀀트 하위 탭 · 조건 백테스트 */
 .subtabs { display: inline-flex; gap: 4px; margin-top: 10px; padding: 3px; border-radius: 12px; background: var(--chip); }
