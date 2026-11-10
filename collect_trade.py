@@ -59,9 +59,19 @@ def load_hs(path: Path = HS_FILE) -> dict:
 def plan(hs: dict) -> dict:
     """품목 사전 → 부를 목록 {hs4: [전국 품목용 앞자리], country_hs: [국가용 앞자리], hs6: [시군구용]}"""
     hs6 = sorted({h for g in hs['groups'] for h in g['hs6']})
-    hs10 = sorted({h for g in hs['groups'] for h in g.get('hs10', [])})
-    hs4 = sorted({h[:4] for h in hs6})
-    return {'hs4': hs4, 'country_hs': hs4 + hs10, 'hs6': hs6}
+    nat = [g for g in hs['groups'] if not g.get('sgg_only')]          # 전국 통계를 받는 묶음
+    hs4 = sorted({h[:4] for g in nat for h in g['hs6']})
+    # 국가별 통계는 넣은 자릿수보다 한 단계 자세히 온다(4자리 → HS6 줄, 6자리·10자리 → HS10 줄).
+    # HS6 로 보는 묶음은 4자리로, HS10 을 지정한 묶음은 그 코드(하나일 때)나 6자리 앞자리(여럿일 때)로 부른다
+    country = set()
+    for g in nat:
+        if not g.get('hs10'):
+            country |= {h[:4] for h in g['hs6']}
+        elif len(g['hs10']) == 1:
+            country.add(g['hs10'][0])
+        else:
+            country |= {h[:6] for h in g['hs10']}
+    return {'hs4': hs4, 'country_hs': sorted(country), 'hs6': hs6}
 
 
 def windows(year: int, today: date) -> list:

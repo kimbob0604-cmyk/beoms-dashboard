@@ -38,6 +38,9 @@ COUNTRY = {'US': '미국', 'CN': '중국', 'JP': '일본', 'HK': '홍콩', 'VN':
 CALL_WORDS = ('컨콜', '컨퍼런스콜', '컨퍼런스 콜', '콘퍼런스콜', '콘퍼런스 콜', '어닝콜', '어닝스콜', '실적발표회',
               'Conference Call', 'conference call', 'Earnings Call', 'earnings call')
 TOP_COUNTRIES, TOP_SGG, SURGE_MIN_USD, SURGE_MIN_YOY, MAX_CALLS = 8, 8, 2_000_000, 0.5, 8
+HEAT = ['US', 'CN', 'JP', 'HK', 'VN', 'TW', 'RU', 'AE', 'EU']          # 품목×국가 표의 열. EU 는 아래 나라들의 합
+EU = ('DE', 'FR', 'NL', 'PL', 'ES', 'IT')
+SCAN_TOP = 2          # 묶음마다 보여 줄 자동 탐색 후보 수
 
 
 # ------------------------------------------------------------
@@ -86,6 +89,7 @@ class Trade:
         self.pos = {m: i for i, m in enumerate(self.months)}
         self._sgg = {}
         self._sgg_months = None
+        self._greg = {}
 
     def _blank(self):
         return [None] * len(self.months)
@@ -139,6 +143,20 @@ class Trade:
             self._sgg_months = {r[0] for r in self.c.execute('SELECT DISTINCT ym FROM sgg')}
         return self._sgg_months
 
+    def group_regions(self, gid: str) -> dict:
+        """{(시도, 시군구): 그 묶음의 월 금액} — 지역 자동 탐색용 (한 번 계산해 둔다)"""
+        if gid not in self._greg:
+            have = self.sgg_months()
+            out = {}
+            for hs6 in self.groups[gid]['hs6']:
+                for key, v in self.sgg_rows(hs6).items():
+                    acc = out.setdefault(key, [0.0 if m in have else None for m in self.months])
+                    for i, x in enumerate(v):
+                        if x is not None and acc[i] is not None:
+                            acc[i] += x
+            self._greg[gid] = out
+        return self._greg[gid]
+
     def regional(self, gid: str, regions: list):
         """그 지역들의 묶음 수출 월 금액. 시군구 통계가 없는 달은 None, 있는데 그 지역 값이 없으면 0"""
         have = self.sgg_months()
@@ -161,6 +179,8 @@ def tail(v, n):
 def group_cards(t: Trade) -> list:
     out = []
     for g in t.hs['groups']:
+        if g.get('sgg_only'):          # 전국 합이 의미 없는 묶음(지역 흐름에만 쓴다)
+            continue
         usd, kg = t.national(g['id'])
         price = [u / k if u and k else None for u, k in zip(usd, kg)]
         cs = t.countries(g['id'])
@@ -184,7 +204,25 @@ def group_cards(t: Trade) -> list:
             'countries': [{'c': c, 'n': COUNTRY.get(c, c), 'usd': tail(v, 36), 'usd12': round(last12(v)),
                            'share': last12(v) / total12 if total12 else None, 'yoy3': K.yoy(v, span=3)} for c, v in top],
             'sgg': [{'sido': k[0], 'n': k[1], 'usd12': round(last12(v)), 'yoy3': K.yoy(v, span=3)} for k, v in top_sgg if last12(v) > 0],
+            'heat': heat_row(cs, total12, len(t.months)),
         })
+    return out
+
+
+def heat_row(cs: dict, total12: float, n: int) -> dict:
+    """{국가: [3개월 전년비, 최근 12개월 비중]} — 품목×국가 표의 한 줄. EU 는 여섯 나라의 합"""
+    eu = [None] * n
+    for c in EU:
+        for i, x in enumerate(cs.get(c) or []):
+            if x is not None:
+                eu[i] = (eu[i] or 0) + x
+    out = {}
+    for c in HEAT:
+        v = eu if c == 'EU' else cs.get(c)
+        if not v or not any(v):
+            continue
+        s12 = sum(x or 0 for x in v[-12:])
+        out[c] = [K.yoy([x or 0 for x in v], span=3), s12 / total12 if total12 else None]
     return out
 
 
@@ -192,14 +230,63 @@ def group_cards(t: Trade) -> list:
 # 종목
 # ------------------------------------------------------------
 
-def revenue_quarters(hconn, code: str) -> dict:
-    """{분기: 매출(억)} — 연결(CFS) 우선"""
+def scan_regions(t: Trade, gid: str, fx: dict, rev_q: dict, skip: list) -> list:
+    """그 종목의 분기 매출과 같이 움직이는 수출 지역 후보 (묶음 하나). 이미 흐름으로 잡은 지역(skip)은 뺀다.
+    수백 개 지역을 훑으므로 우연히 맞는 곳이 나올 수 있다 → 기준을 더 엄하게(SCAN_R·SCAN_NQ) 보고, 후보로만 보여 준다."""
+    if len(rev_q) < K.SCAN_NQ:
+        return []
+    last4 = sorted(rev_q)[-4:]
+    rev4 = sum(rev_q[q] for q in last4)
+    out = []
+    for (sido, name), usd in t.group_regions(gid).items():
+        if K.region_match(sido, name, skip) or rev4 <= 0:
+            continue
+        rough = sum((u or 0) * fx[m] / 1e8 for u, m in zip(usd[-15:], t.months[-15:])) * 12 / 15     # 대략의 연간 수출(억원)
+        if not (K.COVER_MIN * 0.5 <= rough / rev4 <= K.COVER_MAX * 2):                              # 규모가 전혀 안 맞는 지역은 계산도 안 한다
+            continue
+        st = flow_stats(t, usd, fx, rev_q)
+        if K.qualified(st['r'], st['nq'], st['cover']) and st['r'] >= K.SCAN_R and st['nq'] >= K.SCAN_NQ:
+            out.append(((sido, name), st))
+    return sorted(out, key=lambda x: -x[1]['r'])[:SCAN_TOP]
+
+
+def returns(conn) -> dict:
+    """{code: (1개월, 3개월 수정주가 수익률)} — 시총 변화로 읽는다. 신고가 탭의 가격 행렬을 같이 쓴다"""
+    try:
+        import build_newhigh as NH
+        m = NH.matrix(conn, NH.load_base(conn.execute('SELECT MIN(date) FROM price_daily').fetchone()[0]))
+    except Exception as e:            # 과거 가격 DB 가 없을 때
+        print('시총 변화 계산 건너뜀:', type(e).__name__)
+        return {}
+    C, out = m['C'], {}
+    for code, i in m['idx'].items():
+        row = C[i]
+        if row[-1] != row[-1]:
+            continue
+        r = lambda k: round(float(row[-1] / row[-1 - k] - 1), 4) if len(row) > k and row[-1 - k] == row[-1 - k] and row[-1 - k] > 0 else None
+        out[code] = (r(21), r(63))
+    return out
+
+
+def fin_quarters(hconn, code: str, acc: str = 'sales') -> dict:
+    """{분기: 매출 또는 영업이익(억)} — 연결(CFS) 우선"""
     rows = defaultdict(list)
     for year, reprt, fs, cur, cur_add in hconn.execute(
-            "SELECT year, reprt, fs, cur, cur_add FROM fin WHERE code = ? AND acc = 'sales'", (code,)):
+            'SELECT year, reprt, fs, cur, cur_add FROM fin WHERE code = ? AND acc = ?', (code, acc)):
         rows[fs].append({'year': year, 'reprt': reprt, 'cur': cur, 'cur_add': cur_add})
     pick = rows.get('CFS') or rows.get('OFS') or []
     return {q: v / 1e8 for q, v in K.single_quarters(pick).items() if v is not None}
+
+
+def revenue_quarters(hconn, code: str) -> dict:
+    return fin_quarters(hconn, code, 'sales')
+
+
+def margin_4q(rev_q: dict, op_q: dict):
+    """최근 4개 분기(매출·영업이익이 둘 다 있는) 합산 영업이익률. 없으면 None"""
+    qs = sorted(set(rev_q) & set(op_q))[-4:]
+    rev = sum(rev_q[q] for q in qs)
+    return sum(op_q[q] for q in qs) / rev if len(qs) == 4 and rev > 0 else None
 
 
 def flow_stats(t: Trade, usd: list, fx: dict, rev_q: dict) -> dict:
@@ -213,7 +300,8 @@ def flow_stats(t: Trade, usd: list, fx: dict, rev_q: dict) -> dict:
 
 
 def is_qualified(f: dict) -> bool:
-    return f['kind'] == 'sigungu' and K.qualified(f['r'], f['nq'], f['cover'])
+    """회사 수출로 확인된 흐름인가. 자동 탐색 후보(scan)는 검수 전이라 확인으로 치지 않는다"""
+    return f['kind'] == 'sigungu' and f['basis'] != 'scan' and K.qualified(f['r'], f['nq'], f['cover'])
 
 
 def pick_main(flows: list) -> dict:
@@ -229,22 +317,28 @@ def pick_main(flows: list) -> dict:
     return nat[0] if nat else (flows[0] if flows else None)
 
 
-def consensus_sales(conn, code: str, q: str):
-    """분기 매출 컨센서스(억). cns_quarter 의 period 는 분기 끝 달(YYYYMM)"""
+def consensus_quarter(conn, code: str, q: str) -> tuple:
+    """분기 컨센서스 (매출, 영업이익) 억. cns_quarter 의 period 는 분기 끝 달(YYYYMM). 없으면 (None, None)"""
     period = f'{q[:4]}{int(q[5]) * 3:02d}'
-    r = conn.execute('SELECT sales FROM cns_quarter WHERE code = ? AND period = ? AND sales IS NOT NULL ORDER BY as_of DESC LIMIT 1',
+    r = conn.execute('SELECT sales, op FROM cns_quarter WHERE code = ? AND period = ? AND sales IS NOT NULL ORDER BY as_of DESC LIMIT 1',
                      (code, period)).fetchone()
-    return r[0] if r else None
+    return (r[0], r[1]) if r else (None, None)
+
+
+def consensus_sales(conn, code: str, q: str):
+    return consensus_quarter(conn, code, q)[0]
 
 
 def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
     info, _ = market_info(conn, d)
     pv, gx = por_base(d), growth_extract(d)
+    ret = returns(conn)
     labels = {g['id']: g['label'] for g in t.hs['groups']}
     out = []
     for s in assets['stocks']:
         code = s['code']
         rev_q = revenue_quarters(hconn, code) if hconn is not None else {}
+        op_q = fin_quarters(hconn, code, 'op') if hconn is not None else {}
         flows = []
         for f in s['flows']:
             usd = t.regional(f['group'], f['regions']) if f['kind'] == 'sigungu' else t.national(f['group'])[0]
@@ -262,24 +356,45 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
                              'label': '회사 흐름 합 — ' + ' + '.join(f['label'].split(' — ')[0] for f in ch), **flow_stats(t, usd, fx, rev_q)})
             flows[0]['ok'] = is_qualified(flows[0])
         main = pick_main(flows)
-        prev, past = None, []
+        taken = [r for f in s['flows'] if f['kind'] == 'sigungu' for r in f['regions']]
+        for gid in s['groups']:                       # 자동 탐색 후보 (대표 흐름 선정에는 쓰지 않는다)
+            for (sido, name), st in scan_regions(t, gid, fx, rev_q, taken):
+                flows.append({'id': f's-{gid}-{sido}-{name}', 'kind': 'sigungu', 'group': gid, 'basis': 'scan', 'nature': 'candidate',
+                              'label': f"{labels[gid]} — {name}", 'ok': False, **st})
+        prev, past, nxt = None, [], None
+        opm = margin_4q(rev_q, op_q)
         if main and is_qualified(main):
             todo = [q for q in sorted(main['exp_q']) if q not in rev_q]
             if todo:
-                prev = K.preview(main['exp_q'], rev_q, todo[-1], consensus_sales(conn, code, todo[-1]))
+                cs, co = consensus_quarter(conn, code, todo[-1])
+                prev = K.preview(main['exp_q'], rev_q, todo[-1], cs, opm=opm, cns_op=co)
+            # 진행 중인 분기: 들어온 달만으로 분기 수출을 어림해 같은 식에 넣는다 (달이 다 차면 위의 프리뷰로 바뀐다)
+            krw = [None if u is None else u * fx[m] / 1e8 for u, m in zip(main['usd'], t.months)]
+            part = K.partial_quarter(t.months, krw)
+            if part and part[0] not in rev_q:
+                cs, co = consensus_quarter(conn, code, part[0])
+                nxt = K.preview({**main['exp_q'], part[0]: part[1]}, rev_q, part[0], cs, opm=opm, cns_op=co)
+                if nxt:
+                    nxt = {**nxt, 'months': part[2], 'verdict': None}      # 덜 찬 분기는 판정을 내지 않는다
             past = [{'q': h['q'], 'est': round(h['est']), 'act': round(h['act']), 'err': round(h['err'], 4)}
                     for h in K.hindcast(main['exp_q'], rev_q)]
         qs = sorted(set(rev_q) | set(main['exp_q'] if main else {}))[-14:]
+        # 화면에서 프록시(흐름)를 바꿔 다시 계산할 때 쓰는 값: 분기 매출, 아직 실적이 안 나온 분기의 컨센서스, 영업이익률
+        last_rev = max(rev_q) if rev_q else ''
+        cnsq = {q: list(consensus_quarter(conn, code, q)) for q in sorted({K.quarter(m) for m in t.months}) if q > last_rev}
         i = info.get(code) or {}
         out.append({
             'c': code, 'n': s['name'], 'sector': s['sector'], 'stage': s['stage'], 'memo': s.get('memo') or None,
             'reviewed': bool(s.get('reviewed')), 'mk': i.get('mk'), 'w': i.get('w'), 'mc': i.get('mc'), 'p': i.get('p'), 'ch': i.get('ch'),
             **(pv.get(code) or {'fy0': None, 'ops': []}), 'gx': gx.get(code),
+            'ret1': (ret.get(code) or (None, None))[0], 'ret3': (ret.get(code) or (None, None))[1],
             'main': main['id'] if main else None,
             'flows': [{k: v for k, v in f.items() if k != 'exp_q'} for f in flows],
             'q': [{'q': q, 'rev': round(rev_q[q]) if q in rev_q else None,
                    'exp': round(main['exp_q'][q]) if main and q in main['exp_q'] else None} for q in qs],
-            'preview': prev, 'past': past,
+            'preview': prev, 'next': nxt, 'past': past,
+            'rq': {q: round(v, 1) for q, v in sorted(rev_q.items())[-28:]}, 'opm': round(opm, 4) if opm is not None else None,
+            'cnsq': {q: v for q, v in cnsq.items() if v[0] is not None},
         })
     return out
 
@@ -361,9 +476,10 @@ def build(conn, tconn, hconn=None) -> tuple:
     data = {
         'date': d, 'built_at': datetime.now().isoformat(timespec='seconds'), 'last_ym': t.months[-1], 'months': t.months,
         'sgg_from': sm[0] if sm else None, 'sgg_to': sm[-1] if sm else None,
-        'fx_last': round(fx[t.months[-1]], 1), 'chains': assets['chains'], 'groups': group_cards(t), 'stocks': stocks,
+        'fx_last': round(fx[t.months[-1]], 1), 'fx': [round(fx[m], 1) for m in t.months], 'chains': assets['chains'], 'groups': group_cards(t), 'stocks': stocks,
         'surge': surges(t, assets), 'ir': ir_filings(conn, codes, d),
         'r_ok': K.R_OK, 'band': K.BAND, 'cover_min': K.COVER_MIN, 'cover_max': K.COVER_MAX, 'mae_ok': K.MAE_OK,
+        'min_q': K.MIN_Q, 'min_nq': K.MIN_NQ,
     }
     return data, {'built_at': data['built_at'], 'calls': calls}
 

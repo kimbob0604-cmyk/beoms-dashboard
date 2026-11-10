@@ -18,6 +18,12 @@
    "담배",
    "건강기능식품",
    "외식"
+  ],
+  "미용 의료·의료기기": [
+   "톡신·필러·스킨부스터",
+   "미용 의료기기",
+   "치과 임플란트",
+   "창상·렌즈"
   ]
  },
  "stocks": [
@@ -2209,6 +2215,622 @@
    "hq": "41:성남시",
    "hq_addr": "경기도 성남시 수정구 금토로80번길 15-3 (금토동)",
    "flows": [],
+   "reviewed": false
+  },
+  {
+   "code": "145020",
+   "name": "휴젤",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "toxin"
+   ],
+   "memo": "필러·화장품 매출 별도",
+   "hq": "51:춘천시",
+   "hq_addr": "강원특별자치도 춘천시 동내면 거두단지1길 23 -",
+   "flows": [
+    {
+     "id": "c-toxin",
+     "kind": "sigungu",
+     "group": "toxin",
+     "regions": [
+      "51:춘천시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-toxin",
+     "kind": "national",
+     "group": "toxin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "086900",
+   "name": "메디톡스",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "toxin"
+   ],
+   "memo": "",
+   "hq": "43:청원군",
+   "hq_addr": "충청북도 청원군  오창읍 각리1길 78 (주)메디톡스",
+   "flows": [
+    {
+     "id": "c-toxin",
+     "kind": "sigungu",
+     "group": "toxin",
+     "regions": [
+      "43:청주시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-toxin",
+     "kind": "national",
+     "group": "toxin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "069620",
+   "name": "대웅제약",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "toxin"
+   ],
+   "memo": "전문의약품 매출이 대부분 — 톡신(나보타)은 일부",
+   "hq": "41:화성시",
+   "hq_addr": "경기도 화성시 향남읍 제약공단4길 35-14 -",
+   "flows": [
+    {
+     "id": "c-toxin",
+     "kind": "sigungu",
+     "group": "toxin",
+     "regions": [
+      "41:화성시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-toxin",
+     "kind": "national",
+     "group": "toxin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "214450",
+   "name": "파마리서치",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "inject",
+    "mask"
+   ],
+   "memo": "스킨부스터(리쥬란)·화장품. 내수 의료기기 매출이 크다",
+   "hq": "51:강릉시",
+   "hq_addr": "강원도 강릉시  과학단지로 77-19 &nbsp",
+   "flows": [
+    {
+     "id": "c-inject",
+     "kind": "sigungu",
+     "group": "inject",
+     "regions": [
+      "51:강릉시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-inject",
+     "kind": "national",
+     "group": "inject",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "c-mask",
+     "kind": "sigungu",
+     "group": "mask",
+     "regions": [
+      "51:강릉시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-mask",
+     "kind": "national",
+     "group": "mask",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "200670",
+   "name": "휴메딕스",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "skin"
+   ],
+   "memo": "필러는 기초·메이크업 묶음의 기타(3304.99.9000)에 섞여 신고된다 — 전국 묶음은 참고용",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 수정구 창업로 17 판교 아이스퀘어 A동 6층 603호",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "099430",
+   "name": "바이오플러스",
+   "sector": "미용 의료·의료기기",
+   "stage": "톡신·필러·스킨부스터",
+   "groups": [
+    "skin"
+   ],
+   "memo": "필러는 기초·메이크업 묶음의 기타에 섞여 신고된다 — 전국 묶음은 참고용",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 중원구 사기막골로45번길 14, 18층 제에이-1801,1802호(상대원동, 성남 우림라이온스밸리2차",
+   "flows": [
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "214150",
+   "name": "클래시스",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "derma"
+   ],
+   "memo": "",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 테헤란로 208 클래시스",
+   "flows": [
+    {
+     "id": "c-derma",
+     "kind": "sigungu",
+     "group": "derma",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-derma",
+     "kind": "national",
+     "group": "derma",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "336570",
+   "name": "원텍",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "derma"
+   ],
+   "memo": "",
+   "hq": "30:유성구",
+   "hq_addr": "대전광역시 유성구 테크노8로 64 (용산동)",
+   "flows": [
+    {
+     "id": "c-derma",
+     "kind": "sigungu",
+     "group": "derma",
+     "regions": [
+      "30:유성구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-derma",
+     "kind": "national",
+     "group": "derma",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "450950",
+   "name": "아스테라시스",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "derma"
+   ],
+   "memo": "",
+   "hq": "11:성동구",
+   "hq_addr": "서울특별시 성동구 성수일로4길 25, 서울숲코오롱디지털타워1차 1005호",
+   "flows": [
+    {
+     "id": "h-derma",
+     "kind": "sigungu",
+     "group": "derma",
+     "regions": [
+      "11:성동구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-derma",
+     "kind": "national",
+     "group": "derma",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "199550",
+   "name": "레이저옵텍",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "derma",
+    "device"
+   ],
+   "memo": "",
+   "hq": "41:성남시",
+   "hq_addr": "경기도 성남시 중원구 갈마치로 245 성남아이파크디어반 14층",
+   "flows": [
+    {
+     "id": "h-derma",
+     "kind": "sigungu",
+     "group": "derma",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-derma",
+     "kind": "national",
+     "group": "derma",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-device",
+     "kind": "sigungu",
+     "group": "device",
+     "regions": [
+      "41:성남시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-device",
+     "kind": "national",
+     "group": "device",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "149980",
+   "name": "하이로닉",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "derma",
+    "device"
+   ],
+   "memo": "",
+   "hq": "41:용인시",
+   "hq_addr": "경기도 용인시 수지구 신수로 767 19층(동천동, 분당수지U-TOWER)",
+   "flows": [
+    {
+     "id": "h-derma",
+     "kind": "sigungu",
+     "group": "derma",
+     "regions": [
+      "41:용인시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-derma",
+     "kind": "national",
+     "group": "derma",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-device",
+     "kind": "sigungu",
+     "group": "device",
+     "regions": [
+      "41:용인시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-device",
+     "kind": "national",
+     "group": "device",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "086450",
+   "name": "동국제약",
+   "sector": "미용 의료·의료기기",
+   "stage": "미용 의료기기",
+   "groups": [
+    "device",
+    "skin"
+   ],
+   "memo": "의약품이 중심 — 화장품(센텔리안24)·미용기기는 일부",
+   "hq": "11:강남구",
+   "hq_addr": "서울특별시 강남구 영동대로 715 동국제약 청담빌딩",
+   "flows": [
+    {
+     "id": "h-device",
+     "kind": "sigungu",
+     "group": "device",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-device",
+     "kind": "national",
+     "group": "device",
+     "basis": "national",
+     "nature": "mixed"
+    },
+    {
+     "id": "h-skin",
+     "kind": "sigungu",
+     "group": "skin",
+     "regions": [
+      "11:강남구"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-skin",
+     "kind": "national",
+     "group": "skin",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "145720",
+   "name": "덴티움",
+   "sector": "미용 의료·의료기기",
+   "stage": "치과 임플란트",
+   "groups": [
+    "implant"
+   ],
+   "memo": "중국·베트남 현지 생산 별도",
+   "hq": "41:수원시",
+   "hq_addr": "경기도 수원시 영통구 창룡대로 256번길 76(이의동) 덴티움지식산업센터",
+   "flows": [
+    {
+     "id": "c-implant",
+     "kind": "sigungu",
+     "group": "implant",
+     "regions": [
+      "41:수원시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-implant",
+     "kind": "national",
+     "group": "implant",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "039840",
+   "name": "디오",
+   "sector": "미용 의료·의료기기",
+   "stage": "치과 임플란트",
+   "groups": [
+    "implant"
+   ],
+   "memo": "",
+   "hq": "26:해운대구",
+   "hq_addr": "부산광역시 해운대구 센텀서로 66",
+   "flows": [
+    {
+     "id": "c-implant",
+     "kind": "sigungu",
+     "group": "implant",
+     "regions": [
+      "26:해운대구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-implant",
+     "kind": "national",
+     "group": "implant",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "261200",
+   "name": "덴티스",
+   "sector": "미용 의료·의료기기",
+   "stage": "치과 임플란트",
+   "groups": [
+    "implant"
+   ],
+   "memo": "",
+   "hq": "27:달서구",
+   "hq_addr": "대구광역시 달서구 성서서로 99 덴티스",
+   "flows": [
+    {
+     "id": "c-implant",
+     "kind": "sigungu",
+     "group": "implant",
+     "regions": [
+      "27:달서구"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-implant",
+     "kind": "national",
+     "group": "implant",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "340570",
+   "name": "티앤엘",
+   "sector": "미용 의료·의료기기",
+   "stage": "창상·렌즈",
+   "groups": [
+    "wound"
+   ],
+   "memo": "하이드로콜로이드 패치",
+   "hq": "41:용인시",
+   "hq_addr": "경기도 용인시 수지구 신수로 767 에이동 2401호",
+   "flows": [
+    {
+     "id": "c-wound",
+     "kind": "sigungu",
+     "group": "wound",
+     "regions": [
+      "41:안성시"
+     ],
+     "basis": "channel",
+     "nature": "company"
+    },
+    {
+     "id": "n-wound",
+     "kind": "national",
+     "group": "wound",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
+   "reviewed": false
+  },
+  {
+   "code": "119610",
+   "name": "인터로조",
+   "sector": "미용 의료·의료기기",
+   "stage": "창상·렌즈",
+   "groups": [
+    "lens"
+   ],
+   "memo": "",
+   "hq": "41:평택시",
+   "hq_addr": "경기도 평택시  산단로15번길 28",
+   "flows": [
+    {
+     "id": "h-lens",
+     "kind": "sigungu",
+     "group": "lens",
+     "regions": [
+      "41:평택시"
+     ],
+     "basis": "hq",
+     "nature": "draft"
+    },
+    {
+     "id": "n-lens",
+     "kind": "national",
+     "group": "lens",
+     "basis": "national",
+     "nature": "mixed"
+    }
+   ],
    "reviewed": false
   }
  ]

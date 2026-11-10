@@ -87,6 +87,29 @@ class RelationTest(unittest.TestCase):
         self.assertEqual(K.preview(exp, self.rev, '2026Q3', consensus=want * 1.2)['verdict'], 'MISS')
         self.assertIsNone(K.preview(exp, self.rev, '2026Q3', consensus=None)['verdict'])
 
+    def test_preview_exposes_formula_and_operating_profit(self):
+        exp = dict(self.exp, **{'2026Q3': self.exp['2025Q3'] * 1.30})
+        p = K.preview(exp, self.rev, '2026Q3', consensus=None, opm=0.2, cns_op=100.0)
+        self.assertAlmostEqual(p['a'], 0.02, places=6)                # ② 의 절편·기울기
+        self.assertAlmostEqual(p['b'], 0.5, places=6)
+        self.assertAlmostEqual(p['x'], 0.30, places=9)                # ① 수출 전년비
+        self.assertAlmostEqual(p['g'], 0.02 + 0.5 * 0.30, places=6)
+        self.assertEqual((p['base'], p['exp_py']), (self.rev['2025Q3'], self.exp['2025Q3']))
+        self.assertAlmostEqual(p['est'], p['base'] * (1 + p['g']), places=6)       # ③
+        self.assertAlmostEqual(p['op'], p['est'] * 0.2, places=6)                  # ④
+        self.assertAlmostEqual(p['op_diff'], p['op'] / 100.0 - 1, places=9)
+        self.assertIsNone(K.preview(exp, self.rev, '2026Q3')['op'])                # 영업이익률을 모르면 ④ 는 없다
+
+    def test_partial_quarter_scales_by_last_years_month_mix(self):
+        ms = K.months('2025-10', '2026-11')
+        v = [100, 200, 300] + [50] * 9 + [150, None]                 # 전년 4분기 100·200·300, 올해는 10월(150)만 들어옴
+        self.assertEqual(K.partial_quarter(ms[:-1], v[:-1]), ('2026Q4', 150 * 600 / 100, 1))
+        v2 = v[:-1] + [300]                                          # 11월까지 들어옴 → (150+300) × 600 ÷ (100+200)
+        self.assertEqual(K.partial_quarter(ms, v2), ('2026Q4', 450 * 600 / 300, 2))
+        self.assertIsNone(K.partial_quarter(ms[:-2], v[:-2]))        # 마지막 분기가 다 찼다
+        self.assertIsNone(K.partial_quarter(K.months('2026-10', '2026-10'), [150]))   # 전년 값이 없다
+        self.assertIsNone(K.partial_quarter([], []))
+
     def test_preview_gives_no_verdict_when_past_fit_was_poor(self):
         exp = dict(self.exp, **{'2026Q3': self.exp['2025Q3'] * 1.30})
         noisy = dict(self.rev)
@@ -152,6 +175,16 @@ class PlanTest(unittest.TestCase):
         self.assertEqual(T.windows(2026, today), [('202601', '202606'), ('202607', '202611')])
         self.assertEqual(T.windows(2027, today), [])
 
+    def test_plan_picks_query_prefixes(self):
+        hs = {'groups': [{'id': 'a', 'hs6': ['330499', '330410']},                                  # HS6 로 보는 묶음 → 4자리로 부른다
+                         {'id': 'b', 'hs6': ['854370'], 'hs10': ['8543702020']},                    # HS10 하나 → 그 코드
+                         {'id': 'c', 'hs6': ['901890'], 'hs10': ['9018908110', '9018908190']},      # HS10 여럿 → 6자리 앞자리
+                         {'id': 'd', 'hs6': ['300490'], 'sgg_only': True}]}                         # 지역 전용 → 전국·국가 통계는 안 받는다
+        p = T.plan(hs)
+        self.assertEqual(p['hs4'], ['3304', '8543', '9018'])
+        self.assertEqual(p['country_hs'], ['3304', '8543702020', '901890'])
+        self.assertEqual(p['hs6'], ['300490', '330410', '330499', '854370', '901890'])
+
     def test_due_schedule(self):
         conn = T.connect(Path(':memory:'))
         self.assertTrue(T.due(conn, date(2026, 11, 10)))             # 받은 적 없음
@@ -191,6 +224,28 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(v[0], 90.0)
         self.assertEqual(v[-1], 60.0 + 32)                           # 시군구 통계가 있는 달인데 원주 값이 없으면 0 으로 더한다
         self.assertIsNone(self.trade.regional('ramen', ['11:강남구']))  # 그 지역에 이 품목 수출이 없다
+
+    def test_scan_finds_only_regions_that_move_with_revenue(self):
+        fx = {m: 1000.0 for m in self.trade.months}
+        mil = self.trade.regional('ramen', ['48:밀양시'])
+        exp_q = {q: v for q, (v, k) in K.quarter_sums(self.trade.months, [u * 1000 / 1e8 for u in mil]).items() if k == 3}
+        rev = {q: v * 2 for q, v in exp_q.items()}                   # 매출이 밀양 수출의 두 배로 똑같이 움직인다
+        old = (K.SCAN_NQ, K.MIN_NQ)
+        K.SCAN_NQ, K.MIN_NQ = 6, 6                                   # 시험 자료는 전년비 짝이 7분기뿐
+        try:
+            got = B.scan_regions(self.trade, 'ramen', fx, rev, skip=[])
+            self.assertEqual([k for k, _ in got], [('48', '경상남도 밀양시')])   # 내내 30·40 으로 평평한 원주·사상구는 상관이 없다
+            self.assertEqual(B.scan_regions(self.trade, 'ramen', fx, rev, skip=['48:밀양시']), [])   # 이미 흐름으로 잡은 지역은 뺀다
+            self.assertEqual(B.scan_regions(self.trade, 'ramen', fx, {q: v * 100 for q, v in rev.items()}, skip=[]), [])   # 규모가 안 맞으면 후보 아님
+        finally:
+            K.SCAN_NQ, K.MIN_NQ = old
+        f = {'kind': 'sigungu', 'basis': 'scan', 'r': 0.95, 'nq': 12, 'cover': 0.5}
+        self.assertFalse(B.is_qualified(f))                          # 자동 탐색 후보는 확인된 흐름이 아니다
+        self.assertTrue(B.is_qualified({**f, 'basis': 'channel'}))
+
+    def test_sgg_only_group_has_no_card(self):
+        hs = {**self.HS, 'groups': self.HS['groups'] + [{'id': 'inj', 'sector': 'x', 'label': '지역 전용', 'hs6': ['190230'], 'sgg_only': True}]}
+        self.assertEqual([g['id'] for g in B.group_cards(B.Trade(self.t, hs))], ['ramen', 'device'])
 
     def test_flow_stats_and_main_pick(self):
         fx = {m: 1000.0 for m in self.trade.months}
