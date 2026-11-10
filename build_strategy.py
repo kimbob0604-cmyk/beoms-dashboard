@@ -14,9 +14,11 @@
 """
 
 import bisect
+import json
 import sqlite3
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 
@@ -26,6 +28,7 @@ from collect_strategy import STRAT
 from strategy_parse import SERIES
 
 OUT = DATA / 'st'
+NOTES = Path(__file__).resolve().parent / 'strategy_notes.json'      # 글마다 직접 쓴 요약 (문서 id → 문장)
 COST = 0.003
 HOLDS = (20, 60, 120)
 STALE = {'hana_qmp': 50, 'daishin_top10': 50, 'daol_aq': 30}     # 거래일
@@ -151,6 +154,46 @@ def cumlog(r, start):
     return np.round(np.cumsum(np.log1p(np.clip(r[start:], -0.99, None))) * 1e4).astype(int).tolist()
 
 
+def composition(key, kind, issues, mine, cut, name):
+    """전략이 지금 무엇을 담고 있는지 한눈에 볼 재료. issues: [(e, 문서, [(열, 코드, 방향, 비중, 묶음)])] 날짜순, cut: 20거래일 전 날짜"""
+    e, d, rows = issues[-1]
+    nm = lambda r: name[r[1]]
+    comp = {'as': d[2]}
+    if key == 'daol_bu':      # 최근 20거래일 판정 수와 최근 판정 종목
+        recent = [m for m in mine if m[2] >= cut and not m[7]]
+        hit = [(i_d, i_rows) for _, i_d, i_rows in issues if i_d[2] >= cut]
+        longs = [nm(r) for _, rs in hit for r in rs if r[2] == 'L']
+        shorts = [nm(r) for _, rs in hit for r in rs if r[2] == 'S']
+        comp.update(since=cut, stats={'all': len(recent), 'L': len(longs), 'S': len(shorts)},
+                    names=list(dict.fromkeys(longs[::-1]))[:10], short=list(dict.fromkeys(shorts[::-1]))[:10])
+        return comp
+    longs = [r for r in rows if r[2] == 'L']
+    shorts = [r for r in rows if r[2] == 'S']
+    comp['n'] = len(longs)
+    if key == 'daol_aq':
+        strong = lambda rs: [nm(r) + ('★' if 'Conviction' in (r[4] or '') else '') for r in sorted(rs, key=lambda r: 'Conviction' not in (r[4] or ''))]
+        comp.update(names=strong(longs)[:12], short=strong(shorts)[:20], ns=len(shorts))
+    elif any(r[3] for r in longs):      # 비중이 있는 포트폴리오: 업종별 비중과 비중 상위 종목
+        g = {}
+        for r in longs:
+            g[r[4] or '기타'] = g.get(r[4] or '기타', 0) + (r[3] or 0)
+        comp['groups'] = [[k, round(v, 1)] for k, v in sorted(g.items(), key=lambda kv: -kv[1])[:5]]
+        comp['top'] = [[nm(r), r[3]] for r in sorted(longs, key=lambda r: -(r[3] or 0))[:6]]
+    elif any(r[4] for r in longs):      # 묶음(테마)별 종목
+        b = {}
+        for r in longs:
+            b.setdefault(r[4] or '기타', []).append(nm(r))
+        comp['blocks'] = [[k, v] for k, v in b.items()]
+    else:
+        comp['names'] = [nm(r) for r in longs][:15]
+    if kind == 'port' and len(issues) > 1:
+        prev = {r[1] for r in issues[-2][2] if r[2] == 'L'}
+        cur = {r[1] for r in longs}
+        comp['add'] = [name[c] for c in cur - prev]
+        comp['del'] = [name[c] for c in prev - cur]
+    return comp
+
+
 def build():
     x = load()
     days_all = [str(d) for d in x['days']]
@@ -192,6 +235,8 @@ def build():
         return (round(float(rr), 1), round(float(rr - (lvl['k'][to + 1] / lvl['k'][e + 1] - 1) * 100), 1),
                 round(float(rr - (lvl['q'][to + 1] / lvl['q'][e + 1] - 1) * 100), 1))
 
+    notes = json.loads(NOTES.read_text(encoding='utf-8')) if NOTES.exists() else {}
+    cut = days[max(0, T - 20)]
     summary, n_skip = [], 0
     for key, meta in SERIES.items():
         mine = [d for d in docs if d[1] == key]
@@ -294,7 +339,10 @@ def build():
         write_json(OUT / f'{key}.json', {'built': datetime.now().isoformat(timespec='seconds'), **detail})
 
         last = issues[-1][1]
+        noted = next((d for d in reversed(mine) if d[0] in notes), None)
+        note = {'d': noted[2], 't': noted[4], 'u': noted[5], 'x': notes[noted[0]]} if noted else None
         summary.append({'k': key, **meta, 'sides': list(sides), 'docs': len(issues),
+                        'note': note, 'comp': composition(key, meta['kind'], issues, mine, cut, name),
                         'first': issues[0][1][2], 'last': last[2], 'last_t': last[4], 'last_u': last[5],
                         'pend': bool(pend), 'tracks': tracks, 'ev': ev,
                         'src': '네이버 리서치' if last[0].startswith('nv') else '텔레그램 공개 채널'})

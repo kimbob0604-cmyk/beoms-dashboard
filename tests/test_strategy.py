@@ -175,5 +175,29 @@ class TrackTest(unittest.TestCase):
         self.assertAlmostEqual(r[7], -0.003 / B.MIN_N)      # 아직 들고 있으면 파는 비용은 매기지 않는다
 
 
+class CompositionTest(unittest.TestCase):
+    name = {'A': '가', 'B': '나', 'C': '다'}
+    doc = lambda self, d: ('id', 'k', d, None, '제목', 'u', 1, None)
+
+    def test_weighted_portfolio_groups_and_changes(self):
+        prev = (1, self.doc('2026-09-30'), [(0, 'A', 'L', 60.0, 'IT'), (2, 'C', 'L', 40.0, '금융')])
+        cur = (5, self.doc('2026-10-28'), [(0, 'A', 'L', 70.0, 'IT'), (1, 'B', 'L', 30.0, '산업재')])
+        c = B.composition('hana_qmp', 'port', [prev, cur], [], '2026-10-01', self.name)
+        self.assertEqual(c['groups'], [['IT', 70.0], ['산업재', 30.0]])
+        self.assertEqual(c['top'][0], ['가', 70.0])
+        self.assertEqual((c['add'], c['del'], c['n']), (['나'], ['다'], 2))
+
+    def test_themes_and_verdict_counts(self):
+        cur = (5, self.doc('2026-11-10'), [(0, 'A', 'L', None, '은행'), (1, 'B', 'L', None, '은행'), (2, 'C', 'L', None, '보험')])
+        self.assertEqual(B.composition('daishin_focus', 'signal', [cur], [], '2026-10-13', self.name)['blocks'],
+                         [['은행', ['가', '나']], ['보험', ['다']]])
+        old = (1, self.doc('2026-08-01'), [(0, 'A', 'L', None, 'LONG')])
+        new = (5, self.doc('2026-11-05'), [(1, 'B', 'S', None, 'SHORT')])
+        mine = [self.doc('2026-08-01'), self.doc('2026-11-05'), self.doc('2026-11-06')]      # 마지막은 판정 없음(NO POSITION)
+        c = B.composition('daol_bu', 'signal', [old, new], mine, '2026-10-13', self.name)
+        self.assertEqual(c['stats'], {'all': 2, 'L': 0, 'S': 1})
+        self.assertEqual((c['names'], c['short']), ([], ['나']))
+
+
 if __name__ == '__main__':
     unittest.main()

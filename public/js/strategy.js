@@ -1,4 +1,4 @@
-// 전략 트래커: data/st/summary.json (전략별 일별 누적·기간별 성과·신호 성적) + data/st/{전략}.json (지금 보유·최근 글)
+// 전략 트래커: data/st/summary.json (전략별 방법·최근 호 요약·지금 구성, 일별 누적·기간별 성과·신호 성적) + data/st/{전략}.json (지금 보유·최근 글)
 (() => {
   const DEFAULTS = { per: '1y', bm: 'k', view: 'cum', hold: '60', s: '', x: '' };
   const BM = { k: '코스피', q: '코스닥' };
@@ -122,6 +122,56 @@
   }).join('')}</tbody></table></div>`;
   }
 
+  // 전략이 지금 무엇을 담고 있는지 한두 줄로
+  function compLine(s) {
+    const c = s.comp || {};
+    const list = (a, n) => a.slice(0, n).map(U.esc).join(', ') + (a.length > n ? ` 외 ${a.length - n}` : '');
+    const out = [];
+    if (c.stats) {
+      out.push(`<b>최근 20거래일 판정 ${c.stats.all}건</b> · 롱 ${c.stats.L} · 숏 ${c.stats.S} · 판정 없음 ${c.stats.all - c.stats.L - c.stats.S}`);
+      if (c.names.length) out.push(`<span class="up">롱</span> ${list(c.names, 6)}`);
+      if (c.short.length) out.push(`<span class="down">숏</span> ${list(c.short, 6)}`);
+      return out;
+    }
+    if (c.groups) {
+      out.push(`<b>${c.n}종목</b> · ${c.groups.map(g => `${U.esc(g[0])} ${g[1]}%`).join(' · ')}`);
+      out.push(`비중 상위 ${c.top.map(t => `${U.esc(t[0])} ${t[1]}%`).join(', ')}`);
+    } else if (c.blocks) {
+      out.push(`<b>${c.n}종목</b>`);
+      c.blocks.forEach(b => out.push(`<span class="muted">${U.esc(b[0])}</span> ${list(b[1], 6)}`));
+    } else if (c.short) {
+      out.push(`<span class="up">롱 ${c.n}</span> ${c.names.length ? list(c.names, 8) : '없음'}`);
+      out.push(`<span class="down">숏 ${c.ns}</span> ${list(c.short, 8)} <span class="muted">(★ 강한 확신)</span>`);
+    } else if (c.names) {
+      out.push(`<b>${c.n}종목</b> ${list(c.names, 10)}`);
+    }
+    if (c.add && (c.add.length || c.del.length)) {
+      out.push(`${c.add.length ? `<span class="muted">새로 넣음</span> ${list(c.add, 5)}` : ''}${c.add.length && c.del.length ? ' · ' : ''}${c.del.length ? `<span class="muted">뺌</span> ${list(c.del, 5)}` : ''}`);
+    }
+    return out;
+  }
+  const title = t => t.replace(/^\[(?:DAOL퀀트 김경훈|실전 퀀트\(Quant MP\)|QWER)\]\s*/, '').replace('포커 s', '포커스');
+  function latestHtml(s) {
+    const n = s.note;
+    if (!n) return s.k === 'daol_bu' ? '' : `<div class="sg-latest"><span class="sg-lbl">최근 호 ${dot(s.last)}</span> <a href="${U.esc(s.last_u)}" target="_blank" rel="noopener">${U.esc(title(s.last_t))}</a></div>`;
+    return `<div class="sg-latest"><span class="sg-lbl">최근 호 ${dot(n.d)}</span> <a href="${U.esc(n.u)}" target="_blank" rel="noopener">${U.esc(title(n.t))}</a>
+      <p>${U.esc(n.x)}</p>${n.d < s.last ? `<p class="muted small">이 뒤에 새 글이 있습니다 (${dot(s.last)}). 요약은 ${dot(n.d)} 글 기준.</p>` : ''}</div>`;
+  }
+
+  function renderCards() {
+    const trs = tracks().filter(tr => tr.side === 'L');
+    $('cards').innerHTML = trs.map(tr => {
+      const s = tr.s, w = W(tr), ex = w.ret - w[st.bm];
+      return `<article class="card sg-card${tr.id === st.s ? ' on' : ''}" data-track="${tr.id}">
+        <header><i class="sg-dot" style="--c:${tr.color}"></i><b>${U.esc(s.l)}</b><small class="muted">${U.esc(s.house)} · ${U.esc(s.cycle)}${s.kind === 'port' ? '마다 교체' : ''}</small></header>
+        <p class="sg-how">${U.esc(s.how)}</p>
+        ${latestHtml(s)}
+        <div class="sg-comp"><span class="sg-lbl">지금 구성${s.comp && s.comp.as && !s.comp.stats ? ` ${dot(s.comp.as)}` : ''}</span>${compLine(s).map(x => `<p>${x}</p>`).join('')}</div>
+        <footer><span>${PERS.find(p => p[0] === st.per)[1]} <b class="${U.cls(w.ret)}">${pct(w.ret)}</b></span><span>${BM[st.bm]} 대비 <b class="${U.cls(ex)}">${pp(ex)}</b></span><span class="muted">자세히 ↓</span></footer>
+      </article>`;
+    }).join('');
+  }
+
   const kpi = (lbl, v, cls = '', sub = '') => `<div><span>${lbl}</span><b class="${cls}">${v}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
   const chip = (x, extra) => `<span class="chip" ${Stock.hintAttr(x)}>${Stock.link(x)}${extra}</span>`;
   const xOf = x => (st.bm === 'k' ? x.xk : x.xq);
@@ -189,6 +239,7 @@
     box.innerHTML = `<div class="sec-head"><div><h2><i class="sg-dot${tr.dash ? ' dash' : ''}" style="--c:${tr.color}"></i>${U.esc(tr.label)}</h2>
         <p class="muted small">${U.esc(s.d)} · 출처: ${U.esc(s.src)} · ${dot(s.first)}부터 ${s.docs.toLocaleString()}건</p>
         <p class="muted small">${rule} ${tr.side === 'S' ? '피할 종목 묶음은 비용 없이 계산.' : `살 때·팔 때 각 ${S.cost}% 비용.`}</p></div></div>
+      <div class="sg-about"><div><span class="sg-lbl">무엇을 어떻게 고르나</span><p>${U.esc(s.how)}</p></div>${latestHtml(s)}</div>
       <div class="tbl-wrap"><table class="tbl sg-win"><thead><tr><th>기간</th><th class="num">수익률</th><th class="num">${BM[st.bm]}</th><th class="num">차이</th><th class="num">최대 낙폭</th><th class="num">이긴 달</th><th>계산 시작</th></tr></thead>
         <tbody>${wins.map(p => {
     const w = tr.t.w[p[0]], ex = w.ret - w[st.bm];
@@ -199,7 +250,7 @@
       ${evTable(s)}
       ${hold}
       <h3 class="bt-h3">최근 글 <span class="muted small">제목을 누르면 원문</span></h3>
-      <div class="sg-docs">${d.docs.filter(x => s.sides.length < 2 || s.kind === 'port' || x.s.includes(tr.side)).slice(0, 12).map(x => `<a href="${U.esc(x.u)}" target="_blank" rel="noopener"><span class="muted">${dot(x.d)}</span> ${U.esc(x.t)} <small class="muted">${s.k === 'daol_bu' ? (x.s === 'L' ? '롱' : '숏') : `${x.n}종목`}</small></a>`).join('')}</div>`;
+      <div class="sg-docs">${d.docs.filter(x => s.sides.length < 2 || s.kind === 'port' || x.s.includes(tr.side)).slice(0, 12).map(x => `<a href="${U.esc(x.u)}" target="_blank" rel="noopener"><span class="muted">${dot(x.d)}</span> ${U.esc(title(x.t))} <small class="muted">${s.k === 'daol_bu' ? (x.s === 'L' ? '롱' : '숏') : `${x.n}종목`}</small></a>`).join('')}</div>`;
   }
 
   function renderFoot() {
@@ -211,6 +262,7 @@
   }
 
   function render() {
+    renderCards();
     renderFilters();
     renderChart();
     renderBoard();
@@ -232,6 +284,14 @@
     const tr = tracks().find(t => t.id === patch.s);
     if (tr && !shown(tr)) { const f = flips(); if (f.has(tr.id)) f.delete(tr.id); else f.add(tr.id); patch.x = [...f].join(','); }   // 고른 전략은 차트에도 켠다
     pg.set(patch);
+  });
+
+  $('cards').addEventListener('click', e => {
+    if (e.target.closest('a')) return;      // 원문 링크는 그대로 연다
+    const c = e.target.closest('[data-track]');
+    if (!c) return;
+    pg.set({ s: c.dataset.track });
+    $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   pg.bind($('filters'));
