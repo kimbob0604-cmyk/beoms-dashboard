@@ -127,7 +127,7 @@
         <div class="bc-px">${px(m.price)} <small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></div>
         <div class="bc-next">${n ? `<span class="bc-d">${dday(n.date)}</span> ${esc(n.text)}${n.auto ? ' <i>자동</i>' : ''}` : '<span class="muted">예정 일정 없음</span>'}</div>
         <div class="bc-meta" title="${k.runway ? esc('현금 ÷ 월 소진 추정. 근거: ' + k.runway.basis) : ''}">${esc(rw)}${k.runway ? ' (추정)' : ''}</div>
-        <div class="bc-chips">${chip(k.base_up, '기본')}${chip(k.top_up, k.top_label || '낙관')}</div>
+        <div class="bc-chips">${chip(k.base_up, '기본')}${chip(k.top_up, k.top_label || '낙관')}${c.reports && c.reports.summary && c.reports.summary.goal_avg ? chip(c.reports.summary.goal_avg / m.price - 1, '증권사 평균') : ''}</div>
       </button>`;
     }).join('');
   }
@@ -349,6 +349,31 @@
     return h;
   }
 
+  function reportsHtml(c) {
+    const r = c.reports;
+    if (!r) return '';
+    const s = r.summary || {}, price = c.market.price, mine = c.valuation ? c.valuation.per_share : null;
+    const up = v => v == null ? '' : ` <span class="${U.cls(v / price - 1)}">${pc(v / price - 1)}</span>`;
+    const head = `<div class="bio-sub">증권사 리포트 <span class="muted small">${esc(s.source || '')} · 최근 6개월 ${s.n_reports || 0}건, 증권사 ${s.n_brokers || 0}곳</span></div>
+      <div class="bio-pad rep-sum">
+        ${s.goal_avg != null ? `<p>증권사 목표가 평균 <b>${px(s.goal_avg)}</b>${up(s.goal_avg)} · 범위 ${px(s.goal_min)} ~ ${px(s.goal_max)}</p>` : '<p class="muted">목표가 없음</p>'}
+        ${mine != null && s.goal_avg ? `<p class="bio-warn">이 모델의 기본 가치 ${px(mine)}는 증권사 평균 목표가의 ${Math.round(mine / s.goal_avg * 100)}%입니다. 차이는 대부분 피크매출·로열티·마일스톤·할인 방식 가정에서 나오니, 아래 리포트의 산정 근거와 이 모델의 가정치를 나란히 보세요.</p>` : ''}
+      </div>`;
+    if (r.kind === 'us') {
+      const it = r.items || [];
+      return head + (it.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>날짜</th><th>증권사</th><th>의견</th><th class="num">목표가</th><th class="num">이전</th></tr></thead><tbody>
+        ${it.slice(0, 15).map(x => `<tr><td>${esc(x.date)}</td><td>${esc(x.broker || '')}</td><td>${esc(x.opinion || '')}${x.from && x.from !== x.opinion ? `<small>${esc(x.from)}에서 ${esc(x.action || '')}</small>` : ''}</td>
+          <td class="num">${x.goal ? px(x.goal) + up(x.goal) : '–'}</td><td class="num">${x.goal_prev ? px(x.goal_prev) : '–'}</td></tr>`).join('')}</tbody></table></div>
+        <p class="bio-pad muted small">미국 증권사 리포트 원문은 무료로 받을 수 없어 목표가·의견 변경만 보여줍니다.</p>` : '<p class="bio-pad muted">최근 의견 변경 없음</p>');
+    }
+    const it = r.items || [];
+    return head + `<ul class="bio-list">${it.slice(0, 12).map(x => `<li><span class="d">${esc(x.date)}</span><b>${esc(x.broker || '')}</b> ${esc(x.opinion || '')}
+        ${x.goal ? ` · 목표가 <b>${px(x.goal)}</b>${up(x.goal)}` : ''} · <a href="${esc(x.pdf || '#')}" target="_blank" rel="noopener">${esc(x.title || '')}</a>
+        ${(x.heads || []).length ? `<small class="muted">${esc(x.heads.join(' / '))}</small>` : ''}
+        ${(x.valuation || []).length ? `<details><summary class="muted small">산정 근거·가정 문장 ${x.valuation.length}개 (원문 그대로)</summary><ul class="ir-hl">${x.valuation.map(v => `<li>${esc(v)}</li>`).join('')}</ul></details>` : (x.error ? `<small class="muted">PDF 읽기 실패</small>` : '')}</li>`).join('')}</ul>
+      <p class="bio-pad muted small">문장은 리포트 PDF에서 목표가 산정·가치평가와 관련된 말(목표주가, rNPV, WACC, 로열티, 마일스톤, 피크 등)과 숫자가 함께 있는 문장만 골라 원문 그대로 보여줍니다. 요약을 새로 쓰지 않습니다.</p>`;
+  }
+
   function renderOverview() {
     const row = c => {
       const m = c.market, v = c.valuation, p = c.payoffs, n = nextCat(c), cap = m.mcap_used || m.mcap;
@@ -461,6 +486,7 @@
       h += `<div class="bio-warn">바이오 기업이 아니라 임상 방법론(rNPV·옵션)을 적용하지 않습니다. 시세와 뉴스만 표시합니다. 상품(우라늄·희토류) 가격에 따라 가치가 달라지는 광업 기업이라 별도 모델(NAV)이 맞습니다.</div>`;
     } else {
       h += ladderHtml(c);
+      h += reportsHtml(c);
       h += pipeHtml(c);
       h += finHtml(c);
       h += estHtml(c);

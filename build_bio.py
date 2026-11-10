@@ -21,6 +21,7 @@ import requests
 
 import bio_events as be
 import bio_kr as bk
+import bio_reports as br
 import bio_xbrl as bx
 import bio_valuation as bv
 
@@ -629,6 +630,11 @@ def build_kr(co, old, cfg, fx, rf):
     notes.update({k: v for k, v in co.get('overrides', {}).items() if k.endswith('_note')})
     row['override_notes'] = notes
     row['fx'] = fx
+    try:
+        row['reports'] = br.kr_reports(t)
+    except Exception as e:
+        print(f'  리포트 실패: {e}', file=sys.stderr)
+        row['reports'] = old.get('reports')
     return row
 
 
@@ -736,6 +742,11 @@ def build():
             row['pipeline'] = pipeline(co, row)
             row['timeline'] = timeline(co, row, date.today().isoformat())
             row['sensitivity'] = sensitivity(co, mk, g, rf)
+            try:
+                row['reports'] = br.us_reports(t)
+            except Exception as e:
+                print(f'  애널리스트 목표가 실패: {e}', file=sys.stderr)
+                row['reports'] = old.get('reports')
             try:
                 cons = fetch_consensus(t)
             except Exception as e:
