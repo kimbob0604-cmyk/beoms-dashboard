@@ -954,3 +954,5 @@ tr.scr-mine td { background: var(--hover); }
 .bt-year.off { opacity: .45; }
 .bt-yk > div { border: 1px solid var(--line); }
 @media (max-width: 640px) { .bt-years { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; } .bt-exbar { height: 70px; } }
+
+.bio-mkt { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }

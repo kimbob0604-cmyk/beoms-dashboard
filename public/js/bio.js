@@ -2,12 +2,19 @@
 (() => {
   const $ = id => document.getElementById(id);
   const esc = U.esc;
-  const pg = U.page({ c: '' }, () => render());
+  const pg = U.page({ c: '', m: 'us' }, () => render());
   const st = pg.state;
   let data = null;
 
-  const usd = v => v == null ? '–' : `${v < 0 ? '-' : ''}$${Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(2) + 'B' : Math.abs(v).toFixed(0) + 'M'}`;
-  const px = v => v == null ? '–' : `$${v.toFixed(2)}`;
+  // 미장은 백만 달러·달러, 국장은 억원·원 (bio.json 이 시장별 단위로 저장)
+  const KR = () => st.m === 'kr';
+  const LIST = () => data.companies.filter(c => (c.market_code || 'US') === (KR() ? 'KR' : 'US'));
+  const SRC = () => (KR() ? 'DART' : 'SEC');
+  const eokFmt = a => a >= 10000 ? `${(a / 10000).toFixed(2)}조` : `${Math.round(a).toLocaleString('ko-KR')}억`;
+  const usd = v => v == null ? '–' : KR() ? `${v < 0 ? '-' : ''}${eokFmt(Math.abs(v))}`
+    : `${v < 0 ? '-' : ''}$${Math.abs(v) >= 1000 ? (Math.abs(v) / 1000).toFixed(2) + 'B' : Math.abs(v).toFixed(0) + 'M'}`;
+  const px = v => v == null ? '–' : KR() ? `${Math.round(v).toLocaleString('ko-KR')}원` : `$${v.toFixed(2)}`;
+  const shTxt = v => v == null ? '–' : KR() ? `${(v * 100).toFixed(2)}백만 주` : `${v.toFixed(1)}M`;
   const pc = (v, nd = 0) => v == null ? '–' : `${v > 0 ? '+' : ''}${(v * 100).toFixed(nd)}%`;
   const pc100 = (v, nd = 2) => v == null ? '–' : `${v > 0 ? '+' : ''}${v.toFixed(nd)}%`;
   const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
@@ -19,7 +26,7 @@
     return (c.catalysts || []).filter(x => days(x.date) >= 0).sort((a, b) => a.date.localeCompare(b.date))[0];
   }
 
-  const KIND_KO = { regulatory: '허가·규제', readout: '임상 결과', milestone: '개발 단계', earnings: '실적' };
+  const KIND_KO = { regulatory: '허가·규제', readout: '임상 결과', milestone: '개발 단계', earnings: '실적', license: '기술이전' };
   const todayIso = () => { const d = today(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const newTag = x => x && x.new ? ' <span class="bio-tag go">새로</span>' : '';
 
@@ -70,32 +77,33 @@
         ${tc.map(x => `<li><span class="bio-tag">임상</span> <a href="https://clinicaltrials.gov/study/${x.id}" target="_blank" rel="noopener">${x.id}</a> ${esc(x.change)} ${x.before || ''} → ${x.after || ''} <span class="muted">${esc(x.title.slice(0, 60))}</span></li>`).join('')}
         ${!tc.length ? '<li class="muted">임상 시험 변경 없음 (일정은 위 타임라인)</li>' : ''}
       </ul>
-      <div class="bio-sub">최근 60일 SEC 공시</div><ul class="bio-list">
+      <div class="bio-sub">최근 ${SRC()} 공시</div><ul class="bio-list">
         ${fl.length ? fl.map(f => `<li><span class="d">${f.filed}</span><b>${f.form}</b>${newTag(f)} ${esc(f.labels.join(' · '))} <a href="${esc(f.url)}" target="_blank" rel="noopener">원문</a></li>`).join('') : '<li class="muted">없음</li>'}</ul>`;
   }
 
   const SF = { win: '90', kind: 'all', cap: '0', q: '' };
 
   function renderScreen() {
-    const s = data.market_screen;
+    const s = KR() ? data.market_screen_kr : data.market_screen;
     if (!s) { $('screen').innerHTML = ''; return; }
-    const mine = new Set(data.companies.map(c => c.ticker));
+    const mine = new Set(LIST().map(c => c.ticker));
     const seg = (key, opts) => `<span class="seg" role="group">${opts.map(([v, l]) => `<button type="button" data-sf="${key}" data-v="${v}" class="${SF[key] === v ? 'on' : ''}">${l}</button>`).join('')}</span>`;
     const q = SF.q.trim().toLowerCase();
     const rows = s.filter(e => {
-      if (!e.date) return SF.win === 'all';
-      const dd = days(e.date);
-      if (SF.win !== 'all' && dd > +SF.win) return false;
+      if (!KR()) {
+        if (!e.date) return SF.win === 'all';
+        if (SF.win !== 'all' && days(e.date) > +SF.win) return false;
+      }
       if (SF.kind !== 'all' && e.kind !== SF.kind) return false;
       if (+SF.cap && !(e.mcap >= +SF.cap)) return false;
       if (q && !((e.ticker || '').toLowerCase().includes(q) || (e.company || '').toLowerCase().includes(q))) return false;
       return true;
     });
-    $('screen').innerHTML = `<div class="col-head"><h3>시장 스크리너 <span class="muted">최근 30일 8-K·6-K에서 찾은 PDUFA·탑라인 일정 ${rows.length}/${s.length}건</span></h3>
-        <span class="muted small">EDGAR 전문 검색 → 원문 문장에서 날짜 추출 · 시총은 yfinance(원문 아님)</span></div>
-      <div class="bio-pad scr-ctl">${seg('win', [['30', '30일 안'], ['60', '60일'], ['90', '90일'], ['all', '전체']])}
-        ${seg('kind', [['all', '전체'], ['regulatory', '허가·규제'], ['readout', '임상 결과']])}
-        ${seg('cap', [['0', '시총 전체'], ['300', '$300M+'], ['1000', '$1B+'], ['10000', '$10B+']])}
+    $('screen').innerHTML = `<div class="col-head"><h3>시장 스크리너 <span class="muted">${KR() ? `최근 30일 DART 임상·허가·기술이전 공시 ${rows.length}/${s.length}건` : `최근 30일 8-K·6-K에서 찾은 PDUFA·탑라인 일정 ${rows.length}/${s.length}건`}</span></h3>
+        <span class="muted small">${KR() ? 'DART 투자판단 관련 주요경영사항 제목·주요내용 원문 · 시총은 KRX' : 'EDGAR 전문 검색 → 원문 문장에서 날짜 추출 · 시총은 yfinance(원문 아님)'}</span></div>
+      <div class="bio-pad scr-ctl">${KR() ? '' : seg('win', [['30', '30일 안'], ['60', '60일'], ['90', '90일'], ['all', '전체']])}
+        ${seg('kind', KR() ? [['all', '전체'], ['regulatory', '허가·승인'], ['readout', '임상'], ['license', '기술이전']] : [['all', '전체'], ['regulatory', '허가·규제'], ['readout', '임상 결과']])}
+        ${seg('cap', KR() ? [['0', '시총 전체'], ['3000', '3천억+'], ['10000', '1조+'], ['50000', '5조+']] : [['0', '시총 전체'], ['300', '$300M+'], ['1000', '$1B+'], ['10000', '$10B+']])}
         <label class="scr-q"><span class="muted small">검색</span> <input id="scrq" type="search" value="${esc(SF.q)}" placeholder="티커·회사"></label></div>
       <div class="tbl-wrap"><table class="tbl"><thead><tr><th>남은 날</th><th>날짜</th><th>회사</th><th class="num">시총</th><th>종류</th><th>원문 문장</th><th>공시</th></tr></thead><tbody>
       ${rows.length ? rows.map(e => `<tr class="${mine.has(e.ticker) ? 'scr-mine' : ''}"><td><b>${e.date ? dday(e.date) : '–'}</b></td>
@@ -111,11 +119,11 @@
 
   function renderCards() {
     const chip = (v, l) => v == null ? '' : `<span class="bc-chip ${U.cls(v)}">${l} ${pc(v)}</span>`;
-    $('cards').innerHTML = data.companies.map(c => {
+    $('cards').innerHTML = LIST().map(c => {
       const m = c.market, k = c.card || {}, n = k.next;
       const rw = [k.commercial ? '상업화 중' : '', k.cf_positive ? '영업현금 흑자' : k.runway ? `현금 약 ${Math.round(k.runway.months)}개월` : ''].filter(Boolean).join(' · ');
       return `<button class="bc${c.ticker === st.c ? ' on' : ''}" data-c="${c.ticker}" type="button">
-        <div class="bc-top"><b>${esc(c.ticker)}</b>${k.earnings_today ? '<span class="bc-badge">실적 오늘</span>' : ''}</div>
+        <div class="bc-top"><b>${esc(KR() ? c.name : c.ticker)}</b>${k.earnings_today ? '<span class="bc-badge">실적 오늘</span>' : ''}</div>
         <div class="bc-px">${px(m.price)} <small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></div>
         <div class="bc-next">${n ? `<span class="bc-d">${dday(n.date)}</span> ${esc(n.text)}${n.auto ? ' <i>자동</i>' : ''}` : '<span class="muted">예정 일정 없음</span>'}</div>
         <div class="bc-meta" title="${k.runway ? esc('현금 ÷ 월 소진 추정. 근거: ' + k.runway.basis) : ''}">${esc(rw)}${k.runway ? ' (추정)' : ''}</div>
@@ -164,7 +172,7 @@
     const rows = [['revenue', '매출'], ['rnd', 'R&D'], ['sga', '판관비'], ['op_income', '영업이익'], ['net_income', '순이익'], ['opcf', '영업현금흐름']].filter(([k]) => has(k));
     const maxRev = Math.max(1, ...qs.map(q => Math.abs(q.revenue || 0)));
     const cell = v => v == null ? '<td class="num muted">–</td>' : `<td class="num ${v < 0 ? 'down' : ''}">${usd(v)}</td>`;
-    return `<div class="bio-sub">재무 <span class="muted small">SEC XBRL 공시 원문 수치 · 마지막 제출 ${esc(f.last_filed || '')} · <a href="${esc(f.filings_url)}" target="_blank" rel="noopener">EDGAR 공시 목록</a></span></div>
+    return `<div class="bio-sub">재무 <span class="muted small">${KR() ? `DART 재무제표 원문 수치 (${esc(f.concepts.fs || '')})` : 'SEC XBRL 공시 원문 수치'} · 마지막 ${esc(f.last_filed || '')} · <a href="${esc(f.filings_url)}" target="_blank" rel="noopener">${KR() ? 'DART 공시 목록' : 'EDGAR 공시 목록'}</a></span></div>
       <div class="bio-grid"><div class="bio-pad" id="pxbox">${priceSvg(c)}</div>
       <div><table class="tbl"><tbody>
         <tr><td>현금·단기투자 <small>${esc(b.end || '')} 기준${b.sti != null ? ` (현금 ${usd(b.cash)} + 단기투자 ${usd(b.sti)})` : ''}</small></td><td class="num"><b>${usd(b.cash_total)}</b></td></tr>
@@ -173,16 +181,16 @@
         <tr><td>분기 영업현금 유출 <small>최근 2분기 평균</small></td><td class="num">${f.burn_quarter != null ? usd(-f.burn_quarter) : '<span class="up">유입(흑자)</span>'}</td></tr>
         <tr><td>현금 버티는 기간 <small>현금·단기투자 ÷ 분기 유출 × 3</small></td><td class="num"><b>${f.runway_months != null ? Math.round(f.runway_months) + '개월' : '–'}</b></td></tr>
       </tbody></table>
-      ${ck.length ? `<div class="bio-sub">가치 계산 값 대 SEC 원문 <span class="muted small">1% 넘게 다르면 표시</span></div><table class="tbl"><thead><tr><th>항목</th><th class="num">가치 계산</th><th class="num">SEC</th><th class="num">차이</th></tr></thead><tbody>
-        ${ck.map(x => `<tr><td>${esc(x.item)}<small>${esc(x.note || '')}</small></td><td class="num">${x.item.includes('주식') ? (x.used != null ? x.used.toFixed(1) + 'M' : '–') : usd(x.used)}</td>
-          <td class="num">${x.sec == null ? '<span class="muted">없음</span>' : (x.item.includes('주식') ? x.sec.toFixed(1) + 'M' : usd(x.sec))}<small>${esc(x.sec_date || '')}</small></td>
+      ${ck.length ? `<div class="bio-sub">가치 계산 값 대 ${SRC()} 원문 <span class="muted small">1% 넘게 다르면 표시</span></div><table class="tbl"><thead><tr><th>항목</th><th class="num">가치 계산</th><th class="num">${SRC()}</th><th class="num">차이</th></tr></thead><tbody>
+        ${ck.map(x => `<tr><td>${esc(x.item)}<small>${esc(x.note || '')}</small></td><td class="num">${x.item.includes('주식') ? shTxt(x.used) : usd(x.used)}</td>
+          <td class="num">${x.sec == null ? '<span class="muted">없음</span>' : (x.item.includes('주식') ? shTxt(x.sec) : usd(x.sec))}<small>${esc(x.sec_date || '')}</small></td>
           <td class="num">${x.diff == null ? '–' : Math.abs(x.diff) > 0.01 ? `<span class="bio-tag stop">${pc(x.diff, 1)}</span>` : '<span class="bio-tag">일치</span>'}</td></tr>`).join('')}
       </tbody></table>` : ''}</div></div>
-      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>분기 (백만 달러)</th>${qs.map(q => `<th class="num">${esc(q.label)}</th>`).join('')}</tr></thead><tbody>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>분기 (${KR() ? '억원' : '백만 달러'})</th>${qs.map(q => `<th class="num">${esc(q.label)}</th>`).join('')}</tr></thead><tbody>
         ${has('revenue') ? `<tr><td></td>${qs.map(q => `<td class="num"><span class="bio-bar" style="height:${Math.round(Math.abs(q.revenue || 0) / maxRev * 34)}px"></span></td>`).join('')}</tr>` : ''}
         ${rows.map(([k, l]) => `<tr><td>${l}</td>${qs.map(q => cell(q[k])).join('')}</tr>`).join('')}
       </tbody></table></div>
-      <p class="bio-pad muted small">분기 값이 공시에 없으면 같은 회계연도 누적 값의 차이로 계산 (예: 6개월 누적 − 3개월). 회계연도가 달라도 달력 분기로 표시. 사용한 XBRL 항목: ${esc(Object.entries(f.concepts).filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join(', '))}</p>`;
+      <p class="bio-pad muted small">분기 값이 공시에 없으면 같은 회계연도 누적 값의 차이로 계산 (예: 6개월 누적 − 3개월). 회계연도가 달라도 달력 분기로 표시. 사용한 ${KR() ? 'DART 계정' : 'XBRL 항목'}: ${esc(Object.entries(f.concepts).filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join(', '))}</p>`;
   }
 
   function estChart(e) {
@@ -200,7 +208,7 @@
     return `<svg class="bio-est" viewBox="0 0 ${W} ${H}" role="img" aria-label="분기 매출 실제와 컨센서스">
       ${grid.map(v => `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" class="g"/><text x="${pl - 6}" y="${Y(v) + 4}" text-anchor="end">${usd(v)}</text>`).join('')}
       ${cols.map((q, i) => q.kind === 'a'
-        ? `<rect x="${X(i) - bw * 0.3}" y="${Y(q.revenue)}" width="${bw * 0.6}" height="${Y(0) - Y(q.revenue)}" class="act"><title>${q.label} 실제(SEC) ${usd(q.revenue)}</title></rect>`
+        ? `<rect x="${X(i) - bw * 0.3}" y="${Y(q.revenue)}" width="${bw * 0.6}" height="${Y(0) - Y(q.revenue)}" class="act"><title>${q.label} 실제(${SRC()}) ${usd(q.revenue)}</title></rect>`
         : `${q.cons.rev && q.cons.rev.high != null ? `<line x1="${X(i)}" x2="${X(i)}" y1="${Y(q.cons.rev.low)}" y2="${Y(q.cons.rev.high)}" class="wh"/><line x1="${X(i) - 6}" x2="${X(i) + 6}" y1="${Y(q.cons.rev.low)}" y2="${Y(q.cons.rev.low)}" class="wh"/><line x1="${X(i) - 6}" x2="${X(i) + 6}" y1="${Y(q.cons.rev.high)}" y2="${Y(q.cons.rev.high)}" class="wh"/>` : ''}
            ${q.cons.rev && q.cons.rev.avg != null ? `<circle cx="${X(i)}" cy="${Y(q.cons.rev.avg)}" r="5" class="cons"><title>${q.label} 컨센서스 평균 ${usd(q.cons.rev.avg)} (범위 ${usd(q.cons.rev.low)}~${usd(q.cons.rev.high)})</title></circle>` : ''}
            ${q.model != null ? `<circle cx="${X(i) + 9}" cy="${Y(q.model)}" r="4.5" class="model"><title>${q.label} 내 모델 ${usd(q.model)}</title></circle>` : ''}
@@ -208,7 +216,7 @@
       ${hline(th.bull, '낙관 기준', 'thb')}${hline(th.base, '기본 기준', 'tha')}
       ${cols.map((q, i) => `<text x="${X(i)}" y="${H - 6}" text-anchor="middle" class="${q.kind === 'f' ? 'fut' : ''}">${q.label.replace('20', '').replace(' ', '')}</text>`).join('')}
     </svg>
-    <p class="bio-legend"><span class="lg act"></span>실제 (SEC) <span class="lg cons"></span>컨센서스 평균·범위 (yfinance) <span class="lg model"></span>내 모델 (기본 성장)${e.known ? ' <span class="lg known"></span>회사 잠정' : ''} <span class="lg tha"></span>현재가 정당화 분기 매출</p>`;
+    <p class="bio-legend"><span class="lg act"></span>실제 (${SRC()}) <span class="lg cons"></span>컨센서스 평균·범위 (yfinance) <span class="lg model"></span>내 모델 (기본 성장)${e.known ? ' <span class="lg known"></span>회사 잠정' : ''} <span class="lg tha"></span>현재가 정당화 분기 매출</p>`;
   }
 
   function estHtml(c) {
@@ -220,15 +228,15 @@
     const rng = (x, f) => x && x.avg != null ? `${f(x.avg)}<small>${f(x.low)}~${f(x.high)} · ${x.n ?? '–'}명${x.ok === false ? ' · <b class="down">평균이 범위 밖(데이터 이상)</b>' : ''}</small>` : '–';
     const td = (q, fn) => `<td class="num${q.kind === 'f' ? ' fut' : ''}">${fn(q)}</td>`;
     const rows = [
-      rev && ['매출 실제 (SEC)', q => q.kind === 'a' ? usd(q.revenue) : (e.known && e.known.end === q.end ? `<span class="muted">잠정 ${usd(e.known.revenue)}</span>` : '–')],
+      rev && [`매출 실제 (${SRC()})`, q => q.kind === 'a' ? usd(q.revenue) : (e.known && e.known.end === q.end ? `<span class="muted">잠정 ${usd(e.known.revenue)}</span>` : '–')],
       rev && ['매출 컨센서스', q => q.kind === 'f' ? rng(q.cons.rev, usd) : '–'],
       rev && ['매출 내 모델', q => q.kind === 'f' && q.model != null ? usd(q.model) : '–'],
-      ['EPS 실제 (SEC)', q => q.kind === 'a' ? eps(q.eps) : '–'],
+      [`EPS 실제 (${SRC()})`, q => q.kind === 'a' ? eps(q.eps) : '–'],
       ['EPS 컨센서스', q => q.kind === 'f' ? rng(q.cons.eps, eps) : '–'],
     ].filter(Boolean);
     const th = e.thresholds;
     const h = e.eps_hist || [];
-    return `<div class="bio-sub">실적 대 추정 <span class="muted small">실제는 SEC 원문, 추정은 yfinance(원문 아님)</span></div>
+    return `<div class="bio-sub">실적 대 추정 <span class="muted small">실제는 ${SRC()} 원문${KR() ? ', 국장 컨센서스는 아직 연결 전' : ', 추정은 yfinance(원문 아님)'}</span></div>
       ${rev ? `<div class="bio-pad">${estChart(e)}</div>` : ''}
       ${th ? `<p class="bio-pad">분기 매출이 <b>${usd(th.base)}</b>(기본 성장) 또는 <b>${usd(th.bull)}</b>(낙관 성장 ×${th.bull_growth_mult})를 넘으면 현재가 ${px(c.market.price)}가 정당화됩니다. 다음 분기 컨센서스 평균 ${usd(e.future[0].cons.rev && e.future[0].cons.rev.avg)}은 낙관 기준의 ${e.future[0].cons.rev && th.bull ? Math.round(e.future[0].cons.rev.avg / th.bull * 100) + '%' : '–'}입니다.</p>` : ''}
       <div class="tbl-wrap"><table class="tbl"><thead><tr><th></th>${all.map(q => `<th class="num${q.kind === 'f' ? ' fut' : ''}">${esc(q.label)}${q.kind === 'f' ? '<small>추정</small>' : ''}</th>`).join('')}</tr></thead><tbody>
@@ -348,7 +356,7 @@
       const up = x => x == null ? '–' : `<span class="${U.cls(x / m.price - 1)}">${pc(x / m.price - 1)}</span>`;
       const top = p ? (pipe ? p.bull_success : c.scenarios.bull.per_share) : null;
       return `<tr data-c="${c.ticker}" class="${c.ticker === st.c ? 'on' : ''}">
-        <td><b>${esc(c.ticker)}</b><small>${esc(c.name)}</small></td>
+        <td><b>${esc(KR() ? c.name : c.ticker)}</b><small>${esc(KR() ? c.ticker : c.name)}</small></td>
         <td class="num">${px(m.price)}<small class="${U.cls(m.change_pct)}">${pc100(m.change_pct)}</small></td>
         <td class="num" title="${m.mcap_used ? '주당 가치와 같은 주식 수(희석 기준)로 계산' : 'yfinance 시총'}">${usd(cap)}</td>
         <td class="num">${pipe ? px(p.fail) : '–'}</td>
@@ -358,16 +366,16 @@
         <td class="num">${p && p.required_revenue != null ? usd(p.required_revenue) : '–'}<small>가정 ${p ? usd(p.modeled_revenue) : '–'}</small></td>
         <td>${n ? `${esc(n.text)}<small>${n.date} · ${dday(n.date)}</small>` : '<span class="muted">–</span>'}</td></tr>`;
     };
-    $('overview').innerHTML = `<div class="col-head"><h3>${data.companies.length}종목 한눈에 <span class="muted">기준 시세 ${esc(data.companies[0].market.asof)}</span></h3>
-        <span class="muted small">주당 가치는 가정치로 계산한 참고값 · 무위험이자율 ${(data.rf * 100).toFixed(2)}%${data.rf_stale ? ' (대체값)' : ''}</span></div>
+    $('overview').innerHTML = `<div class="col-head"><h3>${LIST().length}종목 한눈에 <span class="muted">기준 시세 ${esc(LIST()[0].market.asof)}</span></h3>
+        <span class="muted small">주당 가치는 가정치로 계산한 참고값 · 무위험이자율 ${KR() ? ((data.rf_kr || 0.03) * 100).toFixed(2) + '% (가정)' : (data.rf * 100).toFixed(2) + '%' + (data.rf_stale ? ' (대체값)' : '')}</span></div>
       <div class="tbl-wrap"><table class="tbl bio-ov"><thead><tr><th>종목</th><th class="num">주가</th><th class="num">시총</th>
         <th class="num" title="임상 자산 가치 0, 첫 발표 때까지만 현금을 쓰고 멈춘다고 봄">실패 시</th>
         <th class="num" title="단계별 PoS를 반영한 확률가중 값 (rNPV)">기본 (확률가중)</th>
         <th class="num" title="모든 단계가 성공하는 경우, 피크매출은 가정치 그대로">성공 시</th>
         <th class="num" title="성공 + 피크매출·성장 ×1.4~1.3">낙관 성공</th>
         <th class="num" title="현재 주가를 설명하려면 필요한 매출 규모(피크매출 합 + 연환산 매출), 작은 글씨는 이 모델이 가정한 값">필요 매출</th><th>다음 일정</th></tr></thead>
-        <tbody>${data.companies.map(row).join('')}</tbody></table></div>
-      <p class="bio-pad muted small">작은 글씨는 현재 주가 대비 %. 임상 자산이 없는 종목(LQDA)은 성공·실패가 없어 낙관 시나리오만 보여줍니다. 필요 매출이 가정 매출보다 크면 시장이 내 가정보다 큰 시장을 가격에 넣고 있다는 뜻입니다.</p>`;
+        <tbody>${LIST().map(row).join('')}</tbody></table></div>
+      <p class="bio-pad muted small">작은 글씨는 현재 주가 대비 %. 임상 자산이 없는 종목은 성공·실패가 없어 낙관 시나리오만 보여줍니다. 필요 매출이 가정 매출보다 크면 시장이 내 가정보다 큰 시장을 가격에 넣고 있다는 뜻입니다.</p>`;
   }
 
   function ladderHtml(c) {
@@ -403,9 +411,9 @@
       ${line('현금', b.cash, esc(on.cash_note || 'yfinance 값 (원문 미확인)'))}
       ${line('부채', -b.debt, esc(on.debt_note || 'yfinance 값 (원문 미확인)'))}
       ${b.other ? line('기타 부채', -b.other, esc(on.other_liab_note || '')) : ''}
-      ${b.burn ? line('출시까지 현금 소진(추정)', -b.burn, esc(on.burn_note || '최근 12개월 영업현금흐름 × 출시까지 햇수(yfinance, 원문 미확인)') + ' × 출시까지 햇수') : ''}
+      ${b.burn ? line('출시까지 현금 소진(추정)', -b.burn, esc(on.burn_note || '최근 12개월 영업현금흐름 (yfinance, 원문 미확인)') + ' × 출시(또는 다음 결정)까지 햇수') : ''}
       <tr><td><b>주주가치</b></td><td class="num"><b>${usd(v.equity)}</b></td></tr>
-      <tr><td>주당 (주식 수 ${(c.market.shares).toFixed(1)}M)<small>${esc(on.shares_note || 'yfinance 값 (원문 미확인)')}</small></td><td class="num"><b>${px(v.per_share)}</b> <span class="${U.cls(v.upside)}">${pc(v.upside)}</span></td></tr></tbody></table>`;
+      <tr><td>주당 (주식 수 ${shTxt(c.market.shares)})<small>${esc(on.shares_note || 'yfinance 값 (원문 미확인)')}</small></td><td class="num"><b>${px(v.per_share)}</b> <span class="${U.cls(v.upside)}">${pc(v.upside)}</span></td></tr></tbody></table>`;
   }
 
   function assetsHtml(c) {
@@ -443,10 +451,10 @@
   }
 
   function renderDetail() {
-    const c = data.companies.find(x => x.ticker === st.c) || data.companies[0];
+    const c = LIST().find(x => x.ticker === st.c) || LIST()[0];
     st.c = c.ticker;
     const m = c.market;
-    let h = `<div class="col-head"><h3>${esc(c.ticker)} · ${esc(c.name)} <span class="muted">${px(m.price)} · 시총 ${usd(m.mcap_used || m.mcap)}${m.mcap_used ? ' (주식 수 ' + m.shares.toFixed(1) + 'M 기준)' : ''}</span></h3>
+    let h = `<div class="col-head"><h3>${esc(c.ticker)} · ${esc(c.name)} <span class="muted">${px(m.price)} · 시총 ${usd(m.mcap_used || m.mcap)}${m.mcap_used ? ' (주식 수 ' + shTxt(m.shares) + ' 기준)' : ''}</span></h3>
       <span class="muted small">${c.stale.length ? '일부 값은 직전 수집 결과 (' + c.stale.join(', ') + ')' : '방금 갱신된 값'}</span></div>
       <div class="bio-pad"><p>${esc(c.summary)}</p></div>`;
     if (c.kind === 'excluded') {
@@ -480,7 +488,7 @@
   function renderCal() {
     const t0 = todayIso();
     // 종목별 타임라인(확정·공시 자동·실적을 이미 합친 것)을 그대로 모은다. 임상 완료 예정일은 많아서 여기서는 뺀다.
-    const ev = data.companies.flatMap(c => (c.timeline || []).filter(x => x.kind !== 'trial' && x.date >= t0)
+    const ev = LIST().flatMap(c => (c.timeline || []).filter(x => x.kind !== 'trial' && x.date >= t0)
       .map(x => ({ date: x.date, text: x.text + (x.confirmed_by ? ' (공시로도 확인)' : ''), t: c.ticker, auto: x.auto })))
       .sort((a, b) => a.date.localeCompare(b.date));
     $('cal').innerHTML = `<div class="col-head"><h3>일정 <span class="muted">다가오는 순</span></h3><span class="muted small">날짜가 분기·반기 단위인 항목은 마지막 날로 적었습니다</span></div>
@@ -504,7 +512,18 @@
       <p>피크매출·PoS·출시비용·마진은 모두 가정치이며 투자 권유가 아닙니다. 가치가 시총과 크게 다르면 먼저 '반영하지 않은 것'과 가정치를 의심하세요. 갱신: ${U.timeLabel(data.generated_at)}</p>`;
   }
 
+  function renderMarket() {
+    const el = $('mkt');
+    if (!el) return;
+    const n = m => data.companies.filter(c => (c.market_code || 'US') === m).length;
+    el.innerHTML = `<span class="seg" role="group" aria-label="시장">${[['us', `미장 ${n('US')}`], ['kr', `국장 ${n('KR')}`]].map(([v, l]) =>
+      `<button type="button" data-m="${v}" class="${st.m === v ? 'on' : ''}">${l}</button>`).join('')}</span>
+      ${KR() ? `<span class="muted small">금액은 억원·원, 달러 가정치는 원/달러 ${data.fx ? data.fx.toFixed(1) : '–'}로 환산</span>` : '<span class="muted small">금액은 백만 달러·달러</span>'}`;
+  }
+
   function render() {
+    if (!LIST().some(c => c.ticker === st.c)) st.c = (LIST()[0] || {}).ticker || '';
+    renderMarket();
     renderCards(); renderOverview(); renderDetail(); renderCal(); renderScreen(); renderMethod(); renderFoot();
   }
 
@@ -512,7 +531,7 @@
     const b = e.target.closest('[data-range]');
     if (!b) return;
     range = b.dataset.range;
-    const c = data.companies.find(x => x.ticker === st.c);
+    const c = LIST().find(x => x.ticker === st.c);
     $('pxbox').innerHTML = priceSvg(c);
   });
   $('screen').addEventListener('click', e => {
@@ -527,6 +546,10 @@
     const pos = e.target.selectionStart;
     renderScreen();
     const el = $('scrq'); el.focus(); el.setSelectionRange(pos, pos);
+  });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('#mkt [data-m]');
+    if (b && b.dataset.m !== st.m) { SF.kind = 'all'; SF.cap = '0'; pg.set({ m: b.dataset.m, c: '' }); }
   });
   $('cards').addEventListener('click', e => {
     const r = e.target.closest('[data-c]');

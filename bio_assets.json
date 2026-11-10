@@ -175,7 +175,8 @@
             "pediatric"
           ]
         }
-      ]
+      ],
+      "market": "US"
     },
     {
       "ticker": "IMVT",
@@ -551,7 +552,8 @@
             "thyroid eye"
           ]
         }
-      ]
+      ],
+      "market": "US"
     },
     {
       "ticker": "AXSM",
@@ -895,7 +897,8 @@
           "verified": true,
           "ct_cond": []
         }
-      ]
+      ],
+      "market": "US"
     },
     {
       "ticker": "LQDA",
@@ -1084,7 +1087,734 @@
             "lung disease"
           ]
         }
+      ],
+      "market": "US"
+    },
+    {
+      "ticker": "196170",
+      "name": "알테오젠",
+      "market": "KR",
+      "kind": "commercial+pipeline",
+      "ct": {
+        "spons": "Alteogen"
+      },
+      "summary": "히알루로니다제 ALT-B4(하이브로자임) 플랫폼 기술이전 회사. MSD 키트루다 SC(미국 Keytruda Qlex)에 들어가 판매 마일스톤을 받고 있고, 2026년에만 GSK·Biogen·비공개 1곳·Novartis와 새 계약을 맺었습니다.",
+      "not_modeled": "새 계약 파트너 제품의 판매 로열티(제품·로열티율 비공개), MSD 외 기존 파트너 계약, 아이젠피(ALT-L9) 국내 판매, 테르가제.",
+      "commercial": {
+        "name": "전체 매출 (로열티·마일스톤·제품)",
+        "run_rate_musd": 2809.8,
+        "run_rate_note": "2026년 상반기 연결 매출 1,404.9억 원 × 2 (DART 반기보고서 원문). 마일스톤이 섞여 분기마다 크게 흔들림",
+        "growth": [
+          0.25,
+          0.2,
+          0.15,
+          0.1,
+          0.07,
+          0.05
+        ],
+        "margin_now": 0.52,
+        "margin_target": 0.55,
+        "margin_years": 3,
+        "loe_year_index": 11,
+        "erosion": 0.3,
+        "years": 15,
+        "run_rate_end": "2026-06-30",
+        "assumptions": "성장률·목표 마진은 가정치. 현재 영업이익률 52%는 상반기 영업이익 735.0억 ÷ 매출 1,404.9억 (원문). 금액 단위는 억원(이 줄의 시작 매출도 억원)."
+      },
+      "assets": [
+        {
+          "id": "alt-ms",
+          "name": "ALT-B4 신규 계약 마일스톤",
+          "indication": "GSK·Biogen·비공개·Novartis 계약",
+          "stage": "계약 체결 (파트너 개발 단계 비공개)",
+          "method": "rnpv",
+          "lump_musd": 4402,
+          "basis": "공시된 최대 금액 합계: Novartis 32.23억 + 비공개 3.65억 + Biogen 5.49억(마일스톤) + GSK 2.65억(마일스톤) 달러 = 44.02억 달러 (각 DART 공시 원문). 계약금·옵션금 포함 상한값",
+          "stages": [
+            {
+              "name": "마일스톤 실현 (평균 4년 뒤로 가정)",
+              "t": 4.0,
+              "pos": 0.15,
+              "x": 0
+            }
+          ],
+          "launch_in": 4.0,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "assumptions": "실현 비율 15%와 평균 시점 4년은 가정치. 공시 금액은 옵션을 모두 행사하고 개발이 모두 성공할 때의 상한이라 그대로 더하면 과대. 판매 로열티는 넣지 않음."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-09-02",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "Novartis와 ALT-B4 독점적 옵션·라이선스 계약. 최대 32.23억 달러(계약금·옵션 행사금·마일스톤, 로열티 별도), 세부 조건 비공개.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260902900182"
+        },
+        {
+          "date": "2026-08-31",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "MSD로부터 키트루다 SC(미국 Keytruda Qlex) 판매 마일스톤 2,500만 달러 수령 예정.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260831900176"
+        },
+        {
+          "date": "2026-08-05",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "비공개 파트너와 ALT-B4 1개 품목 독점 라이선스, 선급금·마일스톤 최대 3.65억 달러(로열티 별도).",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260805900010"
+        },
+        {
+          "date": "2026-03-25",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "Biogen과 2개 품목 독점 라이선스: 선급금 2,000만 달러(두 번째 품목 선정 시 1,000만 달러 추가), 마일스톤 최대 5.49억 달러, 로열티 별도.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260325901047"
+        },
+        {
+          "date": "2026-01-20",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "GSK 자회사 Tesaro와 dostarlimab 피하주사 독점 라이선스: 계약금 2,000만 달러, 마일스톤 2.65억 달러, 로열티 별도.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260120900306"
+        },
+        {
+          "date": "2026-10-06",
+          "verified": true,
+          "src": "DART 주요사항보고서(유상증자결정)",
+          "text": "제3자배정 유상증자 기타주식 174,066주, 시설자금 125억·운영자금 375억 원. 증자 전 보통주 69,655,133주.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261006000310"
+        },
+        {
+          "date": "2026-05-15",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "아이젠피주(ALT-L9, 아일리아 바이오시밀러) 식약처 품목허가(2026-05-14).",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260515900004"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-16",
+          "text": "3분기 보고서 제출 기한 (분기 말 후 45일, 법정)",
+          "kind": "earnings"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "키트루다 SC (MSD)",
+          "indication": "키트루다 적응증",
+          "phase": 5,
+          "status": "미국 판매 중 (Keytruda Qlex), 판매 마일스톤 수령",
+          "src": "DART 2026-08-31",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260831900176",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "ALT-L9 (아이젠피주)",
+          "indication": "습성 황반변성 등 (국내)",
+          "phase": 5,
+          "status": "식약처 허가 2026-05-14",
+          "src": "DART 2026-05-15",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260515900004",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "dostarlimab SC (GSK)",
+          "indication": "파트너 적응증",
+          "phase": null,
+          "status": "계약 2026-01, 개발 단계 비공개",
+          "src": "DART 2026-01-20",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260120900306",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "Biogen 2개 품목",
+          "indication": "비공개",
+          "phase": null,
+          "status": "계약 2026-03, 개발 단계 비공개",
+          "src": "DART 2026-03-25",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260325901047",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "Novartis 복수 품목 (옵션)",
+          "indication": "비공개",
+          "phase": null,
+          "status": "옵션·라이선스 계약 2026-09",
+          "src": "DART 2026-09-02",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260902900182",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        }
+      ]
+    },
+    {
+      "ticker": "009420",
+      "name": "한올바이오파마",
+      "market": "KR",
+      "kind": "commercial+pipeline",
+      "ct": {
+        "spons": "HanAll"
+      },
+      "summary": "FcRn 항체 batoclimab·IMVT-1402(imeroprubart)를 북미·유럽 등은 Roivant/Immunovant에, 중화권은 하버바이오메드에 기술이전. 자체 제약 사업 매출도 있습니다.",
+      "not_modeled": "미국 밖(유럽 등) IMVT-1402 판매 로열티, 중국 batoclimab 로열티·마일스톤, 탄파너셉트, 신규 도입 기술(ERA 등).",
+      "commercial": {
+        "name": "제약 사업 (자체 매출)",
+        "run_rate_musd": 1686.2,
+        "run_rate_note": "2026년 상반기 연결 매출 843.1억 원 × 2 (DART 반기보고서 원문)",
+        "growth": [
+          0.05,
+          0.05,
+          0.04,
+          0.03
+        ],
+        "margin_now": 0.076,
+        "margin_target": 0.08,
+        "margin_years": 3,
+        "loe_year_index": 16,
+        "erosion": 0.0,
+        "years": 15,
+        "run_rate_end": "2026-06-30",
+        "assumptions": "성장률·마진은 가정치. 현재 영업이익률 7.6%는 상반기 영업이익 64.4억 ÷ 매출 843.1억 (원문). 금액 단위는 억원."
+      },
+      "overrides": {
+        "other_liab_musd": 98.0,
+        "other_liab_note": "ICC 중재 판정에 따른 상대방 중재비용 662만 달러(약 98억 원) 부담, 2026-07-21 판정 (DART 원문). 6월 말 이후라 반기 재무에 없다고 보고 차감"
+      },
+      "assets": [
+        {
+          "id": "hanall-roy1",
+          "name": "IMVT-1402 판매 로열티",
+          "indication": "Graves병·중증근무력증 (미국)",
+          "stage": "파트너 2상·3상 (IMVT 모델과 같은 단계)",
+          "method": "rnpv",
+          "peak_musd": 211.4,
+          "margin": 1.0,
+          "ramp_years": 5,
+          "exclusivity_years": 11,
+          "basis": "IMVT 모델의 미국 피크매출 GD $1,815M + MG $827M = $2,642M × 로열티율 8%(가정) = $211.4M",
+          "stages": [
+            {
+              "name": "GD·MG 탑라인 (2027)",
+              "t": 1.0,
+              "pos": 0.62,
+              "x": 0
+            },
+            {
+              "name": "허가 판정",
+              "t": 2.5,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 2.5,
+          "assumptions": "로열티율은 계약상 비공개라 8%는 가정치. 로열티는 비용이 거의 없어 마진 100%로 둠. PoS는 IMVT 모델의 GD(55%)·MG(75%) 중간값."
+        },
+        {
+          "id": "hanall-roy2",
+          "name": "IMVT-1402 판매 로열티",
+          "indication": "CIDP·난치성 RA (미국)",
+          "stage": "파트너 2상",
+          "method": "rnpv",
+          "peak_musd": 108.5,
+          "margin": 1.0,
+          "ramp_years": 5,
+          "exclusivity_years": 11,
+          "basis": "IMVT 모델의 미국 피크매출 CIDP $771M + RA $585M = $1,356M × 로열티율 8%(가정) = $108.5M",
+          "stages": [
+            {
+              "name": "CIDP·RA 탑라인",
+              "t": 2.0,
+              "pos": 0.45,
+              "x": 0
+            },
+            {
+              "name": "허가 판정",
+              "t": 4.0,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 4.0,
+          "assumptions": "로열티율 8%는 가정치. PoS 45%는 IMVT 모델의 CIDP(60%)·RA(경로 합의 60% × 3상 65%) 중간값."
+        },
+        {
+          "id": "hanall-ms",
+          "name": "Roivant 계약 잔여 마일스톤",
+          "indication": "batoclimab·IMVT-1402",
+          "stage": "개발·허가·판매 마일스톤",
+          "method": "rnpv",
+          "lump_musd": 300,
+          "basis": "계약 총 마일스톤 4.525억 달러(DART 사업보고서 원문) 중 이미 받은 금액은 비공개라 잔여 3억 달러로 가정",
+          "stages": [
+            {
+              "name": "마일스톤 실현 (평균 3년 뒤로 가정)",
+              "t": 3.0,
+              "pos": 0.4,
+              "x": 0
+            }
+          ],
+          "launch_in": 3.0,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "assumptions": "잔여 금액 3억 달러·실현 비율 40%·시점 3년은 모두 가정치."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-03-18",
+          "verified": true,
+          "src": "DART 사업보고서(2025) 경영상의 주요계약",
+          "text": "Roivant(Immunovant) 계약: 총 5.025억 달러(계약금 3,000만·연구비 2,000만·단계별 마일스톤 4.525억 달러), 판매 로열티 별도, 받은 금액은 비공개. 하버바이오메드(중화권): 총 8,100만 달러(계약금 400만·마일스톤 7,700만), 로열티 별도.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260318001637"
+        },
+        {
+          "date": "2026-04-02",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항",
+          "text": "batoclimab 갑상선안병증 일본 3상 탑라인: 24주 안구돌출 반응률 23% 대 위약 15%로 통계적 유효성 확인 안 됨.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260402801190"
+        },
+        {
+          "date": "2026-07-22",
+          "verified": true,
+          "src": "DART 투자판단 관련 주요경영사항(정정)",
+          "text": "하버바이오메드 라이선스 해지 통지가 ICC 중재에서 무효로 판정, 계약 유지. 상대방 중재비용 6,615,672달러(약 98억 원) 부담.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260722800882"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-16",
+          "text": "3분기 보고서 제출 기한 (법정)",
+          "kind": "earnings"
+        },
+        {
+          "date": "2027-12-31",
+          "text": "IMVT-1402 Graves병·MG 탑라인 (파트너 Immunovant, 2027년)",
+          "kind": "readout"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "IMVT-1402 (imeroprubart)",
+          "indication": "Graves병 (파트너)",
+          "phase": 2,
+          "status": "Immunovant, CT.gov 2상, 탑라인 2027년",
+          "asset": "hanall-roy1",
+          "src": "Immunovant 분기 보고",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "IMVT-1402 (imeroprubart)",
+          "indication": "중증근무력증 (파트너)",
+          "phase": 3,
+          "status": "Immunovant, 3상, 탑라인 2027년",
+          "asset": "hanall-roy1",
+          "src": "Immunovant 분기 보고",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "IMVT-1402 (imeroprubart)",
+          "indication": "CIDP·난치성 RA (파트너)",
+          "phase": 2,
+          "status": "Immunovant, CT.gov 2상",
+          "asset": "hanall-roy2",
+          "src": "Immunovant 분기 보고",
+          "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "batoclimab",
+          "indication": "중증근무력증 (중국, 하버바이오메드/CSPC)",
+          "phase": 4,
+          "status": "중국 품목허가 신청 재제출 (2024-06, 사업보고서 기준)",
+          "src": "DART 사업보고서(2025)",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260318001637",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        },
+        {
+          "drug": "batoclimab",
+          "indication": "갑상선안병증 (일본)",
+          "phase": 3,
+          "status": "일본 3상 1차 평가변수 미달 (2026-04)",
+          "src": "DART 2026-04-02",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260402801190",
+          "verified": true,
+          "stopped": true,
+          "ct_terms": [],
+          "ct_cond": []
+        }
+      ]
+    },
+    {
+      "ticker": "310210",
+      "name": "보로노이",
+      "market": "KR",
+      "kind": "pipeline",
+      "ct": {
+        "spons": "Voronoi"
+      },
+      "summary": "EGFR C797S(VRN11, 코드 VRN110755)·HER2(VRN10, VRN101099) 저해제를 1상·1/2상에서 개발 중이고, EGFR Exon20 저해제 VRN07은 ORIC에 기술이전했습니다. 상업 매출은 거의 없습니다.",
+      "not_modeled": "VRN07(ORIC) 판매 로열티(로열티율 비공개), 다른 전임상 후보.",
+      "assets": [
+        {
+          "id": "vrn-11",
+          "name": "VRN11 (VRN110755)",
+          "indication": "EGFR 변이 비소세포폐암 (C797S 등)",
+          "stage": "1/2상 (글로벌, 391명)",
+          "method": "rov",
+          "peak_musd": 800,
+          "margin": 0.45,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "basis": "피크매출 8억 달러는 가정치 (EGFR 표적치료 내성 이후 시장을 두고 정한 값, 하향식 근거 없음)",
+          "stages": [
+            {
+              "name": "1/2상 결과 (가정 2028년 말)",
+              "t": 2.0,
+              "pos": 0.35,
+              "x": 200
+            },
+            {
+              "name": "3상 결과",
+              "t": 4.5,
+              "pos": 0.55,
+              "x": 30
+            },
+            {
+              "name": "허가 판정",
+              "t": 5.5,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 5.5,
+          "assumptions": "초기 단계라 실물옵션(이항모형)으로 평가. 다음 단계 비용(3상 2억 달러), PoS, 피크매출, 마진 45%(기술이전 시 몫 반영)는 모두 가정치."
+        },
+        {
+          "id": "vrn-10",
+          "name": "VRN10 (VRN101099)",
+          "indication": "HER2 유발 고형암",
+          "stage": "1상 (102명)",
+          "method": "rov",
+          "peak_musd": 600,
+          "margin": 0.45,
+          "ramp_years": 5,
+          "exclusivity_years": 12,
+          "basis": "피크매출 6억 달러는 가정치 (근거 약함)",
+          "stages": [
+            {
+              "name": "1상 결과",
+              "t": 1.5,
+              "pos": 0.45,
+              "x": 60
+            },
+            {
+              "name": "2상 결과",
+              "t": 3.5,
+              "pos": 0.35,
+              "x": 200
+            },
+            {
+              "name": "3상 결과",
+              "t": 6.0,
+              "pos": 0.55,
+              "x": 30
+            },
+            {
+              "name": "허가 판정",
+              "t": 7.0,
+              "pos": 0.9,
+              "x": 0
+            }
+          ],
+          "launch_in": 7.0,
+          "assumptions": "실물옵션 평가. 단계 비용·PoS·피크매출·마진은 모두 가정치."
+        },
+        {
+          "id": "vrn-07",
+          "name": "VRN07 → ORIC 잔여 마일스톤",
+          "indication": "EGFR/HER2 Exon20 삽입 변이",
+          "stage": "파트너 개발 (사업보고서: 1상)",
+          "method": "rnpv",
+          "lump_musd": 603,
+          "basis": "총 6.21억 달러(계약금 1,300만·개발 1.58억·판매 4.5억) − 받은 1,800만 달러(계약금 1,300만 + 마일스톤 500만) = 6.03억 달러 (DART 사업보고서 원문)",
+          "stages": [
+            {
+              "name": "마일스톤 실현 (평균 5년 뒤로 가정)",
+              "t": 5.0,
+              "pos": 0.1,
+              "x": 0
+            }
+          ],
+          "launch_in": 5.0,
+          "peak_musd": 0,
+          "margin": 1,
+          "ramp_years": 1,
+          "exclusivity_years": 1,
+          "assumptions": "실현 비율 10%·시점은 가정치. 판매 마일스톤 4.5억 달러가 대부분이라 낮게 둠."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-03-20",
+          "verified": true,
+          "src": "DART 사업보고서(2025) 경영상의 주요계약",
+          "text": "VRN07을 ORIC에 기술이전(중화권 제외 전세계): 최대 6.21억 달러(계약금 1,300만 = 현금 500만 + 주식 800만, 개발 마일스톤 1.58억, 판매 마일스톤 4.5억), 받은 금액 계약금 1,300만 + 마일스톤 500만 달러. 2025년 연구개발비 474억 원.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260320000892"
+        },
+        {
+          "date": "2026-09-09",
+          "verified": true,
+          "src": "DART 임상시험계획 자진취하",
+          "text": "VRN110755 1/2상의 캐나다 보건부 신청 자진 취하 (임상시험자 자료집 업데이트 요청 때문). 목표 391명, 최대 6년.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260909900586"
+        },
+        {
+          "date": "2026-10-20",
+          "verified": true,
+          "src": "DART 임상시험계획 변경승인(정정)",
+          "text": "VRN110755 1/2상 EMA(프랑스·스페인) 변경 승인 2026-10-19 추가. 승인기관: 대만·호주·홍콩·싱가포르·말레이시아·태국·EMA.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020900754"
+        },
+        {
+          "date": "2026-03-27",
+          "verified": true,
+          "src": "DART 임상시험계획 승인(정정)",
+          "text": "VRN101099(HER2) 1상: 대만 승인 추가, 목표 102명(72명에서 늘림), 호주·한국·대만.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260327902975"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-16",
+          "text": "3분기 보고서 제출 기한 (법정)",
+          "kind": "earnings"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "VRN11 (VRN110755)",
+          "indication": "EGFR 변이 비소세포폐암",
+          "phase": 1,
+          "status": "글로벌 1/2상 (391명 목표)",
+          "asset": "vrn-11",
+          "src": "DART 2026-10-20",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261020900754",
+          "verified": true,
+          "ct_terms": [
+            "VRN11",
+            "VRN110755"
+          ],
+          "ct_cond": [
+            "lung"
+          ]
+        },
+        {
+          "drug": "VRN10 (VRN101099)",
+          "indication": "HER2 유발 고형암",
+          "phase": 1,
+          "status": "1상 (102명 목표)",
+          "asset": "vrn-10",
+          "src": "DART 2026-03-27",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260327902975",
+          "verified": true,
+          "ct_terms": [
+            "VRN10",
+            "VRN101099"
+          ],
+          "ct_cond": [
+            "her2",
+            "solid"
+          ]
+        },
+        {
+          "drug": "VRN07 (ORIC 개발)",
+          "indication": "EGFR/HER2 Exon20 삽입 변이",
+          "phase": 1,
+          "status": "ORIC 개발, 사업보고서 기준 1상",
+          "asset": "vrn-07",
+          "src": "DART 사업보고서(2025)",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260320000892",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        }
+      ],
+      "burn_years": 2.0,
+      "burn_years_note": "VRN11 1/2상 결과(가정 2년 뒤)까지만 현재 소진을 빼고, 그 뒤 3상 비용은 단계 비용으로 반영"
+    },
+    {
+      "ticker": "028300",
+      "name": "HLB",
+      "market": "KR",
+      "kind": "pipeline",
+      "ct": {
+        "spons": "Elevar"
+      },
+      "summary": "미국 종속회사 Elevar가 간암 1차 치료제(리보세라닙+캄렐리주맙)의 FDA 허가를 추진 중입니다. 세 번째 CRL(2026-07) 뒤 2026-10-09 재제출했고 PDUFA는 2027-04-09입니다. 담관암 치료제 리라푸그라티닙(Lyrfigtu)은 2026-09-23 FDA 승인을 받았습니다.",
+      "not_modeled": "리라푸그라티닙(Lyrfigtu) 판매(승인됐지만 Relay에 줄 상업화 마일스톤 최대 4.25억 달러·로열티 조건과 매출 근거가 없어 미반영), 리보세라닙 위암·선양낭성암, 다른 계열사 사업, 미국 밖 판매, 전환사채 희석.",
+      "assets": [
+        {
+          "id": "hlb-hcc",
+          "name": "리보세라닙 + 캄렐리주맙",
+          "indication": "간암 1차 (미국)",
+          "stage": "FDA 재제출 심사 중 (PDUFA 2027-04-09)",
+          "method": "rnpv",
+          "peak_musd": 400,
+          "margin": 0.4,
+          "ramp_years": 4,
+          "exclusivity_years": 10,
+          "basis": "피크매출 4억 달러는 가정치 (미국 간암 1차 전신치료 시장 점유를 두고 정한 값, 환자 수 원문 미확인)",
+          "stages": [
+            {
+              "name": "FDA 판정 (PDUFA 2027-04-09)",
+              "t": 0.41,
+              "pos": 0.6,
+              "x": 30,
+              "date": "2027-04-09"
+            }
+          ],
+          "launch_in": 0.41,
+          "assumptions": "승인 PoS 60%는 가정치(세 번의 CRL 사유가 효능이 아닌 제조시설 실사였고, 7월 Hengrui 시설 실사가 VAI로 종결됐다는 보도를 반영). 마진 40%는 캄렐리주맙 로열티 20.5%(항서제약), 리보세라닙 로열티 3.5~10%(Advenchen) 등 원문 로열티를 빼고 원가·판관비를 가정한 값."
+        }
+      ],
+      "facts": [
+        {
+          "date": "2026-10-12",
+          "verified": true,
+          "src": "DART 기타 경영사항(자율공시)",
+          "text": "Elevar가 2026-10-09(현지) FDA에 간암 1차 치료제 재승인 신청 서류 제출. FDA가 Class 1(2개월) 또는 Class 2(6개월)로 심사 기간을 정함.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012900006"
+        },
+        {
+          "date": "2026-07-10",
+          "verified": true,
+          "src": "DART 기타 경영사항(자율공시)",
+          "text": "2026-07-09 CRL 수령: CGMP 실사에서 해당 시설 결함 발견, 재실사가 필요할 수 있음. 지적사항은 신청서와 직접 관련되지 않을 수 있다고 명시.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260710900006"
+        },
+        {
+          "date": "2026-03-23",
+          "verified": true,
+          "src": "DART 사업보고서(2025) 경영상의 주요계약",
+          "text": "리보세라닙 로열티 3.5~10%(Advenchen), 캄렐리주맙 로열티 순매출의 20.5%(항서제약). 리라푸그라티닙(Relay) 총 5억 달러(계약금·허가 마일스톤 7,500만, 상업화 최대 4.25억).",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260323001673"
+        },
+        {
+          "date": "2026-08-05",
+          "verified": true,
+          "src": "DART 주요사항보고서(전환사채권발행결정)",
+          "text": "44회차 사모 CB 300억 원, 전환가 33,361원, 전환 시 899,253주(0.68%), 전환청구 2027-08-19부터.",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260805000480"
+        },
+        {
+          "date": "2026-11-04",
+          "verified": false,
+          "src": "CancerNetwork·Targeted Oncology (Elevar 보도자료 인용, 원문 미확인)",
+          "text": "FDA가 재제출을 접수하고 PDUFA 목표일을 2027-04-09로 정함. 캄렐리주맙 BLA(항서제약)와 통합 심사. HLB DART 공시는 2026-11-10까지 없음.",
+          "url": "https://www.cancernetwork.com/view/fda-sets-pdufa-date-for-rivoceranib-camrelizumab-resubmission-after-third-crl-in-unresectable-hcc"
+        },
+        {
+          "date": "2026-09-23",
+          "verified": false,
+          "src": "ASCO Post 등 보도 (FDA 원문 미확인)",
+          "text": "리라푸그라티닙(Lyrfigtu, Elevar) FDA 승인: 이전 치료 경험이 있는 FGFR2 융합·재배열 담관암. REFOCUS 1/2상 116명, 객관적 반응률 46%, 반응 지속기간 중앙값 11.8개월. HLB DART 공시는 확인 못 함.",
+          "url": "https://ascopost.com/news/september-2026/fda-approves-lirafugratinib-for-previously-treated-unresectable-locally-advanced-or-metastatic-cholangiocarcinoma/"
+        }
+      ],
+      "catalysts": [
+        {
+          "date": "2026-11-16",
+          "text": "3분기 보고서 제출 기한 (법정)",
+          "kind": "earnings"
+        },
+        {
+          "date": "2027-04-09",
+          "text": "간암 1차 병용요법 FDA PDUFA (Elevar 11/4 보도자료 인용 기사, 원문 미확인)",
+          "kind": "regulatory"
+        }
+      ],
+      "pipeline": [
+        {
+          "drug": "리보세라닙 + 캄렐리주맙",
+          "indication": "간암 1차 (미국)",
+          "phase": 4,
+          "status": "CRL 3회 뒤 2026-10-09 재제출, PDUFA 2027-04-09 (보도 기준)",
+          "asset": "hlb-hcc",
+          "src": "DART 2026-10-12",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261012900006",
+          "verified": true,
+          "ct_terms": [
+            "rivoceranib",
+            "camrelizumab"
+          ],
+          "ct_cond": [
+            "hepatocellular",
+            "liver"
+          ]
+        },
+        {
+          "drug": "리라푸그라티닙 (Relay 도입)",
+          "indication": "FGFR2 변이 담관암 등",
+          "phase": 5,
+          "status": "미국 승인 2026-09-23 (Lyrfigtu, FGFR2 융합 담관암 2차 이상) · 보도 기준, 원문 미확인",
+          "src": "ASCO Post",
+          "url": "https://ascopost.com/news/september-2026/fda-approves-lirafugratinib-for-previously-treated-unresectable-locally-advanced-or-metastatic-cholangiocarcinoma/",
+          "verified": false,
+          "ct_terms": [
+            "lirafugratinib",
+            "RLY-4008"
+          ],
+          "ct_cond": []
+        },
+        {
+          "drug": "리보세라닙",
+          "indication": "위암 3차",
+          "phase": 3,
+          "status": "3상 완료, NDA 준비 (사업보고서)",
+          "src": "DART 사업보고서(2025)",
+          "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260323001673",
+          "verified": true,
+          "ct_terms": [],
+          "ct_cond": []
+        }
       ]
     }
-  ]
+  ],
+  "global_kr": {
+    "wacc": 0.1,
+    "tax": 0.24,
+    "sigma": 0.35,
+    "fx_fallback": 1400,
+    "rf": 0.03,
+    "rf_note": "국고채 금리를 자동으로 받지 않아 3%로 고정한 가정치"
+  }
 }

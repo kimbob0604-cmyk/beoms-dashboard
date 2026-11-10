@@ -20,6 +20,7 @@ from pathlib import Path
 import requests
 
 import bio_events as be
+import bio_kr as bk
 import bio_xbrl as bx
 import bio_valuation as bv
 
@@ -129,9 +130,15 @@ def scale_stages(stages, k, force=None):
 
 
 def value_asset(a, g, rf, scen):
-    peak = a['peak_musd'] * scen['peak_mult']
-    v0 = bv.launch_value(peak, a['margin'], g['tax'], g['wacc'], a['launch_in'], a['ramp_years'], a['exclusivity_years'])
-    stages = scale_stages(a['stages'], scen['pos_mult'], scen.get('pos_force'))
+    """g['conv']: 자산 금액(백만 달러)을 시장 통화로 바꾸는 배수. 미장 1, 국장은 환율/100 (백만 달러 → 억원).
+    lump_musd: 마일스톤처럼 한 번에 받는 금액. 실현 시점(launch_in)의 금액을 WACC로 오늘 가치로 바꾼 뒤 PoS 만 곱한다."""
+    conv = g.get('conv', 1.0)
+    peak = a['peak_musd'] * scen['peak_mult'] * conv
+    if a.get('lump_musd'):
+        v0 = a['lump_musd'] * scen['peak_mult'] * conv / (1 + g['wacc']) ** a['launch_in']
+    else:
+        v0 = bv.launch_value(peak, a['margin'], g['tax'], g['wacc'], a['launch_in'], a['ramp_years'], a['exclusivity_years'])
+    stages = [{**s, 'x': s['x'] * conv} for s in scale_stages(a['stages'], scen['pos_mult'], scen.get('pos_force'))]
     tree, steps = bv.rnpv_tree(v0, rf, stages)
     rov = bv.option_value(v0, g['sigma'], rf, stages)
     forced = bv.rnpv_forced(v0, rf, stages)
@@ -147,7 +154,8 @@ def value_company(co, mk, g, rf, scen):
     for a in co.get('assets', []):
         v = value_asset(a, g, rf, scen)
         assets.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'stage': a['stage'],
-                       'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'], 'basis': a.get('basis', ''),
+                       'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'] * g.get('conv', 1.0),
+                       'lump': (a['lump_musd'] * scen['peak_mult'] * g.get('conv', 1.0)) if a.get('lump_musd') else None, 'basis': a.get('basis', ''),
                        'assumptions': a.get('assumptions', ''), **v})
         total_assets += v['value']
     comm, comm_pv = None, 0.0
@@ -164,7 +172,9 @@ def value_company(co, mk, g, rf, scen):
     other = ov.get('other_liab_musd', 0.0)
     burn = 0.0
     if co['kind'] == 'pipeline' and co.get('assets'):
-        years = min(MAX_BURN_YEARS, min(a['launch_in'] for a in co['assets']))   # 첫 출시 이후엔 매출이 비용을 댄다(회사: 현금은 GD 출시 가능 시점까지)
+        # 기본은 첫 출시까지(그 뒤엔 매출이 비용을 댄다). 출시가 먼 초기 회사는 burn_years 로 '다음 결정 시점'까지만 빼서,
+        # 그 뒤 비용(단계별 x)과 겹치지 않게 한다.
+        years = min(MAX_BURN_YEARS, co.get('burn_years') or min(a['launch_in'] for a in co['assets']))
         annual = ov.get('annual_burn_musd')
         if annual is None and mk.get('op_cf') is not None:
             annual = max(0.0, -mk['op_cf'])
@@ -213,7 +223,8 @@ def payoffs(co, mk, g, rf, scenarios, base_ps):
             mid = (lo + hi) / 2
             lo, hi = (mid, hi) if at(mid) < price else (lo, mid)
         scale = (lo + hi) / 2
-    modeled = sum(a['peak_musd'] for a in co.get('assets', [])) + (co['commercial']['run_rate_musd'] if co.get('commercial') else 0.0)
+    # 국장은 자산 가정치가 백만 달러라 환산(conv)해야 시작 매출(억원)과 같은 단위가 된다
+    modeled = sum(a['peak_musd'] * g.get('conv', 1.0) for a in co.get('assets', [])) + (co['commercial']['run_rate_musd'] if co.get('commercial') else 0.0)
     return {'modeled_revenue': modeled, 'required_revenue': modeled * scale if scale is not None else None,
             'fail': fail_ps, 'base': base_ps, 'success': success['per_share'], 'bull_success': bull_ok['per_share'],
             'implied_p': p_imp, 'implied_scale': scale}
@@ -496,7 +507,9 @@ def card(co, row, today_iso):
     runway = None
     fin = row.get('fin') or {}
     if fin.get('runway_months'):
-        runway = {'months': fin['runway_months'], 'basis': f"SEC 원문: 현금·단기투자 {fin['balance']['cash_total']:.1f}M ({fin['balance']['end']}) ÷ 최근 2분기 평균 영업현금 유출 {fin['burn_quarter']:.1f}M/분기"}
+        kr = co.get('market') == 'KR'
+        u = '억원' if kr else 'M'
+        runway = {'months': fin['runway_months'], 'basis': f"{'DART' if kr else 'SEC'} 원문: 현금·단기투자 {fin['balance']['cash_total']:,.1f}{u} ({fin['balance']['end']}) ÷ 최근 2분기 평균 영업현금 유출 {fin['burn_quarter']:,.1f}{u}/분기"}
     elif v and co['kind'] == 'pipeline':
         ov = co.get('overrides', {})
         annual = ov.get('annual_burn_musd')
@@ -538,6 +551,87 @@ def implied_pos_scale(co, mk, g, rf):
     return (lo + hi) / 2
 
 
+def fetch_fx(fallback: float):
+    """원/달러 (yfinance KRW=X). 국장 자산의 달러 가정치를 억원으로 바꿀 때 쓴다."""
+    try:
+        import yfinance as yf
+        return float(yf.Ticker('KRW=X').history(period='5d')['Close'].dropna().iloc[-1]), False
+    except Exception as e:
+        print(f'  환율 실패: {e} → {fallback} 사용', file=sys.stderr)
+        return fallback, True
+
+
+def build_kr(co, old, cfg, fx, rf):
+    """국장 종목: KRX 가격 DB + DART 재무·공시. 금액은 억원, 주식 수는 억주."""
+    t = co['ticker']
+    g = {**cfg['global_kr'], 'conv': fx / 100}
+    stale = []
+    mk = bk.market(t)
+    if not mk:
+        return None
+    fin = old.get('fin')
+    try:
+        fin = bk.financials(t) or fin
+    except Exception as e:
+        print(f'  DART 재무 실패: {e}', file=sys.stderr)
+        stale.append('dart')
+    if fin:
+        b = fin['balance']
+        ov = co.get('overrides', {})
+        mk = {**mk, 'cash': b['cash_total'], 'debt': b['debt'] or 0.0,
+              'op_cf': -(fin['burn_quarter'] * 4) if fin.get('burn_quarter') else None}
+        fin['shares'] = None   # 주식 수는 KRX 상장주식수 하나뿐이라 대조할 다른 원문이 없음
+    try:
+        news = fetch_news_rss(co['name'], t)
+    except Exception:
+        news = old.get('news', [])
+    trials = old.get('trials', [])
+    if co.get('ct'):
+        try:
+            trials = fetch_trials(co['ct']['spons'])
+        except Exception as e:
+            print(f'  임상 시험 실패: {e}', file=sys.stderr)
+            stale.append('trials')
+    fl = bk.filings(t, 120)
+    auto = {'archive_ok': True, 'earnings': None, 'events': [], 'trial_changes': be.trial_changes(old.get('trials', []), trials),
+            'filings': [{'acc': f['acc'], 'filed': f['filed'], 'form': 'DART', 'labels': [f['title']], 'url': f['url']} for f in fl][:20],
+            'ir': [{'filed': f['filed'], 'form': 'DART', 'labels': [], 'title': f['title'],
+                    'highlights': [x for x in [(f['data'] or {}).get('title'), (f['data'] or {}).get('body')] if x], 'url': f['url']}
+                   for f in fl if f['kind'] == 'biz'][:6]}
+    old_acc = {f['acc'] for f in (old.get('auto') or {}).get('filings', [])}
+    for f in auto['filings']:
+        f['new'] = bool(old.get('auto')) and f['acc'] not in old_acc
+    row = {'ticker': t, 'name': co['name'], 'market_code': 'KR', 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''),
+           'market': mk, 'news': news, 'trials': trials, 'auto': auto, 'fin': fin, 'prices': bk.prices(t), 'facts': co.get('facts', []),
+           'catalysts': co.get('catalysts', []), 'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
+    row['valuation'] = value_company(co, mk, g, rf, cfg['scenarios']['base'])
+    row['scenarios'] = {}
+    for key, sc in cfg['scenarios'].items():
+        v = value_company(co, mk, g, rf, sc)
+        row['scenarios'][key] = {'label': sc['label'], 'per_share': v['per_share'], 'upside': v['upside'], 'equity': v['equity']}
+    row['implied_pos_scale'] = implied_pos_scale(co, mk, g, rf) if co.get('assets') else None
+    row['payoffs'] = payoffs(co, mk, g, rf, cfg['scenarios'], row['valuation']['per_share'])
+    row['card'] = card(co, row, date.today().isoformat())
+    row['checks'] = checks(row, fin)
+    row['pipeline'] = pipeline(co, row)
+    row['timeline'] = timeline(co, row, date.today().isoformat())
+    row['sensitivity'] = sensitivity(co, mk, g, rf)
+    row['estimates'] = estimates(co, row, None)
+    if row['estimates']:
+        row['estimates']['thresholds'] = thresholds(co, mk, g, rf, cfg)
+    notes = {}
+    if fin:
+        bal = fin['balance']
+        notes = {'cash_note': f"DART {fin['concepts'].get('fs', '')} 재무제표 {bal['end']} (현금 + 단기금융상품, 원문)",
+                 'debt_note': f"DART {bal['end']} 차입·사채 계정 합계: {fin['concepts'].get('debt', '')} (상환전환우선주부채 포함 시 희석 성격)",
+                 'burn_note': 'DART 현금흐름표 최근 2분기 평균 영업현금 유출 × 4'}
+    notes['shares_note'] = f"KRX 상장주식수 {mk['asof']} (전환사채·RCPS 등 희석 미반영)"
+    notes.update({k: v for k, v in co.get('overrides', {}).items() if k.endswith('_note')})
+    row['override_notes'] = notes
+    row['fx'] = fx
+    return row
+
+
 def build():
     cfg = json.loads(ASSETS.read_text(encoding='utf-8'))
     g = cfg['global']
@@ -546,11 +640,22 @@ def build():
     print(f'무위험이자율 {rf:.2%}{" (대체값)" if rf_stale else ""}')
     companies, problems = [], []
     cache = be.load_cache()
+    gk = cfg.get('global_kr', {})
+    fx, fx_stale = fetch_fx(gk.get('fx_fallback', 1400))
+    rf_kr = gk.get('rf', 0.03)
+    print(f'원/달러 {fx:,.1f}{" (대체값)" if fx_stale else ""}')
     for co in cfg['companies']:
         t = co['ticker']
         old = prev.get(t, {})
         print(f'{t} 수집')
         stale = []
+        if co.get('market') == 'KR':
+            row = build_kr(co, old, cfg, fx, rf_kr)
+            if row:
+                companies.append(row)
+            else:
+                problems.append(f'{t} 국장 시세')
+            continue
         try:
             mk, news = fetch_market(t)
         except Exception as e:
@@ -614,7 +719,7 @@ def build():
         except Exception as e:
             print(f'  주가 이력 실패: {e}', file=sys.stderr)
             prices = old.get('prices')
-        row = {'ticker': t, 'name': co['name'], 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''), 'market': mk, 'news': news,
+        row = {'ticker': t, 'name': co['name'], 'market_code': 'US', 'kind': co['kind'], 'summary': co['summary'], 'not_modeled': co.get('not_modeled', ''), 'market': mk, 'news': news,
                'trials': trials, 'auto': auto, 'fin': fin, 'prices': prices, 'facts': co.get('facts', []), 'catalysts': co.get('catalysts', []),
                'assumption_notes': {a['id']: a.get('assumptions', '') for a in co.get('assets', [])}, 'stale': stale}
         if co['kind'] != 'excluded':
@@ -649,7 +754,12 @@ def build():
         print(f'  시장 스크리닝 실패: {e}', file=sys.stderr)
         screen = None
     be.save_cache(cache)
-    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'market_screen': screen, 'archive_ok': be.ARCHIVE_OK, 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
+    try:
+        screen_kr = bk.market_screen()
+    except Exception as e:
+        print(f'  국장 스크리닝 실패: {e}', file=sys.stderr)
+        screen_kr = None
+    out = {'generated_at': datetime.now().isoformat(timespec='seconds'), 'market_screen': screen, 'market_screen_kr': screen_kr, 'fx': fx, 'rf_kr': rf_kr, 'archive_ok': be.ARCHIVE_OK, 'as_of': cfg['as_of'], 'rf': rf, 'rf_stale': rf_stale,
            'params': g, 'scenarios': {k: v['label'] for k, v in cfg['scenarios'].items()}, 'note': cfg['note'], 'companies': companies}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
