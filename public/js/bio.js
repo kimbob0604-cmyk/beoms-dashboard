@@ -1,4 +1,5 @@
 // 바이오 탭: data/bio.json — 종목별 시세·가치(rNPV·옵션·DCF)·임상 일정·뉴스
+// '내 가정으로 다시 계산'(calcHtml·bc*): 환자 수·침투율·가격·마진·성공확률·WACC 를 바꾸면 브라우저에서 같은 식으로 주당 가치를 다시 계산한다
 (() => {
   const $ = id => document.getElementById(id);
   const esc = U.esc;
@@ -563,6 +564,169 @@
       </tbody></table></div>`;
   }
 
+  // ---------- 내 가정으로 다시 계산 ----------
+  // 가정(프록시)을 바꾸면 주당 가치가 다시 계산된다. 식은 bio_valuation.py 와 같다 (launch_value · rnpv_tree · option_value).
+  //   ① 피크매출 = 대상 환자 × 침투율 × 순가격 (시장 가정이 환자 수로 돼 있는 자산) 또는 직접 입력
+  //   ② 출시 가치 V0 = 피크 × 마진 × (1 − 세율)을 램프·독점 기간 동안 WACC 로 할인
+  //   ③ 단계마다 계속가치 = PoS × max(뒤 단계 가치 − 비용의 현재가치, 0)  → 자산 가치(rNPV, 방법이 옵션이면 이항트리)
+  //   ④ 주주가치 = 임상 자산 합 + 상업 DCF + 현금 − 부채 − 기타 − 소진 → 주당 = 주주가치 ÷ 주식 수
+  // 고친 값은 종목별로 이 브라우저에 남는다. 상업 DCF·현금 소진은 서버가 계산한 값을 그대로 쓴다(WACC 를 바꿔도 안 바뀐다).
+  const BKEY = 'bioCalc';
+  const bcAll = () => { try { return JSON.parse(localStorage.getItem(BKEY)) || {}; } catch (e) { return {}; } };
+  const pyRound = x => (Math.abs(x % 1) === 0.5 ? 2 * Math.round(x / 2) : Math.round(x));   // 파이썬 round 와 같게(0.5 는 짝수로)
+
+  function launchValue(peak, margin, tax, wacc, launchIn, ramp, excl) {
+    let pv = 0;
+    for (let k = 0; k < Math.trunc(excl); k++) pv += peak * Math.min(1, (k + 1) / ramp) * margin * (1 - tax) / (1 + wacc) ** (launchIn + k + 1);
+    return pv;
+  }
+  function rnpvTree(v0, rf, stages) {
+    const ord = [...stages].sort((a, b) => a.t - b.t), steps = [];
+    let cont = v0;
+    for (let i = ord.length - 1; i >= 0; i--) {
+      const st0 = ord[i], pvx = st0.x / (1 + rf) ** st0.t;
+      steps.unshift({ ...st0, pv_x: pvx, cont, go: cont > pvx, breakeven: cont > 0 ? pvx / cont : null });
+      cont = st0.pos * Math.max(cont - pvx, 0);
+    }
+    return { value: cont, steps };
+  }
+  function optionValue(v0, sigma, rf, stages, dt = 0.25) {
+    const n = Math.max(1, pyRound(Math.max(...stages.map(x => x.t)) / dt)), at = {};
+    for (const x of [...stages].sort((a, b) => a.t - b.t)) (at[pyRound(x.t / dt)] = at[pyRound(x.t / dt)] || []).push(x);
+    const growth = (1 + rf) ** dt, u = Math.exp(sigma * Math.sqrt(dt)), d = 1 / u, p = (growth - d) / (u - d);
+    if (!(p > 0 && p < 1)) return null;
+    const apply = (cont, grp) => grp.slice().reverse().reduce((cv, x) => x.pos * Math.max(cv - x.x, 0), cont);
+    let vals = Array.from({ length: n + 1 }, (_, j) => v0 * u ** j * d ** (n - j));
+    if (at[n]) vals = vals.map(v => apply(v, at[n]));
+    for (let t = n - 1; t >= 0; t--) {
+      vals = Array.from({ length: t + 1 }, (_, j) => (p * vals[j + 1] + (1 - p) * vals[j]) / growth);
+      if (at[t]) vals = vals.map(v => apply(v, at[t]));
+    }
+    return vals[0];
+  }
+
+  // 서버가 쓴 기본 가정 (자산마다). mk = 시장 가정이 '환자 × 침투율 × 가격'이고 그 곱이 피크매출과 맞을 때만
+  function bcBase(c) {
+    const v = c.valuation;
+    return { wacc: v.g.wacc, assets: v.assets.map(a => {
+      const m = (c.markets || []).find(x => x.id === a.id), cs = m && m.cases ? m.cases.base : null;
+      const ok = cs && cs.sam_n && cs.pen && cs.price_k && cs.peak && Math.abs(cs.sam_n * cs.pen * cs.price_k / 1000 - cs.peak) / cs.peak < 0.02 && !a.lump;
+      return { id: a.id, lump: a.lump, peak: a.peak, margin: a.inp.margin, pos: a.steps.map(x => x.pos),
+        mk: ok ? { n: cs.sam_n, pen: cs.pen, price: cs.price_k, conv: a.peak / cs.peak } : null };
+    }) };
+  }
+  // 저장된 내 값(기본과 다른 것만)을 기본 가정 위에 덮는다
+  function bcInputs(c) {
+    const base = bcBase(c), mine = bcAll()[c.ticker] || {};
+    return { wacc: mine.wacc ?? base.wacc, assets: base.assets.map(a => {
+      const o = (mine.a || {})[a.id] || {};
+      return { ...a, lump: o.lump ?? a.lump, peak: o.peak ?? a.peak, margin: o.margin ?? a.margin, pos: a.pos.map((x, i) => (o.pos || {})[i] ?? x),
+        mk: a.mk ? { ...a.mk, n: o.n ?? a.mk.n, pen: o.pen ?? a.mk.pen, price: o.price ?? a.mk.price } : null };
+    }) };
+  }
+  function bcCompute(c, inp) {
+    const v = c.valuation, g = v.g, b = v.bridge;
+    const assets = v.assets.map((a, i) => {
+      const x = inp.assets[i];
+      const peak = x.mk ? x.mk.n * x.mk.pen * x.mk.price / 1000 * x.mk.conv : x.peak;
+      const v0 = a.lump != null ? x.lump / (1 + inp.wacc) ** a.inp.launch_in
+        : launchValue(peak, x.margin, g.tax, inp.wacc, a.inp.launch_in, a.inp.ramp, a.inp.excl);
+      const stages = a.steps.map((st0, k) => ({ name: st0.name, t: st0.t, x: st0.x, pos: x.pos[k] }));
+      const tree = rnpvTree(v0, g.rf, stages);
+      const value = a.method === 'rov' ? (optionValue(v0, g.sigma, g.rf, stages) ?? tree.value) : tree.value;
+      return { peak, v0, value, steps: tree.steps };
+    });
+    const total = assets.reduce((t, a) => t + a.value, 0);
+    const equity = total + b.commercial + b.cash - b.debt - b.other - b.burn;
+    const per = c.market.shares ? Math.max(0, equity) / c.market.shares : null;
+    return { assets, total, equity, per, upside: per != null && c.market.price ? per / c.market.price - 1 : null };
+  }
+
+  const pct1 = v => (v * 100).toFixed(v * 100 % 1 ? 1 : 0);
+  function calcHtml(c) {
+    const v = c.valuation;
+    if (!v.assets.length || !v.g || !v.assets.every(a => a.inp)) return '';
+    const inp = bcInputs(c), mine = !!bcAll()[c.ticker];
+    const num = (k, val, i, extra = '') => `<input type="number" data-bk="${k}" data-ai="${i}" value="${val}" ${extra}>`;
+    const rows = v.assets.map((a, i) => {
+      const x = inp.assets[i], unit = KR() ? '억' : '$M';
+      const peakRow = a.lump != null
+        ? `<li><span>① 일시금</span><span>마일스톤처럼 한 번에 받는 금액 ${num('lump', +x.lump.toFixed(1), i, 'step="10"')} ${unit}</span></li>`
+        : x.mk ? `<li><span>① 피크매출</span><span>대상 환자 ${num('n', Math.round(x.mk.n), i, 'step="100" class="w"')}명 × 침투율 ${num('pen', pct1(x.mk.pen), i, 'step="1"')}% × 순가격 ${num('price', x.mk.price, i, 'step="10"')}천 달러 =</span><b data-bo="peak" data-ai="${i}"></b></li>`
+          : `<li><span>① 피크매출</span><span>${num('peak', +x.peak.toFixed(1), i, 'step="10" class="w"')} ${unit} <i class="muted">(시장 가정이 환자 수 꼴이 아니라 금액을 직접 넣는다)</i></span></li>`;
+      return `<div class="bc-asset"><h5>${esc(a.name)} <small class="muted">${esc(a.indication)} · ${esc(a.stage)} · ${a.method === 'rov' ? '옵션(이항트리)' : 'rNPV'}</small></h5><ol>
+        ${peakRow}
+        ${a.lump != null ? `<li><span>② 오늘 가치 V0</span><span>① ÷ (1 + WACC)^${a.inp.launch_in} =</span><b data-bo="v0" data-ai="${i}"></b></li>`
+          : `<li><span>② 출시 가치 V0</span><span>① × 마진 ${num('margin', pct1(x.margin), i, 'step="5"')}% × (1 − 세율 ${pct1(v.g.tax)}%) 를 램프 ${a.inp.ramp}년·독점 ${a.inp.excl}년 동안, 출시 ${a.inp.launch_in}년 뒤부터 WACC 로 할인 =</span><b data-bo="v0" data-ai="${i}"></b></li>`}
+        ${a.steps.map((st0, k) => `<li><span>③ ${esc(st0.name)}</span><span>성공확률 ${num('pos', pct1(x.pos[k]), i, `step="5" data-si="${k}"`)}% · 비용 ${usd(st0.x)} →</span><small data-bo="step" data-ai="${i}" data-si="${k}"></small></li>`).join('')}
+        <li><span>④ 자산 가치</span><span>${a.method === 'rov' ? '이항트리 옵션 가치 (σ ' + pct1(v.g.sigma) + '%)' : '뒤 단계부터 성공확률 × (계속가치 − 비용)'} =</span><b data-bo="val" data-ai="${i}"></b><small data-bo="vald" data-ai="${i}"></small></li>
+      </ol></div>`;
+    }).join('');
+    const m = c.market;
+    return `<div class="bio-sub">내 가정으로 다시 계산 <span class="muted small">칸의 숫자(프록시·가정)를 바꾸면 아래가 다시 계산됩니다. 고친 값은 이 브라우저에 남습니다</span>
+        <span class="pill bc-mine"${mine ? '' : ' hidden'}>내 설정</span><button class="linkish" data-breset type="button">처음 값으로</button></div>
+      <div class="bio-pad bc" data-bc="${esc(c.ticker)}">
+        <p class="bc-top">할인율(WACC) <input type="number" data-bk="wacc" value="${pct1(inp.wacc)}" step="0.5">% <span class="muted">· 무위험이자율 ${(v.g.rf * 100).toFixed(2)}% · 세율 ${pct1(v.g.tax)}%</span></p>
+        ${rows}
+        <div class="bc-sum"><ol>
+          <li><span>⑤ 주주가치</span><span>임상 자산 합 <b data-bo="total"></b>${v.commercial ? ` + 상업 DCF ${usd(v.bridge.commercial)}` : ''} + 현금 ${usd(v.bridge.cash)} − 부채 ${usd(v.bridge.debt)}${v.bridge.other ? ` − 기타 ${usd(v.bridge.other)}` : ''}${v.bridge.burn ? ` − 소진 ${usd(v.bridge.burn)}` : ''} =</span><b data-bo="equity"></b></li>
+          <li><span>⑥ 주당 가치</span><span>⑤ ÷ 주식 수 ${shTxt(m.shares)} =</span><b data-bo="per"></b><small data-bo="perd"></small></li>
+        </ol></div>
+        <p class="muted small">그 밖의 숫자: 최근 12개월 영업현금흐름 ${usd(m.op_cf)}${m.revenue_ttm ? ` · 매출 ${usd(m.revenue_ttm)}` : ''}${m.beta != null ? ` · 베타 ${m.beta.toFixed(2)}` : ''}${c.reports && c.reports.summary && c.reports.summary.goal_median ? ` · 목표가 중앙값 ${px(c.reports.summary.goal_median)}(${c.reports.summary.n_brokers}곳)` : ''}.
+          ${v.commercial ? '상업 DCF 와 ' : ''}현금 소진은 서버가 계산한 값을 그대로 씁니다${v.commercial ? ' (WACC 를 바꿔도 상업 DCF 는 바뀌지 않습니다)' : ''}.</p>
+      </div>`;
+  }
+
+  // 화면의 칸 → 입력값. 기본과 다른 값만 저장한다
+  function bcRead(c, box) {
+    const base = bcBase(c), inp = bcInputs(c), mine = { a: {} };
+    const val = el => { const x = parseFloat(el.value); return Number.isFinite(x) ? x : null; };
+    const near = (x, y) => Math.abs(x - y) <= Math.abs(y) * 1e-6 + 1e-9;
+    box.querySelectorAll('[data-bk]').forEach(el => {
+      const k = el.dataset.bk, x = val(el);
+      if (x == null) return;
+      if (k === 'wacc') { inp.wacc = x / 100; if (!near(inp.wacc, base.wacc)) mine.wacc = inp.wacc; return; }
+      const i = +el.dataset.ai, a = inp.assets[i], b0 = base.assets[i], o = mine.a[a.id] || (mine.a[a.id] = {});
+      const put = (key, v0, b) => { if (!near(v0, b)) o[key] = v0; };
+      if (k === 'n') { a.mk.n = x; put('n', x, Math.round(b0.mk.n)); }
+      else if (k === 'pen') { a.mk.pen = x / 100; put('pen', a.mk.pen, +(b0.mk.pen * 100).toFixed(1) / 100); }
+      else if (k === 'price') { a.mk.price = x; put('price', x, b0.mk.price); }
+      else if (k === 'peak') { a.peak = x; put('peak', x, +b0.peak.toFixed(1)); }
+      else if (k === 'lump') { a.lump = x; put('lump', x, +b0.lump.toFixed(1)); }
+      else if (k === 'margin') { a.margin = x / 100; put('margin', a.margin, b0.margin); }
+      else if (k === 'pos') { const si = +el.dataset.si; a.pos[si] = Math.min(1, Math.max(0, x / 100)); if (!near(a.pos[si], +(b0.pos[si] * 100).toFixed(1) / 100)) (o.pos = o.pos || {})[si] = a.pos[si]; }
+    });
+    for (const id of Object.keys(mine.a)) if (!Object.keys(mine.a[id]).length) delete mine.a[id];
+    const all = bcAll();
+    if (mine.wacc == null && !Object.keys(mine.a).length) delete all[c.ticker]; else all[c.ticker] = mine;
+    try { localStorage.setItem(BKEY, JSON.stringify(all)); } catch (e) { /* 저장 안 되는 브라우저 */ }
+    return inp;
+  }
+
+  function bcPaint(c, box, inp) {
+    const r = bcCompute(c, inp), v = c.valuation;
+    const set = (sel, html) => { const el = box.querySelector(sel); if (el) el.innerHTML = html; };
+    const d = (now, was) => (was ? ` <span class="${U.cls(now / was - 1)}">기본 ${usd(was)} 대비 ${pc(now / was - 1)}</span>` : '');
+    r.assets.forEach((a, i) => {
+      set(`[data-bo="peak"][data-ai="${i}"]`, usd(a.peak));
+      set(`[data-bo="v0"][data-ai="${i}"]`, usd(a.v0));
+      a.steps.forEach((st0, k) => set(`[data-bo="step"][data-ai="${i}"][data-si="${k}"]`,
+        `비용의 현재가치 ${usd(st0.pv_x)} · 이 단계 뒤의 가치 ${usd(st0.cont)} · <span class="bio-tag ${st0.go ? 'go' : 'stop'}">${st0.go ? '진행' : '포기'}</span>${st0.breakeven != null && st0.x > 0 ? ` · 이후 성공확률이 ${(st0.breakeven * 100).toFixed(st0.breakeven < 0.1 ? 1 : 0)}%만 넘으면 비용을 감당` : ''}`));
+      set(`[data-bo="val"][data-ai="${i}"]`, usd(a.value));
+      set(`[data-bo="vald"][data-ai="${i}"]`, d(a.value, v.assets[i].value));
+    });
+    set('[data-bo="total"]', usd(r.total));
+    set('[data-bo="equity"]', usd(r.equity));
+    set('[data-bo="per"]', px(r.per));
+    set('[data-bo="perd"]', ` 현재가 ${px(c.market.price)} 대비 <b class="${U.cls(r.upside)}">${pc(r.upside)}</b> <span class="muted">· 기본 가정으로는 ${px(v.per_share)} (${pc(v.upside)})</span>`);
+  }
+
+  function bcInit() {
+    const box = $('detail').querySelector('.bc');
+    const c = LIST().find(x => x.ticker === st.c);
+    if (box && c) bcPaint(c, box, bcInputs(c));
+  }
+
   function commHtml(c) {
     const m = c.valuation.commercial;
     if (!m) return '';
@@ -610,7 +774,7 @@
         ${c.implied_pos_scale != null ? `<p><b>시장 내재 PoS</b> 시총을 설명하려면 모든 단계 PoS를 가정치의 ${(c.implied_pos_scale * 100).toFixed(0)}% 수준으로 곱해야 합니다 (100%보다 작으면 시장이 가정치보다 비관적, 크면 낙관적).</p>`
           : c.valuation.assets.length ? '<p><b>시장 내재 PoS</b> PoS를 최대로 올려도 시총에 닿지 않습니다. 이 모델이 반영하지 못한 가치가 있다는 뜻입니다.</p>' : ''}
         ${c.not_modeled ? `<p class="muted"><b>반영하지 않은 것</b> ${esc(c.not_modeled)}</p>` : ''}</div></div>`;
-      h += assetsHtml(c) + commHtml(c);
+      h += assetsHtml(c) + calcHtml(c) + commHtml(c);
       h += sensHtml(c);
     }
     h += trialsHtml(c);
@@ -622,6 +786,7 @@
       <div><div class="bio-sub">최근 뉴스</div><ul class="bio-list">
         ${c.news.length ? c.news.map(n => `<li><span class="d">${esc(n.date)}</span><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>${n.src ? ` <span class="muted">${esc(n.src)}</span>` : ''}</li>`).join('') : '<li class="muted">불러오지 못함</li>'}</ul></div></div>`;
     $('detail').innerHTML = h;
+    bcInit();
   }
 
   function renderCal() {
@@ -695,6 +860,22 @@
     range = b.dataset.range;
     const c = LIST().find(x => x.ticker === st.c);
     $('pxbox').innerHTML = priceSvg(c);
+  });
+  $('detail').addEventListener('input', e => {
+    const box = e.target.closest('.bc');
+    if (!box || !e.target.dataset.bk) return;
+    const c = LIST().find(x => x.ticker === st.c);
+    bcPaint(c, box, bcRead(c, box));
+    const tag = $('detail').querySelector('.bc-mine'), mine = !!bcAll()[c.ticker];
+    if (tag) tag.hidden = !mine;
+  });
+  $('detail').addEventListener('click', e => {
+    if (!e.target.closest('[data-breset]')) return;
+    const all = bcAll();
+    delete all[st.c];
+    try { localStorage.setItem(BKEY, JSON.stringify(all)); } catch (err) { /* 저장 안 되는 브라우저 */ }
+    renderDetail();
+    $('detail').querySelector('.bc')?.scrollIntoView({ block: 'center' });
   });
   $('screen').addEventListener('click', e => {
     const b = e.target.closest('[data-sf]');

@@ -162,7 +162,10 @@ def value_company(co, mk, g, rf, scen):
         assets.append({'id': a['id'], 'name': a['name'], 'indication': a['indication'], 'stage': a['stage'],
                        'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'] * scen['peak_mult'] * g.get('conv', 1.0),
                        'lump': (a['lump_musd'] * scen['peak_mult'] * g.get('conv', 1.0)) if a.get('lump_musd') else None, 'basis': a.get('basis', ''),
-                       'assumptions': a.get('assumptions', ''), **v})
+                       'assumptions': a.get('assumptions', ''), **v,
+                       # 화면의 '내 가정으로 다시 계산'이 같은 식을 돌리는 데 쓰는 입력값 (bio.js calc*)
+                       'inp': {'margin': a.get('margin'), 'ramp': a.get('ramp_years'), 'excl': a.get('exclusivity_years'),
+                               'launch_in': a['launch_in']}})
         total_assets += v['value']
     comm, comm_pv = None, 0.0
     c = co.get('commercial')
@@ -190,7 +193,8 @@ def value_company(co, mk, g, rf, scen):
     per_share = max(0.0, equity) / mk['shares'] if mk.get('shares') else None
     return {'assets': assets, 'commercial': comm, 'equity': equity, 'per_share': per_share,
             'upside': (per_share / mk['price'] - 1) if per_share is not None and mk['price'] else None,
-            'bridge': {'assets': total_assets, 'commercial': comm_pv, 'cash': cash, 'debt': debt, 'other': other, 'burn': burn}}
+            'bridge': {'assets': total_assets, 'commercial': comm_pv, 'cash': cash, 'debt': debt, 'other': other, 'burn': burn},
+            'g': {'wacc': g['wacc'], 'tax': g['tax'], 'sigma': g['sigma'], 'rf': rf}}
 
 
 BASE = {'pos_mult': 1.0, 'peak_mult': 1.0, 'growth_mult': 1.0}
