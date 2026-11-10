@@ -2,7 +2,7 @@
 네이버 수집분 → 화면용 JSON
 
 - public/data/flow/{거래일}.json   수급 탭: 종목별 외국인·기관·개인 순매수 금액(1·5·20·60일), 연속 순매수, 지분율 변화
-- public/data/high/{거래일}.json   신고가 탭: 그날 52주 신고가 종목 + 최근 20거래일 안에 신고가를 냈던 종목
+- public/data/high/{거래일}.json   신고가 탭: build_newhigh.py 가 가격 이력으로 계산 (역사적·52주·120일·60일, 종가 기준)
 - public/data/reports/recent.json  컨센 리비전 탭: 최근 30일 리포트의 목표가와 같은 증권사 직전 목표가
 - public/data/stocks/{code}.json   종목 상세: 리포트 목록·키워드 정리·목표가 요약·최근 수급
 
@@ -25,7 +25,6 @@ from universe import is_common
 DATA = Path(__file__).parent / 'public' / 'data'
 REPORT_DAYS = 90       # 종목 상세에 보일 리포트 기간
 RECENT_DAYS = 30       # 컨센 리비전 탭의 목표가 변경 목록 기간
-HIGH_WINDOW = 20       # 최근 신고가 집계 거래일 수
 FLOW_DAYS = (1, 5, 20, 60)
 
 OPINION = {
@@ -67,10 +66,34 @@ def summarize_flow(rows):
             vals = [v for v in amt[key][:d] if v is not None]
             out[f'{short}{d}'] = round(sum(vals), 1) if len(rows) >= d else None
         out[f'{short}s'] = streak([r[key] for r in rows])
+    # 직전 3거래일(오늘 제외) 외국인 순매수 합 — 수급 반전(순매도 → 순매수 전환) 판정용
+    out['fp3'] = round(sum(v or 0 for v in amt['frgn'][1:4]), 1) if len(rows) >= 4 else None
     ratios = [r['frgn_ratio'] for r in rows]
     out['fr'] = ratios[0] if ratios else None
     out['frd'] = round(ratios[0] - ratios[20], 2) if len(ratios) > 20 and None not in (ratios[0], ratios[20]) else None
     return out
+
+
+SIG_MIN = 50        # 억: 쌍끌이·수급 반전에서 당일 순매수(순매도) 하한. 연속은 이 값의 절반
+SIG_STREAK = 3      # 외국인 연속 순매수·순매도 최소 일수
+SIG_TOP = 6         # 시그널마다 올릴 종목 수
+
+
+def flow_signals(stocks, min_eok=SIG_MIN, streak_min=SIG_STREAK, top=SIG_TOP):
+    """수급 시그널 {종류: [종목코드…]} — 예전 stock-dashboard 의 '수급 시그널' 텔레그램 알림과 같은 규칙.
+    dual_buy/dual_sell  쌍끌이: 외국인·기관이 둘 다 min_eok 이상 순매수(순매도). 합이 큰 순
+    streak_buy/sell     외국인이 streak_min 일 이상 연속 순매수(순매도)이고 당일 금액이 min_eok 의 절반 이상. 긴 순, 같으면 금액순
+    reversal            수급 반전: 직전 3거래일 외국인 합이 순매도였는데 당일 min_eok 이상 순매수. 금액순"""
+    rows = [s for s in stocks if s.get('f1') is not None and s.get('o1') is not None]
+    half = min_eok / 2
+    pick = lambda xs, key: [s['c'] for s in sorted(xs, key=key)[:top]]
+    return {
+        'dual_buy': pick([s for s in rows if s['f1'] >= min_eok and s['o1'] >= min_eok], lambda s: -(s['f1'] + s['o1'])),
+        'dual_sell': pick([s for s in rows if s['f1'] <= -min_eok and s['o1'] <= -min_eok], lambda s: s['f1'] + s['o1']),
+        'streak_buy': pick([s for s in rows if s['fs'] >= streak_min and s['f1'] >= half], lambda s: (-s['fs'], -s['f1'])),
+        'streak_sell': pick([s for s in rows if s['fs'] <= -streak_min and s['f1'] <= -half], lambda s: (s['fs'], s['f1'])),
+        'reversal': pick([s for s in rows if s.get('fp3') is not None and s['fp3'] < 0 and s['f1'] >= min_eok], lambda s: -s['f1']),
+    }
 
 
 def prev_goals(reports):
@@ -88,17 +111,39 @@ def prev_goals(reports):
 # 공통
 # ------------------------------------------------------------
 
-def growth_extract(d):
-    """d 이하 가장 최근 이익 성장 JSON → {code: 영업이익 성장률·구간·POR·1개월 리비전}"""
+_growth_cache = {}
+
+
+def growth_stocks(d):
+    """d 이하 가장 최근 이익 성장 JSON 의 종목 목록 (한 번 읽어 둔다)"""
     files = sorted(p for p in (DATA / 'growth').glob('20*.json') if p.stem <= d)
     if not files:
-        return {}
+        return []
+    if files[-1] not in _growth_cache:
+        _growth_cache[files[-1]] = json.loads(files[-1].read_text(encoding='utf-8'))['stocks']
+    return _growth_cache[files[-1]]
+
+
+def growth_extract(d):
+    """d 이하 가장 최근 이익 성장 JSON → {code: 영업이익 성장률·구간·POR·1개월 리비전}"""
     out = {}
-    for s in json.loads(files[-1].read_text(encoding='utf-8'))['stocks']:
+    for s in growth_stocks(d):
         op = s['k'].get('y0', {}).get('op')
         if op:
             out[s['c']] = {'g': op['g'], 'k': op['k'], 'por': op['mn'], 'r1': op['m1'], 'lb': op['lb']}
     return out
+
+
+def por_series(s):
+    """이익 성장 JSON 의 한 종목 → {'fy0': 올해 결산연도, 'ops': [[연도, 영업이익(억), 추정이면 1]…]} (전년 실적 ~ 내후년 추정).
+    화면이 지금 시총 ÷ 연도별 영업이익으로 POR 을 계산한다 (장중 시총이 바뀌어도 맞도록 배수는 싣지 않는다)."""
+    ops = [x for x in s['s'].get('op', []) if x[0] >= s['fy0'] - 1 and x[1] is not None]
+    return {'fy0': s['fy0'], 'ops': ops} if ops else None
+
+
+def por_base(d):
+    """{code: por_series} — 종목 패널과 탐방 탭의 'POR = 시총 ÷ 영업이익' 표에 쓴다"""
+    return {s['c']: v for s in growth_stocks(d) if (v := por_series(s))}
 
 
 def market_info(conn, d):
@@ -178,48 +223,7 @@ def build_flow(conn, d):
         if rows[0]['date'] != d or code not in info:   # 그날 수급이 없는 종목(거래정지 등)은 뺀다
             continue
         stocks.append({'c': code, **public(info[code]), **summarize_flow(rows), 'gx': gx.get(code)})
-    return {'date': d, 'stocks': stocks}
-
-
-# ------------------------------------------------------------
-# 신고가
-# ------------------------------------------------------------
-
-def build_high(conn, d):
-    info, _ = market_info(conn, d)
-    gx = growth_extract(d)
-    flows = flow_by_code(conn, d, limit=20)
-    days = [r[0] for r in conn.execute(
-        'SELECT DISTINCT date FROM high52_daily WHERE date <= ? ORDER BY date DESC LIMIT ?', (d, HIGH_WINDOW))]
-    hits = defaultdict(list)   # code → [(date, close)] 최신순
-    snap = {}                  # code → 가장 최근 신고가 행
-    for r in conn.execute(f"SELECT * FROM high52_daily WHERE date IN ({','.join('?' * len(days))}) "
-                          'ORDER BY date DESC', days):
-        hits[r['code']].append((r['date'], r['close']))
-        snap.setdefault(r['code'], dict(r))
-
-    def row(code):
-        h = hits[code]
-        sn = snap[code]
-        base = dict(info.get(code) or {'n': sn['name'], 'mk': sn['market'], 'mc': round(sn['mcap'] or 0),
-                                       'p': None, 'ch': None, 'w': None, 'pd': None})
-        if base['pd'] != d and sn['date'] == d:   # 그날 KRX·수급 가격이 없으면 신고가 목록의 가격
-            base.update(p=sn['close'], ch=sn['change_pct'])
-        base = public(base)
-        run = 0
-        for day in days:   # 오늘부터 거꾸로 연속 신고가 일수
-            if day in {x[0] for x in h}:
-                run += 1
-            else:
-                break
-        f = summarize_flow(flows[code]) if flows.get(code) else {}
-        return {'c': code, **base, 'n20': len(h), 'run': run, 'last': h[0][0], 'hp': h[0][1],
-                'first': h[-1][0], 'f5': f.get('f5'), 'o5': f.get('o5'), 'gx': gx.get(code)}
-
-    today = [row(c) for c, h in hits.items() if h[0][0] == d]
-    recent = [row(c) for c, h in hits.items() if h[0][0] != d]
-    at = conn.execute('SELECT MAX(fetched_at) FROM high52_daily WHERE date = ?', (d,)).fetchone()[0]
-    return {'date': d, 'at': at, 'days': len(days), 'from': days[-1] if days else None, 'today': today, 'recent': recent}
+    return {'date': d, 'stocks': stocks, 'sig': flow_signals(stocks), 'sig_min': SIG_MIN, 'sig_streak': SIG_STREAK}
 
 
 # ------------------------------------------------------------
@@ -246,6 +250,7 @@ def build_reports(conn, d):
 
     info, _ = market_info(conn, d)
     gx = growth_extract(d)
+    pv = por_base(d)
     flows = flow_by_code(conn, d, limit=20)
     month_ago = (date.fromisoformat(d) - timedelta(days=RECENT_DAYS)).isoformat()
 
@@ -272,6 +277,7 @@ def build_reports(conn, d):
         stock_files[code] = {
             'c': code, 'n': name, **{k: v for k, v in public(info.get(code) or {}).items() if k != 'n'},
             'gx': gx.get(code),
+            'pv': pv.get(code),
             'tgt': {'avg': round(sum(goals) / len(goals)), 'hi': max(goals), 'lo': min(goals), 'n': len(goals),
                     'up': sum(1 for r in reps if r['goal'] and pg[r['id']] and r['goal'] > pg[r['id']]),
                     'dn': sum(1 for r in reps if r['goal'] and pg[r['id']] and r['goal'] < pg[r['id']])}
@@ -298,12 +304,11 @@ def main():
         write_dates(DATA / 'flow')
         print(f"flow/{fd}.json: {len(data['stocks'])}종목")
 
-    hd = conn.execute('SELECT MAX(date) FROM high52_daily').fetchone()[0]
-    if hd:
-        data = build_high(conn, hd)
-        write_json(DATA / 'high' / f'{hd}.json', data)
-        write_dates(DATA / 'high')
-        print(f"high/{hd}.json: 오늘 {len(data['today'])}, 최근 {len(data['recent'])} ({data['days']}거래일 기록)")
+    # 신고가: 가격 이력으로 직접 계산 (build_newhigh.py — 역사적·52주·120일·60일, 종가 기준)
+    import build_newhigh
+    data = build_newhigh.write_all(conn)
+    hd = data['date']
+    print(f"high/{hd}.json{' (잠정)' if data['prov'] else ''}: 대상 {data['universe']}종목, 신고가 {len(data['today'])}, 최근 {len(data['recent'])}")
 
     rd = max(filter(None, [d, fd, hd]))
     recent, stocks = build_reports(conn, rd)

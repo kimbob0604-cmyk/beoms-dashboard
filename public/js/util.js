@@ -41,6 +41,24 @@ const U = (() => {
     cls(v) {
       return v > 0 ? 'up' : v < 0 ? 'down' : '';
     },
+    // POR = 시총 ÷ 영업이익 표 (종목 패널·탐방 탭 공통). mc: 시총(억), pv: {fy0: 올해 결산연도, ops: [[연도, 영업이익(억), 추정이면 1]…]}
+    // 내년 열을 강조한다. 영업이익이 0 이하면 배수 대신 '적자'.
+    porTable(mc, pv, capLabel = '시총') {
+      if (!pv?.ops?.length || !mc) return '';
+      const cs = pv.ops.map(([fy, op, est]) => ({ fy, op, est, por: op > 0 ? mc / op : null, key: fy === pv.fy0 + 1 }));
+      const k = c => (c.key ? ' class="key"' : '');
+      const tag = c => (c.key ? '<small>내년</small>' : c.fy === pv.fy0 ? '<small>올해</small>' : '');
+      return `<div class="por">
+        <div class="por-eq"><b>POR</b> = ${capLabel} <b>${U.eok(mc)}</b> ÷ 영업이익</div>
+        <table class="por-tbl">
+          <thead><tr><th></th>${cs.map(c => `<th${k(c)}>${String(c.fy).slice(2)}${c.est ? 'E' : 'A'}${tag(c)}</th>`).join('')}</tr></thead>
+          <tbody>
+            <tr><th>영업이익</th>${cs.map(c => `<td${k(c)}><span class="${c.op < 0 ? 'down' : ''}">${U.eok(c.op)}</span></td>`).join('')}</tr>
+            <tr class="por-x"><th>POR</th>${cs.map(c => `<td${k(c)}>${c.por != null ? `<b>${U.mult(c.por)}</b>` : '<span class="muted">적자</span>'}</td>`).join('')}</tr>
+          </tbody>
+        </table>
+      </div>`;
+    },
     // 글 속 숫자 강조: 원문을 이스케이프한 뒤 금액·비율·배수 같은 숫자를 <b class="n">로 감싼다.
     // 부호 있는 %(+12%, -3.5%)는 오름·내림 색까지. HTML 엔티티(&#39; 등) 속 숫자는 건드리지 않는다.
     num(s) {

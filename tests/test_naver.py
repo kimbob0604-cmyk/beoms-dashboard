@@ -99,6 +99,30 @@ class FlowTest(unittest.TestCase):
         self.assertEqual(s['fs'], 25)
         self.assertEqual(s['os'], -25)
         self.assertEqual(s['frd'], -2.0)      # 최신 10.0 − 20일 전 12.0
+        self.assertEqual(s['fp3'], 0.3)       # 직전 3거래일(오늘 제외) 외국인 합
+        self.assertIsNone(B.summarize_flow(rows[:3])['fp3'])
+
+    def test_flow_signals(self):
+        st = lambda c, f1, o1, fs=1, fp3=0: {'c': c, 'f1': f1, 'o1': o1, 'fs': fs, 'fp3': fp3}
+        stocks = [
+            st('A', 600, 400),                    # 쌍끌이 순매수 (합 1,000)
+            st('B', 700, 60, fs=5),               # 쌍끌이 (합 760) + 5일 연속
+            st('C', 80, 40),                      # 기관이 50억 미만 → 쌍끌이 아님
+            st('D', -120, -170, fs=-2),           # 쌍끌이 순매도
+            st('E', 30, -10, fs=7),               # 7일 연속, 당일 30억(25억 이상) → 연속 순매수 1위
+            st('F', 20, 0, fs=9),                 # 9일 연속이지만 당일 25억 미만 → 빠짐
+            st('G', -40, 10, fs=-16),             # 연속 순매도
+            st('H', 1000, 30, fs=1, fp3=-200),    # 직전 3일 순매도 → 당일 강한 순매수: 반전
+            st('I', 55, -5, fs=1, fp3=10),        # 직전 3일이 순매수였으면 반전 아님
+            {'c': 'J', 'f1': None, 'o1': None, 'fs': 0, 'fp3': None},   # 그날 수급 없음
+        ]
+        sig = B.flow_signals(stocks)
+        self.assertEqual(sig['dual_buy'], ['A', 'B'])
+        self.assertEqual(sig['dual_sell'], ['D'])
+        self.assertEqual(sig['streak_buy'], ['E', 'B'])
+        self.assertEqual(sig['streak_sell'], ['G'])
+        self.assertEqual(sig['reversal'], ['H'])
+        self.assertEqual(B.flow_signals(stocks, top=1)['dual_buy'], ['A'])
 
     def test_prev_goals_same_broker(self):
         reps = [{'id': 1, 'code': 'A', 'broker': 'X', 'goal': 100},

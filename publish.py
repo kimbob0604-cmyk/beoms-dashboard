@@ -25,8 +25,11 @@ ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart', 'digest')   # 날짜별 JSON + dates.json
-CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st')   # 최신 파일만
+CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart')   # 최신 파일만 (vchart = 탐방 탭 차트)
 FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json')   # 최신 단일 파일
+# 공개용으로 따로 만든 파일 → 배포본에서의 이름. 탐방 탭: 이 컴퓨터용 visits.json(1:1 대화·공개 채널 원문 포함)은 올리지 않고
+# build_visits.public_view 가 줄인 visits_pub.json 을 data/visits.json 으로 올린다
+RENAMED = {'visits_pub.json': 'visits.json'}
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
@@ -97,6 +100,9 @@ def stage(out: Path) -> int:
     for f in FILES:
         if (DATA / f).exists():
             shutil.copy2(DATA / f, out / 'data' / f)
+    for src, dst in RENAMED.items():
+        if (DATA / src).exists():
+            shutil.copy2(DATA / src, out / 'data' / dst)
     hold = held()
     if hold:
         apply_hold(out, hold)

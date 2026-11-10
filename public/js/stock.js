@@ -3,6 +3,9 @@
 // - 리포트·키워드·목표가·수급: data/stocks/{code}.json (맥에서 매일 빌드)
 // - 가격: 위 둘은 하루 한 번 빌드라 전날 종가에 머문다. 장중엔 data/quotes.json(10분마다 갱신)이 더 새로우면
 //   그 값으로 헤더 가격·등락률·시총을 바꾸고 차트 끝에 임시 봉(종가만)을 붙인다
+// - 시총 기준: 헤더·차트 축·52주 범위·목표가·수급 표를 주가가 아니라 시총으로 보여 준다. 과거 값은 '지금 주식 수'로
+//   환산한 값(주가 × 지금 시총 ÷ 지금 주가)이라, 그 사이 증자·감자가 있었다면 당시 실제 시총과 다르다. 주가는 작은 글씨로 남긴다
+// - POR: 시총 ÷ 영업이익을 전년 실적~내후년 추정까지 표로 (U.porTable). 평균 목표 시총 기준 POR 도 함께
 // 이름 링크는 네이버 증권 주소라서 Ctrl/⌘+클릭하면 네이버가 새 탭으로 열린다.
 const Stock = (() => {
   const CHARTS = [['3m', '3개월'], ['6m', '6개월'], ['1y', '1년'], ['w', '주봉']];
@@ -10,6 +13,9 @@ const Stock = (() => {
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   let panel, code = null, hint = {}, chart = '6m', kwOpen = null, cdata = null, filings = null;
   let live = null;   // 이 종목의 최신 시세 {d: 20261110, p, ch, t: 장중 받은 시각 | null}
+  let capK = null;   // 주가 1원당 시총(억) = 지금 시총 ÷ 지금 주가. 없으면(시총 모름) 주가로 보여 준다
+  const cap = v => (v == null ? '–' : capK ? U.eok(v * capK) : num(v));   // 주가 → 시총 글자
+  const capTitle = v => (capK && v != null ? ` title="주가 ${num(v)}원"` : '');
 
   // ---------- 관심종목 (이 브라우저에만 저장) ----------
   const WKEY = 'watch';
@@ -71,22 +77,23 @@ const Stock = (() => {
     const last = day.c[day.c.length - 1];
     const pos = hi > lo ? (last - lo) / (hi - lo) : 0.5;
     const pos52 = panel.querySelector('.st-52');
-    if (pos52) pos52.innerHTML = `<span class="muted">52주</span> 최저 <b>${num(lo)}</b>
-      <span class="st-52-bar"><i style="left:${(pos * 100).toFixed(1)}%"></i></span> 최고 <b>${num(hi)}</b>
+    if (pos52) pos52.innerHTML = `<span class="muted">52주${capK ? ' 시총' : ''}</span> 최저 <b${capTitle(lo)}>${cap(lo)}</b>
+      <span class="st-52-bar"><i style="left:${(pos * 100).toFixed(1)}%"></i></span> 최고 <b${capTitle(hi)}>${cap(hi)}</b>
       <span class="muted">고점 대비 <b class="${U.cls(last / hi - 1)}">${U.pct(last / hi - 1)}</b> · 저점 대비 <b class="${U.cls(last / lo - 1)}">${U.pct(last / lo - 1)}</b></span>`;
     panel.querySelector('.st-legend').innerHTML = mas.map(([k, col]) => `<i style="--c:${col}"></i>${k}${chart === 'w' ? '주' : '일'}`).join(' ') + ' 이동평균';
     Plot.chart(el, {
       n: d.length, height: 300, uid: 'stc',
       panes: [
-        { h: 3.4, fmt: num, series: [{ type: 'candle', o, h, l, c },
+        { h: 3.4, fmt: cap, series: [{ type: 'candle', o, h, l, c },
           ...mas.map(([k, col]) => ({ type: 'line', values: Plot.ma(all.c, k).slice(from), color: col, width: 1.1, nodot: true }))] },
         { h: 1, fmt: vol, series: [{ type: 'bar', values: v, cls: i => (pch(i) >= 0 ? 'up' : 'dn') }] },
       ],
       xTicks: Plot.monthTicks(d),
       tip: i => `<div class="tt-h">${Plot.dateStr(d[i])}${chart === 'w' ? ' 주' : ''}</div>
-        <div class="tt-v">${num(c[i])} ${chHtml(pch(i))}</div>
-        ${o[i] == null ? `<div class="muted">${liveDay(d[i]) ? `${liveLabel()} 시세 (임시)` : 'KRX 공개 전 임시 종가'}</div>` : `<div class="tt-g"><span>시가</span><b>${num(o[i])}</b><span>고가</span><b>${num(h[i])}</b>
-          <span>저가</span><b>${num(l[i])}</b><span>거래량</span><b>${vol(v[i])}</b></div>`}`,
+        <div class="tt-v">${cap(c[i])} ${chHtml(pch(i))}</div>
+        ${capK ? `<div class="muted">주가 ${num(c[i])}</div>` : ''}
+        ${o[i] == null ? `<div class="muted">${liveDay(d[i]) ? `${liveLabel()} 시세 (임시)` : 'KRX 공개 전 임시 종가'}</div>` : `<div class="tt-g"><span>시가</span><b>${cap(o[i])}</b><span>고가</span><b>${cap(h[i])}</b>
+          <span>저가</span><b>${cap(l[i])}</b><span>거래량</span><b>${vol(v[i])}</b></div>`}`,
     });
   }
 
@@ -130,9 +137,10 @@ const Stock = (() => {
     return `<header class="st-head">
       <div>
         <h2>${U.esc(s.n || code)} <small class="muted">${code}</small></h2>
-        <p class="muted small">${[MARKETS[s.mk], s.w, s.mc != null ? `시총 ${U.eok(s.mc)}` : ''].filter(Boolean).map(U.esc).join(' · ')}</p>
+        <p class="muted small">${[MARKETS[s.mk], s.w].filter(Boolean).map(U.esc).join(' · ')}</p>
       </div>
-      <div class="st-price">${s.p != null ? `<b>${U.price(s.p)}</b>${chHtml(s.ch)}<small class="muted">${s.pl || '종가'}</small>` : ''}</div>
+      <div class="st-price">${s.mc ? `<small class="muted">시총</small><b>${U.eok(s.mc)}</b>${chHtml(s.ch)}<small class="muted">${s.p != null ? `주가 ${U.price(s.p)} · ` : ''}${s.pl || '종가'}</small>`
+        : s.p != null ? `<b>${U.price(s.p)}</b>${chHtml(s.ch)}<small class="muted">${s.pl || '종가'}</small>` : ''}</div>
       <button class="icon-btn st-star${isWatched(code) ? ' on' : ''}" aria-label="관심종목" title="관심종목 (홈에 모아 보기)">${isWatched(code) ? '★' : '☆'}</button>
       <button class="icon-btn st-close" aria-label="닫기" title="닫기 (Esc)">✕</button>
     </header>
@@ -151,30 +159,42 @@ const Stock = (() => {
       </div>
       <div class="st-plot"></div>
       <p class="small st-52"></p>
-      <p class="muted small">일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가, 장중엔 10분마다 받는 장중 시세일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
+      <p class="muted small">${capK ? '차트·52주 범위는 시총 기준 (주가 × 지금 주식 수로 환산, 증자·감자 전 구간은 당시 실제 시총과 다를 수 있음) · ' : ''}일봉: KRX (마지막 날은 KRX 공개 전 네이버 종가, 장중엔 10분마다 받는 장중 시세일 수 있음) · <a href="${naverUrl(code)}" target="_blank" rel="noopener">네이버 실시간 차트 ↗</a></p>
     </section>`;
   }
 
-  function growthHtml(gx) {
-    if (!gx) return '';
-    const g = gx.k === 'turnaround' ? '흑자전환' : gx.k === 'loss' ? '적자 지속' : U.pct(gx.g);
-    const gc = gx.k === 'turnaround' ? 'up' : gx.k === 'loss' ? 'down' : U.cls(gx.g);
-    return `<div class="st-kpis">
+  // 내년(올해 결산연도 + 1) 영업이익 추정치. POR 계산의 기준
+  const nextOp = pv => pv?.ops?.find(x => x[0] === pv.fy0 + 1)?.[1];
+
+  function growthHtml(s) {
+    const gx = s.gx, por = U.porTable(s.mc, s.pv);
+    if (!gx && !por) return '';
+    const g = !gx ? '' : gx.k === 'turnaround' ? '흑자전환' : gx.k === 'loss' ? '적자 지속' : U.pct(gx.g);
+    const gc = !gx ? '' : gx.k === 'turnaround' ? 'up' : gx.k === 'loss' ? 'down' : U.cls(gx.g);
+    const op1 = nextOp(s.pv);
+    const liveP = s.mc && op1 > 0 ? s.mc / op1 : gx?.por;   // 장중이면 지금 시총으로 다시 계산한 값
+    return `${por ? `<div class="st-por">${por}</div>` : ''}${gx ? `<div class="st-kpis">
       <div><span>내년 영업이익 성장</span><b class="${gc}">${g}</b>${gx.lb ? '<small class="muted">기저</small>' : ''}</div>
-      <div><span>내년 POR</span><b>${U.mult(gx.por)}</b></div>
+      <div><span>내년 POR <small class="muted">시총 ÷ 내년 영업이익</small></span><b>${U.mult(liveP)}</b></div>
       <div><span>추정치 1개월 변화</span><b class="${U.cls(gx.r1)}">${U.pct(gx.r1)}</b></div>
-    </div>`;
+    </div>` : ''}`;
   }
 
+  // 목표가 → 목표 시총 (지금 주식 수 기준). 시총을 모르면 목표가 그대로
   function targetHtml(d) {
     const t = d.tgt;
     if (!t) return '';
     const upside = d.p ? t.avg / d.p - 1 : null;
+    const op1 = nextOp(d.pv);
+    const tPor = capK && op1 > 0 ? t.avg * capK / op1 : null;
+    const what = capK ? '목표 시총' : '목표가';
     return `<div class="st-kpis">
-      <div><span>평균 목표가 <small class="muted">${t.n}개 증권사</small></span><b>${U.price(t.avg)}</b>
-        ${upside != null ? `<small>상승여력 <b class="${U.cls(upside)}">${U.pct(upside)}</b></small>` : ''}</div>
-      <div><span>목표가 범위</span><b class="st-range">${U.price(t.lo)} ~ ${U.price(t.hi)}</b></div>
-      <div><span>90일 목표가 변경</span><b>상향 <span class="up">${t.up}</span> · 하향 <span class="down">${t.dn}</span></b></div>
+      <div><span>평균 ${what} <small class="muted">${t.n}개 증권사</small></span><b${capTitle(t.avg)}>${cap(t.avg)}</b>
+        ${upside != null ? `<small>지금 시총 대비 <b class="${U.cls(upside)}">${U.pct(upside)}</b></small>` : ''}</div>
+      <div><span>${what} 범위</span><b class="st-range">${cap(t.lo)} ~ ${cap(t.hi)}</b>
+        ${tPor != null ? `<small>평균 목표 시총이면 내년 POR <b>${U.mult(tPor)}</b></small>` : ''}</div>
+      <div><span>90일 목표가 변경</span><b>상향 <span class="up">${t.up}</span> · 하향 <span class="down">${t.dn}</span></b>
+        ${capK ? `<small class="muted">평균 목표가 ${U.price(t.avg)}원</small>` : ''}</div>
     </div>`;
   }
 
@@ -199,9 +219,10 @@ const Stock = (() => {
 
   function goalHtml(r) {
     if (!r.g) return '<span class="muted">목표가 없음</span>';
-    if (!r.pg || r.pg === r.g) return `${U.price(r.g)}${r.pg ? ' <span class="muted">유지</span>' : ''}`;
+    const lbl = capK ? '<span class="muted">목표 시총</span> ' : '';
+    if (!r.pg || r.pg === r.g) return `${lbl}<span${capTitle(r.g)}>${cap(r.g)}</span>${r.pg ? ' <span class="muted">유지</span>' : ''}`;
     const ch = r.g / r.pg - 1;
-    return `<span class="muted">${U.price(r.pg)} →</span> <b>${U.price(r.g)}</b> <span class="${U.cls(ch)}">${U.pct(ch)}</span>`;
+    return `${lbl}<span class="muted">${cap(r.pg)} →</span> <b${capTitle(r.g)}>${cap(r.g)}</b> <span class="${U.cls(ch)}">${U.pct(ch)}</span>`;
   }
 
   function reportsHtml(d) {
@@ -235,9 +256,9 @@ const Stock = (() => {
         <div><span>외국인 지분율</span><b>${d.flow[0][5] != null ? `${d.flow[0][5].toFixed(2)}%` : '–'}</b></div>
       </div>
       <table class="tbl flow-tbl">
-        <thead><tr><th>날짜</th><th class="num">종가</th><th class="num">외국인</th><th class="bar-cell"></th><th class="num">기관</th><th class="bar-cell"></th><th class="num">개인</th></tr></thead>
+        <thead><tr><th>날짜</th><th class="num">${capK ? '시총' : '종가'}</th><th class="num">외국인</th><th class="bar-cell"></th><th class="num">기관</th><th class="bar-cell"></th><th class="num">개인</th></tr></thead>
         <tbody>${d.flow.slice(0, 10).map(r => `<tr>
-          <td class="muted">${U.md(r[0])}</td><td class="num">${U.price(r[4])}</td>
+          <td class="muted">${U.md(r[0])}</td><td class="num"${capTitle(r[4])}>${cap(r[4])}</td>
           <td class="num">${fmt(r[1])}</td><td class="bar-cell"><span class="fbar">${bar(r[1])}</span></td>
           <td class="num">${fmt(r[2])}</td><td class="bar-cell"><span class="fbar">${bar(r[2])}</span></td>
           <td class="num">${fmt(r[3])}</td></tr>`).join('')}</tbody>
@@ -276,11 +297,12 @@ const Stock = (() => {
       if (s.mc && s.p) s.mc = s.mc * live.p / s.p;
       Object.assign(s, { p: live.p, ch: live.ch, pl: liveLabel() });
     }
+    capK = s.mc && s.p ? s.mc / s.p : null;
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
-        : `${growthHtml(s.gx)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
+        : `${growthHtml(s)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
-           목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다.</p>`}</div>`;
+           목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다. 목표 시총 = 목표가 × 지금 주식 수(우선주 포함 회사 시총 기준 어림).</p>`}</div>`;
     drawChart();
   }
 

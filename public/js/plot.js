@@ -50,7 +50,8 @@ const Plot = (() => {
 
   // ---------- 여러 칸 차트 ----------
   // spec: { n, panes: [{h, series, baseline, zero, fmt}], xTicks: [[i, label]], tip(i) → html, onHover(i|null),
-  //         height, uid }
+  //         height, uid, marks: [{i, v, n}], onMark(mark) }
+  // marks: 날짜 표시(탐방일·발표일). 세로 점선 + 첫 칸의 v 자리에 점(n 이 2 이상이면 조금 크게). 점 근처를 누르면 onMark
   // series: {type:'line', values, color, width, area, split(기준선 위·아래 색), connect, dash}
   //         {type:'candle', o,h,l,c} · {type:'bar', values, color(i)}
   function chart(el, spec) {
@@ -84,7 +85,8 @@ const Plot = (() => {
     spec.panes.forEach((p, k) => {
       const ph = totalH * (p.h || 1) / hsum;
       const [lo, hi] = extent(p, 0, n);
-      const Y = v => y0 + ph - (v - lo) / (hi - lo) * ph;
+      const top = y0;   // 칸마다 고정 (y0 는 다음 칸으로 넘어가며 바뀐다 — 그린 뒤에 쓰는 Y 가 어긋나지 않게)
+      const Y = v => top + ph - (v - lo) / (hi - lo) * ph;
       const fmt = p.fmt || fmtDefault;
       layout.push({ top: y0, h: ph, lo, hi, Y, fmt, p });
       // 눈금
@@ -155,6 +157,15 @@ const Plot = (() => {
       if (p.label) svg += `<text class="pl-plab" x="${PAD_L + 2}" y="${y0 + 12}">${p.label}</text>`;
       y0 += ph + GAP;
     });
+
+    // 표시 (탐방일 등)
+    const P0 = layout[0];
+    for (const m of spec.marks || []) {
+      if (m.i < 0 || m.i >= n) continue;
+      const x = X(m.i).toFixed(1);
+      svg += `<line class="pl-mark" x1="${x}" x2="${x}" y1="${PAD_T}" y2="${(P0.top + P0.h).toFixed(1)}"/>`;
+      if (defined(m.v)) svg += `<circle class="pl-markdot" cx="${x}" cy="${P0.Y(Math.max(P0.lo, Math.min(P0.hi, m.v))).toFixed(1)}" r="${m.n > 1 ? 5.5 : 4.5}"/>`;
+    }
 
     // x 축 눈금
     const axisY = H - AXIS_H + 14;
@@ -241,6 +252,17 @@ const Plot = (() => {
       tip.hidden = true;
       el._spec.onHover?.(null);
     };
+    hit.addEventListener('click', e => {   // 표시 근처를 누르면 그 표시를 알려 준다
+      const spec = el._spec, L = el._layout;
+      if (!spec.onMark || !spec.marks?.length) return;
+      const mx = e.clientX - svg.getBoundingClientRect().left;
+      let best = null, bd = Math.max(L.step * 1.5, 10);
+      for (const m of spec.marks) {
+        const dist = Math.abs(L.X(m.i) - mx);
+        if (dist <= bd) { bd = dist; best = m; }
+      }
+      if (best) spec.onMark(best);
+    });
     hit.addEventListener('pointermove', move);
     hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', leave);

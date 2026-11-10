@@ -3,7 +3,7 @@
 
 launchd(com.kimbob.beomdashboard.live)가 10분마다 부른다. 평일에만 돈다.
 - 07:00~19:30: DART 새 공시 (장전 공시 07:30~08:50, 장후 공시 15:30~19:00 무렵이 많다), 새 증권사 리포트
-- 09:00~15:50: 지수·전 종목 시세·52주 신고가
+- 09:00~15:50: 지수·전 종목 시세 (신고가 탭은 이 시세로 다시 계산)
 - 06:00~23:59 (매일): 종목별 수급이 새 거래일로 올라왔는지 1번 확인하고, 올라왔으면 전 종목 수급을 받아 다시 빌드한다.
   네이버가 KRX 종목별 투자자 매매동향을 올리는 시각이 날마다 달라서(20:20 무렵 ~ 다음 날) 정해진 실행 시각만으로는 놓친다.
 daily.py 가 돌고 있으면(같은 잠금 파일) 건너뛴다. GitHub Pages 빌드 한도(시간당 10회 안팎) 때문에 10분 간격이다.
@@ -61,10 +61,9 @@ def main() -> int:
             need_naver |= new_flow
         if market:
             ok |= got(run(['collect_naver.py', 'index'], log))
-            ok |= got(run(['collect_naver.py', 'quotes'], log))
-            new_high = got(run(['collect_naver.py', 'high'], log))
-            ok |= new_high
-            need_naver |= new_high
+            new_quotes = got(run(['collect_naver.py', 'quotes'], log))
+            ok |= new_quotes
+            need_naver |= new_quotes      # 신고가 탭은 이 시세로 다시 계산한다 (build_newhigh — 장중에는 잠정 판정)
         if filings:
             ok |= got(run(['collect_dart.py'], log))
             run(['collect_dart.py', 'times', '--latest'], log)   # KIND 최신 100건 공시 시각

@@ -307,7 +307,7 @@
           <div class="r-name">${naverLink(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span>${streakBadge(s)}</div>
           <div class="r-growth"><small>${fmtVal(v.n - v.b, true)}</small><b class="${gClass(v)}">${growthText(v)}</b></div>
         </div>
-        <div class="r-line">${mName} ${fmtVal(v.b)} → <b>${fmtVal(v.n)}</b>, ${mult} ${U.mult(v.mb)} → ${U.mult(v.mn)}, 주가 ${U.price(s.p)}</div>
+        <div class="r-line">${mName} ${fmtVal(v.b)} → <b>${fmtVal(v.n)}</b>, ${mult} ${U.mult(v.mb)} → <b>${U.mult(v.mn)}</b>${isEps() ? `, 주가 ${U.price(s.p)}` : ` <span class="muted">(시총 ${U.eok(s.mc)} ÷ ${mName})</span>`}</div>
         <div class="r-series">${seriesHtml(s)}</div>
         <div class="r-rev" title="FY${fy2(nextFyOf(s))}E 추정치의 1개월 전·3개월 전 대비 변화">FY${fy2(nextFyOf(s))} 추정치
           <span class="chip">1개월 <b class="${U.cls(v.m1)}">${U.pct(v.m1)}</b></span>
@@ -342,7 +342,7 @@
         <td class="num muted">${i + 1}</td>
         <td class="name-cell">${naverLink(s)}<small class="muted">${MARKETS[s.mk]} · ${U.esc(s.w || '')}</small></td>
         <td class="num">${U.eok(s.mc)}</td>
-        <td class="num">${U.price(s.p)}<small>${chHtml(s)}</small></td>
+        <td class="num" title="주가 ${U.price(s.p)}원">${chHtml(s)}</td>
         <td class="num">${fmtVal(v.b)} → <b>${fmtVal(v.n)}</b></td>
         <td class="num strong ${gClass(v)}">${growthText(v)}</td>
         <td class="num muted">${fmtVal(v.n - v.b, true)}</td>
@@ -359,7 +359,7 @@
       <div class="col-head"><h3>전체 <span class="muted">${list.length}종목, ${sortLabel()} · 열 제목을 누르면 정렬, 한 번 더 누르면 반대로</span></h3></div>
       <table class="tbl">
       <thead><tr>
-        ${th('', '#', 'num')}${th('name', '종목')}${th('mc', '시총', 'num')}${th('ch', '주가', 'num')}
+        ${th('', '#', 'num')}${th('name', '종목')}${th('mc', '시총', 'num')}${th('ch', '등락률', 'num')}
         ${th('', `${mName} FY${fy2(fy)}→${fy2(fy + 1)}E`, 'num')}${th('g', `${mName} 성장`, 'num')}${th('delta', '증가액', 'num')}
         ${others.map(m => th(`g_${m}`, `${METRICS[m][0]} 성장`, 'num', `같은 기간 ${METRICS[m][0]} 성장률`)).join('')}
         ${th('por', mult, 'num')}${th('rev', '컨센 1M', 'num')}${th('m3', '3M', 'num')}${th('st', '연속', 'num')}${th('', '')}

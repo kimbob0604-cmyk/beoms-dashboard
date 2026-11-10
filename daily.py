@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·전략 트래커·바이오·홈·종목 차트) → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·전략 트래커·탐방 노트·소비재·바이오·홈·종목 차트) → GitHub Pages 배포(publish.py)
 장중 10분 간격 홈 갱신은 live.py 가 따로 한다.
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
@@ -114,6 +114,21 @@ def main() -> int:
             problems.append('전략 리포트·채널 수집 일부 실패 — 다음 실행에서 이어 받음')
         if run('전략 빌드', ['build_strategy.py'], log) != 0:
             problems.append('전략 트래커 JSON 빌드 실패')
+        # 탐방 노트: 내 텔레그램 방의 '탐방' 글. 본인 계정 로그인이 필요하고, 설정 전이면 4로 조용히 건너뛴다.
+        # 글 원문이 들어가므로 공개 배포에서는 빠진다 (publish_hold.txt)
+        if run('탐방 수집', ['collect_visits.py'], log) not in (0, 4):
+            problems.append('텔레그램 탐방 글 수집 실패 — 다음 실행에서 이어 받음')
+        if run('탐방 빌드', ['build_visits.py'], log) != 0:
+            problems.append('탐방 노트 JSON 빌드 실패')
+        run('탐방 차트', ['collect_visits_chart.py'], log)   # 탐방 종목의 네이버 일봉 (하루 한 번, 실패해도 직전 파일이 남는다)
+        # 소비재 탭: 관세청 수출 통계(올해 창은 14~21일에 하루 한 번, 그 밖엔 7일에 한 번만 다시 받는다 — 아니면 바로 끝난다),
+        # 텔레그램 컨콜 노트, 그리고 빌드. 키·로그인이 없으면 4로 건너뛴다
+        if run('수출 통계', ['collect_trade.py'], log) not in (0, 4):
+            problems.append('관세청 수출 통계 일부 실패 — 다음 실행에서 이어 받음')
+        if run('컨콜 수집', ['collect_visits.py', '--topic', 'concall'], log) not in (0, 4):
+            problems.append('텔레그램 컨콜 글 수집 실패 — 다음 실행에서 이어 받음')
+        if run('소비재 빌드', ['build_consumer.py'], log) != 0:
+            problems.append('소비재 JSON 빌드 실패')
         # 바이오 탭: 미국 종목(yfinance·ClinicalTrials.gov)이라 위 한국 데이터와 독립. 실패해도 직전 값이 남는다
         if run('바이오 빌드', ['build_bio.py'], log) != 0:
             problems.append('바이오 JSON 빌드 실패')

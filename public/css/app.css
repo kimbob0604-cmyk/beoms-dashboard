@@ -1030,3 +1030,145 @@ tr.scr-mine td { background: var(--hover); }
 
 .bc.watch { opacity: .72; }
 .bc.watch .bc-top b::after { content: ' 감시'; font-size: 10px; font-weight: 400; color: var(--muted); }
+
+/* ---------- POR 표 (종목 패널·탐방 탭 공통): POR = 시총 ÷ 영업이익 ---------- */
+.por { font-size: 13px; }
+.por-eq { color: var(--sub); margin-bottom: 6px; }
+.por-eq b { color: var(--text); font-weight: 800; }
+.por-eq b:first-child { font-size: 14px; }
+.por-tbl { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.por-tbl th, .por-tbl td { padding: 5px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.por-tbl thead th { font-size: 12px; font-weight: 600; color: var(--muted); }
+.por-tbl thead th small { margin-left: 3px; font-weight: 500; }
+.por-tbl tbody th { text-align: left; font-weight: 500; color: var(--sub); padding-left: 0; }
+.por-tbl .por-x td b { font-size: 15px; font-weight: 800; }
+.por-tbl .por-x th { color: var(--text); font-weight: 700; }
+.por-tbl .key { background: var(--hover); }
+.por-tbl thead .key { color: var(--text); border-radius: 8px 8px 0 0; }
+.por-tbl .por-x td, .por-tbl .por-x th { border-bottom: 0; }
+.por-tbl .por-x .key { border-radius: 0 0 8px 8px; }
+.por-tbl .por-x .key b { color: var(--accent); }
+.st-por { padding: 14px 22px 2px; border-top: 1px solid var(--line); }
+.st-por + .st-kpis { border-top: 0 !important; }
+.st-price > small:first-child { font-size: 11px; margin-bottom: -2px; }
+@media (max-width: 640px) { .st-por { padding-left: 16px; padding-right: 16px; } }
+
+/* ---------- 탐방 노트 탭 ---------- */
+.vs-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 2px 10px; font-size: 12px; color: var(--muted); }
+.vs-list { display: grid; gap: 12px; }
+.vs-co { padding: 16px 18px 6px; }
+.vs-head { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.vs-name { flex: 1; min-width: 180px; }
+.vs-name h3 { margin: 0; font-size: 17px; font-weight: 800; }
+.vs-name h3 small { font-size: 12px; font-weight: 500; margin-left: 6px; }
+.vs-name p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.vs-cap { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.3; }
+.vs-cap small { font-size: 11px; color: var(--muted); }
+.vs-cap b { font-size: 18px; font-weight: 800; }
+.vs-since { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.3; min-width: 150px; }
+.vs-since small { font-size: 11px; color: var(--muted); }
+.vs-since b { font-size: 16px; font-weight: 800; }
+.vs-co .por { margin: 12px 0 4px; max-width: 560px; }
+.vs-nopor { margin: 10px 0 2px; font-size: 12px; color: var(--muted); }
+.vs-notes { margin: 8px 0 0; padding: 0; list-style: none; }
+.vs-note { padding: 12px 0; border-top: 1px solid var(--line); }
+.vs-note-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-size: 12px; color: var(--muted); }
+.vs-note-head b { color: var(--text); font-weight: 700; }
+.vs-note-head a { margin-left: auto; color: var(--muted); white-space: nowrap; }
+.vs-title { margin: 3px 0 0; font-size: 14px; font-weight: 700; }
+.vs-sum { margin: 6px 0 0; padding: 8px 12px; background: var(--hover); border-radius: 10px; font-size: 13px; line-height: 1.6; }
+.vs-lines { margin: 6px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--sub); }
+.vs-lines b.n { color: var(--text); font-weight: 700; }
+.vs-lines b.n.up { color: var(--up); }
+.vs-lines b.n.down { color: var(--down); }
+.vs-note details { margin-top: 6px; }
+.vs-note summary { cursor: pointer; font-size: 12px; color: var(--muted); list-style: none; }
+.vs-note summary::-webkit-details-marker { display: none; }
+.vs-note summary:hover { color: var(--text); }
+.vs-text { margin: 8px 0 0; padding: 12px 14px; background: var(--hover); border-radius: 10px; font: inherit; font-size: 13px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; max-height: 520px; overflow: auto; }
+.vs-also { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.vs-more { display: block; width: 100%; margin: 0; padding: 10px 0; border: 0; border-top: 1px solid var(--line); background: none; cursor: pointer; font-size: 12px; color: var(--muted); }
+.vs-more:hover { color: var(--text); }
+.vs-setup { padding: 20px 22px; line-height: 1.7; font-size: 14px; }
+.vs-setup h3 { margin: 0 0 6px; font-size: 16px; }
+.vs-setup ol { margin: 6px 0 10px; padding-left: 20px; }
+.vs-setup code { padding: 1px 6px; border-radius: 6px; background: var(--hover); font-size: 13px; }
+.vs-local { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--chip); font-size: 11px; color: var(--sub); margin-left: 6px; vertical-align: middle; }
+@media (max-width: 640px) {
+  .vs-co { padding: 14px 14px 4px; }
+  .vs-since { align-items: flex-start; min-width: 0; }
+}
+.vs-cap small.up, .vs-note-head b.up, .vs-since b.up { color: var(--up); }
+.vs-cap small.down, .vs-note-head b.down, .vs-since b.down { color: var(--down); }
+
+/* 차트 표시(탐방일 등) + 탐방 카드 차트 */
+.pl-mark { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; opacity: .75; }
+.pl-markdot { fill: var(--accent); stroke: var(--card); stroke-width: 2; }
+.vs-body { display: grid; grid-template-columns: minmax(300px, 460px) minmax(0, 1fr); gap: 8px 28px; align-items: start; margin-top: 4px; }
+.vs-body .por { margin: 12px 0 4px; max-width: none; }
+.vs-chart { min-width: 0; padding-top: 8px; }
+.vs-chart .vs-plot { min-height: 210px; cursor: pointer; }
+.vs-chart-note { margin: 2px 0 0; line-height: 1.6; }
+.vs-chart-note b.up { color: var(--up); } .vs-chart-note b.down { color: var(--down); }
+.vs-tt-notes { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); max-width: 240px; white-space: normal; font-size: 12px; }
+.vs-tt-notes b { color: var(--accent); }
+.vs-note.flash { background: var(--hover); box-shadow: -4px 0 0 var(--accent); transition: background .3s; }
+@media (max-width: 900px) { .vs-body { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- 신고가 탭(축별 카드) · 수급 시그널 카드 ---------- */
+.nh-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 12px; }
+.nh-count { display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border-radius: 12px; background: var(--hover); color: var(--text); }
+.nh-count:hover { text-decoration: none; background: var(--chip); }
+.nh-count small { font-size: 12px; color: var(--sub); }
+.nh-count b { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.nh-chart { margin: 4px 0 2px; }
+.badge.nh-new { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; }
+.deck .col-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 2px 10px; }
+.sig-deck { display: flex; flex-direction: column; gap: 22px; }
+.sig-deck[hidden], .sec-title[hidden] { display: none; }
+.deck #list-title { margin-top: 30px; }
+@media (max-width: 640px) { .nh-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- 소비재 탭 ---------- */
+.cs-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.cs-g { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 10px; text-align: left; cursor: pointer; font: inherit; color: inherit; border: 1px solid transparent; }
+.cs-g:hover { border-color: var(--line); } .cs-g.on { border-color: var(--accent); }
+.cs-g header { display: flex; align-items: center; gap: 6px; } .cs-g header b { font-size: 15px; } .cs-g header small { margin-left: auto; font-size: 11px; }
+.cs-g-main { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 6px; }
+.cs-g-main > div { display: flex; flex-direction: column; line-height: 1.3; } .cs-g-main small { font-size: 11px; } .cs-g-main b { font-size: 15px; font-weight: 800; }
+.cs-g-main b.up, .cs-kpis b.up, .cs-mini b.up, .cs-chip b.up, .cs-flow b.up, .cs-tbl b.up, .cs-prev b.up { color: var(--up); }
+.cs-g-main b.down, .cs-kpis b.down, .cs-mini b.down, .cs-chip b.down, .cs-flow b.down, .cs-tbl b.down, .cs-prev b.down { color: var(--down); }
+.cs-spark { display: block; max-width: 100%; } .cs-spark polyline { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.cs-spark.up polyline { stroke: var(--up); } .cs-spark.down polyline { stroke: var(--down); }
+.cs-detail { padding: 16px 20px 14px; margin-bottom: 14px; } .cs-detail[hidden] { display: none; }
+.cs-d-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.cs-d-head h3 { margin: 0; font-size: 17px; font-weight: 800; } .cs-d-head h3 small { font-size: 12px; font-weight: 500; margin-left: 6px; }
+.cs-detail h4, .cs-chain h4 { margin: 12px 0 6px; font-size: 13px; font-weight: 700; } .cs-detail h4 small, .cs-chain h4 small { font-weight: 500; margin-left: 4px; }
+.cs-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 4px 0 8px; }
+.cs-kpis > div { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: var(--hover); }
+.cs-kpis span { font-size: 12px; color: var(--muted); } .cs-kpis b { font-size: 17px; font-weight: 800; }
+.cs-cols3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 24px; } .cs-span2 { grid-column: span 2; }
+.cs-two { display: grid; grid-template-columns: minmax(300px, 460px) minmax(0, 1fr); gap: 8px 28px; align-items: start; }
+.cs-mini { width: 100%; border-collapse: collapse; font-size: 13px; } .cs-mini td { padding: 3px 6px 3px 0; border-bottom: 1px solid var(--grid); }
+.cs-mini .num { text-align: right; white-space: nowrap; }
+.cs-chain { padding: 16px 20px 14px; margin-bottom: 14px; }
+.cs-stages { display: grid; grid-template-columns: repeat(var(--n), minmax(150px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+.cs-stage { min-width: 0; padding: 8px; border-radius: 12px; background: var(--hover); } .cs-stage h4 { margin: 0 2px 6px; }
+.cs-chip { display: flex; flex-direction: column; width: 100%; gap: 1px; margin-top: 6px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+  text-align: left; font: inherit; font-size: 12px; color: inherit; cursor: pointer; }
+.cs-chip:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); } .cs-chip.on { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.cs-chip > b { font-size: 13px; }
+.cs-v { font-style: normal; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 5px; background: var(--chip); color: var(--sub); white-space: nowrap; }
+.cs-v.BEAT { background: color-mix(in srgb, var(--up) 15%, transparent); color: var(--up); } .cs-v.MISS { background: color-mix(in srgb, var(--down) 15%, transparent); color: var(--down); }
+.cs-tbl tbody tr { cursor: pointer; } .cs-tbl tbody tr.on { background: var(--hover); box-shadow: inset 3px 0 0 var(--accent); }
+.cs-memo { margin: 0 0 8px; font-size: 13px; color: var(--sub); }
+.cs-prev { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--hover); font-size: 13px; line-height: 1.6; } .cs-prev small { display: block; }
+.cs-flows { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 8px; margin-bottom: 8px; }
+.cs-flow { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+  text-align: left; font: inherit; font-size: 12px; color: inherit; cursor: pointer; }
+.cs-flow.on { border-color: var(--accent); } .cs-flow > b { font-size: 13px; }
+.cs-call { padding: 6px 0; border-top: 1px solid var(--grid); font-size: 13px; } .cs-call summary { cursor: pointer; }
+.cs-pick { color: var(--text); font-size: 13px; font-weight: 700; }
+@media (max-width: 900px) { .cs-two, .cs-cols3 { grid-template-columns: minmax(0, 1fr); } .cs-span2 { grid-column: auto; } .cs-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#detail, #chain, #group-detail, .cs-detail { scroll-margin-top: 130px; }
+.cs-past { margin: 8px 0 0; line-height: 1.6; } .cs-past b.up { color: var(--up); } .cs-past b.down { color: var(--down); }

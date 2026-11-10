@@ -1,4 +1,6 @@
 // 수급 탭: data/flow/{거래일}.json — 종목별 외국인·기관 순매수 금액(억원, 수량×종가 어림)
+// - 수급 시그널 카드: 쌍끌이 순매수·순매도, 외국인 연속 순매수·순매도, 수급 반전 (build_naver.flow_signals 가 고른 종목)
+//   아래 필터(주체·기간·시장)와 상관없이 그날 전 종목에서 고른다
 (() => {
   const WHO = { f: '외국인', o: '기관', fo: '외국인+기관' };
   const DAYS = { 1: '1일', 5: '5일', 20: '20일', 60: '60일' };
@@ -80,6 +82,46 @@
       <p class="note">금액 = 그날 순매수 수량 × 정규장 종가, ${DAYS[d]} 합. 기관은 금융투자·연기금 등 합계. 출처 네이버 증권 투자자별 매매동향.</p>`;
   }
 
+  const SIGNALS = [
+    ['dual_buy', '🤝 쌍끌이 순매수', s => `외국인·기관이 함께 ${data.sig_min}억 이상 순매수`, s => s.f1 + s.o1, '외국인+기관'],
+    ['dual_sell', '💥 쌍끌이 순매도', s => `외국인·기관이 함께 ${data.sig_min}억 이상 순매도`, s => s.f1 + s.o1, '외국인+기관'],
+    ['streak_buy', '🔼 외국인 연속 순매수', s => `${data.sig_streak}거래일 이상 연속, 당일 ${data.sig_min / 2}억 이상`, s => s.f1, '외국인'],
+    ['streak_sell', '🔽 외국인 연속 순매도', s => `${data.sig_streak}거래일 이상 연속, 당일 ${data.sig_min / 2}억 이상`, s => s.f1, '외국인'],
+    ['reversal', '🔁 수급 반전', s => `직전 3거래일 외국인 순매도 → 당일 ${data.sig_min}억 이상 순매수`, s => s.f1, '외국인'],
+  ];
+
+  function sigRow(s, key, val, who) {
+    const streak = key.startsWith('streak') ? `<span class="badge">${Math.abs(s.fs)}일 연속</span>`
+      : Math.abs(s.fs) >= data.sig_streak ? `<span class="badge">외국인 ${Math.abs(s.fs)}일 연속 ${s.fs > 0 ? '순매수' : '순매도'}</span>` : '';
+    return `<article class="row" ${Stock.hintAttr(s)}>
+      <div class="r-main">
+        <div class="r-top">
+          <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}${streak}</div>
+          <div class="r-growth"><small>${who}</small><b class="${U.cls(val(s))}">${U.eok(val(s), true)}</b></div>
+        </div>
+        <div class="r-line">외국인 <b class="${U.cls(s.f1)}">${U.eok(s.f1, true)}</b> · 기관 <b class="${U.cls(s.o1)}">${U.eok(s.o1, true)}</b>${key === 'reversal' ? ` · 직전 3일 외국인 <b class="${U.cls(s.fp3)}">${U.eok(s.fp3, true)}</b>` : ''}</div>
+        <div class="r-sub"><span>시총 <b>${U.eok(s.mc)}</b></span><span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span>
+          <span>5일 외국인 <b class="${U.cls(s.f5)}">${U.eok(s.f5, true)}</b> · 기관 <b class="${U.cls(s.o5)}">${U.eok(s.o5, true)}</b></span></div>
+      </div>
+    </article>`;
+  }
+
+  function renderSignals() {
+    const sig = data.sig;
+    $('sig-title').hidden = $('signals').hidden = !sig;
+    if (!sig) return;
+    const by = Object.fromEntries(data.stocks.map(s => [s.c, s]));
+    const total = SIGNALS.reduce((a, [k]) => a + (sig[k]?.length || 0), 0);
+    $('sig-title').innerHTML = `<h2>수급 시그널</h2><span class="muted small">${U.dateLabel(data.date)} 하루 수급 · 전 종목에서 고름 · ${total ? '종목을 누르면 상세' : '오늘은 잡힌 시그널 없음'}</span>`;
+    $('signals').innerHTML = SIGNALS.map(([key, label, tip, val, who]) => {
+      const items = (sig[key] || []).map(c => by[c]).filter(Boolean);
+      if (!items.length) return '';
+      return `<div class="col"><div class="col-head"><h3>${label} <span class="muted">${items.length}종목</span></h3><span class="muted small">${tip()}</span></div>
+        ${items.map(s => sigRow(s, key, val, who)).join('')}</div>`;
+    }).join('');
+    $('list-title').innerHTML = '<h2>순매수 순위</h2><span class="muted small">위 필터(주체·기간·시장)를 따릅니다</span>';
+  }
+
   function streakText(n, who) {
     if (Math.abs(n) < 2) return '';
     return `${who} ${Math.abs(n)}일 연속 ${n > 0 ? '순매수' : '순매도'}`;
@@ -96,7 +138,7 @@
           <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span></div>
           <div class="r-growth"><small>${WHO[st.who]} ${DAYS[d]}</small><b class="${U.cls(v)}">${fmtVal(v)}</b></div>
         </div>
-        <div class="r-line">외국인 <b class="${U.cls(s[`f${d}`])}">${U.eok(s[`f${d}`], true)}</b> · 기관 <b class="${U.cls(s[`o${d}`])}">${U.eok(s[`o${d}`], true)}</b> · 개인 <b class="${U.cls(s[`i${d}`])}">${U.eok(s[`i${d}`], true)}</b>, 주가 ${U.price(s.p)} <span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span></div>
+        <div class="r-line">외국인 <b class="${U.cls(s[`f${d}`])}">${U.eok(s[`f${d}`], true)}</b> · 기관 <b class="${U.cls(s[`o${d}`])}">${U.eok(s[`o${d}`], true)}</b> · 개인 <b class="${U.cls(s[`i${d}`])}">${U.eok(s[`i${d}`], true)}</b>, 시총 ${U.eok(s.mc)} <span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span></div>
         <div class="r-sub">
           ${[streakText(s.fs, '외국인'), streakText(s.os, '기관')].filter(Boolean).map(t => `<span>${t}</span>`).join('')}
           ${s.fr != null ? `<span>외국인 지분 <b>${s.fr.toFixed(1)}%</b>${s.frd != null ? ` (20일 <span class="${U.cls(s.frd)}">${s.frd > 0 ? '+' : ''}${s.frd.toFixed(2)}%p</span>)` : ''}</span>` : ''}
@@ -121,7 +163,7 @@
     }
   }
 
-  document.querySelector('.cols').addEventListener('click', e => {
+  document.querySelector('main .cols').addEventListener('click', e => {
     const b = e.target.closest('.more');
     if (!b) return;
     shown[b.dataset.m] = (shown[b.dataset.m] || PAGE) + PAGE * 2;
@@ -143,6 +185,7 @@
   function render() {
     renderFilters();
     renderBody();
+    renderSignals();
     renderFoot();
   }
 

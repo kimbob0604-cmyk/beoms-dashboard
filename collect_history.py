@@ -321,10 +321,16 @@ def sync(conn):
     """화면용 DB에 있는 최근 날짜를 복사 (KRX 를 다시 부르지 않는다). 오늘 날짜는 장 마감 직후 잠정치일 수 있어 어제까지만."""
     import db
     src = db.connect()
-    last = conn.execute('SELECT MAX(date) FROM hday WHERE n > 0').fetchone()[0] or '2010-01-01'
+    # 마지막으로 '확정된' 날: 시가가 채워진 날. KRX 공개 전 임시 종가(시가 없음)로 복사된 날은 다시 복사해 확정값으로 덮는다
+    # (2026-11-09 가 임시 종가로 들어가 2,243종목의 종가가 KRX 확정값과 달랐다 — 2026-11-10 발견)
+    last = '2010-01-01'
+    for (d,) in conn.execute('SELECT date FROM hday WHERE n > 0 ORDER BY date DESC LIMIT 10'):
+        if conn.execute('SELECT 1 FROM hp WHERE date = ? AND open IS NOT NULL LIMIT 1', (d,)).fetchone():
+            last = d
+            break
     days = [r[0] for r in src.execute(
         'SELECT DISTINCT p.date FROM price_daily p WHERE p.date > ? AND p.date < ? AND EXISTS '
-        '(SELECT 1 FROM ohlc_daily o WHERE o.date = p.date AND o.chg IS NOT NULL) ORDER BY 1',
+        '(SELECT 1 FROM ohlc_daily o WHERE o.date = p.date AND o.chg IS NOT NULL AND o.open IS NOT NULL) ORDER BY 1',
         (last, date.today().isoformat()))]
     for d in days:
         rows = [dict(zip(('date', 'code', 'name', 'market', 'close', 'change_pct', 'mcap', 'trd_val',

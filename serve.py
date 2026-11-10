@@ -7,6 +7,7 @@
 """
 
 import functools
+import os
 import http.server
 import sys
 from pathlib import Path
@@ -15,7 +16,7 @@ ROOT = Path(__file__).parent / 'public'
 
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('PORT') or 8765)   # PORT: 미리보기 도구가 정해 주는 포트
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(ROOT))
     with http.server.ThreadingHTTPServer(('127.0.0.1', port), handler) as httpd:
         print(f'http://127.0.0.1:{port}  (종료: Ctrl+C)', flush=True)

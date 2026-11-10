@@ -146,7 +146,7 @@
           <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span></div>
           <div class="r-growth"><small>${PERIODS[st.per]}</small><b class="${U.cls(r)}">${U.pct(r)}</b></div>
         </div>
-        <div class="r-line">FY${fy2(e.fy)}E ${METRICS[st.metric]} ${prev != null ? `${fmtVal(prev)} → ` : ''}<b>${fmtVal(e.now)}</b>, 주가 ${U.price(s.p)}</div>
+        <div class="r-line">FY${fy2(e.fy)}E ${METRICS[st.metric]} ${prev != null ? `${fmtVal(prev)} → ` : ''}<b>${fmtVal(e.now)}</b>${st.metric === 'eps' ? `, 주가 ${U.price(s.p)}` : ''}</div>
         <div class="r-rev">FY${fy2(e.fy)} ${Object.entries(PERIODS).map(([k, l]) =>
           `<span class="chip">${l} <b class="${U.cls(e[k])}">${U.pct(e[k])}</b></span>`).join('')}</div>
         <div class="r-sub">${otherYears(s).map(t => `<span>${t}</span>`).join('')}
@@ -205,14 +205,15 @@
   function tgtRow(r) {
     const ch = r.g / r.pg - 1;
     const upside = r.cp ? r.g / r.cp - 1 : null;
+    const k = r.mc && r.cp ? r.mc / r.cp : null;   // 주가 1원당 시총(억): 목표가 → 목표 시총 (지금 주식 수 기준)
     return `<article class="row" ${Stock.hintAttr({ n: r.n, mk: r.mk, w: r.w, mc: r.mc, p: r.cp })}>
       <div class="r-main">
         <div class="r-top">
           <div class="r-name">${Stock.link({ c: r.c, n: r.n })}${r.w ? `<span class="tag">${U.esc(r.w)}</span>` : ''}<span class="muted">${U.eok(r.mc)}</span></div>
-          <div class="r-growth"><small>${U.price(r.pg)} → ${U.price(r.g)}</small><b class="${U.cls(ch)}">${U.pct(ch)}</b></div>
+          <div class="r-growth"><small title="목표가 ${U.price(r.pg)} → ${U.price(r.g)}원">${k ? `목표 시총 ${U.eok(r.pg * k)} → ${U.eok(r.g * k)}` : `${U.price(r.pg)} → ${U.price(r.g)}`}</small><b class="${U.cls(ch)}">${U.pct(ch)}</b></div>
         </div>
         <div class="r-line"><span class="muted">${U.md(r.d)}</span> <b>${U.esc(r.b)}</b>${r.op ? ` · ${r.op}` : ''} · ${U.esc(r.t)}</div>
-        <div class="r-sub"><span>현재가 <b>${U.price(r.cp)}</b></span>${upside != null ? `<span>목표가까지 <b class="${U.cls(upside)}">${U.pct(upside)}</b></span>` : ''}</div>
+        <div class="r-sub">${k ? `<span>지금 시총 <b>${U.eok(r.mc)}</b></span>` : `<span>현재가 <b>${U.price(r.cp)}</b></span>`}${upside != null ? `<span>목표 ${k ? '시총' : '가'}까지 <b class="${U.cls(upside)}">${U.pct(upside)}</b></span>` : ''}</div>
       </div>
     </article>`;
   }

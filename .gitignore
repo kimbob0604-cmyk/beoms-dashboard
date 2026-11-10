@@ -7,3 +7,7 @@ public/data/
 .publish/
 .cache/
 db/*.db-*
+
+# 텔레그램 로그인 정보 (계정 열쇠)
+*.session
+*.session-journal

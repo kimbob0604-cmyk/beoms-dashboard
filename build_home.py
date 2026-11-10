@@ -157,7 +157,8 @@ def build_flow(flow):
 
 
 def build_high(high):
-    today = sorted(high['today'], key=lambda s: -(s.get('mc') or 0))
+    # 홈에는 52주 이상(역사적·52주) 신고가만 올린다
+    today = sorted((s for s in high['today'] if s.get('ax', 'w52') in ('hist', 'w52')), key=lambda s: -(s.get('mc') or 0))
     return {'d': high['date'], 'at': high.get('at'), 'n': len(today),
             'list': [slim(s, run=s.get('run')) for s in today[:8]]}
 
