@@ -139,7 +139,11 @@ def save_events(conn, rows, d: date):
            ' '.join(r['report_nm'].split()))
           for r in rows if (kind := dart.kind_of(r['report_nm']))]
     with conn:
-        conn.executemany('INSERT OR REPLACE INTO dart_event VALUES (?, ?, ?, ?, ?, ?, ?)', ev)
+        # 열 이름을 적는다: 2026-11-10 에 tm(KIND 공시 시각) 열이 더해진 뒤로 '값 7개' 꼴이 깨져 공시 수집 전체가 멈췄다.
+        # 이미 있는 공시는 tm 을 지우지 않도록 REPLACE 대신 갱신한다
+        conn.executemany('INSERT INTO dart_event (rcept_no, date, code, name, market, kind, title) VALUES (?, ?, ?, ?, ?, ?, ?) '
+                         'ON CONFLICT(rcept_no) DO UPDATE SET date = excluded.date, code = excluded.code, name = excluded.name, '
+                         'market = excluded.market, kind = excluded.kind, title = excluded.title', ev)
     return len(ev)
 
 

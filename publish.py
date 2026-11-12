@@ -143,6 +143,18 @@ def last_deploy_failed(remote: str, commit: str) -> bool:
 
 
 def main() -> int:
+    # daily.py 와 live.py 가 동시에 배포하면 .publish 작업 저장소가 엉킨다 → 배포는 한 번에 하나 (앞의 배포가 끝날 때까지 기다린다)
+    import fcntl
+    (ROOT / 'logs').mkdir(exist_ok=True)
+    lock = open(ROOT / 'logs' / 'publish.lock', 'w')
+    fcntl.flock(lock, fcntl.LOCK_EX)
+    try:
+        return _publish()
+    finally:
+        fcntl.flock(lock, fcntl.LOCK_UN)
+
+
+def _publish() -> int:
     remote = git('remote', 'get-url', 'origin', cwd=ROOT)
     name = git('config', 'user.name', cwd=ROOT)
     email = git('config', 'user.email', cwd=ROOT)

@@ -6,7 +6,8 @@ launchd(com.kimbob.beomdashboard.live)가 10분마다 부른다. 평일에만 �
 - 09:00~15:50: 지수·전 종목 시세 (신고가 탭은 이 시세로 다시 계산)
 - 06:00~23:59 (매일): 종목별 수급이 새 거래일로 올라왔는지 1번 확인하고, 올라왔으면 전 종목 수급을 받아 다시 빌드한다.
   네이버가 KRX 종목별 투자자 매매동향을 올리는 시각이 날마다 달라서(20:20 무렵 ~ 다음 날) 정해진 실행 시각만으로는 놓친다.
-daily.py 가 돌고 있으면(같은 잠금 파일) 건너뛴다. GitHub Pages 빌드 한도(시간당 10회 안팎) 때문에 10분 간격이다.
+daily.py 와는 따로 돈다(잠금 파일이 다르다 — 아침 정기 실행이 길어져도 장중 갱신이 멈추지 않게). 두 쪽의 배포는 publish.py 가 차례로 한다.
+GitHub Pages 빌드 한도(시간당 10회 안팎) 때문에 10분 간격이다.
 
   python3 live.py           # 장 시간 밖이면 아무것도 안 함
   python3 live.py --force   # 시간 상관없이 한 번
@@ -33,6 +34,19 @@ def in_dart_hours(now: datetime) -> bool:
     return now.weekday() < 5 and DART_START <= now.time() <= DART_END
 
 
+def daily_running() -> bool:
+    """daily.py 가 잠금을 쥐고 있는가 (기록용 — 장중 갱신을 막지는 않는다)"""
+    try:
+        with open(LOG_DIR / 'daily.lock', 'w') as f:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(f, fcntl.LOCK_UN)
+        return False
+    except BlockingIOError:
+        return True
+    except OSError:
+        return False
+
+
 def run(args, log) -> int:
     log.write(f'--- {datetime.now():%H:%M:%S} {" ".join(args)}\n')
     log.flush()
@@ -47,12 +61,16 @@ def main() -> int:
     if not (market or filings or flow):
         return 0
     LOG_DIR.mkdir(exist_ok=True)
-    lock = open(LOG_DIR / 'daily.lock', 'w')
+    # 자기 잠금만 건다: 전에는 daily.py 와 같은 잠금 파일을 써서, 아침 정기 실행이 길어지면(백테스트 수급 35분 등)
+    # 장 초반 내내 장중 갱신이 조용히 건너뛰어졌다 (2026-11-12 07:17~09:4x). 배포가 겹치는 것은 publish.py 의 잠금이 막는다.
+    lock = open(LOG_DIR / 'live.lock', 'w')
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
-        return 0   # 정기 실행 중
+        return 0   # 직전 장중 갱신이 아직 도는 중
     with open(LOG_DIR / f'live_{datetime.now():%Y%m%d}.log', 'a', encoding='utf-8') as log:
+        if daily_running():
+            log.write(f'--- {datetime.now():%H:%M:%S} 정기 실행(daily.py)이 도는 중 — 장중 갱신은 그대로 진행\n')
         got = lambda code: code in (0, 1)   # 0 정상, 1 일부 오류 — 둘 다 새로 받은 것이 있다
         ok = need_naver = False
         if flow:   # 새 거래일 종목별 수급이 올라왔을 때만 받는다 (없으면 종료 코드 10)
