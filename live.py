@@ -77,6 +77,10 @@ def main() -> int:
             new_flow = got(run(['collect_naver.py', 'flow', '--if-new'], log))
             ok |= new_flow
             need_naver |= new_flow
+            # 기관 세부(KIS): 네이버 수급이 올라온 거래일을 아직 안 받았을 때만 호출한다 (받았으면 API 호출 없이 10)
+            new_det = got(run(['collect_kis_flow.py'], log))
+            ok |= new_det
+            need_naver |= new_det
         if market:
             ok |= got(run(['collect_naver.py', 'index'], log))
             new_quotes = got(run(['collect_naver.py', 'quotes'], log))

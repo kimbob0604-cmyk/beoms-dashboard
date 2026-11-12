@@ -100,6 +100,26 @@ CREATE TABLE IF NOT EXISTS flow_daily (
     PRIMARY KEY (date, code)
 );
 
+-- 종목별 투자자 순매수 거래대금 (백만원) — 한국투자증권 Open API, 통합(KRX+넥스트레이드) 기준.
+-- org = sec+trust+pef+bank+ins+etcfin+pension (반올림 차이만)
+CREATE TABLE IF NOT EXISTS flow_detail (
+    date     TEXT NOT NULL,
+    code     TEXT NOT NULL,
+    frgn     REAL,      -- 외국인
+    ind      REAL,      -- 개인
+    org      REAL,      -- 기관 계
+    sec      REAL,      -- 금융투자
+    trust    REAL,      -- 투신
+    pef      REAL,      -- 사모펀드
+    bank     REAL,      -- 은행
+    ins      REAL,      -- 보험
+    etcfin   REAL,      -- 기타금융(종금)
+    pension  REAL,      -- 연기금 등
+    corp     REAL,      -- 기타법인
+    gov      REAL,      -- 기타(국가·지자체)
+    PRIMARY KEY (date, code)
+);
+
 -- 네이버 52주 신고가 목록 스냅샷 (그날 신고가를 낸 종목)
 CREATE TABLE IF NOT EXISTS high52_daily (
     date        TEXT NOT NULL,

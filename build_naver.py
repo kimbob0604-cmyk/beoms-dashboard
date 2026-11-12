@@ -74,6 +74,41 @@ def summarize_flow(rows):
     return out
 
 
+# 기관 세부 (flow_detail, KIS 실제 거래대금 백만원) — 화면 키 → 열. 기관 세부 7개 + 기타법인
+DETAIL = [('sc', 'sec'), ('pn', 'pension'), ('tr', 'trust'), ('pe', 'pef'), ('in', 'ins'), ('bk', 'bank'), ('ef', 'etcfin'),
+          ('cp', 'corp')]
+
+
+def detail_by_code(conn, d, limit=max(FLOW_DAYS)):
+    rows = defaultdict(list)
+    for r in conn.execute('SELECT * FROM flow_detail WHERE date <= ? ORDER BY code, date DESC', (d,)):
+        if len(rows[r['code']]) < limit:
+            rows[r['code']].append(dict(r))
+    return rows
+
+
+def summarize_detail(rows):
+    """rows: 한 종목의 flow_detail 최신순 → {sc1, sc5, sc20, sc60, scs, …} 억원. 기간보다 행이 적으면 None"""
+    out = {}
+    for short, col in DETAIL:
+        vals = [r[col] for r in rows]
+        for d in FLOW_DAYS:
+            out[f'{short}{d}'] = round(sum(v or 0 for v in vals[:d]) / 100, 1) if len(rows) >= d else None
+        out[f'{short}s'] = streak(vals)
+    return out
+
+
+def detail_table(rows):
+    """종목 상세용: [[키, 1일, 5일, 20일, 60일]…] 억원. f·i·o 도 같은 출처(KIS 실제 대금)라 기관 세부를 더하면 o 와 맞는다"""
+    cols = [('f', lambda r: r['frgn']), ('i', lambda r: r['ind']), ('o', lambda r: r['org'])] + \
+           [(short, (lambda c: lambda r: r[c])(col)) for short, col in DETAIL] + [('gv', lambda r: r['gov'])]
+    out = []
+    for key, get in cols:
+        vals = [get(r) for r in rows]
+        out.append([key] + [round(sum(v or 0 for v in vals[:d]) / 100, 1) if len(rows) >= d else None for d in FLOW_DAYS])
+    return out
+
+
 SIG_MIN = 50        # 억: 쌍끌이·수급 반전에서 당일 순매수(순매도) 하한. 연속은 이 값의 절반
 SIG_STREAK = 3      # 외국인 연속 순매수·순매도 최소 일수
 SIG_TOP = 6         # 시그널마다 올릴 종목 수
@@ -218,12 +253,17 @@ def flow_by_code(conn, d, limit=max(FLOW_DAYS)):
 def build_flow(conn, d):
     info, _ = market_info(conn, d)
     gx = growth_extract(d)
+    det = detail_by_code(conn, d)
     stocks = []
     for code, rows in flow_by_code(conn, d).items():
         if rows[0]['date'] != d or code not in info:   # 그날 수급이 없는 종목(거래정지 등)은 뺀다
             continue
-        stocks.append({'c': code, **public(info[code]), **summarize_flow(rows), 'gx': gx.get(code)})
-    return {'date': d, 'stocks': stocks, 'sig': flow_signals(stocks), 'sig_min': SIG_MIN, 'sig_streak': SIG_STREAK}
+        dr = det.get(code)
+        extra = summarize_detail(dr) if dr and dr[0]['date'] == d else {}
+        stocks.append({'c': code, **public(info[code]), **summarize_flow(rows), **extra, 'gx': gx.get(code)})
+    n_det = sum(1 for s in stocks if 'sc1' in s)
+    return {'date': d, 'stocks': stocks, 'sig': flow_signals(stocks), 'sig_min': SIG_MIN, 'sig_streak': SIG_STREAK,
+            'det': n_det or None}
 
 
 # ------------------------------------------------------------
@@ -252,6 +292,7 @@ def build_reports(conn, d):
     gx = growth_extract(d)
     pv = por_base(d)
     flows = flow_by_code(conn, d, limit=20)
+    dets = detail_by_code(conn, d)
     month_ago = (date.fromisoformat(d) - timedelta(days=RECENT_DAYS)).isoformat()
 
     def slim(r):
@@ -289,6 +330,7 @@ def build_reports(conn, d):
                         for r in reps],
             'flow': [[f['date'], eok(f['frgn'], f['close']), eok(f['org'], f['close']), eok(f['ind'], f['close']),
                       f['close'], f['frgn_ratio']] for f in flows.get(code, [])],
+            'fdet': {'d': dets[code][0]['date'], 'n': len(dets[code]), 't': detail_table(dets[code])} if dets.get(code) else None,
         }
     return {'date': d, 'since': month_ago, 'reports': recent}, stock_files
 

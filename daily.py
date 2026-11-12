@@ -84,6 +84,9 @@ def main() -> int:
             problems.append('네이버 서버 응답 없음 — 다음 실행에서 이어 받음')
         elif nv != 0:
             problems.append('네이버 수집 오류가 많음')
+        # 기관 세부(금융투자·연기금·투신·사모…): 한국투자증권 API. 네이버 수급의 마지막 거래일 기준, 이미 받았으면 10으로 바로 끝
+        if run('기관 세부', ['collect_kis_flow.py'], log) not in (0, 4, 10):
+            problems.append('KIS 기관 세부 수급 일부 실패 — 다음 실행에서 이어 받음')
         if run('네이버 빌드', ['build_naver.py'], log) != 0:
             problems.append('리포트·수급·신고가 JSON 빌드 실패')
         else:

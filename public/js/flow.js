@@ -2,7 +2,10 @@
 // - 수급 시그널 카드: 쌍끌이 순매수·순매도, 외국인 연속 순매수·순매도, 수급 반전 (build_naver.flow_signals 가 고른 종목)
 //   아래 필터(주체·기간·시장)와 상관없이 그날 전 종목에서 고른다
 (() => {
-  const WHO = { f: '외국인', o: '기관', fo: '외국인+기관' };
+  const MAIN = { f: '외국인', o: '기관', fo: '외국인+기관' };
+  // 기관 세부·기타법인: build_naver.DETAIL (KIS 실제 거래대금, KRX+넥스트레이드). data.det 가 있을 때만 고를 수 있다
+  const DET = { sc: '금융투자', pn: '연기금', tr: '투신', pe: '사모', in: '보험', bk: '은행', ef: '기타금융', cp: '기타법인' };
+  const WHO = { ...MAIN, ...DET };
   const DAYS = { 1: '1일', 5: '5일', 20: '20일', 60: '60일' };
   const CAPS = { L: [10000, Infinity], M: [3000, 10000], S: [0, 3000] };
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
@@ -19,7 +22,8 @@
   const amt = (s, who = st.who, d = st.days) =>
     (who === 'fo' ? (s[`f${d}`] == null || s[`o${d}`] == null ? null : s[`f${d}`] + s[`o${d}`]) : s[`${who}${d}`]);
   const val = s => { const a = amt(s); return a == null ? null : st.unit === 'pct' ? a / s.mc : a; };
-  const streakOf = s => (st.who === 'o' ? s.os : st.who === 'f' ? s.fs : Math.sign(s.fs) === Math.sign(s.os) ? Math.min(Math.abs(s.fs), Math.abs(s.os)) * Math.sign(s.fs) : 0);
+  const streakOf = s => (DET[st.who] ? s[`${st.who}s`] || 0 : st.who === 'o' ? s.os : st.who === 'f' ? s.fs
+    : Math.sign(s.fs) === Math.sign(s.os) ? Math.min(Math.abs(s.fs), Math.abs(s.os)) * Math.sign(s.fs) : 0);
   const fmtVal = v => (v == null ? '–' : st.unit === 'pct' ? `${v > 0 ? '+' : ''}${(v * 100).toFixed(2)}%` : U.eok(v, true));
 
   function filtered(skipQ) {
@@ -43,11 +47,12 @@
     $('view').innerHTML = '';
     $('filters').innerHTML = `
       <div class="frow">
-        ${pg.seg('who', Object.entries(WHO))}
+        ${pg.seg('who', Object.entries(MAIN))}
         ${pg.seg('days', Object.entries(DAYS))}
         ${pg.seg('dir', [['buy', '순매수'], ['sell', '순매도']])}
         ${pg.seg('unit', [['amt', '금액 순'], ['pct', '시총 대비 순', '순매수 금액 ÷ 시가총액']])}
       </div>
+      ${data?.det ? `<div class="frow"><span class="muted small">기관 세부</span>${pg.seg('who', Object.entries(DET))}</div>` : ''}
       <div class="frow">
         ${pg.seg('market', [['all', '전체'], ['KOSPI', '코스피'], ['KOSDAQ', '코스닥']])}
         ${pg.seg('cap', [['all', '시총 전체'], ['L', '1조 이상'], ['M', '3천억~1조'], ['S', '3천억 미만']])}
@@ -74,12 +79,15 @@
           ${[['f', '외국인'], ['o', '기관'], ['i', '개인']].map(([k, n]) => `<div><span>${n}</span><b class="${U.cls(sum(l, k))}">${U.eok(sum(l, k), true)}</b>
             <small class="muted">순매수 ${cnt(k)} · 순매도 ${l.filter(s => (s[`${k}${d}`] || 0) < 0).length}종목</small></div>`).join('')}
         </div>
+        ${data.det ? `<div class="fl-det">${Object.entries(DET).map(([k, n]) => `<button type="button" class="fl-det-i${st.who === k ? ' on' : ''}" data-who="${k}"
+            title="${n} ${DAYS[d]} 순매수 순위 보기"><span>${n}</span><b class="${U.cls(sum(l, k))}">${U.eok(sum(l, k), true)}</b></button>`).join('')}</div>` : ''}
       </div>`;
     }).join('');
     $('summary').innerHTML = `
       <p class="sub">시총 1,000억 이상 보통주와 컨센서스·리포트가 있는 종목의 합입니다 (시장 전체 합계와 다름).</p>
       <div class="rv-mks">${cards}</div>
-      <p class="note">금액 = 그날 순매수 수량 × 정규장 종가, ${DAYS[d]} 합. 기관은 금융투자·연기금 등 합계. 출처 네이버 증권 투자자별 매매동향.</p>`;
+      <p class="note">금액 = 그날 순매수 수량 × 정규장 종가, ${DAYS[d]} 합. 출처 네이버 증권 투자자별 매매동향(KRX+넥스트레이드).
+        ${data.det ? `기관 세부(금융투자~기타금융)와 기타법인은 한국투자증권 API의 실제 체결 대금입니다 — 세부를 더하면 그쪽 기관 합계와 맞고, 위 기관 합계(수량 × 종가 어림)와는 조금 다릅니다. 세부가 있는 종목 ${data.det}개.` : '기관은 금융투자·연기금 등 합계.'}</p>`;
   }
 
   const SIGNALS = [
@@ -138,9 +146,9 @@
           <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span></div>
           <div class="r-growth"><small>${WHO[st.who]} ${DAYS[d]}</small><b class="${U.cls(v)}">${fmtVal(v)}</b></div>
         </div>
-        <div class="r-line">외국인 <b class="${U.cls(s[`f${d}`])}">${U.eok(s[`f${d}`], true)}</b> · 기관 <b class="${U.cls(s[`o${d}`])}">${U.eok(s[`o${d}`], true)}</b> · 개인 <b class="${U.cls(s[`i${d}`])}">${U.eok(s[`i${d}`], true)}</b>, 시총 ${U.eok(s.mc)} <span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span></div>
+        <div class="r-line">${DET[st.who] ? `${DET[st.who]} <b class="${U.cls(s[`${st.who}${d}`])}">${U.eok(s[`${st.who}${d}`], true)}</b> · ` : ''}외국인 <b class="${U.cls(s[`f${d}`])}">${U.eok(s[`f${d}`], true)}</b> · 기관 <b class="${U.cls(s[`o${d}`])}">${U.eok(s[`o${d}`], true)}</b> · 개인 <b class="${U.cls(s[`i${d}`])}">${U.eok(s[`i${d}`], true)}</b>, 시총 ${U.eok(s.mc)} <span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch?.toFixed(2) ?? '–'}%</span></div>
         <div class="r-sub">
-          ${[streakText(s.fs, '외국인'), streakText(s.os, '기관')].filter(Boolean).map(t => `<span>${t}</span>`).join('')}
+          ${[streakText(s.fs, '외국인'), streakText(s.os, '기관'), DET[st.who] ? streakText(s[`${st.who}s`] || 0, DET[st.who]) : ''].filter(Boolean).map(t => `<span>${t}</span>`).join('')}
           ${s.fr != null ? `<span>외국인 지분 <b>${s.fr.toFixed(1)}%</b>${s.frd != null ? ` (20일 <span class="${U.cls(s.frd)}">${s.frd > 0 ? '+' : ''}${s.frd.toFixed(2)}%p</span>)` : ''}</span>` : ''}
           ${gx ? `<span>내년 영업이익 <b class="${gx.k === 'turnaround' ? 'up' : U.cls(gx.g)}">${gx.k === 'turnaround' ? '흑자전환' : gx.k === 'loss' ? '적자' : U.pct(gx.g)}</b></span>` : ''}
         </div>
@@ -163,6 +171,11 @@
     }
   }
 
+  $('summary').addEventListener('click', e => {
+    const b = e.target.closest('.fl-det-i');
+    if (b) pg.set({ who: b.dataset.who });
+  });
+
   document.querySelector('main .cols').addEventListener('click', e => {
     const b = e.target.closest('.more');
     if (!b) return;
@@ -172,7 +185,8 @@
 
   function renderFoot() {
     $('foot').innerHTML = `
-      <p>수급: 네이버 증권 종목별 투자자별 매매동향(KRX 정규장), ${U.dateLabel(data.date)}까지. 금액은 순매수 수량 × 그날 종가로 어림한 값이라 실제 거래대금과 다를 수 있습니다.</p>
+      <p>수급: 네이버 증권 종목별 투자자별 매매동향(KRX+넥스트레이드), ${U.dateLabel(data.date)}까지. 금액은 순매수 수량 × 그날 종가로 어림한 값이라 실제 거래대금과 다를 수 있습니다.</p>
+      ${data.det ? '<p>기관 세부·기타법인: 한국투자증권 Open API 종목별 투자자 매매동향의 순매수 거래대금(KRX+넥스트레이드).</p>' : ''}
       <p>시총·주가: KRX 종가 (다음 날 아침 KRX 공개 전까지는 네이버 시세로 임시 표시). 이익 성장: FnGuide 컨센서스(네이버 종목분석).</p>
       <p>투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
   }
@@ -201,6 +215,7 @@
       return showError(`${d} 데이터를 불러오지 못했습니다. (${e.message})`);
     }
     $('msg').hidden = true;
+    if (!data.det && DET[st.who]) { st.who = 'f'; pg.write(); }   // 세부가 없는 날짜로 옮기면 외국인으로
     render();
   }
 

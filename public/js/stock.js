@@ -266,6 +266,25 @@ const Stock = (() => {
     </section>`;
   }
 
+  // 기관 세부 (build_naver.detail_table): 한국투자증권 API 실제 순매수 거래대금, 억원 [키, 1일, 5일, 20일, 60일]
+  const DET_ROWS = [['f', '외국인'], ['i', '개인'], ['o', '기관 계'], ['sc', '금융투자', 1], ['pn', '연기금 등', 1], ['tr', '투신', 1],
+    ['pe', '사모펀드', 1], ['in', '보험', 1], ['bk', '은행', 1], ['ef', '기타금융', 1], ['cp', '기타법인'], ['gv', '국가·지자체']];
+  function flowDetailHtml(d) {
+    const t = d.fdet?.t;
+    if (!t?.length) return '';
+    const by = Object.fromEntries(t.map(r => [r[0], r.slice(1)]));
+    const fmt = v => (v == null ? '<span class="muted">–</span>' : `<span class="${U.cls(v)}">${U.eok(v, true)}</span>`);
+    return `<section class="st-sec">
+      <div class="st-sec-head"><h3>투자자 세부 <small class="muted">순매수 거래대금 · ${U.md(d.fdet.d)}까지</small></h3></div>
+      <table class="tbl flow-det">
+        <thead><tr><th>투자자</th><th class="num">1일</th><th class="num">5일</th><th class="num">20일</th><th class="num">60일</th></tr></thead>
+        <tbody>${DET_ROWS.filter(([k]) => by[k] && (k !== 'gv' || by[k].some(v => v))).map(([k, n, sub]) => `<tr class="${sub ? 'sub' : ''}${k === 'o' ? ' tot' : ''}">
+          <td>${sub ? '└ ' : ''}${n}</td>${by[k].map(v => `<td class="num">${fmt(v)}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+      <p class="note">한국투자증권 Open API 종목별 투자자 매매동향(KRX+넥스트레이드)의 실제 체결 대금. 위 표(수량 × 종가 어림)와 조금 다를 수 있습니다.</p>
+    </section>`;
+  }
+
   // 최근 90일 DART 주요 공시 (data/dart/s/{code}.json)
   function dartHtml() {
     if (!filings?.length || typeof DartFmt === 'undefined') return '<div class="st-dart-slot"></div>';
@@ -300,7 +319,7 @@ const Stock = (() => {
     capK = s.mc && s.p ? s.mc / s.p : null;
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
-        : `${growthHtml(s)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}
+        : `${growthHtml(s)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}${flowDetailHtml(s)}
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
            목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다. 목표 시총 = 목표가 × 지금 주식 수(우선주 포함 회사 시총 기준 어림).</p>`}</div>`;
     drawChart();

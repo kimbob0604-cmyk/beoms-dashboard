@@ -277,6 +277,15 @@ h2.sec-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
 .fl-sum span { font-size: 12px; color: var(--muted); }
 .fl-sum b { font-size: 17px; font-weight: 700; }
 .fl-sum small { font-size: 11px; }
+.fl-det { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 4px 8px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.fl-det-i { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; padding: 3px 6px; border: 0; border-radius: 6px;
+  background: none; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+.fl-det-i:hover, .fl-det-i.on { background: var(--chip, rgba(127,127,127,.12)); }
+.fl-det-i span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.fl-det-i b { white-space: nowrap; }
+.fl-det-i b { font-size: 13px; font-weight: 700; }
+.flow-det tr.sub td:first-child { color: var(--muted); padding-left: 10px; }
+.flow-det tr.tot td { font-weight: 700; }
 .tgt-top { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .tgt-top .chip { padding: 3px 9px; font-size: 13px; }
 .tgt-top .chip a { font-weight: 600; color: var(--text); }
