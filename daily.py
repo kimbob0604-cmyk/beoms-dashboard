@@ -109,8 +109,11 @@ def main() -> int:
             problems.append('실적 발표 덱 JSON 빌드 실패')
         if run('이벤트 빌드', ['build_events.py'], log) != 0:
             problems.append('이벤트 스터디 JSON 빌드 실패')
-        if run('팩터 빌드', ['build_factors.py'], log) != 0:
-            problems.append('퀀트 팩터 JSON 빌드 실패')
+        # 펀더: 대상 종목(fund_watch.json)의 새 정기보고서에서 성격별 비용 주석·손익을 받아 분기로 쌓는다 (한 번에 300건까지)
+        if run('펀더 수집', ['collect_fund.py'], log) not in (0, 4):
+            problems.append('펀더(DART 주석) 수집 일부 실패 — 다음 실행에서 이어 받음')
+        if run('펀더 빌드', ['build_fund.py'], log) != 0:
+            problems.append('펀더 JSON 빌드 실패')
         # 조건 백테스트(20년): 과거 DB(history.db)에 어제까지의 확정 가격을 복사. 다시 계산은 아침 실행에서만 (약 8분)
         run('백테스트 과거 가격', ['collect_history.py', 'sync'], log)
         if datetime.now().hour < 12:

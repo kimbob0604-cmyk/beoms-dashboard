@@ -66,13 +66,54 @@ def connect(path=DB):
     return conn
 
 
-def name_codes() -> dict:
-    """옛 형식 글(종목코드 없음)용 이름 → 코드. 이름이 겹치면 최근 것"""
+NAMES_CACHE = ROOT / '.cache' / 'dart_names.json'
+
+
+def dart_names() -> dict:
+    """DART 회사 목록의 정식 이름 → 종목코드 (현대자동차·케이티앤지·엘에스일렉트릭 꼴). 7일 캐시"""
+    import io
+    import os
+    import re
+    import time
+    import zipfile
+    if NAMES_CACHE.exists() and time.time() - NAMES_CACHE.stat().st_mtime < 7 * 86400:
+        return json.loads(NAMES_CACHE.read_text(encoding='utf-8'))
+    key = os.environ.get('DART_API_KEY', '')
+    if not key:
+        return {}
+    try:
+        r = requests.get('https://opendart.fss.or.kr/api/corpCode.xml', params={'crtfc_key': key}, timeout=60)
+        xml = zipfile.ZipFile(io.BytesIO(r.content)).read('CORPCODE.xml').decode('utf-8')
+    except (requests.RequestException, zipfile.BadZipFile, KeyError) as e:
+        log.warning('DART 회사 목록 실패: %s', e)
+        return {}
     out = {}
+    for block in xml.split('<list>')[1:]:
+        nm = re.search(r'<corp_name>(.*?)</corp_name>', block)
+        st = re.search(r'<stock_code>\s*(\w{6})\s*</stock_code>', block)
+        if nm and st:
+            out[nm.group(1).strip()] = st.group(1)
+    NAMES_CACHE.parent.mkdir(exist_ok=True)
+    NAMES_CACHE.write_text(json.dumps(out, ensure_ascii=False), encoding='utf-8')
+    return out
+
+
+def name_codes() -> dict:
+    """옛 형식 글(종목코드 없음)용 이름 → 코드. 거래소 이름(hname, 겹치면 최근 것)이 먼저, 없으면 DART 정식 이름"""
+    out = dict(dart_names())
     if HIST.exists():
         for code, name in sqlite3.connect(f'file:{HIST}?mode=ro', uri=True).execute('SELECT code, name FROM hname ORDER BY last'):
             out[name] = code
     return out
+
+
+def fill_codes(conn) -> int:
+    """코드 없이 저장된 글에 이름으로 코드를 채운다 (이름 표가 나중에 늘어난 경우)"""
+    names = name_codes()
+    rows = [(names[n], i) for i, n in conn.execute('SELECT id, name FROM earn_post WHERE code IS NULL AND name IS NOT NULL') if n in names]
+    with conn:
+        conn.executemany('UPDATE earn_post SET code = ? WHERE id = ?', rows)
+    return len(rows)
 
 
 # ---------------- 글 ----------------
@@ -137,8 +178,9 @@ def collect_posts(conn) -> int:
     if seen == -4:
         log.info('텔레그램 로그인 없음 — 건너뜀')
         return 4
-    n = conn.execute('SELECT COUNT(*) FROM earn_post').fetchone()[0]
-    log.info('실적 글: 전체 %d', n)
+    filled = fill_codes(conn)
+    n, miss = conn.execute('SELECT COUNT(*), SUM(code IS NULL AND (se IS NOT NULL OR oe IS NOT NULL)) FROM earn_post').fetchone()
+    log.info('실적 글: 전체 %d (이름으로 코드 채움 %d, 예상치 있는데 코드 모름 %d)', n, filled, miss or 0)
     return 0
 
 

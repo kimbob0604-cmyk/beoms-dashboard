@@ -319,7 +319,7 @@ const Stock = (() => {
     capK = s.mc && s.p ? s.mc / s.p : null;
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
-        : `${growthHtml(s)}${targetHtml(s)}${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}${flowDetailHtml(s)}
+        : `${growthHtml(s)}${targetHtml(s)}<div class="st-fund-slot"></div>${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}${flowDetailHtml(s)}
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
            목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다. 목표 시총 = 목표가 × 지금 주식 수(우선주 포함 회사 시총 기준 어림).</p>`}</div>`;
     drawChart();
@@ -345,6 +345,15 @@ const Stock = (() => {
       loadLive(c),
     ]);
     if (code === c) render(d || null);
+    loadFund(c);
+  }
+
+  // 분기 비용 구조 (data/fund/{code}.json — 쌓아 둔 종목만). fund.js 가 그린다
+  async function loadFund(c) {
+    if (typeof Fund === 'undefined') return;
+    const d = await Fund.load(c);
+    const slot = panel.querySelector('.st-fund-slot');
+    if (code === c && d && slot) Fund.render(slot, d);
   }
 
   function close() {

@@ -1263,3 +1263,42 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .ed-path-head h3 { font-size: 14px; margin: 0; }
 .ed-legend { display: flex; gap: 10px; flex-wrap: wrap; }
 .tt-v .ed-dot { width: 7px; height: 7px; }
+
+/* 펀더: 분기 비용 구조 (fund.js · funds.js) */
+.fd-ctl { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.fd-wrap { overflow-x: auto; }
+.fd-tbl { font-size: 12.5px; white-space: nowrap; }
+.fd-tbl th:first-child, .fd-tbl td:first-child { position: sticky; left: 0; background: var(--card); z-index: 1; text-align: left; min-width: 92px; }
+.fd-tbl th[data-fq] { cursor: pointer; }
+.fd-tbl th.sel, .fd-tbl td.sel { background: var(--hover); }
+.fd-tbl .fd-rev td { font-weight: 700; }
+.fd-tbl .fd-tot td { font-weight: 700; border-top: 2px solid var(--line); }
+.fd-tbl .fd-op td, .fd-tbl .fd-opm td { font-weight: 700; }
+.fd-warn { display: inline-block; margin-left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--down); color: #fff; font: 700 9px/13px sans-serif; text-align: center; font-style: normal; }
+.fd-earn { display: block; font-style: normal; font-size: 9.5px; font-weight: 700; }
+.fd-earn.up { color: var(--up); } .fd-earn.down { color: var(--down); }
+.fd-brs { margin-top: 12px; }
+.fd-br-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.fd-brs h4, .fd-ev h4, .fd-calc h4 { font-size: 13.5px; margin: 0 0 6px; }
+.fd-br-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 6px; }
+.fd-br h4 b { float: right; }
+.fd-bar { display: grid; grid-template-columns: 78px 1fr 62px; gap: 6px; align-items: center; font-size: 12px; padding: 2px 0; }
+.fd-bar i { height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+.fd-bar em { display: block; height: 100%; border-radius: 4px; }
+.fd-bar em.neg { background: var(--down); } .fd-bar em.pos { background: var(--up); }
+.fd-bar b { text-align: right; }
+.fd-ev, .fd-calc { margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.fd-chip { display: inline-block; margin: 0 4px 2px 0; padding: 1px 7px; border-radius: 9px; background: var(--chip); font-size: 11px; white-space: nowrap; }
+.fd-chip.on { background: var(--text); color: var(--card); }
+.fd-rep { padding: 6px 0; border-top: 1px solid var(--line); }
+.fd-rep header { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-size: 12.5px; }
+.fd-rep p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.5; }
+.fd-inputs { display: flex; gap: 10px 16px; flex-wrap: wrap; font-size: 12.5px; }
+.fd-inputs input { width: 84px; margin: 0 4px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--text); font: inherit; text-align: right; }
+.fd-out { margin: 8px 0 2px; font-size: 13.5px; }
+.fd-detail { padding: 14px 16px; margin-bottom: 12px; }
+.fd-detail[hidden] { display: none; }
+.fd-dhead { display: flex; justify-content: space-between; align-items: center; }
+.fd-dhead h2 { font-size: 18px; margin: 0; }
+.fd-list tr[data-c] { cursor: pointer; }
+.fd-list tr.on td { background: var(--hover); }
