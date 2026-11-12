@@ -100,6 +100,13 @@ def main() -> int:
         run('공시 시각', ['collect_dart.py', 'times'], log)   # KIND 오늘 공시 시각 → 이벤트 스터디 반응일
         if run('공시 빌드', ['build_dart.py'], log) != 0:
             problems.append('공시 JSON 빌드 실패')
+        # 실적 발표 덱: @darthacking 실적 글(텔레그램 로그인 필요, 없으면 4) → 최근 1년 발표의 KIS 분봉 → 판정·반응 빌드
+        if run('실적 글', ['collect_earn.py', 'posts'], log) not in (0, 4):
+            problems.append('실적 글(텔레그램) 수집 실패 — 다음 실행에서 이어 받음')
+        if run('실적 분봉', ['collect_earn.py', 'minutes'], log) not in (0, 4):
+            problems.append('실적 발표 분봉(KIS) 일부 실패 — 다음 실행에서 이어 받음')
+        if run('실적 덱 빌드', ['build_earn.py'], log) != 0:
+            problems.append('실적 발표 덱 JSON 빌드 실패')
         if run('이벤트 빌드', ['build_events.py'], log) != 0:
             problems.append('이벤트 스터디 JSON 빌드 실패')
         if run('팩터 빌드', ['build_factors.py'], log) != 0:

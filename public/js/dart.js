@@ -145,6 +145,7 @@
   function renderBody() {
     const xs = filtered();
     renderSummary(xs);
+    if (typeof EarnDeck !== 'undefined') EarnDeck.show(data.date, st);
     renderSections(xs);
   }
 

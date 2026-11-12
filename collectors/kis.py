@@ -119,3 +119,134 @@ def investor_daily(session: requests.Session, tok: str, code: str, end: str, mar
             continue
         raise KisError(f"{code}: {j.get('msg_cd')} {j.get('msg1') or r.status_code}")
     raise KisError(f'{code}: 재시도 초과')
+
+
+# ---------------- 분봉 ----------------
+MINUTE_TR = 'FHKST03010230'      # 주식일별분봉조회 — 약 1년 전까지, 한 번에 120분 (기준 시각부터 거꾸로)
+MINUTE_PATH = '/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice'
+
+
+def _minute_page(session, tok, code, day, hhmmss, market='UN'):
+    key, secret = keys()
+    h = {'Content-Type': 'application/json; charset=utf-8', 'authorization': f'Bearer {tok}', 'appkey': key, 'appsecret': secret,
+         'tr_id': MINUTE_TR, 'custtype': 'P'}
+    p = {'FID_COND_MRKT_DIV_CODE': market, 'FID_INPUT_ISCD': code, 'FID_INPUT_HOUR_1': hhmmss, 'FID_INPUT_DATE_1': day,
+         'FID_PW_DATA_INCU_YN': 'Y', 'FID_FAKE_TICK_INCU_YN': ''}
+    for i in range(3):
+        r = session.get(f'{BASE}{MINUTE_PATH}', headers=h, params=p, timeout=15)
+        try:
+            j = r.json()
+        except ValueError:
+            j = {}
+        if j.get('rt_cd') == '0':
+            return j.get('output2') or []
+        if j.get('msg_cd') == 'EGW00201' or r.status_code in (429, 500):
+            time.sleep(1 + i)
+            continue
+        raise KisError(f"{code} {day}: {j.get('msg_cd')} {j.get('msg1') or r.status_code}")
+    raise KisError(f'{code} {day}: 재시도 초과')
+
+
+def _minute_day(session, tok, code: str, day: str, start: str, end: str, gap: float, market: str) -> List:
+    """day(YYYYMMDD) 의 1분봉 [[HHMM, 종가, 거래량]…] 시각순 (통합: KRX+넥스트레이드). end 부터 거꾸로 120분씩"""
+    bars, at = {}, end + '00'
+    for _ in range(10):
+        rows = _minute_page(session, tok, code, day, at, market)
+        time.sleep(gap)
+        same = [x for x in rows if x.get('stck_bsop_date') == day]
+        for x in same:
+            hm = x['stck_cntg_hour'][:4]
+            c = _num(x.get('stck_prpr'))
+            if c:
+                bars[hm] = [hm, c, _num(x.get('cntg_vol')) or 0]
+        if not same or len(same) < len(rows):      # 그날이 끝났다 (앞 거래일로 넘어감)
+            break
+        first = min(x['stck_cntg_hour'] for x in same)
+        if first[:4] <= start:
+            break
+        m = int(first[:2]) * 60 + int(first[2:4]) - 1
+        at = f'{m // 60:02d}{m % 60:02d}00'
+    return [bars[k] for k in sorted(bars) if start <= k <= end]
+
+
+TODAY_TR = 'FHKST03010200'       # 주식당일분봉조회 — 오늘 것만, 한 번에 30분. (일별분봉조회는 오늘 날짜를 주면 엉뚱한 옛날 분봉을 섞어 준다)
+TODAY_PATH = '/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice'
+
+
+def _minute_today(session, tok, code: str, start: str, end: str, since: str, gap: float, market: str) -> List:
+    """오늘 1분봉 [[HHMM, 종가, 거래량]…] (통합). end 부터 거꾸로 30분씩, start 또는 since(이미 가진 마지막 분) 까지"""
+    key, secret = keys()
+    h = {'Content-Type': 'application/json; charset=utf-8', 'authorization': f'Bearer {tok}', 'appkey': key, 'appsecret': secret,
+         'tr_id': TODAY_TR, 'custtype': 'P'}
+    today = time.strftime('%Y%m%d')
+    bars, at = {}, end + '00'
+    stop = max(start, since)
+    for _ in range(30):
+        p = {'FID_ETC_CLS_CODE': '', 'FID_COND_MRKT_DIV_CODE': market, 'FID_INPUT_ISCD': code, 'FID_INPUT_HOUR_1': at, 'FID_PW_DATA_INCU_YN': 'Y'}
+        for i in range(3):
+            r = session.get(f'{BASE}{TODAY_PATH}', headers=h, params=p, timeout=15)
+            try:
+                j = r.json()
+            except ValueError:
+                j = {}
+            if j.get('rt_cd') == '0':
+                break
+            if j.get('msg_cd') == 'EGW00201' or r.status_code in (429, 500):
+                time.sleep(1 + i)
+                continue
+            raise KisError(f"{code} 오늘 분봉: {j.get('msg_cd')} {j.get('msg1') or r.status_code}")
+        else:
+            raise KisError(f'{code} 오늘 분봉: 재시도 초과')
+        time.sleep(gap)
+        rows = [x for x in j.get('output2') or [] if x.get('stck_bsop_date') == today]
+        for x in rows:
+            hm = x['stck_cntg_hour'][:4]
+            c = _num(x.get('stck_prpr'))
+            if c and _num(x.get('cntg_vol')) is not None:
+                bars[hm] = [hm, c, _num(x.get('cntg_vol')) or 0]
+        if not rows:
+            break
+        first = min(x['stck_cntg_hour'] for x in rows)
+        if first[:4] <= stop:
+            break
+        m = int(first[:2]) * 60 + int(first[2:4]) - 1
+        at = f'{m // 60:02d}{m % 60:02d}00'
+    return [bars[k] for k in sorted(bars) if start <= k <= end]
+
+
+def _traded(bars) -> bool:
+    return any(b[2] for b in bars if '0900' <= b[0] <= '1530')
+
+
+def _un_ok(rows, day) -> bool:
+    """통합(UN) 응답의 정규장 줄에 거래량이 있으면 진짜 (넥스트레이드에 없는 종목은 거래량 0 인 가짜 줄)"""
+    return any((_num(x.get('cntg_vol')) or 0) > 0 for x in rows if x.get('stck_bsop_date') == day and '090000' <= x['stck_cntg_hour'] <= '153000')
+
+
+def market_for(session, tok, code: str, day: str, gap: float = 0.11) -> str:
+    """그날 분봉을 받을 시장: 15:30 앞 한 쪽만 통합으로 불러 보고 정한다 ('UN' | 'J')"""
+    if day == time.strftime('%Y%m%d'):
+        key, secret = keys()
+        h = {'Content-Type': 'application/json; charset=utf-8', 'authorization': f'Bearer {tok}', 'appkey': key, 'appsecret': secret,
+             'tr_id': TODAY_TR, 'custtype': 'P'}
+        p = {'FID_ETC_CLS_CODE': '', 'FID_COND_MRKT_DIV_CODE': 'UN', 'FID_INPUT_ISCD': code,
+             'FID_INPUT_HOUR_1': min('153000', time.strftime('%H%M00')), 'FID_PW_DATA_INCU_YN': 'Y'}
+        rows = session.get(f'{BASE}{TODAY_PATH}', headers=h, params=p, timeout=15).json().get('output2') or []
+    else:
+        rows = _minute_page(session, tok, code, day, '153000', 'UN')
+    time.sleep(gap)
+    return 'UN' if _un_ok(rows, day) else 'J'
+
+
+def minute_day(session, tok, code: str, day: str, start: str = '0800', end: str = '2000', gap: float = 0.11) -> tuple:
+    """day(YYYYMMDD) 의 1분봉 [[HHMM, 종가, 거래량]…] 시각순과 쓴 시장. 통합(UN, 넥스트레이드 포함)이 되면 통합,
+    넥스트레이드에 없는 종목은 KRX(J — 정규장과 시간외 단일가)"""
+    mk = market_for(session, tok, code, day, gap)
+    return _minute_day(session, tok, code, day, start, end, gap, mk), mk
+
+
+def minute_today(session, tok, code: str, start: str = '0800', end: str = '2000', since: str = '', gap: float = 0.11,
+                 market: str = '') -> tuple:
+    """오늘 1분봉과 쓴 시장. market 을 주면 그 시장으로 since 뒤만 (이어 받기)"""
+    mk = market or market_for(session, tok, code, time.strftime('%Y%m%d'), gap)
+    return _minute_today(session, tok, code, start, end, since if market else '', gap, mk), mk

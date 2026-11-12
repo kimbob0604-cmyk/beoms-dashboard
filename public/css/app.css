@@ -1237,3 +1237,29 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .cs-fit { display: inline-block; margin-left: 2px; padding: 0 6px; border-radius: 5px; font-size: 10px; font-weight: 700; line-height: 16px; vertical-align: 1px; background: var(--chip); color: var(--muted); white-space: nowrap; }
 .cs-fit.ok { background: color-mix(in srgb, var(--up) 14%, transparent); color: var(--up); }
 .cs-fit.loose, .cs-fit.small { color: var(--sub); }
+
+/* 공시 탭 · 실적 발표 덱 (earn.js) */
+.ed-wrap[hidden], .ed-stats[hidden] { display: none; }
+.ed-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+.ed-card { border-left: 3px solid var(--cc); }
+.ed-vs { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.ed-vs small { font-size: 11px; }
+.ed-spark { display: block; width: 100%; height: 64px; margin-top: 6px; }
+.ed-spark polyline { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.ed-spark polyline.up { stroke: var(--up); } .ed-spark polyline.dn { stroke: var(--down); }
+.ed-spark .b { stroke: var(--muted); stroke-dasharray: 3 3; opacity: .6; vector-effect: non-scaling-stroke; }
+.ed-spark .t0 { stroke: var(--text); stroke-width: 1.2; opacity: .75; vector-effect: non-scaling-stroke; }
+.ed-spark .d { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ed-ax { display: flex; justify-content: space-between; font-size: 10.5px; margin-top: 1px; }
+.ed-nochart { padding: 6px 0; }
+.ed-steps { flex-wrap: wrap; }
+.ed-stats { margin-top: 12px; }
+.ed-stats > summary { cursor: pointer; list-style: none; }
+.ed-stats > summary h2 { display: inline; font-size: 17px; }
+.ed-ctl { margin: 10px 0 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ed-tbl td small { display: block; font-size: 10.5px; }
+.ed-tbl .ed-sep { border-left: 1px dashed var(--line); }
+.ed-path-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.ed-path-head h3 { font-size: 14px; margin: 0; }
+.ed-legend { display: flex; gap: 10px; flex-wrap: wrap; }
+.tt-v .ed-dot { width: 7px; height: 7px; }
