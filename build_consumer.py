@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parent
 DATA = ROOT / 'public' / 'data'
 OUT, OUT_CALLS = DATA / 'consumer.json', DATA / 'consumer_calls.json'
 ASSETS = ROOT / 'consumer_assets.json'
+FACTORIES = ROOT / 'consumer_factories.json'      # consumer_factories.py — DART 사업보고서의 생산·물류 사업장
 HISTORY_DB = ROOT / 'db' / 'history.db'
 CONCALL_DB = ROOT / 'db' / 'concall.db'
 COUNTRY = {'US': '미국', 'CN': '중국', 'JP': '일본', 'HK': '홍콩', 'VN': '베트남', 'TW': '대만', 'TH': '태국', 'SG': '싱가포르',
@@ -299,20 +300,80 @@ def flow_stats(t: Trade, usd: list, fx: dict, rev_q: dict) -> dict:
     return {'usd': tail(usd, len(usd)), 'yoy': K.yoy(usd), 'yoy3': K.yoy(usd, span=3), 'r': r, 'nq': n, 'cover': cover, 'exp_q': exp_q}
 
 
+def with_factories(s: dict, fac: dict) -> list:
+    """종목 설정의 흐름 + DART 사업보고서의 공장·물류 사업장으로 만든 흐름(basis factory).
+    품목 묶음마다 '사업장 전체 합' 하나와, 사업장이 여럿이면 사업장 하나씩. 이미 설정에 있는 지역 조합은 다시 넣지 않는다."""
+    flows = list(s['flows'])
+    f = fac.get(s['code']) or {}
+    sites = [x['region'] for x in f.get('sites', []) if x['kind'] in ('factory', 'logistics')]
+    if not sites:
+        return flows
+    have = {(x['group'], tuple(sorted(x.get('regions') or []))) for x in flows if x['kind'] == 'sigungu'}
+    src = f"DART {f.get('report', '사업보고서')} 생산설비 현황 (접수번호 {f.get('rcept_no')})"
+    for g in s['groups']:
+        combos = [sites] + ([[r] for r in sites] if len(sites) > 1 else [])
+        for i, regs in enumerate(combos):
+            key = (g, tuple(sorted(regs)))
+            if key in have:
+                continue
+            have.add(key)
+            flows.append({'id': f"f-{g}" if i == 0 else f"f-{g}-{regs[0]}", 'kind': 'sigungu', 'group': g, 'regions': regs,
+                          'basis': 'factory', 'nature': 'company', 'src': src})
+    return flows
+
+
+def place(names: list) -> str:
+    """지역 이름 줄임: 셋까지는 모두, 넘으면 앞의 셋 + 외 N곳"""
+    u = list(dict.fromkeys(names))
+    if not u:
+        return '전국'
+    return '·'.join(u) if len(u) <= 3 else f"{'·'.join(u[:3])} 외 {len(u) - 3}곳"
+
+
+def export_fit(flows: list) -> dict:
+    """종목의 수출 연동 판정 → {k, why}.
+    ok    = 회사 수출로 확인된 지역 흐름이 있다 (상관 0.6↑ · 8분기↑ · 수출÷매출 10~120%)
+    loose = 매출의 의미 있는 몫(10~120%)인 지역 흐름은 있는데 매출과 같이 움직이지 않는다
+    short = 그런 흐름은 있는데 비교할 분기가 모자라다 (상장·실적 이력이 짧다)
+    small = 지역 흐름이 매출의 10%도 안 된다 — 해외 생산·내수·다른 사업이 크다
+    mixed = 지역 흐름이 매출보다 크다 — 그 지역의 다른 회사 물량이 대부분이다
+    none  = 회사 지역 흐름이 없다 — 전국 업황으로만 본다"""
+    reg = [f for f in flows if f['kind'] == 'sigungu' and f['basis'] != 'scan' and f['cover'] is not None]
+    good = [f for f in reg if f.get('ok')]
+    if good:
+        f = max(good, key=lambda x: x['r'])
+        return {'k': 'ok', 'why': f"{f['label']} — 상관 {f['r']:.2f}, 매출의 {f['cover'] * 100:.0f}%"}
+    sized = [f for f in reg if K.COVER_MIN <= f['cover'] <= K.COVER_MAX]
+    if [f for f in sized if f['r'] is not None]:
+        f = max((f for f in sized if f['r'] is not None), key=lambda x: x['r'])
+        return {'k': 'loose', 'why': f"{f['label']} — 매출의 {f['cover'] * 100:.0f}%인데 매출과의 상관 {f['r']:.2f}"}
+    if sized:
+        f = sized[0]
+        return {'k': 'short', 'why': f"{f['label']} — 매출의 {f['cover'] * 100:.0f}%, 비교할 분기가 {f['nq']}개뿐이라 판정 보류"}
+    if reg and min(f['cover'] for f in reg) > K.COVER_MAX:
+        f = min(reg, key=lambda x: x['cover'])
+        return {'k': 'mixed', 'why': f"{f['label']} 수출이 매출의 {f['cover']:.1f}배 — 같은 지역 다른 회사 물량이 대부분"}
+    if reg:
+        f = max((f for f in reg if f['cover'] < K.COVER_MIN), key=lambda x: x['cover'])
+        return {'k': 'small', 'why': f"가장 큰 지역 흐름({f['label']})도 매출의 {f['cover'] * 100:.1f}%"}
+    return {'k': 'none', 'why': '회사 지역 흐름이 없어 전국 업황으로만 본다'}
+
+
 def is_qualified(f: dict) -> bool:
     """회사 수출로 확인된 흐름인가. 자동 탐색 후보(scan)는 검수 전이라 확인으로 치지 않는다"""
     return f['kind'] == 'sigungu' and f['basis'] != 'scan' and K.qualified(f['r'], f['nq'], f['cover'])
 
 
 def pick_main(flows: list) -> dict:
-    """대표 흐름: 회사 수출로 확인된 지역 흐름(상관·비중 통과) → 채널 근거 지역 흐름 → 전국 묶음.
+    """대표 흐름: 회사 수출로 확인된 지역 흐름(상관·비중 통과) → 채널 근거 지역 흐름 → 공장 소재지 흐름(사업장 전체 합) → 전국 묶음.
     본사 소재지 흐름(hq)은 확인되지 않으면 대표로 쓰지 않는다."""
     good = sorted((f for f in flows if is_qualified(f)), key=lambda f: -f['r'])
     if good:
         return good[0]
-    ch = [f for f in flows if f['kind'] == 'sigungu' and f['basis'] == 'channel']
-    if ch:
-        return ch[0]
+    for basis in ('channel', 'factory'):
+        ch = [f for f in flows if f['kind'] == 'sigungu' and f['basis'] == basis and (basis != 'factory' or f['id'].count('-') == 1)]
+        if ch:
+            return ch[0]
     nat = [f for f in flows if f['kind'] == 'national']
     return nat[0] if nat else (flows[0] if flows else None)
 
@@ -333,6 +394,7 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
     info, _ = market_info(conn, d)
     pv, gx = por_base(d), growth_extract(d)
     ret = returns(conn)
+    fac = json.loads(FACTORIES.read_text(encoding='utf-8')) if FACTORIES.exists() else {}
     labels = {g['id']: g['label'] for g in t.hs['groups']}
     out = []
     for s in assets['stocks']:
@@ -340,14 +402,16 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
         rev_q = revenue_quarters(hconn, code) if hconn is not None else {}
         op_q = fin_quarters(hconn, code, 'op') if hconn is not None else {}
         flows = []
-        for f in s['flows']:
+        cand = with_factories(s, fac)
+        for f in cand:
             usd = t.regional(f['group'], f['regions']) if f['kind'] == 'sigungu' else t.national(f['group'])[0]
             if usd is None or not any(usd):
                 continue
             st = flow_stats(t, usd, fx, rev_q)
             names = [r.split(':')[1] for r in f.get('regions', [])]
             flows.append({'id': f['id'], 'kind': f['kind'], 'group': f['group'], 'basis': f['basis'], 'nature': f['nature'],
-                          'label': f"{labels[f['group']]} — {'·'.join(dict.fromkeys(names)) if names else '전국'}", **st})
+                          'label': f"{labels[f['group']]} — {place(names)}", **st,
+                          **({'src': f['src']} if f.get('src') else {})})
             flows[-1]['ok'] = is_qualified(flows[-1])
         ch = [f for f in flows if f['kind'] == 'sigungu' and f['basis'] == 'channel']
         if len(ch) > 1:                               # 채널 근거 지역 흐름이 여럿이면 합친 '회사 흐름'도 본다
@@ -356,11 +420,12 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
                              'label': '회사 흐름 합 — ' + ' + '.join(f['label'].split(' — ')[0] for f in ch), **flow_stats(t, usd, fx, rev_q)})
             flows[0]['ok'] = is_qualified(flows[0])
         main = pick_main(flows)
-        taken = [r for f in s['flows'] if f['kind'] == 'sigungu' for r in f['regions']]
+        taken = [r for f in cand if f['kind'] == 'sigungu' for r in f['regions']]
         for gid in s['groups']:                       # 자동 탐색 후보 (대표 흐름 선정에는 쓰지 않는다)
             for (sido, name), st in scan_regions(t, gid, fx, rev_q, taken):
                 flows.append({'id': f's-{gid}-{sido}-{name}', 'kind': 'sigungu', 'group': gid, 'basis': 'scan', 'nature': 'candidate',
                               'label': f"{labels[gid]} — {name}", 'ok': False, **st})
+        fit = export_fit(flows)
         prev, past, nxt = None, [], None
         opm = margin_4q(rev_q, op_q)
         if main and is_qualified(main):
@@ -392,7 +457,7 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
             'flows': [{k: v for k, v in f.items() if k != 'exp_q'} for f in flows],
             'q': [{'q': q, 'rev': round(rev_q[q]) if q in rev_q else None,
                    'exp': round(main['exp_q'][q]) if main and q in main['exp_q'] else None} for q in qs],
-            'preview': prev, 'next': nxt, 'past': past,
+            'preview': prev, 'next': nxt, 'past': past, 'fit': fit,
             'rq': {q: round(v, 1) for q, v in sorted(rev_q.items())[-28:]}, 'opm': round(opm, 4) if opm is not None else None,
             'cnsq': {q: v for q, v in cnsq.items() if v[0] is not None},
         })
@@ -401,6 +466,7 @@ def build_stocks(conn, hconn, t: Trade, assets: dict, fx: dict, d: str) -> list:
 
 def surges(t: Trade, assets: dict) -> list:
     out = []
+    fac = json.loads(FACTORIES.read_text(encoding='utf-8')) if FACTORIES.exists() else {}
     for g in t.hs['groups']:
         if g.get('mixed') or g.get('sgg_mixed'):
             continue
@@ -412,7 +478,7 @@ def surges(t: Trade, assets: dict) -> list:
                 y = K.yoy([x or 0 for x in v], span=3)
                 if cur < SURGE_MIN_USD or y is None or y < SURGE_MIN_YOY:
                     continue
-                stocks = [s['name'] for s in assets['stocks'] for f in s['flows']
+                stocks = [s['name'] for s in assets['stocks'] for f in with_factories(s, fac)
                           if f['kind'] == 'sigungu' and f['group'] == g['id'] and K.region_match(sido, name, f['regions'])]
                 out.append({'g': g['id'], 'label': g['label'], 'hs6': hs6, 'sgg': name, 'usd3': round(cur), 'yoy3': y,
                             'inc': round(cur - cur / (1 + y)), 'stocks': sorted(set(stocks)), 'spark': tail(v, 24)})
@@ -437,6 +503,7 @@ def call_notes(codes: dict, names: dict, path: Path = CONCALL_DB) -> dict:
     conn = sqlite3.connect(f'file:{path}?mode=ro', uri=True)
     conn.row_factory = sqlite3.Row
     raw = [dict(r) for r in conn.execute('SELECT * FROM msg ORDER BY date')]
+    dm_rooms = {m['chat'] for m in raw if m['chat_id'] > 0}
     notes = V.group_dupes([m for m in raw if V.is_note(m['text'], CALL_WORDS) and V.kind(m['text'], CALL_WORDS) == 'note'])
     matcher = V.Matcher(names)
     out = defaultdict(list)
@@ -445,8 +512,25 @@ def call_notes(codes: dict, names: dict, path: Path = CONCALL_DB) -> dict:
         if not p or p['c'] not in codes or len(out[p['c']]) >= MAX_CALLS:
             continue
         out[p['c']].append({'id': f"{m['chat_id']}:{m['id']}", 'd': m['date'][:10], 'tm': m['date'][11:16], 't': V.title(m['text']),
-                            'rooms': m['rooms'], 'link': m['link'] or None, 'lines': V.key_lines(m['text'], 6), 'x': m['text'][:5000]})
+                            'rooms': m['rooms'], 'link': m['link'] or None, 'lines': V.key_lines(m['text'], 6), 'x': m['text'][:5000],
+                            'dm': m['chat_id'] > 0, 'pub': bool(m.get('chat_user')), 'rp': [r for r in m['rooms'] if r not in dm_rooms]})
     return dict(out)
+
+
+def calls_public(calls: dict) -> dict:
+    """공개 배포용 컨콜 노트 (탐방 탭 build_visits.public_view 와 같은 기준):
+    1:1 대화 글은 빼고, 공개 채널 글은 제목·날짜·방·링크만, 비공개 방 글은 원문까지. 방 목록에서 1:1 상대 이름은 지운다."""
+    out = {}
+    for code, ns in calls.items():
+        keep = []
+        for n in ns:
+            if n.get('dm'):
+                continue
+            n = {**{k: v for k, v in n.items() if k != 'rp'}, 'rooms': n.get('rp', n['rooms'])}
+            keep.append({**n, 'x': '', 'lines': [], 'lim': True} if n.get('pub') else n)
+        if keep:
+            out[code] = keep
+    return out
 
 
 def visit_counts(path: Path = DATA / 'visits.json') -> dict:
@@ -496,6 +580,8 @@ def main() -> int:
         return 0
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     OUT_CALLS.write_text(json.dumps(calls, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    OUT_CALLS.with_name('consumer_calls_pub.json').write_text(
+        json.dumps({**calls, 'calls': calls_public(calls['calls']), 'public': True}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     pv = [s for s in data['stocks'] if s['preview']]
     print(f"consumer.json: {data['last_ym']}까지 · 묶음 {len(data['groups'])} · 종목 {len(data['stocks'])} · 프리뷰 {len(pv)} · "
           f"급등 {len(data['surge'])} · IR {len(data['ir'])} · 컨콜 노트 {sum(len(v) for v in calls['calls'].values())}건 "

@@ -1225,3 +1225,6 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .bc-sum { margin: 10px 0 4px; padding: 6px 14px; border-radius: 12px; background: var(--hover); } .bc-sum li:first-child { border-top: 0; }
 .bc .up { color: var(--up); } .bc .down { color: var(--down); }
 .bc-top { font-size: 13px; }
+.cs-fit { display: inline-block; margin-left: 2px; padding: 0 6px; border-radius: 5px; font-size: 10px; font-weight: 700; line-height: 16px; vertical-align: 1px; background: var(--chip); color: var(--muted); white-space: nowrap; }
+.cs-fit.ok { background: color-mix(in srgb, var(--up) 14%, transparent); color: var(--up); }
+.cs-fit.loose, .cs-fit.small { color: var(--sub); }

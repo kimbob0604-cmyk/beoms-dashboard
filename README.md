@@ -443,3 +443,12 @@ python3 build_consumer.py           # → public/data/consumer.json, consumer_ca
     `bio_valuation.py` 의 `launch_value`·`rnpv_tree`·`option_value` 를 그대로 옮겼고, 기본 가정에서는 서버 값과 12종목 모두 일치한다.
   - 그동안 화면에 안 쓰던 값(단계의 `pv_x`·`cont`·`breakeven`, 영업현금흐름·매출·베타, 목표가 중앙값)을 여기에 붙였다. 계산 입력(`valuation.assets[].inp`, `valuation.g`)은 `build_bio.py` 가 싣는다.
   - 상업 DCF 와 현금 소진은 서버 값을 그대로 쓴다(WACC 를 바꿔도 상업 DCF 는 안 바뀐다).
+
+### 소비재 탭 공개 준비 (2026-11-11)
+
+- **공장 소재지 흐름** (`consumer_factories.py` → `consumer_factories.json`): DART 최근 사업보고서의 '원재료 및 생산설비' 구역에서 생산·물류 사업장 주소를 뽑아
+  관세청 시군구 이름과 맞춘다(시도 없이 쓴 '원주공장'·'생산공장(원주, 익산, 밀양)' 꼴도 이름이 전국에서 하나뿐이면 받는다. 광주·서울 같은 광역시 이름은 버린다).
+  70종목 가운데 38종목에서 찾았다. `build_consumer.with_factories` 가 품목 묶음마다 '사업장 전체 합'과 '사업장 하나씩' 흐름(basis factory)을 더한다. 사업보고서가 바뀌는 연 1회 다시 돌리면 된다.
+- **수출 연동 판정** (`export_fit`): 종목마다 ✓ 수출 연동(7) / 따로 논다(31) / 수출 작음(21) / 지역 혼합(8) / 판정 보류(1) / 업황만(2). 화면의 종목 이름 옆과 상세 첫 줄에 이유와 함께 보인다.
+  공장 흐름을 더해도 확인 종목은 7개(토니모리가 새로 들어옴)다 — 대부분의 소비재 회사는 해외 생산·내수·여러 회사가 섞인 지역 때문에 지역 수출로 매출이 설명되지 않는다. 그 사실을 숨기지 않고 표시한다.
+- **공개**: `publish_hold.txt` 에서 소비재 탭을 뺐다. 컨콜 노트는 탐방 탭과 같은 기준의 공개용 사본(`consumer_calls_pub.json` → 배포본 `data/consumer_calls.json`: 1:1 대화 제외, 공개 채널은 제목·링크만, 비공개 방만 원문)을 올린다.

@@ -29,7 +29,8 @@ CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart')   # 최
 FILES = ('home.json', 'names.json', 'quotes.json', 'factors.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json')   # 최신 단일 파일
 # 공개용으로 따로 만든 파일 → 배포본에서의 이름. 탐방 탭: 이 컴퓨터용 visits.json(1:1 대화·공개 채널 원문 포함)은 올리지 않고
 # build_visits.public_view 가 줄인 visits_pub.json 을 data/visits.json 으로 올린다
-RENAMED = {'visits_pub.json': 'visits.json'}
+RENAMED = {'visits_pub.json': 'visits.json', 'consumer.json': 'consumer.json',
+           'consumer_calls_pub.json': 'consumer_calls.json'}     # 소비재 탭: 컨콜 노트도 공개용 사본(1:1 제외, 공개 채널은 제목·링크만)
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)

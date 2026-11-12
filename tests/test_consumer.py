@@ -243,6 +243,27 @@ class BuildTest(unittest.TestCase):
         self.assertFalse(B.is_qualified(f))                          # 자동 탐색 후보는 확인된 흐름이 아니다
         self.assertTrue(B.is_qualified({**f, 'basis': 'channel'}))
 
+    def test_export_fit_and_place(self):
+        f = lambda r, cover, nq=12, ok=False, basis='channel': {'kind': 'sigungu', 'basis': basis, 'r': r, 'cover': cover, 'nq': nq, 'ok': ok, 'label': 'x'}
+        self.assertEqual(B.export_fit([f(0.8, 0.5, ok=True)])['k'], 'ok')
+        self.assertEqual(B.export_fit([f(0.3, 0.5)])['k'], 'loose')
+        self.assertEqual(B.export_fit([f(None, 0.8, nq=4)])['k'], 'short')
+        self.assertEqual(B.export_fit([f(0.9, 0.03)])['k'], 'small')
+        self.assertEqual(B.export_fit([f(0.2, 24.7)])['k'], 'mixed')
+        self.assertEqual(B.export_fit([f(0.9, 0.5, basis='scan')])['k'], 'none')          # 자동 탐색 후보는 판정에 쓰지 않는다
+        self.assertEqual(B.export_fit([])['k'], 'none')
+        self.assertEqual(B.place(['a', 'b', 'a']), 'a·b')
+        self.assertEqual(B.place(['a', 'b', 'c', 'd', 'e']), 'a·b·c 외 2곳')
+        self.assertEqual(B.place([]), '전국')
+
+    def test_factory_flows_added_once(self):
+        s = {'code': '000001', 'groups': ['ramen'], 'flows': [{'id': 'c-ramen', 'kind': 'sigungu', 'group': 'ramen', 'regions': ['48:밀양시'], 'basis': 'channel'}]}
+        fac = {'000001': {'report': 'r', 'rcept_no': '1', 'sites': [{'region': '48:밀양시', 'kind': 'factory'}, {'region': '51:원주시', 'kind': 'logistics'},
+                                                                   {'region': '11:중구', 'kind': 'office'}]}}
+        got = B.with_factories(s, fac)
+        self.assertEqual([(x['id'], x['regions']) for x in got[1:]], [('f-ramen', ['48:밀양시', '51:원주시']), ('f-ramen-51:원주시', ['51:원주시'])])
+        self.assertEqual(B.with_factories(s, {}), s['flows'])          # 사업장 자료가 없으면 그대로 (밀양 단독은 채널 흐름과 같아 다시 넣지 않았다)
+
     def test_sgg_only_group_has_no_card(self):
         hs = {**self.HS, 'groups': self.HS['groups'] + [{'id': 'inj', 'sector': 'x', 'label': '지역 전용', 'hs6': ['190230'], 'sgg_only': True}]}
         self.assertEqual([g['id'] for g in B.group_cards(B.Trade(self.t, hs))], ['ramen', 'device'])
@@ -295,7 +316,7 @@ class ConfigTest(unittest.TestCase):
             self.assertEqual(len(fids), len(set(fids)), s['name'])
             for f in s['flows']:
                 self.assertIn(f['group'], s['groups'])
-                self.assertIn(f['basis'], ('channel', 'hq', 'national'))
+                self.assertIn(f['basis'], ('channel', 'hq', 'national'))      # factory 는 빌드 때 consumer_factories.json 에서 더한다
                 if f['kind'] == 'sigungu':
                     self.assertTrue(f['regions'] and all(':' in r and r.split(':')[0].isdigit() for r in f['regions']), s['name'])
 

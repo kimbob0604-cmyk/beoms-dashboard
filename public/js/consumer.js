@@ -4,14 +4,16 @@
 // - 업황 카드: 품목 묶음별 전국 월 수출·전년 대비. 누르면 월 차트·국가별·세부 품목·수출 상위 시군구
 // - 밸류체인 보드: 분야의 단계(원료 → 용기 → ODM → 브랜드 → 유통 …)마다 종목. 시총·내년 POR·대표 흐름의 3개월 전년비
 // - 종목 표와 상세: 수출 흐름(지역×품목 / 전국 묶음), 분기 수출과 분기 매출, 수출로 본 분기 매출 추정(프리뷰), POR 표
-// - 급등 탐색: 시군구×품목 수출이 크게 뛴 곳 / 컨콜: DART 기업설명회 공시 + 텔레그램 컨콜 노트(data/consumer_calls.json — 로컬에만 있다)
+// - 급등 탐색: 시군구×품목 수출이 크게 뛴 곳 / 컨콜: DART 기업설명회 공시 + 텔레그램 컨콜 노트(data/consumer_calls.json —
+//   공개 사이트에는 1:1 대화를 빼고 공개 채널 글은 제목·링크만 실은 사본이 올라간다)
 // 금액은 달러(통관 기준), 분기 비교는 월평균 환율로 바꾼 억원. 주가가 아니라 시총·POR 로 본다.
 (() => {
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
-  const BASIS = { channel: ['채널 근거', '수출입 채널이 이 종목·지역·품목을 짝지어 다뤘다'], hq: ['본사 소재지 · 검수 전', 'DART 본사 주소의 시군구 — 공장이 아닐 수 있다'], national: ['전국 업황', '여러 회사가 섞인 전국 품목 묶음'],
-    scan: ['자동 탐색 후보 · 검수 전', '이 종목의 분기 매출과 같이 움직인 수출 지역을 자동으로 찾은 것 — 같은 업황이라 우연히 맞았을 수 있다'] };
+  const BASIS = { channel: ['채널 근거', '수출입 채널이 이 종목·지역·품목을 짝지어 다뤘다'], hq: ['본사 소재지', 'DART 본사 주소의 시군구 — 공장이 아닐 수 있다'], national: ['전국 업황', '여러 회사가 섞인 전국 품목 묶음'],
+    factory: ['공장 소재지', 'DART 사업보고서의 생산·물류 사업장이 있는 시군구 — 같은 지역의 다른 회사 물량이 섞일 수 있다'],
+    scan: ['자동 탐색 후보', '이 종목의 분기 매출과 같이 움직인 수출 지역을 자동으로 찾은 것 — 같은 업황이라 우연히 맞았을 수 있다'] };
   const HEAT = [['US', '미국'], ['CN', '중국'], ['JP', '일본'], ['HK', '홍콩'], ['VN', '베트남'], ['TW', '대만'], ['RU', '러시아'], ['AE', 'UAE'], ['EU', 'EU 6국']];
-  const SHOWS = [['all', '전체'], ['flow', '지역 흐름 있는 종목', '채널 근거·확인된 지역 흐름이 대표인 종목'], ['prev', '프리뷰 있는 종목'], ['gap', '수출↑ 시총↓', '회사 지역 흐름(매출의 10% 이상)의 3개월 전년비가 +15% 이상인데 시총은 3개월 -10% 이하'], ['notes', '컨콜·탐방 있는 종목']];
+  const SHOWS = [['all', '전체'], ['ok', '수출 연동 ✓', '회사 수출로 확인된 지역 흐름이 있는 종목'], ['flow', '지역 흐름 있는 종목', '대표 흐름이 회사 지역 흐름인 종목'], ['prev', '프리뷰 있는 종목'], ['gap', '수출↑ 시총↓', '회사 지역 흐름(매출의 10% 이상)의 3개월 전년비가 +15% 이상인데 시총은 3개월 -10% 이하'], ['notes', '컨콜·탐방 있는 종목']];
   const DEFAULTS = { sector: 'all', g: '', s: '', f: '', q: '', show: 'all' };
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => (typing ? renderTable() : render()));
@@ -28,6 +30,8 @@
   const porNext = s => (s.mc && opNext(s) > 0 ? s.mc / opNext(s) : null);
   const mainFlow = s => s.flows.find(f => f.id === s.main) || null;
   const own = s => { const f = mainFlow(s); return f && f.kind === 'sigungu'; };          // 대표 흐름이 회사 지역 흐름인가
+  const FIT = { ok: ['수출 연동 ✓'], loose: ['따로 논다'], short: ['판정 보류'], small: ['수출 작음'], mixed: ['지역 혼합'], none: ['업황만'] };
+  const fitTag = s => (s.fit ? `<span class="cs-fit ${s.fit.k}" title="${U.esc(s.fit.why)}">${FIT[s.fit.k][0]}</span>` : '');
   // 수출↑ 시총↓: 회사 지역 흐름(매출의 10% 이상을 설명하는 것만 — 아주 작은 흐름의 +900% 같은 숫자는 뺀다)이 늘었는데 시총은 빠진 종목
   const solid = s => { const f = mainFlow(s); return own(s) && f.cover != null && f.cover >= data.cover_min && f.yoy3 != null && s.ret3 != null; };
   const gap = s => solid(s) && mainFlow(s).yoy3 >= 0.15 && s.ret3 <= -0.10;
@@ -151,7 +155,7 @@
   function chipHtml(s) {
     const f = mainFlow(s);
     return `<button class="cs-chip${st.s === s.c ? ' on' : ''}" data-s="${s.c}" title="${U.esc(s.memo || '')}">
-      <b>${U.esc(s.n)}</b>
+      <b>${U.esc(s.n)} ${fitTag(s)}</b>
       <span class="muted">${U.eok(s.mc)}${porNext(s) ? ` · POR ${U.mult(porNext(s))}` : ''}</span>
       <span>${!f ? '<span class="muted">맞는 품목 없음</span>'
         : f.kind === 'sigungu' && f.cover != null && f.cover < data.cover_min ? `<span class="muted" title="이 지역 흐름은 매출의 ${(f.cover * 100).toFixed(0)}%뿐이라 전년비가 크게 튄다">수출(매출의 ${(f.cover * 100).toFixed(0)}%) ${U.pct(f.yoy3, 0)}</span>`
@@ -175,7 +179,7 @@
 
   function renderTable() {
     const q = st.q.trim().toLowerCase();
-    const shows = { all: () => true, flow: own, prev: s => !!s.preview, gap, notes: s => (s.calls?.n || 0) + (s.visits?.n || 0) > 0 };
+    const shows = { all: () => true, ok: s => s.fit?.k === 'ok', flow: own, prev: s => !!s.preview, gap, notes: s => (s.calls?.n || 0) + (s.visits?.n || 0) > 0 };
     const list = data.stocks.filter(s => inSector(s) && shows[st.show](s) && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q)));
     $('table').innerHTML = `<div class="tbl-wrap card"><div class="col-head"><h3>종목 <span class="muted">${list.length}개 · 열 제목을 누르면 정렬 · 줄을 누르면 위에 상세</span></h3>${pg.seg('show', SHOWS)}</div>
       <table class="tbl cs-tbl"><thead><tr><th>종목</th><th>단계</th><th class="num">시총</th><th class="num" title="수정주가 기준 3개월 변화">시총 3개월</th><th class="num">내년 POR</th><th>대표 흐름</th>
@@ -185,7 +189,7 @@
       <tbody>${list.map(s => {
         const f = mainFlow(s);
         return `<tr data-s="${s.c}" class="${st.s === s.c ? 'on' : ''}" ${Stock.hintAttr(s)}>
-          <td class="name-cell">${Stock.link(s)}${s.reviewed ? '' : ' <small class="muted" title="흐름 매핑을 아직 검수하지 않았다">초안</small>'}</td>
+          <td class="name-cell">${Stock.link(s)} ${fitTag(s)}</td>
           <td class="muted">${s.stage}</td><td class="num" data-v="${s.mc ?? ''}">${U.eok(s.mc)}</td><td class="num" data-v="${s.ret3 ?? ''}">${pctB(s.ret3, 0)}</td><td class="num" data-v="${porNext(s) ?? ''}">${porNext(s) ? U.mult(porNext(s)) : '–'}</td>
           <td>${f ? `${U.esc(f.label)} <small class="muted">${BASIS[f.basis][0]}</small>` : '<span class="muted">–</span>'}</td>
           <td class="num" data-v="${f?.yoy ?? ''}">${pctB(f?.yoy)}</td><td class="num" data-v="${f?.yoy3 ?? ''}">${pctB(f?.yoy3)}</td>
@@ -372,6 +376,7 @@
     const irs = data.ir.filter(x => x.c === s.c);
     box.innerHTML = `<div class="cs-d-head"><h3>${Stock.link(s)} <small class="muted">${s.c} · ${MARKETS[s.mk] || ''} · ${s.sector} ${s.stage} · 시총 ${U.eok(s.mc)}${s.ret1 != null ? ` (1개월 ${U.pct(s.ret1, 0)} · 3개월 ${U.pct(s.ret3, 0)})` : ''}</small></h3>
         <button class="linkish" data-s="">닫기 ✕</button></div>
+      ${s.fit ? `<p class="cs-memo">${fitTag(s)} ${U.esc(s.fit.why)}${s.fit.k === 'ok' ? '' : s.fit.k === 'none' ? '' : ' — 수출 숫자는 이 회사 매출을 설명하지 못하니 업황 참고로만 보세요.'}</p>` : ''}
       ${s.memo ? `<p class="cs-memo">${U.esc(s.memo)}</p>` : ''}
       <div class="cs-two">
         <div>${U.porTable(s.mc, s) || '<p class="muted small">영업이익 컨센서스가 없어 POR 을 계산하지 못합니다.</p>'}
@@ -394,7 +399,9 @@
       <div class="cs-cols3">
         <div><h4>기업설명회 공시 <small class="muted">DART, 최근 60일</small></h4>${irs.length ? irs.map(x => `<p class="small"><span class="muted">${U.md(x.d)}</span> <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${x.no}" target="_blank" rel="noopener">${U.esc(x.t)} ↗</a></p>`).join('') : '<p class="muted small">없음</p>'}</div>
         <div class="cs-span2"><h4>컨콜 노트 <small class="muted">텔레그램 · ${notes.length}건${calls ? '' : ' (이 화면에서는 볼 수 없음)'}</small>${s.visits?.n ? ` <a class="small" href="visit.html?per=all&q=${encodeURIComponent(s.n)}">탐방 노트 ${s.visits.n}건 →</a>` : ''}</h4>
-          ${notes.map(n => `<details class="cs-call"><summary><span class="muted">${U.md(n.d)}</span> <b>${U.esc(n.t)}</b> <small class="muted">${n.rooms.map(U.esc).join(' · ')}</small></summary>
+          ${notes.map(n => n.lim
+            ? `<p class="cs-call small"><span class="muted">${U.md(n.d)}</span> <b>${U.esc(n.t)}</b> <small class="muted">${n.rooms.map(U.esc).join(' · ')}</small>${n.link ? ` · <a href="${U.esc(n.link)}" target="_blank" rel="noopener">원문은 채널에서 ↗</a>` : ''}</p>`
+            : `<details class="cs-call"><summary><span class="muted">${U.md(n.d)}</span> <b>${U.esc(n.t)}</b> <small class="muted">${n.rooms.map(U.esc).join(' · ')}</small></summary>
             ${n.lines.length ? `<ul class="vs-lines">${n.lines.map(l => `<li>${U.num(l)}</li>`).join('')}</ul>` : ''}
             <pre class="vs-text">${U.esc(n.x)}</pre>${n.link ? `<a class="small muted" href="${U.esc(n.link)}" target="_blank" rel="noopener">텔레그램에서 열기 ↗</a>` : ''}</details>`).join('') || '<p class="muted small">없음</p>'}</div>
       </div>`;
@@ -431,7 +438,7 @@
       <div class="cs-cols3">
         <div><h4>기업설명회 공시 <small class="muted">DART 최근 60일</small></h4>${irs.map(x => `<p class="small"><span class="muted">${U.md(x.d)}</span> <button class="linkish cs-pick" data-s="${x.c}">${U.esc(x.n)}</button>
           <a class="muted" href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${x.no}" target="_blank" rel="noopener">공시 ↗</a></p>`).join('') || '<p class="muted small">없음</p>'}</div>
-        <div class="cs-span2"><h4>최근 컨콜 노트 <small class="muted">텔레그램에서 모은 글${calls ? '' : ' — 이 화면(공개 사이트)에는 싣지 않습니다'}</small></h4>
+        <div class="cs-span2"><h4>최근 컨콜 노트 <small class="muted">텔레그램에서 모은 글${calls?.public ? ' · 공개 채널 글은 제목·링크만' : ''}</small></h4>
           ${all.map(n => `<p class="small"><span class="muted">${U.md(n.d)}</span> <button class="linkish cs-pick" data-s="${n.c}">${U.esc(n.n)}</button> ${U.esc(n.t)} <span class="muted">${U.esc(n.rooms[0] || '')}</span></p>`).join('') || '<p class="muted small">없음</p>'}</div>
       </div></div>`;
   }
@@ -449,7 +456,12 @@
     $('asof').textContent = `${U.timeLabel(data.built_at)} 정리`;
     $('foot').innerHTML = `<p><b>읽는 법</b> · 수출은 관세청 통관 기준(달러)입니다. 전국 통계는 품목(HS 10단위)·국가·중량까지, 시군구 통계는 품목(HS 6단위) 금액만 나옵니다.
         시군구는 수출 신고인의 소재지라 공장이 아니라 본사·물류센터·무역상 주소로 잡히기도 하고, 한 시군구에 여러 회사가 섞입니다. 해외 공장에서 만들어 파는 매출은 한국 수출에 잡히지 않습니다.</p>
-      <p>흐름의 근거: <b>채널 근거</b> = 수출입 채널이 그 종목·지역·품목을 함께 다룬 기록, <b>본사 소재지</b> = DART 본사 주소(검수 전 초안), <b>전국 업황</b> = 회사가 아니라 품목 전체.
+      <p>흐름의 근거: <b>공장 소재지</b> = DART 사업보고서 '생산설비 현황'의 생산·물류 사업장, <b>채널 근거</b> = 수출입 채널이 그 종목·지역·품목을 함께 다룬 기록,
+        <b>본사 소재지</b> = DART 본사 주소, <b>전국 업황</b> = 회사가 아니라 품목 전체, <b>자동 탐색 후보</b> = 매출과 같이 움직인 지역을 기계적으로 찾은 것(판정에 쓰지 않음).</p>
+      <p>종목 옆 표시: <b>수출 연동 ✓</b> 회사 수출로 확인 · <b>따로 논다</b> 매출의 상당 부분인 지역 수출이 있지만 매출과 같이 움직이지 않음 · <b>수출 작음</b> 지역 수출이 매출의 10% 미만(해외 생산·내수·다른 사업)
+        · <b>지역 혼합</b> 지역 수출이 매출보다 커 다른 회사 물량이 대부분 · <b>판정 보류</b> 비교할 분기가 모자람 · <b>업황만</b> 회사 지역 흐름 없음.
+        종목 매핑은 공시·채널 기록으로 기계적으로 만든 것이라 틀린 곳이 있을 수 있습니다.</p>
+      <p>
         매출 상관 r 은 분기 수출 전년비와 분기 매출 전년비의 상관입니다. r 이 ${data.r_ok} 이상이고 최근 4분기 수출이 매출의 ${data.cover_min * 100}~${data.cover_max * 100}% 인 지역 흐름만 '회사 수출로 확인(✓)'으로 보고 프리뷰를 냅니다
         (상관만 높고 매출의 1~2%인 흐름, 수출이 매출보다 훨씬 큰 흐름은 다른 회사 물량이거나 우연입니다).
         예측 계산식: ① 수출 전년비 → ② 매출 전년비 = a + b × ① (지난 12분기로 맞춘 직선) → ③ 매출 = 전년 같은 분기 매출 × (1 + ②) → ④ 영업이익 = ③ × 최근 4분기 영업이익률 → ⑤ 연환산 POR = 시총 ÷ (④ × 4). 프리뷰는 지난 분기 되맞춤 오차가 ${data.mae_ok * 100}% 이하일 때만 컨센서스 대비 ±${data.band * 100}% 로 BEAT·MISS 를 냅니다.</p>
