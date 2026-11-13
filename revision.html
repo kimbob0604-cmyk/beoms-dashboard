@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>컨센 리비전 · Beom's Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/app.css?v=3e323877">
+<script>
+  // 깜빡임 방지: 저장된 테마를 렌더 전에 적용
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Beom's Dashboard</div>
+  <nav class="tabs">
+    <a class="tab" href="./">홈</a>
+    <a class="tab" href="growth.html">이익 성장</a>
+    <a class="tab on" href="revision.html">컨센 리비전</a>
+    <a class="tab" href="high.html">신고가</a>
+    <a class="tab" href="flow.html">수급</a>
+    <a class="tab" href="dart.html">공시</a>
+    <a class="tab" href="report.html">리포트</a>
+    <a class="tab" href="fund.html">펀더</a>
+    <a class="tab" href="strategy.html">전략</a>
+    <a class="tab" href="event.html">이벤트</a>
+    <a class="tab" href="bio.html">바이오</a>
+    <a class="tab" href="consumer.html">소비재</a>
+    <a class="tab" href="visit.html">탐방</a>
+  </nav>
+  <div class="top-right">
+    <span id="view"></span>
+    <select id="date" aria-label="기준일"></select>
+    <button id="theme" class="icon-btn" aria-label="다크 모드 전환" title="다크 모드 전환">◐</button>
+  </div>
+</header>
+
+<main class="deck">
+  <div class="page-head"><h1>컨센 리비전</h1><p>증권사 이익 추정치가 올라가거나 내려간 종목, 같은 증권사 직전 대비 목표가 변경</p></div>
+  <section class="filters" id="filters"></section>
+  <details class="card summary" id="summary-box" open>
+    <summary id="summary-head"></summary>
+    <div id="summary"></div>
+  </details>
+  <details class="card sectors" id="sectors">
+    <summary id="sectors-head"></summary>
+    <div id="sector-list"></div>
+  </details>
+  <section class="cols">
+    <div class="col card" id="col-KOSPI"></div>
+    <div class="col card" id="col-KOSDAQ"></div>
+  </section>
+  <p class="msg" id="msg">불러오는 중…</p>
+</main>
+
+<footer id="foot"></footer>
+
+<script src="js/util.js?v=07b87b8e"></script>
+<script src="js/plot.js?v=d4d0063e"></script>
+<script src="js/dartfmt.js?v=5de59fe4"></script>
+<script src="js/fund.js?v=57da2243"></script>
+<script src="js/stock.js?v=d1eeb8dd"></script>
+<script src="js/revision.js?v=1a95f9e9"></script>
+</body>
+</html>
