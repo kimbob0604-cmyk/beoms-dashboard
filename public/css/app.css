@@ -1302,3 +1302,7 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .fd-dhead h2 { font-size: 18px; margin: 0; }
 .fd-list tr[data-c] { cursor: pointer; }
 .fd-list tr.on td { background: var(--hover); }
+.fd-seg { margin-top: 18px; padding-top: 12px; border-top: 2px solid var(--line); }
+.fd-wrap2 { overflow-x: auto; }
+.fd-seg .fd-br { margin-top: 12px; max-width: 560px; }
+.fd-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

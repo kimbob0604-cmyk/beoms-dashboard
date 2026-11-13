@@ -85,8 +85,80 @@ def company(conn, code):
         'groups': [{'g': g, 'fix': g in fund.FIXED, 'v': [r1(groups[e].get(g)) for e in ends]} for g in gnames],
         'xb': sorted({e for ln in lines.values() for e in ln['x']} & set(ends)),      # 주석 XBRL 로 채운 분기
         'chk': chk, 'rep': {e: reps[e] for e in ends if e in reps},
+        'seg': segments(facts, basis, inc),
         '_groups': groups, '_inc': inc,
     }
+
+
+def segments(facts, basis, inc):
+    """부문·제품·지역 보기 [{k, name, q, ql, m: [{n, rev, op}], adj, tot, chk}] — 주석 XBRL 이 있는 기간만 (없으면 빈 목록).
+    같은 축 아래 분류가 여러 벌이면(item = '분류¦이름') 전체 매출과 가장 잘 맞는 한 벌만 쓴다 — 벌을 섞으면 같은 매출을 두 번 센다"""
+    out = []
+    r1 = lambda v: None if v is None else round(v, 1)
+    split = lambda raw: {g: {k.split('¦', 1)[1]: vs for k, vs in raw.items() if k.split('¦', 1)[0] == g} for g in {k.split('¦', 1)[0] for k in raw}}
+    merged = lambda vals: fund.merge_similar(vals, {n: max(en for _, en in vs) for n, vs in vals.items()})   # Harman/Haman
+    for view in ('seg', 'prod', 'geo'):
+        sets, opsets = split(facts.get((basis, f'{view}:rev')) or {}), split(facts.get((basis, f'{view}:op')) or {})
+        adj = fund.quarterize(sets.pop('', {}).get('조정', {}))
+        adjop = fund.quarterize(opsets.pop('', {}).get('조정', {}))
+        best = None
+        for g, raw in sets.items():
+            rev = {n: {e: v for e, v in fund.quarterize(vs).items() if e >= FROM} for n, vs in merged(raw).items()}
+            rev = {n: q for n, q in rev.items() if q}
+            names = fund.pick_members(rev)
+            ends = sorted({e for n in names for e in rev[n]} & set(inc['rev']))
+            if len(names) < 2 or not ends:
+                continue
+            use_adj = adj if view == 'seg' else {}
+
+            def check(ns):
+                out = {}
+                for e in ends:
+                    msg = fund.seg_check({n: rev[n].get(e) for n in ns}, use_adj.get(e), inc['rev'].get(e), partial_ok=(view == 'prod'))
+                    if msg:
+                        out[e] = msg
+                return out
+            chk = check(names)
+            if len(chk) * 2 >= len(ends):       # 절반 넘게 안 맞으면: 한 표에 분류가 두 벌일 수 있다 → 전체 매출과 맞는 줄 묶음만
+                sub = fund.best_subset(rev, names, use_adj, inc['rev'], ends)
+                if sub:
+                    names = sub
+                    ends = sorted({e for n in names for e in rev[n]} & set(inc['rev']))
+                    chk = check(names)
+            score = (len(ends) - len(chk), -len(chk), len(names))      # 검증을 통과한 분기가 많은 벌
+            if best is None or score > best[0]:
+                best = (score, g, rev, names, ends, chk)
+        if not best:
+            continue
+        _, g, rev, names, ends, chk = best
+        op = {n: fund.quarterize(vs) for n, vs in merged(opsets.get(g, {})).items()}
+        names.sort(key=lambda n: -(rev[n].get(ends[-1]) or 0))
+        out.append({'k': view, 'name': fund.VIEW_NAME[view], 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
+                    'm': [{'n': n, 'rev': [r1(rev[n].get(e)) for e in ends],
+                           'op': [r1(op[n].get(e)) for e in ends] if n in op and any(e in op[n] for e in ends) else None} for n in names],
+                    'adj': [r1(adj.get(e)) for e in ends] if view == 'seg' and any(e in adj for e in ends) else None,
+                    'adjop': [r1(adjop.get(e)) for e in ends] if view == 'seg' and any(e in adjop for e in ends) else None,
+                    'tot': [r1(inc['rev'].get(e)) for e in ends], 'chk': chk, 'sets': len(sets)})
+    return out
+
+
+def attach_seg_reports(main, code, d):
+    """부문 이름이 든 리포트 문장 {분기 끝: [{d, b, t, pdf, s: [[이름, 문장]…]}]} (부문 보기 → 없으면 제품 보기의 이름으로)"""
+    views = {v['k']: v for v in d.get('seg') or []}
+    v = views.get('seg') or views.get('prod')
+    if not v:
+        return {}
+    names = [m['n'] for m in v['m']] + ([m['n'] for m in views['prod']['m']] if 'prod' in views and v['k'] != 'prod' else [])
+    ends = d['q'] + [fund.months_back(d['q'][-1], -3)]
+    ev = defaultdict(list)
+    for r in main.execute('SELECT date, broker, title, heads, body, pdf FROM research WHERE code = ? ORDER BY date DESC', (code,)):
+        q = fund.quarter_of_report(r['date'], ends)
+        if not q or len(ev[q]) >= 5:
+            continue
+        s = fund.mentions('\n'.join(json.loads(r['heads'] or '[]') + [r['body'] or '']), names)
+        if s:
+            ev[q].append({'d': r['date'], 'b': r['broker'], 't': r['title'], 'pdf': r['pdf'], 's': [[n, t] for n, t in s]})
+    return dict(ev)
 
 
 def attach_reports(main, code, d):
@@ -158,7 +230,8 @@ def build():
             continue
         i = info.get(code, {})
         d.update({'n': i.get('n') or code, 'mk': i.get('mk'), 'mc': i.get('mc'), 'built': built,
-                  'ev': attach_reports(main, code, d), 'cns': attach_cns(main, code, d), 'earn': attach_earn(code, d)})
+                  'ev': attach_reports(main, code, d), 'cns': attach_cns(main, code, d), 'earn': attach_earn(code, d),
+                  'sev': attach_seg_reports(main, code, d)})
         groups, inc = d.pop('_groups'), d.pop('_inc')
         write_json(OUT / f'{code}.json', d)
         e = d['q'][-1]
@@ -170,7 +243,8 @@ def build():
                       'dq': None if opm(e) is None or opm(p1) is None else round(opm(e) - opm(p1), 1),
                       'dy': None if opm(e) is None or opm(p4) is None else round(opm(e) - opm(p4), 1),
                       'top': [[g, round(v, 1)] for g, v in br[:2] if abs(v) >= 0.3], 'chk': bool(d['chk']),
-                      'ev': sum(len(v) for v in d['ev'].values()), 'cns': bool(d['cns']['next'])})
+                      'ev': sum(len(v) for v in d['ev'].values()), 'cns': bool(d['cns']['next']),
+                      'seg': [v['name'] for v in d['seg']]})
     for p in OUT.glob('*.json'):
         if p.stem != 'index' and p.stem not in {x['c'] for x in index}:
             p.unlink()

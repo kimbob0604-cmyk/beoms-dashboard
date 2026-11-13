@@ -499,3 +499,7 @@ python3 build_consumer.py           # → public/data/consumer.json, consumer_ca
   종목 패널에도 같은 구역이 붙는다(`fund.js`).
 - **대상**: `fund_watch.json`(한양디지텍 + 탐방 노트·소비재 탭 종목 + 대형주 몇 개). `python3 collect_fund.py --add 종목코드` 로 더한다. `daily.py` 가 새 보고서만 받는다.
 - **퀀트 탭 제거**: `quant.html`·`quant.js`·`build_factors.py`·`factors.json` 삭제. 조건 백테스트는 전략 탭의 하위 탭으로 옮겼다.
+- **부문·제품·지역별 매출** (2026-11-13): 주석 XBRL 의 매출·영업이익 × 부문/지역/제품 축 사실을 읽는다(`fund_xbrl.seg_class`·`settle_views`·`leaves_only`, 저장 topic `seg:rev`·`seg:op`·`prod:rev`·`geo:rev`).
+  회사가 주석 XBRL 을 시작한 뒤의 분기만 있다. XBRL 압축은 `.cache/fund_xbrl/` 에 남기고(`--xbrl-cache` 로 채움) `--reparse` 가 원문·XBRL 을 함께 다시 읽는다.
+  이중 집계는 맨 아래 구성요소만 쓰기 → 주석 표 코드별 분류 벌 중 전체 매출과 맞는 벌 고르기 → 맞는 줄 묶음 찾기(`fund.best_subset`) 순으로 막고, 줄의 합 = 전체 매출 검증을 화면에 표시한다.
+  화면은 비용 구조 아래 '부문별 매출'(매출·비중·전년 대비·영업이익·이익률, 매출 증가 기여, 부문 이름이 든 리포트 문장).

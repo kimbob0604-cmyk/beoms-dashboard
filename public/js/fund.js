@@ -104,6 +104,52 @@ const Fund = (() => {
       ${need != null ? `<p class="small muted">컨센서스 영업이익이 맞으려면 이 매출·고정비에서 원가(원재료·재고) 비율이 <b>${need.toFixed(1)}%</b> 여야 합니다 (최근 4분기 평균 ${((m.var['원가'] || 0) * 100).toFixed(1)}%${lastCogs == null ? '' : `, 직전 ${lastCogs.toFixed(1)}%`}).</p>` : ''}</div>`;
   }
 
+  // ---------- 부문·제품·지역별 매출 (주석 XBRL 이 있는 기간) ----------
+  const SU = [['rev', '매출'], ['share', '비중'], ['yoy', '전년 대비'], ['op', '영업이익'], ['opm', '이익률']];
+  function segHtml(s) {
+    const d = s.d;
+    if (!d.seg?.length) return '';
+    const v = d.seg.find(x => x.k === s.sv) || d.seg[0];
+    s.sv = v.k;
+    const hasOp = v.m.some(m => m.op);
+    if (!hasOp && (s.su === 'op' || s.su === 'opm')) s.su = 'rev';
+    const u = s.su, n = v.q.length, last = n - 1;
+    const sum = i => v.m.reduce((a, m) => a + (m.rev[i] || 0), 0);
+    const fmt = (m, i) => {
+      const r = m.rev[i], o = m.op?.[i];
+      if (u === 'rev') return r == null ? '–' : n1(r);
+      if (u === 'share') return r == null || !sum(i) ? '–' : `${(r / sum(i) * 100).toFixed(0)}%`;
+      if (u === 'yoy') { const p = i >= 4 ? m.rev[i - 4] : null; return r == null || !p ? '–' : `<span class="${U.cls(r - p)}">${r > p ? '+' : ''}${((r / p - 1) * 100).toFixed(0)}%</span>`; }
+      if (u === 'op') return o == null ? '–' : `<span class="${o < 0 ? 'down' : ''}">${n1(o)}</span>`;
+      return o == null || !r ? '–' : `<span class="${o < 0 ? 'down' : ''}">${(o / r * 100).toFixed(1)}%</span>`;
+    };
+    const totRow = u === 'rev' ? `${v.adj ? `<tr class="muted"><td>내부거래·조정</td>${v.adj.map(x => `<td class="num">${x == null ? '–' : n1(x)}</td>`).join('')}</tr>` : ''}
+        <tr class="fd-tot"><td>전체 매출</td>${v.tot.map(x => `<td class="num">${x == null ? '–' : n1(x)}</td>`).join('')}</tr>`
+      : u === 'op' ? `${v.adjop ? `<tr class="muted"><td>조정</td>${v.adjop.map(x => `<td class="num">${x == null ? '–' : n1(x)}</td>`).join('')}</tr>` : ''}` : '';
+    // 전년 동기 대비 매출 증가에 대한 줄별 기여 (%p)
+    let contrib = '';
+    if (last >= 4) {
+      const base = v.m.reduce((a, m) => a + (m.rev[last - 4] || 0), 0);
+      const list = base ? v.m.map(m => [m.n, ((m.rev[last] || 0) - (m.rev[last - 4] || 0)) / Math.abs(base) * 100]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])) : [];
+      const max = Math.max(...list.map(([, x]) => Math.abs(x)), 0.5), g = base ? (sum(last) / base - 1) * 100 : null;
+      if (list.length) contrib = `<div class="fd-br"><h4>${v.ql[last]} 매출은 어디서 늘었나 <span class="muted small">전년 동기 대비 · 줄별 기여</span><b class="${U.cls(g)}">${g == null ? '–' : (g > 0 ? '+' : '') + g.toFixed(1) + '%'}</b></h4>
+        ${list.slice(0, 7).map(([nm, x]) => `<div class="fd-bar"><span title="${esc(nm)}">${esc(nm)}</span><i><em class="${x > 0 ? 'pos' : 'neg'}" style="width:${Math.abs(x) / max * 100}%"></em></i><b class="${U.cls(x)}">${pp(x)}</b></div>`).join('')}</div>`;
+    }
+    const e = v.q[last], reps = (d.sev?.[e] || []).concat(d.sev?.[d.q[d.q.length - 1]] && e !== d.q[d.q.length - 1] ? d.sev[d.q[d.q.length - 1]] : []);
+    const nchk = Object.keys(v.chk).length;
+    return `<div class="fd-seg"><div class="st-sec-head"><h3>${v.name}별 매출 <small class="muted">${d.basis} · 분기(3개월) · 주석 XBRL ${v.ql[0]}~</small></h3>
+        <div class="fd-ctl">${d.seg.length > 1 ? `<div class="seg">${d.seg.map(x => `<button data-sv="${x.k}" class="${x.k === v.k ? 'on' : ''}">${x.name}</button>`).join('')}</div>` : ''}
+          <div class="seg">${SU.filter(([k]) => hasOp || (k !== 'op' && k !== 'opm')).map(([k, l]) => `<button data-su="${k}" class="${u === k ? 'on' : ''}">${l}</button>`).join('')}</div></div></div>
+      <div class="tbl-wrap fd-wrap2"><table class="tbl fd-tbl"><thead><tr><th>${u === 'rev' || u === 'op' ? '억원' : u === 'share' ? '매출 비중' : u === 'yoy' ? '전년 동기 대비' : '영업이익률'}</th>
+        ${v.q.map((q, i) => `<th class="num" title="${q}${v.chk[q] ? ` · 검증: ${esc(v.chk[q])}` : ''}">${v.ql[i]}${v.chk[q] ? '<i class="fd-warn">!</i>' : ''}</th>`).join('')}</tr></thead>
+        <tbody>${v.m.map(m => `<tr><td>${esc(m.n)}</td>${v.q.map((_, i) => `<td class="num">${fmt(m, i)}</td>`).join('')}</tr>`).join('')}${totRow}</tbody></table></div>
+      <p class="muted small">회사가 주석에 XBRL 로 표시한 값입니다 — 표시를 시작한 뒤의 분기만 있습니다. ${v.adj ? '부문 값은 내부거래 제거 전이라 조정을 더해야 전체 매출이 됩니다. ' : ''}${nchk ? `<span class="down">부문 합이 전체 매출과 어긋난 분기 ${nchk}개 (! 표시).</span>` : '부문 합 = 전체 매출 검증 통과.'}</p>
+      ${contrib}
+      ${reps.length ? `<div class="fd-ev"><h4>증권사가 이 ${v.name}에 대해 쓴 문장 <span class="muted small">${reps.length}건</span></h4>
+        ${reps.slice(0, 5).map(r => `<article class="fd-rep"><header><span class="muted small">${r.d.slice(5)} · ${esc(r.b)}</span>${r.pdf ? `<a href="${esc(r.pdf)}" target="_blank" rel="noopener">${esc(r.t)} ↗</a>` : `<b>${esc(r.t)}</b>`}</header>
+          ${r.s.map(([nm, t]) => `<p><span class="fd-chip on">${esc(nm)}</span>${esc(t)}</p>`).join('')}</article>`).join('')}</div>` : ''}</div>`;
+  }
+
   function draw(el) {
     const s = st.get(el), d = s.d, i = s.sel, e = d.q[i];
     const j1 = i - 1, j4 = d.q.indexOf(prevYear(e));
@@ -123,9 +169,12 @@ const Fund = (() => {
         <div class="fd-br-grid">${bars(b1, '직전 분기 대비', j1 >= 0 ? opm(d, j1) : null, opm(d, i))}${bars(b4, '전년 동기 대비', j4 >= 0 ? opm(d, j4) : null, opm(d, i))}</div></div>
       ${evHtml(d, e, b1.filter(([, v]) => v > 0).concat(b1.filter(([, v]) => v <= 0)))}
       ${i === d.q.length - 1 ? calcHtml(s) : ''}
+      ${segHtml(s)}
     </section>`;
     const w = el.querySelector('.fd-wrap');
     if (w && !s.scrolled) { w.scrollLeft = w.scrollWidth; s.scrolled = true; } else if (w) w.scrollLeft = s.left || w.scrollWidth;
+    const w2 = el.querySelector('.fd-wrap2');
+    if (w2) w2.scrollLeft = w2.scrollWidth;
   }
 
   function prevYear(e) { return `${+e.slice(0, 4) - 1}${e.slice(4)}`; }
@@ -147,6 +196,8 @@ const Fund = (() => {
       if (!s) return;
       const keep = () => { s.left = el.querySelector('.fd-wrap')?.scrollLeft; };
       const m = ev.target.closest('[data-fm]'), u = ev.target.closest('[data-fu]'), q = ev.target.closest('[data-fq]'), c = ev.target.closest('[data-fcopy]');
+      const sv = ev.target.closest('[data-sv]'), su = ev.target.closest('[data-su]');
+      if (sv || su) { keep(); if (sv) s.sv = sv.dataset.sv; else s.su = su.dataset.su; return draw(el); }
       if (m) { keep(); s.mode = m.dataset.fm; draw(el); }
       else if (u) { keep(); s.unit = u.dataset.fu; draw(el); }
       else if (q) { keep(); s.sel = +q.dataset.fq; draw(el); }
@@ -166,7 +217,7 @@ const Fund = (() => {
 
   function render(el, d) {
     if (!d || !d.q?.length) { el.innerHTML = ''; return; }
-    st.set(el, { d, mode: 'grp', unit: 'amt', sel: d.q.length - 1 });
+    st.set(el, { d, mode: 'grp', unit: 'amt', sel: d.q.length - 1, sv: '', su: 'rev' });
     bind(el);
     draw(el);
   }

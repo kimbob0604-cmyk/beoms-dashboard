@@ -145,6 +145,39 @@ def document(session, key, rcept_no: str) -> str:
     return text
 
 
+XBRLS = ROOT / '.cache' / 'fund_xbrl'     # XBRL 압축 캐시 (손익·주석 XBRL·부문)
+
+
+def xbrl_zip(session, key, rcept_no: str, code: str) -> bytes:
+    f = XBRLS / f'{rcept_no}.zip'
+    if f.exists():
+        return f.read_bytes()
+    z = session.get(f'{API}/fnlttXbrl.xml', params={'crtfc_key': key, 'rcept_no': rcept_no, 'reprt_code': code}, timeout=120).content
+    time.sleep(DELAY)
+    if z[:2] == b'PK':
+        XBRLS.mkdir(parents=True, exist_ok=True)
+        f.write_bytes(z)
+    return z
+
+
+def xbrl_rows(zbytes: bytes, rno: str) -> list:
+    """XBRL → fund_fact 줄: 손익(is), 주석 XBRL 성격별 비용(nature_x), 부문·제품·지역별 매출/영업이익(seg:rev · prod:rev · geo:rev · seg:op …)"""
+    x = fund_xbrl.parse(zbytes)
+    rows, agg = [], {}
+    for item, basis, st, en, v in x['facts']:
+        if item in fund_xbrl.IS_ITEMS:
+            rows.append((basis, 'is', fund_xbrl.IS_ITEMS[item][0], fund_xbrl.IS_ITEMS[item][1], st, en, v, rno, 0))
+        else:               # 주석 XBRL (검증·보충용) — 같은 키는 더한다
+            lab = x['labels'].get(item, item)
+            k = 'total' if item == fund_xbrl.TOTAL else fund.key_of(lab)[0]
+            a = agg.setdefault((basis, k, st, en), [lab, 0.0, x['nature'].index(item) if item in x['nature'] else 99])
+            a[1] += v
+    rows += [(b, 'nature_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in agg.items()]
+    # 부문: item = '분류¦이름' (같은 이름이 다른 분류 벌에 또 나와도 덮어쓰지 않게), label = 이름
+    rows += [(b, f'{view}:{item}', f'{grp}¦{name}', name, st, en, v, rno, 0) for view, item, name, grp, b, st, en, v in x['segs']]
+    return rows
+
+
 def put(conn, code, rows):
     """rows: (basis, topic, item, label, start, end, value, rcept_no, ord)"""
     conn.executemany('INSERT OR REPLACE INTO fund_fact (code, basis, topic, item, label, start, end, value, rcept_no, ord) '
@@ -166,19 +199,7 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
         notes.append('원문 없음')
     time.sleep(DELAY)
     try:
-        z = session.get(f'{API}/fnlttXbrl.xml', params={'crtfc_key': key, 'rcept_no': rno, 'reprt_code': reprt_code(kind, end, fy_end)},
-                        timeout=120).content
-        x = fund_xbrl.parse(z)
-        agg = {}
-        for item, basis, st, en, v in x['facts']:
-            if item in fund_xbrl.IS_ITEMS:
-                rows.append((basis, 'is', fund_xbrl.IS_ITEMS[item][0], fund_xbrl.IS_ITEMS[item][1], st, en, v, rno, 0))
-            else:               # 주석 XBRL (검증·보충용) — 같은 키는 더한다
-                lab = x['labels'].get(item, item)
-                k = 'total' if item == fund_xbrl.TOTAL else fund.key_of(lab)[0]
-                a = agg.setdefault((basis, k, st, en), [lab, 0.0, x['nature'].index(item) if item in x['nature'] else 99])
-                a[1] += v
-        rows += [(b, 'nature_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in agg.items()]
+        rows += xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
     except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
         notes.append('XBRL 없음')
     time.sleep(DELAY)
@@ -198,6 +219,11 @@ def reparse(conn) -> int:
     n = miss = 0
     with conn:
         conn.execute("DELETE FROM fund_fact WHERE topic = 'nature'")
+        zs = {r[0]: XBRLS / f'{r[0]}.zip' for r in conn.execute('SELECT rcept_no FROM fund_report')}
+        have_x = [rno for rno, f in zs.items() if f.exists()]
+        if have_x:      # XBRL 캐시가 있는 보고서의 XBRL 유래 값도 다시 (손익·주석 XBRL·부문)
+            q = ','.join('?' * len(have_x))
+            conn.execute(f"DELETE FROM fund_fact WHERE topic != 'nature' AND rcept_no IN ({q})", have_x)
         for r in conn.execute('SELECT rcept_no, code, name, period_end, kind, note FROM fund_report ORDER BY rcept_no').fetchall():
             f = DOCS / f"{r['rcept_no']}.xml.gz"
             if not f.exists():
@@ -205,6 +231,11 @@ def reparse(conn) -> int:
             tables = fund.note_tables(gzip.decompress(f.read_bytes()).decode('utf-8'))
             rows = [(t['basis'], 'nature', item, label, st, en, v, r['rcept_no'], o)
                     for t in tables for item, label, st, en, v, o in fund.table_facts(t, r['period_end'], r['kind'], fy.get(r['code'], 12))]
+            if zs[r['rcept_no']].exists():
+                try:
+                    rows += xbrl_rows(zs[r['rcept_no']].read_bytes(), r['rcept_no'])
+                except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
+                    pass
             put(conn, r['code'], rows)
             note = [x for x in (r['note'] or '').split('; ') if x and '성격별' not in x]
             if not tables:
@@ -221,12 +252,25 @@ def main() -> int:
     ap.add_argument('--code', help='이 종목만')
     ap.add_argument('--add', nargs='+', help='대상에 더할 종목코드')
     ap.add_argument('--max', type=int, default=300, help='한 번에 받을 보고서 수')
-    ap.add_argument('--reparse', action='store_true', help='캐시한 원문으로 주석 표만 다시 읽기 (네트워크 없음)')
+    ap.add_argument('--reparse', action='store_true', help='캐시한 원문·XBRL 로 다시 읽기 (네트워크 없음)')
+    ap.add_argument('--xbrl-cache', action='store_true', help='받은 보고서의 XBRL 압축을 캐시에 채우기')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
+    key = os.environ.get('DART_API_KEY', '')
+    if args.xbrl_cache and key:      # 이미 받은 보고서의 XBRL 압축을 캐시에 채운다 (부문 등 새 토픽을 읽으려고) → 그다음 --reparse
+        conn, s, n = connect(), requests.Session(), 0
+        fy = {c: int(e[5:7]) for c, e in conn.execute("SELECT code, period_end FROM fund_report WHERE kind = 'A'")}
+        for r in conn.execute('SELECT rcept_no, code, kind, period_end FROM fund_report ORDER BY rcept_no DESC').fetchall():
+            if not (XBRLS / f"{r['rcept_no']}.zip").exists():
+                try:
+                    xbrl_zip(s, key, r['rcept_no'], reprt_code(r['kind'], r['period_end'], fy.get(r['code'], 12)))
+                    n += 1
+                except requests.RequestException as e:
+                    log.warning('%s XBRL 실패: %s', r['rcept_no'], type(e).__name__)
+        log.info('XBRL 캐시: %d건 받음', n)
+        return 0
     if args.reparse:
         return reparse(connect())
-    key = os.environ.get('DART_API_KEY', '')
     if not key:
         log.info('DART_API_KEY 없음 — 건너뜀')
         return 4

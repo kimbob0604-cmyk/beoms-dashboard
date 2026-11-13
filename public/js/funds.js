@@ -23,7 +23,7 @@
         <span class="muted small">줄을 누르면 분기 표가 열립니다 · 요인 = 직전 분기 대비 매출 대비 비중이 가장 크게 움직인 비용 (＋면 그만큼 OPM 을 깎음)</span></div>
       <div class="tbl-wrap"><table class="tbl fd-list">
         <thead><tr><th>종목</th><th class="num">시총</th><th class="num">최근 분기</th><th class="num">매출</th><th class="num">OP</th><th class="num">OPM</th>
-          <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th>큰 요인</th><th class="num">리포트 문장</th></tr></thead>
+          <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th>큰 요인</th><th class="num" title="리포트 문장 수 · 다음 분기 컨센서스 · 부문(제품·지역)별 매출이 있는지">리포트 · 컨센 · 부문</th></tr></thead>
         <tbody>${rows.map(s => `<tr data-c="${s.c}" class="${st.c === s.c ? 'on' : ''}" ${Stock.hintAttr(s)}>
           <td class="name-cell"><b>${U.esc(s.n)}</b>${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? '<i class="fd-warn" title="검증이 어긋난 분기가 있습니다">!</i>' : ''}</td>
           <td class="num">${s.mc != null ? U.eok(s.mc) : '–'}</td><td class="num">${s.ql} <small class="muted">${s.nq}분기</small></td>
@@ -32,7 +32,7 @@
           <td class="num">${s.opm == null ? '–' : s.opm.toFixed(1) + '%'}</td>
           <td class="num"><b class="${U.cls(s.dq)}">${pp(s.dq)}</b></td><td class="num"><b class="${U.cls(s.dy)}">${pp(s.dy)}</b></td>
           <td>${(s.top || []).map(([g, v]) => `<span class="fd-chip">${g} <b class="${v > 0 ? 'down' : 'up'}">${pp(v)}</b></span>`).join('')}</td>
-          <td class="num muted">${s.ev || ''}${s.cns ? ' · 컨센' : ''}</td></tr>`).join('') || '<tr><td colspan="10" class="muted">해당 종목 없음</td></tr>'}
+          <td class="num muted">${s.ev || ''}${s.cns ? ' · 컨센' : ''}${s.seg?.length ? ` · ${s.seg[0]}` : ''}</td></tr>`).join('') || '<tr><td colspan="10" class="muted">해당 종목 없음</td></tr>'}
         </tbody></table></div>
       ${data.skipped?.length ? `<p class="muted small" style="padding:8px 12px">성격별 비용 주석을 찾지 못한 종목 ${data.skipped.length}개 (대개 기능별로만 공시): ${data.skipped.map(x => U.esc(x.n)).join(' · ')}</p>` : ''}`;
   }

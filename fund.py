@@ -385,3 +385,106 @@ def evidence(text: str, limit: int = 3) -> List[Tuple[List[str], str]]:
             out.append((hits, s))
     out.sort(key=lambda x: (x[0] == ['마진'], -len(x[0])))
     return out[:limit]
+
+
+# ---------------- 부문·제품·지역 ----------------
+VIEW_NAME = {'seg': '부문', 'prod': '제품·서비스', 'geo': '지역'}
+_AGG = re.compile(r'합계|소계|^계$|^보고부문$|^영업부문$|^부문$|총계')
+_GENERIC = {'국내', '해외', '기타', '기타부문', '조정', '기타 부문', '외국', '내수', '수출', '본사', '공통'}
+
+
+def pick_members(q: Dict[str, Dict[str, float]]) -> List[str]:
+    """보기 하나의 {이름: {분기: 값}} 에서 줄로 쓸 이름 (조정 제외). 합계·소계 꼴 이름은 빼고,
+    '해외'는 다른 나라 줄이 따로 있으면 그 합이라 뺀다 (국내/해외 둘뿐이면 둔다)"""
+    names = [n for n in q if n != '조정' and not _AGG.search(n.replace(' ', ''))]
+    others = [n for n in names if n not in ('국내', '해외')]
+    if '해외' in names and others:
+        names.remove('해외')
+    return names
+
+
+def seg_check(members: Dict[str, float], adj: Optional[float], total: Optional[float], tol: float = 0.02,
+              partial_ok: bool = False) -> Optional[str]:
+    """줄의 합(+조정) = 전체 매출인가. 어긋나면 사유 글, 맞으면 None.
+    partial_ok: 합이 전체보다 작은 것은 봐준다 (제품 보기 — 회사가 주요 제품만 적는다)"""
+    if total is None or not members:
+        return None
+    s = sum(v for v in members.values() if v is not None) + (adj or 0.0)
+    if partial_ok and s <= total * (1 + tol):
+        return None
+    if abs(s - total) > max(1.0, abs(total) * tol):
+        return f'줄의 합 {s:.1f} ≠ 매출 {total:.1f}'
+    return None
+
+
+def best_subset(rev: Dict[str, Dict[str, float]], names: List[str], adj: Dict[str, float], total: Dict[str, float],
+                ends: List[str], tol: float = 0.003) -> Optional[List[str]]:
+    """줄을 다 더하면 전체 매출과 안 맞을 때(한 표에 분류가 두 벌 — 상품·제품·가맹점 / 재화의 판매·용역의 제공), 합이 전체 매출과 맞는 줄 묶음을 찾는다.
+    분기의 80% 이상(최소 4분기)에서 맞는 묶음 중 줄이 가장 많은 것. 없으면 None. 줄이 12개를 넘으면 찾지 않는다.
+    허용 오차는 좁게(0.3%) — 넓으면 작은 줄이 다른 벌의 줄과 바뀌어 들어간다"""
+    from itertools import combinations
+    qs = [e for e in ends if total.get(e)]
+    if not (2 <= len(names) <= 12) or len(qs) < 4:
+        return None
+    need = max(4, -(-len(qs) * 8 // 10))        # 4분기 이상 맞아야 — 분기가 적으면 우연히 맞는 묶음이 나온다
+    for k in range(len(names) - 1, 1, -1):
+        found = []
+        for sub in combinations(names, k):
+            ok = sum(1 for e in qs if abs(sum(rev[n].get(e) or 0.0 for n in sub) + (adj.get(e) or 0.0) - total[e]) <= max(1.0, abs(total[e]) * tol))
+            if ok >= need:
+                found.append((ok, sub))
+        if found:
+            return list(max(found)[1])
+    return None
+
+
+def merge_similar(vals: Dict[str, Dict], recent: Dict[str, str]) -> Dict[str, Dict]:
+    """철자가 거의 같은 이름(Harman/Haman, 'DS 부문'/'DS부문')을 한 줄로. recent = {이름: 그 이름이 마지막으로 쓰인 기간 끝}.
+    가장 최근까지 쓰인 이름이 대표이고, 같은 기간 값은 대표 이름의 것을 둔다"""
+    from difflib import SequenceMatcher
+    norm = lambda n: re.sub(r'\s+|부문|사업부', '', n).lower()
+    reps, out = [], {}
+    for n in sorted(vals, key=lambda n: recent.get(n, ''), reverse=True):
+        r = next((x for x in reps if norm(x) == norm(n) or (min(len(norm(x)), len(norm(n))) >= 4
+                                                             and SequenceMatcher(None, norm(x), norm(n)).ratio() >= 0.8)), None)
+        if r is None:
+            reps.append(n)
+            out[n] = dict(vals[n])
+        else:
+            out[r] = {**vals[n], **out[r]}
+    return out
+
+
+def contribution(cur: Dict[str, float], prev: Dict[str, float]) -> List[Tuple[str, float]]:
+    """전년 동기 대비 매출 증가율에 대한 줄별 기여(%p) = (이번 − 작년) ÷ 작년 합. 큰 순"""
+    base = sum(v for v in prev.values() if v is not None)
+    if not base:
+        return []
+    out = [(n, ((cur.get(n) or 0.0) - (prev.get(n) or 0.0)) / abs(base) * 100) for n in set(cur) | set(prev)]
+    return sorted(out, key=lambda x: -abs(x[1]))
+
+
+def mention_key(name: str) -> Optional[str]:
+    """부문 이름 → 리포트 문장에서 찾을 낱말 ('DS 부문' → 'DS', '제조부문' → '제조'). 너무 흔한 이름은 None"""
+    if name in _GENERIC:
+        return None
+    k = re.sub(r'\s*(사업)?부문$|\s*사업부$|\s*등$', '', name).strip()
+    return k if len(k) >= 2 and k not in _GENERIC else None
+
+
+def mentions(text: str, names: List[str], limit: int = 3) -> List[Tuple[str, str]]:
+    """글에서 부문 이름이 든 문장 [(이름, 문장)]"""
+    keys = [(n, mention_key(n)) for n in names]
+    keys = [(n, k) for n, k in keys if k]
+    out = []
+    for s in re.split(r'(?<=[.!?다음])\s+|\n+', text or ''):
+        s = s.strip(' -·•')
+        if not (12 <= len(s) <= 220):
+            continue
+        for n, k in keys:
+            if re.search(r'(?<![A-Za-z0-9가-힣])' + re.escape(k) if re.match(r'[A-Za-z]', k) else re.escape(k), s):
+                out.append((n, s))
+                break
+        if len(out) >= limit:
+            break
+    return out
