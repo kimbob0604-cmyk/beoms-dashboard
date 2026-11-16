@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS fund_fact (
     topic TEXT NOT NULL,                              -- nature(원문 주석) / nature_x(주석 XBRL) / is(손익 XBRL)
     item TEXT NOT NULL, label TEXT,                   -- item = 공통 키 (fund.key_of), label = 회사가 쓴 이름
     start TEXT NOT NULL, end TEXT NOT NULL, value REAL,   -- 억원
-    rcept_no TEXT, ord INTEGER,
-    PRIMARY KEY (code, basis, topic, item, start, end)
+    rcept_no TEXT NOT NULL, ord INTEGER,
+    PRIMARY KEY (code, basis, topic, item, start, end, rcept_no)      -- 보고서별로 다 둔다: 같은 기간이 나중 보고서에 재작성돼 다시 나온다
 );
 """
 
@@ -63,6 +63,10 @@ CREATE TABLE IF NOT EXISTS fund_fact (
 def connect(path=DB):
     conn = sqlite3.connect(str(path), timeout=30)
     conn.row_factory = sqlite3.Row
+    pk = [r[1] for r in conn.execute("PRAGMA table_info(fund_fact)") if r[5]] if conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE name = 'fund_fact'").fetchone() else None
+    if pk is not None and 'rcept_no' not in pk:      # 옛 구조(기간마다 마지막 보고서 값만) → 새로 만든다. 값은 --reparse 가 캐시에서 다시 채운다
+        conn.execute('DROP TABLE fund_fact')
     conn.executescript(SCHEMA)
     return conn
 
@@ -178,6 +182,40 @@ def xbrl_rows(zbytes: bytes, rno: str) -> list:
     return rows
 
 
+def oracle_of(xrows: list) -> dict:
+    """XBRL 손익 줄 → {basis: {(시작, 끝): [매출원가+판관비, 매출−영업이익]}} — 주석 표의 어느 열이 어느 기간인지 맞춰 보는 기준값"""
+    by = {}
+    for basis, topic, item, _, st, en, v, *_ in xrows:
+        if topic == 'is':
+            by.setdefault(basis, {}).setdefault((st, en), {})[item] = v
+    out = {}
+    for b, pe in by.items():
+        for k, d in pe.items():
+            refs = []
+            if d.get('cogs') is not None and d.get('sga') is not None:
+                refs.append(d['cogs'] + d['sga'])
+            if d.get('rev') is not None and d.get('op') is not None:
+                refs.append(d['rev'] - d['op'])
+            if refs:
+                out.setdefault(b, {})[k] = refs
+    return out
+
+
+def note_rows(xml: str, end: str, kind: str, fy_end: int, oracle: dict, rno: str):
+    """원문 → (fund_fact 줄, 표를 찾았나). 연결·별도마다 그 basis 의 기준값으로 열을 맞춘다 (없으면 구분 없는 'X' 기준값)"""
+    tables = fund.note_tables(xml)
+    rows, claimed = [], set()
+    for t in tables:
+        orc = oracle.get(t['basis']) or oracle.get('X')
+        fs = fund.table_facts(t, end, kind, fy_end, orc, t.get('first', True))
+        mine = {(st, en) for _, _, st, en, _, _ in fs}
+        for item, label, st, en, v, ord_ in fs:
+            if (t['basis'], st, en) not in claimed:        # 한 기간은 그 보고서에서 먼저 나온 표 하나만 — 뒤의 다른 표가 같은 기간을 또 채우면 합이 두 배가 된다
+                rows.append((t['basis'], 'nature', item, label, st, en, v, rno, ord_))
+        claimed |= {(t['basis'], st, en) for st, en in mine}
+    return rows, bool(tables)
+
+
 def put(conn, code, rows):
     """rows: (basis, topic, item, label, start, end, value, rcept_no, ord)"""
     conn.executemany('INSERT OR REPLACE INTO fund_fact (code, basis, topic, item, label, start, end, value, rcept_no, ord) '
@@ -185,24 +223,21 @@ def put(conn, code, rows):
 
 
 def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> str:
-    """보고서 하나. 돌려주는 글 = 메모 ('' 이면 다 읽음)"""
-    notes, rows = [], []
+    """보고서 하나. 돌려주는 글 = 메모 ('' 이면 다 읽음). XBRL 손익을 먼저 읽어 주석 표의 기준값으로 쓴다"""
+    notes, rows, xr = [], [], []
     try:
-        xml = document(session, key, rno)
-        tables = fund.note_tables(xml)
-        for t in tables:
-            for item, label, st, en, v, ord_ in fund.table_facts(t, end, kind, fy_end):
-                rows.append((t['basis'], 'nature', item, label, st, en, v, rno, ord_))
-        if not tables:
-            notes.append('원문에서 성격별 비용 표를 못 찾음')
-    except zipfile.BadZipFile:
-        notes.append('원문 없음')
-    time.sleep(DELAY)
-    try:
-        rows += xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
+        xr = xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
     except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
         notes.append('XBRL 없음')
+    try:
+        nr, found = note_rows(document(session, key, rno), end, kind, fy_end, oracle_of(xr), rno)
+        rows += nr
+        if not found:
+            notes.insert(0, '원문에서 성격별 비용 표를 못 찾음')
+    except zipfile.BadZipFile:
+        notes.insert(0, '원문 없음')
     time.sleep(DELAY)
+    rows += xr
     with conn:
         put(conn, code, rows)
         conn.execute('INSERT OR REPLACE INTO fund_report VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -218,7 +253,7 @@ def reparse(conn) -> int:
         fy[code] = int(end[5:7])
     n = miss = 0
     with conn:
-        conn.execute("DELETE FROM fund_fact WHERE topic = 'nature'")
+        conn.execute("DELETE FROM fund_fact WHERE topic = 'nature'")      # 원문 유래 값은 전부 다시
         zs = {r[0]: XBRLS / f'{r[0]}.zip' for r in conn.execute('SELECT rcept_no FROM fund_report')}
         have_x = [rno for rno, f in zs.items() if f.exists()]
         if have_x:      # XBRL 캐시가 있는 보고서의 XBRL 유래 값도 다시 (손익·주석 XBRL·부문)
@@ -228,14 +263,15 @@ def reparse(conn) -> int:
             f = DOCS / f"{r['rcept_no']}.xml.gz"
             if not f.exists():
                 continue
-            tables = fund.note_tables(gzip.decompress(f.read_bytes()).decode('utf-8'))
-            rows = [(t['basis'], 'nature', item, label, st, en, v, r['rcept_no'], o)
-                    for t in tables for item, label, st, en, v, o in fund.table_facts(t, r['period_end'], r['kind'], fy.get(r['code'], 12))]
+            xr = []
             if zs[r['rcept_no']].exists():
                 try:
-                    rows += xbrl_rows(zs[r['rcept_no']].read_bytes(), r['rcept_no'])
+                    xr = xbrl_rows(zs[r['rcept_no']].read_bytes(), r['rcept_no'])
                 except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
                     pass
+            rows, tables = note_rows(gzip.decompress(f.read_bytes()).decode('utf-8'), r['period_end'], r['kind'], fy.get(r['code'], 12),
+                                     oracle_of(xr), r['rcept_no'])
+            rows += xr
             put(conn, r['code'], rows)
             note = [x for x in (r['note'] or '').split('; ') if x and '성격별' not in x]
             if not tables:

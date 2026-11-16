@@ -25,7 +25,7 @@
         <thead><tr><th>종목</th><th class="num">시총</th><th class="num">최근 분기</th><th class="num">매출</th><th class="num">OP</th><th class="num">OPM</th>
           <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th>큰 요인</th><th class="num" title="리포트 문장 수 · 다음 분기 컨센서스 · 부문(제품·지역)별 매출이 있는지">리포트 · 컨센 · 부문</th></tr></thead>
         <tbody>${rows.map(s => `<tr data-c="${s.c}" class="${st.c === s.c ? 'on' : ''}" ${Stock.hintAttr(s)}>
-          <td class="name-cell"><b>${U.esc(s.n)}</b>${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? '<i class="fd-warn" title="검증이 어긋난 분기가 있습니다">!</i>' : ''}</td>
+          <td class="name-cell"><b>${U.esc(s.n)}</b>${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? `<i class="fd-warn" title="검증이 어긋난 분기 ${s.chk}개 — 종목을 열면 사유가 보입니다">!</i>` : ''}</td>
           <td class="num">${s.mc != null ? U.eok(s.mc) : '–'}</td><td class="num">${s.ql} <small class="muted">${s.nq}분기</small></td>
           <td class="num">${s.rev == null ? '–' : Math.round(s.rev).toLocaleString('ko-KR')}</td>
           <td class="num ${s.op < 0 ? 'down' : ''}">${s.op == null ? '–' : Math.round(s.op).toLocaleString('ko-KR')}</td>

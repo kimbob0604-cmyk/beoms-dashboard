@@ -35,8 +35,8 @@ const Fund = (() => {
       return `<i class="fd-earn ${up ? 'up' : 'down'}" title="실적 발표 덱: 영업이익 예상 대비 ${x.or == null ? '–' : (x.or * 100).toFixed(0) + '%'}, 매출 ${x.sr == null ? '–' : (x.sr * 100).toFixed(0) + '%'}">${up ? '서프' : '미스'}</i>`;
     };
     return `<div class="tbl-wrap fd-wrap"><table class="tbl fd-tbl">
-      <thead><tr><th>${unit === 'pct' ? '매출액 대비 비중' : '억원'}</th>${d.q.map((e, i) => `<th class="num${i === sel ? ' sel' : ''}" data-fq="${i}" title="${e} · 누르면 아래 분석이 이 분기로 바뀝니다${d.xb.includes(e) ? ' · 주석 XBRL 값' : ''}${d.chk[e] ? ` · 검증: ${esc(d.chk[e])}` : ''}">
-        ${d.ql[i]}${d.chk[e] ? '<i class="fd-warn">!</i>' : ''}${tag(e)}</th>`).join('')}</tr></thead>
+      <thead><tr><th>${unit === 'pct' ? '매출액 대비 비중' : '억원'}</th>${d.q.map((e, i) => `<th class="num${i === sel ? ' sel' : ''}" data-fq="${i}" title="${e} · 누르면 아래 분석이 이 분기로 바뀝니다${d.xb.includes(e) ? ' · 주석 XBRL 값' : ''}${d.chk[e] ? ` · 검증 어긋남: ${esc(d.chk[e])}` : d.inf?.[e] ? ` · 참고: ${esc(d.inf[e])}` : ''}">
+        ${d.ql[i]}${d.chk[e] ? '<i class="fd-warn">!</i>' : d.inf?.[e] ? '<i class="fd-info">i</i>' : ''}${tag(e)}</th>`).join('')}</tr></thead>
       <tbody>
         <tr class="fd-rev"><td>매출액</td>${d.rev.map((v, i) => `<td class="num${i === sel ? ' sel' : ''}">${v == null ? '–' : n1(v)}</td>`).join('')}</tr>
         ${rows.map(([l, v, fix, g]) => `<tr><td title="${g ? `묶음: ${g}` : fix ? '고정비성(계산에서 금액 유지)' : ''}">${esc(l)}</td>${v.map((x, i) => cell(x, i)).join('')}</tr>`).join('')}
@@ -141,9 +141,9 @@ const Fund = (() => {
         <div class="fd-ctl">${d.seg.length > 1 ? `<div class="seg">${d.seg.map(x => `<button data-sv="${x.k}" class="${x.k === v.k ? 'on' : ''}">${x.name}</button>`).join('')}</div>` : ''}
           <div class="seg">${SU.filter(([k]) => hasOp || (k !== 'op' && k !== 'opm')).map(([k, l]) => `<button data-su="${k}" class="${u === k ? 'on' : ''}">${l}</button>`).join('')}</div></div></div>
       <div class="tbl-wrap fd-wrap2"><table class="tbl fd-tbl"><thead><tr><th>${u === 'rev' || u === 'op' ? '억원' : u === 'share' ? '매출 비중' : u === 'yoy' ? '전년 동기 대비' : '영업이익률'}</th>
-        ${v.q.map((q, i) => `<th class="num" title="${q}${v.chk[q] ? ` · 검증: ${esc(v.chk[q])}` : ''}">${v.ql[i]}${v.chk[q] ? '<i class="fd-warn">!</i>' : ''}</th>`).join('')}</tr></thead>
+        ${v.q.map((q, i) => `<th class="num" title="${q}${v.chk[q] ? ` · 검증 어긋남: ${esc(v.chk[q])}` : v.inf?.[q] ? ` · 참고: ${esc(v.inf[q])}` : ''}">${v.ql[i]}${v.chk[q] ? '<i class="fd-warn">!</i>' : v.inf?.[q] ? '<i class="fd-info">i</i>' : ''}</th>`).join('')}</tr></thead>
         <tbody>${v.m.map(m => `<tr><td>${esc(m.n)}</td>${v.q.map((_, i) => `<td class="num">${fmt(m, i)}</td>`).join('')}</tr>`).join('')}${totRow}</tbody></table></div>
-      <p class="muted small">회사가 주석에 XBRL 로 표시한 값입니다 — 표시를 시작한 뒤의 분기만 있습니다. ${v.adj ? '부문 값은 내부거래 제거 전이라 조정을 더해야 전체 매출이 됩니다. ' : ''}${nchk ? `<span class="down">부문 합이 전체 매출과 어긋난 분기 ${nchk}개 (! 표시).</span>` : '부문 합 = 전체 매출 검증 통과.'}</p>
+      <p class="muted small">회사가 주석에 XBRL 로 표시한 값입니다 — 표시를 시작한 뒤의 분기만 있습니다. ${v.adj ? '부문 값은 내부거래 제거 전이라 조정을 더해야 전체 매출이 됩니다. ' : ''}${nchk ? `<span class="down">줄의 합이 전체 매출보다 큰 분기 ${nchk}개 (! 표시).</span>` : '줄의 합이 전체 매출을 넘는 분기 없음.'}${Object.keys(v.inf || {}).length ? ` 일부 줄이 표시되지 않아 합이 모자란 분기 ${Object.keys(v.inf).length}개 (ⓘ — 보이는 숫자는 맞습니다).` : ''}</p>
       ${contrib}
       ${reps.length ? `<div class="fd-ev"><h4>증권사가 이 ${v.name}에 대해 쓴 문장 <span class="muted small">${reps.length}건</span></h4>
         ${reps.slice(0, 5).map(r => `<article class="fd-rep"><header><span class="muted small">${r.d.slice(5)} · ${esc(r.b)}</span>${r.pdf ? `<a href="${esc(r.pdf)}" target="_blank" rel="noopener">${esc(r.t)} ↗</a>` : `<b>${esc(r.t)}</b>`}</header>
@@ -164,7 +164,8 @@ const Fund = (() => {
       ${tableHtml(s)}
       <p class="muted small">분기 값 = 3개월 값, 없으면 누적끼리 뺀 값(4Q = 연간 − 3Q 누적). ${d.xb.length ? `${d.ql[d.q.indexOf(d.xb[0])]} 부터는 주석 XBRL 값. ` : ''}분기 머리글을 누르면 아래가 그 분기로 바뀝니다.
         ${d.rep?.[e] ? `<a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rep[e]}" target="_blank" rel="noopener">${d.ql[i]} 보고서 원문 ↗</a>` : ''}
-        ${Object.keys(d.chk).length ? `<span class="down"> · 검증이 어긋난 분기 ${Object.keys(d.chk).length}개 (머리글의 ! 표시)</span>` : ' · 줄의 합 = 합계, 매출 − 비용 = 영업이익 검증 통과'}</p>
+        ${Object.keys(d.chk).length ? `<span class="down"> · 검증이 어긋난 분기 ${Object.keys(d.chk).length}개 (머리글의 ! 표시)</span>` : ' · 줄의 합 = 합계, 매출 − 비용 = 영업이익 검증 통과'}${Object.keys(d.inf || {}).length ? ` · <span title="회사 손익계산서 구성이나 주석 범위가 달라 생기는 차이 — 표는 맞게 읽혔습니다">참고 ${Object.keys(d.inf).length}개 분기 (ⓘ)</span>` : ''}</p>
+      ${(d.chk[e] || d.inf?.[e]) ? `<p class="small ${d.chk[e] ? 'down' : 'muted'}">${d.ql[i]}: ${esc(d.chk[e] || d.inf[e])}</p>` : ''}
       <div class="fd-brs"><div class="fd-br-head"><h4>${d.ql[i]} 영업이익률은 왜 변했나</h4><span class="muted small">비용 묶음의 매출 대비 비중 변화를 더하면 OPM 변화가 됩니다 (부호 반대)</span></div>
         <div class="fd-br-grid">${bars(b1, '직전 분기 대비', j1 >= 0 ? opm(d, j1) : null, opm(d, i))}${bars(b4, '전년 동기 대비', j4 >= 0 ? opm(d, j4) : null, opm(d, i))}</div></div>
       ${evHtml(d, e, b1.filter(([, v]) => v > 0).concat(b1.filter(([, v]) => v <= 0)))}

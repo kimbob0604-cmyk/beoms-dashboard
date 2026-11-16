@@ -40,8 +40,11 @@ NEW = """<TABLE-GROUP ACLASS="{XBRL}NT_C_D834300" ADELETETABLE="N">
 
 class TableTest(unittest.TestCase):
     def test_old_format_both_bases_and_unit_only_table(self):
-        ts = fund.note_tables(OLD)
+        every = fund.note_tables(OLD)
+        ts = [t for t in every if t['first']]
         self.assertEqual([t['basis'] for t in ts], ['C', 'S'])
+        self.assertEqual([t['first'] for t in every], [True, False, True])    # 뒤따르는 표(종업원급여 내역)는 first 가 아니다 — 기준값과 맞을 때만 쓰인다
+        self.assertEqual(fund.table_facts(every[1], '2023-09-30', 'Q', first=False), [])
         self.assertEqual(ts[0]['unit'], '원')
         self.assertEqual(ts[1]['unit'], '백만원')            # 설명 뒤의 단위만 든 표를 건너뛰고 단위를 이어받는다
         self.assertEqual(len(ts[0]['rows']), 5)              # 뒤의 종업원급여 내역 표는 안 섞인다
@@ -55,7 +58,7 @@ class TableTest(unittest.TestCase):
         self.assertIn(('total', '2023-01-01', '2023-09-30'), f)
 
     def test_three_month_and_cumulative_columns(self):
-        t = fund.note_tables(OLD)[1]
+        t = [x for x in fund.note_tables(OLD) if x['first']][1]
         f = {(k, st, en): v for k, _, st, en, v, _ in fund.table_facts(t, '2023-09-30', 'Q')}
         self.assertAlmostEqual(f[('raw', '2023-07-01', '2023-09-30')], 1.0)          # 100 백만원
         self.assertAlmostEqual(f[('raw', '2023-01-01', '2023-09-30')], 3.0)
@@ -79,6 +82,54 @@ class TableTest(unittest.TestCase):
         self.assertEqual([r[0] for r in t['rows']], ['성격별 비용', '원재료 등의 사용액', '급여', '기타 비용'])
         self.assertEqual([r[1][0] for r in t['rows']], [100, 70, 20, 10])
 
+    def test_columns_assigned_by_income_statement_totals(self):
+        # 기능별 행렬(판관비 / 매출원가 / 합계): 합계 열만 기준값(매출원가+판관비)과 맞는다
+        t = {'mult': 1.0, 'cols': ['판매비와관리비', '매출원가', '합 계'],
+             'rows': [('원재료 사용', [0, 70, 70]), ('급여', [10, 15, 25]), ('기타', [2, 3, 5]), ('합 계', [12, 88, 100])]}
+        orc = {('2026-01-01', '2026-03-31'): [100.0, 101.5], ('2025-01-01', '2025-03-31'): [90.0]}
+        f = {(k, st, en): v for k, _, st, en, v, _ in fund.table_facts(t, '2026-03-31', 'Q', oracle=orc)}
+        self.assertEqual(f[('raw', '2026-01-01', '2026-03-31')], 70)
+        self.assertEqual(f[('total', '2026-01-01', '2026-03-31')], 100)
+        self.assertEqual({k[2] for k in f}, {'2026-03-31'})                 # 매출원가·판관비 열은 버린다
+        # '제24기 반기 / 제23기 / 제22기': 첫 열만 이번 누적과 맞고, 지난 사업연도 열은 기준값이 없어 버린다 (전년 동기로 잘못 넣지 않는다)
+        t2 = {'mult': 1.0, 'cols': ['제24기 반기', '제23기', '제22기'], 'rows': [('상품', [40, 90, 80]), ('급여', [10, 25, 22]), ('합계', [50, 115, 102])]}
+        orc2 = {('2026-01-01', '2026-06-30'): [50.2], ('2025-01-01', '2025-06-30'): [44.0], ('2026-04-01', '2026-06-30'): [27.0]}
+        f2 = {(k, st, en) for k, _, st, en, v, _ in fund.table_facts(t2, '2026-06-30', 'Q', oracle=orc2)}
+        self.assertEqual({(st, en) for _, st, en in f2}, {('2026-01-01', '2026-06-30')})
+        # 3개월·누적 표시가 사라진 4열: 숫자로 3개월과 누적을 가른다
+        t3 = {'mult': 1.0, 'cols': ['당반기', '당반기', '전반기', '전반기'], 'rows': [('원재료', [30, 55, 20, 45]), ('합계', [40, 75, 28, 60])]}
+        orc3 = {('2026-04-01', '2026-06-30'): [40.0], ('2026-01-01', '2026-06-30'): [75.0], ('2025-04-01', '2025-06-30'): [28.0], ('2025-01-01', '2025-06-30'): [60.0]}
+        f3 = {(k, st, en): v for k, _, st, en, v, _ in fund.table_facts(t3, '2026-06-30', 'Q', oracle=orc3)}
+        self.assertEqual(f3[('raw', '2026-04-01', '2026-06-30')], 30)
+        self.assertEqual(f3[('raw', '2025-01-01', '2025-06-30')], 45)
+        # 기준값이 없으면 머리말로: 표시 없는 당·전 두 쌍은 3개월·누적 순서
+        f4 = {(k, st, en): v for k, _, st, en, v, _ in fund.table_facts(t3, '2026-06-30', 'Q')}
+        self.assertEqual(f4[('raw', '2026-04-01', '2026-06-30')], 30)
+        self.assertEqual(fund.col_role('당반기 당2분기'), ('cur', 'q'))
+        self.assertEqual(fund.col_role('당반기 누적'), ('cur', 'ytd'))
+
+    def test_subtotals_are_not_summed_into_total(self):
+        t = {'mult': 1.0, 'cols': ['당기', '전기'], 'rows': [('원재료', [60, 50]), ('매출원가 소계', [60, 50]), ('급여', [40, 30]), ('합계', [100, 80])]}
+        f = {(k, en): v for k, _, st, en, v, _ in fund.table_facts(t, '2025-12-31', 'A')}
+        self.assertEqual(f[('total', '2025-12-31')], 100)                    # 소계 + 합계 = 160 이 아니라 합계
+
+    def test_section_header_rows_are_dropped(self):
+        # 구역 제목 줄 '연구개발비'(= 아래 두 줄의 합)를 비용 줄로 세면 합계보다 그만큼 많아진다
+        t = {'mult': 1.0, 'cols': ['당기', '전기'], 'rows': [('원재료', [60, 50]), ('급여', [20, 15]), ('연구개발비', [10, 8]), ('급여', [7, 6]), ('기타비용', [3, 2]), ('합계', [90, 73])]}
+        f = {(k, en): v for k, _, st, en, v, _ in fund.table_facts(t, '2025-12-31', 'A')}
+        self.assertNotIn(('rnd', '2025-12-31'), f)
+        self.assertEqual(f[('emp', '2025-12-31')], 27)
+        self.assertEqual(sum(v for (k, en), v in f.items() if en == '2025-12-31' and k != 'total'), 90)
+        # 합이 맞는 표에서는 아무것도 빼지 않는다 (감가상각비 10 = 그 아래 5 + 5 여도)
+        ok = {'mult': 1.0, 'cols': ['당기'], 'rows': [('감가상각비', [10]), ('급여', [5]), ('기타비용', [5]), ('합계', [20])]}
+        self.assertEqual(fund.section_rows(ok, 0, None), set())
+
+    def test_discontinued_operations_row_is_excluded(self):
+        t = {'mult': 1.0, 'cols': ['당기 공시금액'], 'rows': [('원재료', [70]), ('급여', [20]), ('중단영업으로부터 발생한 비용', [15]), ('성격별 비용(중단영업 포함) 합계', [105])]}
+        f = {k: v for k, _, st, en, v, _ in fund.table_facts(t, '2025-12-31', 'A', oracle={('2025-01-01', '2025-12-31'): [90.2]})}
+        self.assertEqual(f['total'], 90)                     # 105 − 15: 계속영업 비용 (기준값 90.2 와 맞는다)
+        self.assertEqual(set(f), {'raw', 'emp', 'total'})
+
     def test_keys(self):
         self.assertEqual(fund.key_of('감가상각비(투자부동산감가상각비 포함)'), ('dep', '감가상각비'))
         self.assertEqual(fund.key_of('사용권자산상각비'), ('rou', '감가상각비'))
@@ -87,6 +138,12 @@ class TableTest(unittest.TestCase):
         self.assertEqual(fund.key_of('성격별 기타비용'), ('other', '기타'))
         self.assertEqual(fund.key_of('성격별 비용')[0], 'total')
         self.assertEqual(fund.key_of('경상연구개발비')[1], 'R&D')
+        self.assertEqual(fund.key_of('종업원급여비용 합계'), ('emp', '인건비'))          # 특정 비용의 합계는 그 비용 줄
+        self.assertEqual(fund.key_of('성격별 비용 합계')[0], 'total')
+        self.assertEqual(fund.key_of('매출원가 소계')[0], 'total')
+        self.assertEqual(fund.key_of('총비용')[0], 'total')
+        self.assertEqual(fund.key_of('대손상각비')[1], '기타')                          # 감가상각이 아니다
+        self.assertEqual(fund.key_of('판매비와관리비')[0], 'total')                     # 기능별 소계
         self.assertEqual(fund.key_of('포장비'), ('x:포장', '기타'))
         self.assertEqual(fund.key_of('전산비')[0], fund.key_of('전산 비용')[0])            # 표기가 달라도 같은 키
         self.assertEqual(fund.key_of('재고자산의 매입')[0], fund.key_of('재고자산 매입액')[0])
@@ -111,6 +168,21 @@ class QuarterTest(unittest.TestCase):
         q = fund.quarterize(v)
         self.assertEqual(q['2023-06-30'], 16)
         self.assertEqual(q['2023-12-31'], 70 - 10 - 16 - 20)
+
+    def test_annual_minus_three_month_quarters_beats_restated_cumulative(self):
+        # 9개월 누적이 나중에 재작성돼 작아졌어도(55), 그해 분기 보고서의 3개월 값(18·24·21)으로 4Q 를 만든다
+        v = {('2024-01-01', '2024-03-31'): 18, ('2024-04-01', '2024-06-30'): 24, ('2024-07-01', '2024-09-30'): 21,
+             ('2024-01-01', '2024-09-30'): 55, ('2024-01-01', '2024-12-31'): 95}
+        self.assertEqual(fund.quarterize(v)['2024-12-31'], 95 - 18 - 24 - 21)
+
+    def test_year_header_table(self):
+        html = """<TABLE><THEAD><TR><TH>구 분</TH><TH>2023</TH><TH>2022</TH></TR></THEAD><TBODY>
+        <TR><TD>원재료 및 상품의 사용</TD><TD>5,628</TD><TD>5,288</TD></TR><TR><TD>종업원급여</TD><TD>1,495</TD><TD>1,171</TD></TR>
+        <TR><TD>합 계</TD><TD>7,123</TD><TD>6,459</TD></TR></TBODY></TABLE>"""
+        t = fund.parse_table(html)
+        self.assertEqual(t['cols'], ['2023', '2022'])
+        self.assertEqual(len(t['rows']), 3)
+        self.assertEqual(fund.key_of('성격별 비용(중단영업 포함) 합계')[0], 'total')
 
     def test_gap_stays_empty(self):
         v = {('2023-01-01', '2023-03-31'): 10, ('2023-01-01', '2023-09-30'): 45}
@@ -211,12 +283,33 @@ class SegmentTest(unittest.TestCase):
 
     def test_best_subset_when_two_breakdowns_share_a_table(self):
         qs = ['a', 'b', 'c', 'd']
-        tot = dict(zip(qs, [100, 110, 121, 133]))
-        rev = {'상품': dict(zip(qs, [80, 90, 97, 108])), '제품': dict(zip(qs, [15, 16, 19, 20])), '기타': dict(zip(qs, [5, 4, 5, 5])),
-               '재화의 판매': dict(zip(qs, [94, 105, 114, 126])), '용역의 제공': dict(zip(qs, [6, 5, 7, 7]))}
+        z = lambda xs: dict(zip(qs, [x * 100 for x in xs]))
+        tot = z([100, 110, 121, 133])
+        rev = {'상품': z([80, 90, 97, 108]), '제품': z([15, 16, 19, 20]), '기타': z([5, 4, 5, 5]), '재화의 판매': z([94, 105, 114, 126]), '용역의 제공': z([6, 5, 7, 7])}
         self.assertEqual(sorted(fund.best_subset(rev, list(rev), {}, tot, qs)), ['기타', '상품', '제품'])   # 맞는 묶음 중 줄이 많은 쪽
-        self.assertIsNone(fund.best_subset(rev, list(rev), {}, tot, qs[:2]))                                # 분기가 적으면 찾지 않는다
+        self.assertEqual(sorted(fund.best_subset(rev, list(rev), {}, tot, qs[:2])), ['기타', '상품', '제품'])    # 분기가 적어도 전부 정확히 맞으면
+        loose = {**rev, '상품': z([80.4, 90, 97, 108])}
+        self.assertIsNone(fund.best_subset(loose, ['상품', '제품', '기타', '재화의 판매'], {}, tot, qs[:2]))        # 0.1% 넘게 어긋나면 안 고른다
         self.assertIsNone(fund.best_subset({n: {q: 1 for q in qs} for n in 'ABC'}, list('ABC'), {}, tot, qs))
+
+    def test_verdict_over_is_warning_under_is_note(self):
+        self.assertEqual(fund.seg_verdict({'A': 60, 'B': 39.5}, None, 100), (None, None))
+        w, i = fund.seg_verdict({'A': 60, 'B': 60}, None, 100)
+        self.assertIn('>', w)
+        self.assertIsNone(i)
+        w, i = fund.seg_verdict({'A': 60}, None, 100)                       # 국내 매출이 표시 안 된 분기 등
+        self.assertIsNone(w)
+        self.assertIn('작음', i)
+        w, i = fund.seg_verdict({'A': 60, 'B': 60}, 0.0, 100, has_adj_elsewhere=True)   # 조정이 이 분기만 없음
+        self.assertIsNone(w)
+        self.assertIn('조정', i)
+        self.assertEqual(fund.seg_name('대한민국'), '국내')
+        self.assertEqual(fund.pick_members({'A부문': {'q': 1}, 'B부문': {'q': 2}, '중요한 조정사항 전 금액': {'q': 3}}), ['A부문', 'B부문'])
+
+    def test_rename_map_links_names_by_equal_values(self):
+        tb = {('s', 'e'): {'r1': {'캡슐 등': 20.0, '원료': 3.0}, 'r2': {'캡슐': 20.0, '원료': 3.0}},
+              ('s2', 'e2'): {'r2': {'캡슐': 22.0, '원료': 4.0}}}
+        self.assertEqual(fund.rename_map(tb), {'캡슐 등': '캡슐'})
 
     def test_contribution(self):
         c = dict(fund.contribution({'DS': 150, 'DX': 90}, {'DS': 100, 'DX': 100}))

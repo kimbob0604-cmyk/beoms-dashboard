@@ -1306,3 +1306,4 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .fd-wrap2 { overflow-x: auto; }
 .fd-seg .fd-br { margin-top: 12px; max-width: 560px; }
 .fd-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fd-info { display: inline-block; margin-left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--muted); color: var(--card); font: 700 9px/13px sans-serif; text-align: center; font-style: normal; opacity: .75; }
