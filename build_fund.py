@@ -355,6 +355,9 @@ def attach_earn(code, d):
 
 def build():
     conn = connect()
+    from collect_fund import WATCH
+    w = json.loads(WATCH.read_text(encoding='utf-8')) if WATCH.exists() else {}
+    idx_of = w.get('index', {})                    # 코스피200·코스닥150 구성 (화면 필터)
     main = db.connect()
     day = main.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
     info, _ = market_info(main, day)
@@ -385,11 +388,13 @@ def build():
                       'top': [[g, round(v, 1)] for g, v in br[:2] if abs(v) >= 0.3],
                       'chk': len(d['chk']) + sum(len(v['chk']) for v in d['seg']),
                       'ev': sum(len(v) for v in d['ev'].values()), 'cns': bool(d['cns']['next']),
-                      'seg': [v['name'] for v in d['seg']]})
+                      'seg': [v['name'] for v in d['seg']], 'ix': idx_of.get(code, [])})
     for p in OUT.glob('*.json'):
         if p.stem != 'index' and p.stem not in {x['c'] for x in index}:
             p.unlink()
-    write_json(OUT / 'index.json', {'built': built, 'stocks': index, 'skipped': skipped})
+    pending = [c for c in w.get('codes', []) if c not in {x['c'] for x in index} and c not in {x['c'] for x in skipped}]
+    write_json(OUT / 'index.json', {'built': built, 'stocks': index, 'skipped': skipped, 'pending': len(pending),
+                                     'ix_as_of': w.get('index_as_of')})
     return len(index)
 
 

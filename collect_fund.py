@@ -237,6 +237,8 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
     except zipfile.BadZipFile:
         notes.insert(0, '원문 없음')
     time.sleep(DELAY)
+    if '원문 없음' in notes and (datetime.now() - datetime.strptime(rno[:8], '%Y%m%d')).days < 10:
+        return 'retry'          # 막 접수된 보고서는 DART 가 원문 파일을 며칠 늦게 연다(상태 014) — 기록하지 않고 다음 실행에서 다시
     rows += xr
     with conn:
         put(conn, code, rows)
@@ -292,6 +294,14 @@ def main() -> int:
     ap.add_argument('--xbrl-cache', action='store_true', help='받은 보고서의 XBRL 압축을 캐시에 채우기')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
+    import fcntl
+    (ROOT / 'logs').mkdir(exist_ok=True)
+    lock = open(ROOT / 'logs' / 'collect_fund.lock', 'w')
+    try:                    # 정기 실행과 손으로 돌린 수집이 겹치면 같은 보고서를 두 번 받는다
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        log.info('다른 펀더 수집이 도는 중 — 건너뜀')
+        return 0
     key = os.environ.get('DART_API_KEY', '')
     if args.xbrl_cache and key:      # 이미 받은 보고서의 XBRL 압축을 캐시에 채운다 (부문 등 새 토픽을 읽으려고) → 그다음 --reparse
         conn, s, n = connect(), requests.Session(), 0
@@ -333,7 +343,9 @@ def main() -> int:
                     note = collect_report(conn, s, key, code, rno, name, kind, end, fy_end)
                     done += 1
                     fails = 0
-                    if note:
+                    if note == 'retry':
+                        log.info('%s %s: 원문이 아직 안 열림 — 다음 실행에서 다시', code, name)
+                    elif note:
                         log.info('%s %s: %s', code, name, note)
                 except requests.RequestException as e:
                     errors += 1

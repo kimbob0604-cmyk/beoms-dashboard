@@ -1,7 +1,7 @@
 // 펀더 탭: data/fund/index.json — 분기 비용 구조를 쌓아 둔 종목. 줄을 누르면 위에 표·브리지·리포트 문장이 열린다 (fund.js)
 (() => {
   const $ = id => document.getElementById(id);
-  const DEFAULTS = { q: '', sort: 'dq', c: '' };
+  const DEFAULTS = { q: '', sort: 'dq', c: '', ix: 'all' };
   const pg = U.page(DEFAULTS, (patch, typing) => { if ('c' in patch) openDetail(); renderTable(); if (!typing) renderFilters(); });
   const st = pg.state;
   let data = null;
@@ -9,15 +9,17 @@
 
   function renderFilters() {
     $('filters').innerHTML = `<div class="frow">
+      ${pg.seg('ix', [['all', '전체'], ['코스피200', '코스피200'], ['코스닥150', '코스닥150'], ['etc', '그 밖']])}
       ${pg.seg('sort', [['dq', 'OPM 변화(직전 분기)'], ['dy', 'OPM 변화(전년 동기)'], ['mc', '시총 순'], ['opm', 'OPM 순']])}
       <input type="search" data-q="q" placeholder="종목명·코드 검색" value="${U.esc(st.q)}" autocomplete="off">
-      <span class="muted small">${data.stocks.length}종목 · ${U.timeLabel(data.built)} 갱신</span></div>`;
+      <span class="muted small">${data.stocks.length}종목${data.pending ? ` · 아직 받는 중 ${data.pending}종목` : ''} · ${U.timeLabel(data.built)} 갱신</span></div>`;
   }
 
   function renderTable() {
     const q = st.q.trim().toLowerCase();
     const key = st.sort;
-    const rows = data.stocks.filter(s => !q || s.n.toLowerCase().includes(q) || s.c.includes(q))
+    const inIx = s => st.ix === 'all' || (st.ix === 'etc' ? !(s.ix || []).length : (s.ix || []).includes(st.ix));
+    const rows = data.stocks.filter(s => inIx(s) && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q)))
       .sort((a, b) => (key === 'mc' || key === 'opm' ? (b[key] ?? -1e9) - (a[key] ?? -1e9) : Math.abs(b[key] ?? 0) - Math.abs(a[key] ?? 0)));
     $('table').innerHTML = `<div class="col-head"><h3>쌓아 둔 종목 <span class="muted">${rows.length}</span></h3>
         <span class="muted small">줄을 누르면 분기 표가 열립니다 · 요인 = 직전 분기 대비 매출 대비 비중이 가장 크게 움직인 비용 (＋면 그만큼 OPM 을 깎음)</span></div>
@@ -25,7 +27,7 @@
         <thead><tr><th>종목</th><th class="num">시총</th><th class="num">최근 분기</th><th class="num">매출</th><th class="num">OP</th><th class="num">OPM</th>
           <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th>큰 요인</th><th class="num" title="리포트 문장 수 · 다음 분기 컨센서스 · 부문(제품·지역)별 매출이 있는지">리포트 · 컨센 · 부문</th></tr></thead>
         <tbody>${rows.map(s => `<tr data-c="${s.c}" class="${st.c === s.c ? 'on' : ''}" ${Stock.hintAttr(s)}>
-          <td class="name-cell"><b>${U.esc(s.n)}</b>${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? `<i class="fd-warn" title="검증이 어긋난 분기 ${s.chk}개 — 종목을 열면 사유가 보입니다">!</i>` : ''}</td>
+          <td class="name-cell"><b>${U.esc(s.n)}</b>${(s.ix || []).map(x => `<span class="tag">${x}</span>`).join('')}${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? `<i class="fd-warn" title="검증이 어긋난 분기 ${s.chk}개 — 종목을 열면 사유가 보입니다">!</i>` : ''}</td>
           <td class="num">${s.mc != null ? U.eok(s.mc) : '–'}</td><td class="num">${s.ql} <small class="muted">${s.nq}분기</small></td>
           <td class="num">${s.rev == null ? '–' : Math.round(s.rev).toLocaleString('ko-KR')}</td>
           <td class="num ${s.op < 0 ? 'down' : ''}">${s.op == null ? '–' : Math.round(s.op).toLocaleString('ko-KR')}</td>
@@ -65,6 +67,7 @@
     renderTable();
     openDetail();
     $('foot').innerHTML = `<p>출처: 금융감독원 DART 정기보고서 원문 주석(비용의 성격별 분류)과 XBRL(손익). 분기 값은 3개월 값, 없으면 누적끼리 뺀 값입니다. 연결이 있으면 연결, 없으면 별도.</p>
+      <p>코스피200·코스닥150 구성: ${U.esc(data.ix_as_of || '')}. 지수 정기변경(6월·12월) 뒤에는 목록을 다시 맞춰야 합니다.</p>
       <p>리포트 문장은 네이버 증권 리서치 요약에서 요인 낱말이 든 문장을 뽑은 것이고, 컨센서스는 네이버 종목분석(FnGuide) 분기 추정치입니다. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
   })();
 })();
