@@ -229,6 +229,13 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
         xr = xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
     except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
         notes.append('XBRL 없음')
+    if any(r[1] == 'nature_x' and r[5] == end and r[2] != 'total' for r in xr):
+        rows = xr                   # 주석 XBRL 에 이번 기간의 성격별 비용이 있다 — 큰 원문(수 MB)은 받지 않는다
+        with conn:
+            put(conn, code, rows)
+            conn.execute('INSERT OR REPLACE INTO fund_report VALUES (?, ?, ?, ?, ?, ?, ?)',
+                         (rno, code, name, end, kind, datetime.now().isoformat(timespec='seconds'), '원문 생략 (주석 XBRL)'))
+        return ''
     try:
         nr, found = note_rows(document(session, key, rno), end, kind, fy_end, oracle_of(xr), rno)
         rows += nr
@@ -263,7 +270,7 @@ def reparse(conn) -> int:
             conn.execute(f"DELETE FROM fund_fact WHERE topic != 'nature' AND rcept_no IN ({q})", have_x)
         for r in conn.execute('SELECT rcept_no, code, name, period_end, kind, note FROM fund_report ORDER BY rcept_no').fetchall():
             f = DOCS / f"{r['rcept_no']}.xml.gz"
-            if not f.exists():
+            if not f.exists() and not zs[r['rcept_no']].exists():
                 continue
             xr = []
             if zs[r['rcept_no']].exists():
@@ -271,8 +278,11 @@ def reparse(conn) -> int:
                     xr = xbrl_rows(zs[r['rcept_no']].read_bytes(), r['rcept_no'])
                 except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
                     pass
-            rows, tables = note_rows(gzip.decompress(f.read_bytes()).decode('utf-8'), r['period_end'], r['kind'], fy.get(r['code'], 12),
-                                     oracle_of(xr), r['rcept_no'])
+            if f.exists():      # 원문을 받지 않은 보고서(주석 XBRL 로 대신)는 XBRL 만 다시
+                rows, tables = note_rows(gzip.decompress(f.read_bytes()).decode('utf-8'), r['period_end'], r['kind'], fy.get(r['code'], 12),
+                                         oracle_of(xr), r['rcept_no'])
+            else:
+                rows, tables = [], True
             rows += xr
             put(conn, r['code'], rows)
             note = [x for x in (r['note'] or '').split('; ') if x and '성격별' not in x]
@@ -292,11 +302,13 @@ def main() -> int:
     ap.add_argument('--max', type=int, default=300, help='한 번에 받을 보고서 수')
     ap.add_argument('--reparse', action='store_true', help='캐시한 원문·XBRL 로 다시 읽기 (네트워크 없음)')
     ap.add_argument('--xbrl-cache', action='store_true', help='받은 보고서의 XBRL 압축을 캐시에 채우기')
+    ap.add_argument('--shard', help='i/n — 대상의 i 번째 조각만 (여러 개를 나란히 돌려 빨리 받는다)')
     args = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S')
     import fcntl
     (ROOT / 'logs').mkdir(exist_ok=True)
-    lock = open(ROOT / 'logs' / 'collect_fund.lock', 'w')
+    shard = tuple(int(x) for x in args.shard.split('/')) if args.shard else None
+    lock = open(ROOT / 'logs' / (f'collect_fund.{shard[0]}.lock' if shard else 'collect_fund.lock'), 'w')
     try:                    # 정기 실행과 손으로 돌린 수집이 겹치면 같은 보고서를 두 번 받는다
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
@@ -323,6 +335,8 @@ def main() -> int:
     if args.add:
         add_watch(args.add)
     codes = [args.code] if args.code else (args.add or watch())
+    if shard:
+        codes = [c for k, c in enumerate(codes) if k % shard[1] == shard[0]]
     conn = connect()
     s = requests.Session()
     cc = corp_codes(s, key)

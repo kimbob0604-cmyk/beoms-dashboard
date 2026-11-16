@@ -245,6 +245,7 @@ class SegmentTest(unittest.TestCase):
         self.assertIsNone(X.seg_class([ops]))                                                       # 부문 합계
         self.assertIsNone(X.seg_class([(X.AX_GEO, 'ifrs-full:GeographicalAreasMember')]))            # 축 전체
         self.assertIsNone(X.seg_class([(X.AX_SEG, 'e:A'), (X.AX_GEO, 'e:B')]))                       # 두 축 교차는 안 쓴다
+        self.assertEqual(X.seg_class([(X.AX_SEG, 'ifrs-full:EliminationOfIntersegmentAmountsMember')]), ('seg', '__adj__'))   # 영풍: 제거를 부문 축 안에
 
     def test_settle_views(self):
         import fund_xbrl as X

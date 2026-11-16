@@ -91,7 +91,9 @@ def nature_periods(tables, basis, own=None):
 
 def company(conn, code):
     facts, labels, tables, own, by = load(conn, code)
-    basis = 'C' if tables.get(('C', 'nature')) or tables.get(('C', 'nature_x')) else 'S'
+    # 연결 우선. 다만 연결 표를 분기 보고서에서 못 읽어 연간 값만 있으면(별도 쪽 기간이 훨씬 많으면) 별도 기준으로 — 빈 표보다 낫다
+    nper = lambda b: len(set(tables.get((b, 'nature'), {})) | set(tables.get((b, 'nature_x'), {})))
+    basis = 'C' if nper('C') and nper('C') >= 0.6 * nper('S') else 'S'
     periods, meta, src, bad = nature_periods(tables, basis, own)
     if not periods:
         return None
@@ -236,7 +238,7 @@ def segments(by, own, basis, inc):
                 if v is not None:
                     revv[pe] = v
             vint = {e: v for e, v in fund.quarterize(revv).items() if e >= FROM}
-            use_adj0 = adj if view == 'seg' else {}
+            use_adj0 = adj if view in ('seg', 'geo') else {}
             tot = dict(inc['rev'])
             for e, v in vint.items():            # 그 기간 보고서의 매출과 안 맞고 줄을 가져온 보고서의 매출과는 맞을 때만 그쪽 매출로
                 ssum = sum(rev[n].get(e) or 0.0 for n in names) + (use_adj0.get(e) or 0.0)
@@ -246,7 +248,7 @@ def segments(by, own, basis, inc):
             ends = sorted({e for n in names for e in rev[n]} & set(tot))
             if len(names) < 2 or not ends:
                 continue
-            use_adj = adj if view == 'seg' else {}
+            use_adj = adj if view in ('seg', 'geo') else {}
 
             def check(ns):
                 chk, inf = {}, {}
@@ -276,7 +278,7 @@ def segments(by, own, basis, inc):
         out.append({'k': view, 'name': fund.VIEW_NAME[view], 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
                     'm': [{'n': n, 'rev': [r1(rev[n].get(e)) for e in ends],
                            'op': [r1(op[n].get(e)) for e in ends] if n in op and any(e in op[n] for e in ends) else None} for n in names],
-                    'adj': [r1(adj.get(e)) for e in ends] if view == 'seg' and any(e in adj for e in ends) else None,
+                    'adj': [r1(adj.get(e)) for e in ends] if view in ('seg', 'geo') and any(e in adj for e in ends) else None,
                     'adjop': [r1(adjop.get(e)) for e in ends] if view == 'seg' and any(e in adjop for e in ends) else None,
                     'tot': [r1(tot.get(e)) for e in ends], 'chk': chk, 'inf': inf, 'sets': len(rt)})
     return out

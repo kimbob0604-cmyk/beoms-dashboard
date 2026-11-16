@@ -60,8 +60,10 @@ def seg_class(extra):
             return None
         return ('seg', '__adj__' if c in M_ADJ else c)
     axis, m = rest[0]
-    if axis not in VIEW or m in M_TOTAL or m in M_ADJ or (c is not None and c != M_OPSEG):
+    if axis not in VIEW or m in M_TOTAL or (c is not None and c != M_OPSEG):
         return None
+    if m in M_ADJ:                       # 부문간 제거·조정을 부문(지역) 축 안에 둔 회사(지주사 등) → 그 보기의 조정
+        return (VIEW[axis] if c is None else VIEW[axis] + '*', '__adj__')
     # '영업부문' + 지역/제품 축: 지역이 곧 부문인 회사(삼양식품)일 수도, 부문 축이 따로 있는데 지역에도 표시를 붙인 회사(삼성전자)일 수도 있다
     # → 일단 'geo*'/'prod*' 로 두고 settle_views 가 그 보고서에 진짜 부문이 있는지 보고 정한다
     return (VIEW[axis] + '*' if c == M_OPSEG and axis != AX_SEG else VIEW[axis], m)
