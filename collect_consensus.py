@@ -210,6 +210,7 @@ def main():
 
     mcap = {u['code']: u['market_cap'] for u in universe}
     session = requests.Session()
+    session.headers['User-Agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36'
     throttle = Throttle(args.delay)
     started = time.monotonic()
     log.info('수집 시작: %d종목 (as_of=%s)', len(codes), args.as_of)
