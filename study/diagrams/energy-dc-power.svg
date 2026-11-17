@@ -1,0 +1,47 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 데이터센터 전력 병목과 ESS: 계통 연결을 기다리는 길과 자가발전+ESS로 가는 길">
+  <defs><marker id="dcArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">AI 데이터센터는 전기를 기다리지 않는다 — 두 갈래 길과 ESS</text>
+  <!-- 출발 -->
+  <rect x="10" y="150" width="120" height="70" rx="8" class="dg-hi"/>
+  <text x="70" y="176" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">신규 AI DC</text>
+  <text x="70" y="194" text-anchor="middle" class="dg-s" font-size="10.5">IT 1GW 짓기로</text>
+  <text x="70" y="208" text-anchor="middle" class="dg-s" font-size="10.5">결정</text>
+  <!-- 위 길: FTM -->
+  <path d="M130 170 C160 120, 170 92, 200 92" class="dg-arrow" marker-end="url(#dcArr)"/>
+  <rect x="204" y="44" width="300" height="100" rx="8" class="dg-lane1"/>
+  <text x="216" y="64" class="dg-t" font-size="12.5" font-weight="800">길 ① 전력망(계통)에 연결 — FTM</text>
+  <text x="216" y="84" class="dg-s" font-size="11">미국 계통 대기 약 2,061GW (iM p.9)</text>
+  <text x="216" y="100" class="dg-s" font-size="11">신청 → 가동 평균 약 75개월</text>
+  <text x="216" y="116" class="dg-s" font-size="11">DC 전원 확보: 계통 단독 60개월 (대신)</text>
+  <text x="216" y="133" class="dg-t" font-size="11" font-weight="700">+ 출력조절용 ESS를 붙이면 36개월로 단축</text>
+  <!-- 아래 길: BTM -->
+  <path d="M130 200 C160 250, 170 268, 200 268" class="dg-arrow" marker-end="url(#dcArr)"/>
+  <rect x="204" y="214" width="300" height="104" rx="8" class="dg-lane3"/>
+  <text x="216" y="234" class="dg-t" font-size="12.5" font-weight="800">길 ② 자가발전 + ESS — BTM</text>
+  <text x="216" y="254" class="dg-s" font-size="11">가스 30개월 · 연료전지 18개월 (대신)</text>
+  <text x="216" y="270" class="dg-s" font-size="11">태양광·가스는 출력이 출렁여 ESS가 필요</text>
+  <text x="216" y="286" class="dg-s" font-size="11">부하 완충용: xAI 메가팩 약 2.3GWh (iM p.16)</text>
+  <text x="216" y="306" class="dg-t" font-size="11" font-weight="700">계통이 늦어질수록 이 길의 ESS 수요가 커진다</text>
+  <!-- 오른쪽: IT 1GW당 ESS -->
+  <rect x="520" y="44" width="190" height="274" rx="8" class="dg-panel"/>
+  <text x="615" y="64" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">IT 1GW당 ESS 몇 GWh?</text>
+  <text x="532" y="88" class="dg-t" font-size="11.5" font-weight="700">대신: 1.0~2.2GWh</text>
+  <text x="532" y="104" class="dg-s" font-size="10.5">계통+ESS 1.0 · 가스 100% 1.6</text>
+  <text x="532" y="119" class="dg-s" font-size="10.5">태양광 섞으면 2.2</text>
+  <text x="532" y="144" class="dg-t" font-size="11.5" font-weight="700">iM: 4.0GWh</text>
+  <text x="532" y="160" class="dg-s" font-size="10.5">태양광 2.4GW + 4시간 저장</text>
+  <line x1="530" y1="174" x2="700" y2="174" class="dg-div"/>
+  <text x="532" y="194" class="dg-t" font-size="11.5" font-weight="700">2027 AI DC 연계 ESS</text>
+  <text x="532" y="211" class="dg-s" font-size="10.5">대신 9 · 대신(10월) 12.1</text>
+  <text x="532" y="226" class="dg-s" font-size="10.5">유안타 BTM 18 · iM 22~28</text>
+  <text x="532" y="241" class="dg-s" font-size="10.5">메리츠 31 GWh (미국)</text>
+  <text x="532" y="262" class="dg-s" font-size="10.5">→ 3배 넘게 갈린다. 원인은</text>
+  <text x="532" y="277" class="dg-s" font-size="10.5">   위의 '1GW당' 가정 차이</text>
+  <text x="532" y="300" class="dg-m" font-size="10">글로벌 DC용 ESS(GGII):</text>
+  <text x="532" y="313" class="dg-m" font-size="10">12 → 61 → 272GWh (25·27·30)</text>
+  <!-- 아래 설명 -->
+  <rect x="10" y="330" width="700" height="62" rx="6" class="dg-band"/>
+  <text x="22" y="349" class="dg-t" font-size="11.5" font-weight="700">그래서 'AI DC 착공이 늦어지면 ESS도 나쁘다'는 단순하지 않다 (5/7 하우스: 영향 제한적)</text>
+  <text x="22" y="366" class="dg-s" font-size="11">DB: 대기 물량은 전력망 쪽(FTM)이라 무관. iM·대신: 계통이 막히면 BTM ESS가 오히려 는다. 미래: 업황 호조는 AI DC와 무관.</text>
+  <text x="22" y="383" class="dg-m" font-size="10">출처: 대신 11월 p.16, iM p.9·13·16·18, DB p.18·23, 메리츠 p.25, 유안타 p.22, 신한 p.17. 개월 수는 대신의 사례 추정.</text>
+</svg>

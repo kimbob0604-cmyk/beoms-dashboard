@@ -1,0 +1,56 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="차세대 배터리 기술 로드맵 2026~2030: LFP, 46시리즈, BBU, LMR, 전고체, 나트륨">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">기술 로드맵 2026~2030 — 2027년에 돈이 되는 것과 아직 아닌 것</text>
+  <!-- 연도 눈금: 2026=150, 1년=110px -->
+  <g font-size="11.5" font-weight="800" class="dg-t">
+    <text x="205" y="44" text-anchor="middle" class="dg-t">2026</text>
+    <text x="315" y="44" text-anchor="middle" class="dg-t">2027</text>
+    <text x="425" y="44" text-anchor="middle" class="dg-t">2028</text>
+    <text x="535" y="44" text-anchor="middle" class="dg-t">2029</text>
+    <text x="645" y="44" text-anchor="middle" class="dg-t">2030</text>
+  </g>
+  <g>
+    <line x1="150" y1="50" x2="150" y2="316" class="dg-div"/><line x1="260" y1="50" x2="260" y2="316" class="dg-div"/>
+    <line x1="370" y1="50" x2="370" y2="316" class="dg-div"/><line x1="480" y1="50" x2="480" y2="316" class="dg-div"/>
+    <line x1="590" y1="50" x2="590" y2="316" class="dg-div"/><line x1="700" y1="50" x2="700" y2="316" class="dg-div"/>
+  </g>
+  <rect x="260" y="50" width="110" height="266" class="dg-band"/>
+  <text x="315" y="62" text-anchor="middle" class="dg-s" font-size="10" font-weight="700">← 이 스터디의 해</text>
+  <!-- 레인 이름 -->
+  <g font-size="11.5">
+    <text x="12" y="88" class="dg-t" font-weight="800">LFP 각형 ESS</text><text x="12" y="102" class="dg-s" font-size="10">지금의 돈줄</text>
+    <text x="12" y="132" class="dg-t" font-weight="800">46시리즈</text><text x="12" y="146" class="dg-s" font-size="10">대형 원통형</text>
+    <text x="12" y="176" class="dg-t" font-weight="800">BBU 2170</text><text x="12" y="190" class="dg-s" font-size="10">탭리스 LFP</text>
+    <text x="12" y="220" class="dg-t" font-weight="800">LMR</text><text x="12" y="234" class="dg-s" font-size="10">망간 과잉 양극</text>
+    <text x="12" y="264" class="dg-t" font-weight="800">전고체</text><text x="12" y="278" class="dg-s" font-size="10">황화물</text>
+    <text x="12" y="300" class="dg-t" font-weight="800">나트륨</text><text x="12" y="312" class="dg-s" font-size="10">리튬 대신</text>
+  </g>
+  <g font-size="10.5">
+    <!-- LFP -->
+    <rect x="152" y="76" width="546" height="26" rx="5" class="dg-ok"/>
+    <text x="160" y="93" class="dg-t" font-weight="700">북미 EV 라인 → ESS(LFP) 전환 · SDI 캐파 16~20→30, LGES 50→62~70GWh(26→27)</text>
+    <!-- 46 -->
+    <rect x="152" y="120" width="216" height="26" rx="5" class="dg-mid"/>
+    <rect x="370" y="120" width="328" height="26" rx="5" class="dg-hi"/>
+    <text x="160" y="137" class="dg-t" font-weight="700">LGES 애리조나 10→20GWh 이상</text>
+    <text x="378" y="137" class="dg-t" font-weight="700">수주 → 양산 확대 (LGES 46 수주잔고 약 440GWh, 신한)</text>
+    <!-- BBU -->
+    <rect x="262" y="164" width="436" height="26" rx="5" class="dg-hi"/>
+    <text x="270" y="181" class="dg-t" font-weight="700">LGES 탭리스 LFP 2170 상업화(1H27) · SDI BBU 확대 · 수요 9.1→14.5GWh(27→30, DB)</text>
+    <!-- LMR -->
+    <rect x="372" y="208" width="326" height="26" rx="5" class="dg-mid"/>
+    <text x="380" y="225" class="dg-t" font-weight="700">GM 각형 LMR 적용 준비 (2028~)</text>
+    <!-- 전고체 -->
+    <rect x="315" y="252" width="165" height="26" rx="5" class="dg-mid"/>
+    <rect x="480" y="252" width="218" height="26" rx="5" class="dg-hi"/>
+    <text x="320" y="269" class="dg-t" font-weight="700">SDI 로봇용 2H27</text>
+    <text x="486" y="269" class="dg-t" font-weight="700">SK온 29 · LGES 29~30 · SDI 차량 30</text>
+    <!-- 나트륨 -->
+    <rect x="315" y="290" width="383" height="22" rx="5" class="dg-mid"/>
+    <text x="320" y="305" class="dg-t" font-weight="700">CATL 해외 인도 2027.6 · LGES 2027 개발 → 2028 샘플</text>
+  </g>
+  <!-- 아래 설명 -->
+  <rect x="10" y="326" width="700" height="66" rx="6" class="dg-band"/>
+  <text x="22" y="345" class="dg-t" font-size="11.5" font-weight="700">2027년 실적에 들어오는 것은 맨 위 두 줄(LFP ESS, 46시리즈)과 BBU 정도다. 전고체·나트륨은 '주가 촉매'이지 이익이 아니다.</text>
+  <text x="22" y="362" class="dg-s" font-size="11">신한: 신기술 이익 기여는 2028년 이후. 전고체 팩 $400~600/kWh는 LFP 팩(약 $81)의 5~7배라 처음엔 로봇·특수용도로 간다.</text>
+  <text x="22" y="379" class="dg-m" font-size="10">진한 칸 = 양산·확대, 연한 칸 = 개발·소량·준비. 출처: 신한 p.21~24, 대신 10월 p.42~43, 유안타 p.34~37, 메리츠 p.28~34, DB p.29~30.</text>
+</svg>

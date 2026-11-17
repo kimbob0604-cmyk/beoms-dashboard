@@ -173,6 +173,20 @@ h1 .sd-chip { font-size: 12px; vertical-align: middle; }
 
 /* ---------- 설명 그림 (study/diagrams/*.svg) ---------- */
 .sd-dia .dg svg { display: block; width: 100%; max-width: 860px; height: auto; margin: 6px 0 4px; }
+/* 계산 카드 (가정 조절) */
+.sd-calc .cc-in { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 8px 0 10px; }
+.sd-calc .cc-in label { display: flex; align-items: center; gap: 6px; font-size: 13px; background: var(--chip); border-radius: 8px; padding: 5px 9px; }
+.sd-calc .cc-in input { width: 78px; font: inherit; font-weight: 700; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--text); }
+.sd-calc .cc-in small { color: var(--sub); }
+.sd-calc .cc-in em { font-style: normal; color: var(--muted); font-size: 12px; }
+.sd-calc .cc-out { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.sd-calc .cc-out th { text-align: left; font-weight: 600; padding: 6px 8px; width: 34%; }
+.sd-calc .cc-out td { padding: 6px 8px; border-top: 1px solid var(--line); }
+.sd-calc .cc-out th { border-top: 1px solid var(--line); }
+.sd-calc .cc-f { color: var(--sub); font-variant-numeric: tabular-nums; }
+.sd-calc .cc-v { text-align: right; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sd-calc .cc-out tr.hi th, .sd-calc .cc-out tr.hi .cc-v { color: var(--s1); }
+@media (max-width: 700px) { .sd-calc .cc-out th { width: auto; } .sd-calc .cc-f { display: block; } }
 .sd-diatxt { margin: 6px 0 0; line-height: 1.65; color: var(--sub); }
 .dg text { font-family: inherit; }
 .dg-t { fill: var(--text); } .dg-s { fill: var(--sub); } .dg-m { fill: var(--muted); }

@@ -1,0 +1,104 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2차전지·ESS 밸류체인: 원료에서 소재, 셀, 시스템, 수요처까지와 단계별 한국 상장사">
+  <defs><marker id="ecArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">2차전지·ESS 밸류체인 — 돈이 흐르는 순서</text>
+  <!-- 단계 머리 -->
+  <g font-size="12" font-weight="800">
+    <rect x="10" y="34" width="120" height="26" rx="6" class="dg-lane3"/><text x="70" y="52" text-anchor="middle" class="dg-t">① 원료</text>
+    <rect x="148" y="34" width="150" height="26" rx="6" class="dg-lane2"/><text x="223" y="52" text-anchor="middle" class="dg-t">② 소재</text>
+    <rect x="316" y="34" width="120" height="26" rx="6" class="dg-lane1"/><text x="376" y="52" text-anchor="middle" class="dg-t">③ 셀</text>
+    <rect x="454" y="34" width="120" height="26" rx="6" class="dg-lane2"/><text x="514" y="52" text-anchor="middle" class="dg-t">④ 팩·시스템</text>
+    <rect x="592" y="34" width="118" height="26" rx="6" class="dg-lane3"/><text x="651" y="52" text-anchor="middle" class="dg-t">⑤ 수요처</text>
+  </g>
+  <g class="dg-arrow" marker-end="url(#ecArr)">
+    <line x1="131" y1="47" x2="146" y2="47"/><line x1="299" y1="47" x2="314" y2="47"/><line x1="437" y1="47" x2="452" y2="47"/><line x1="575" y1="47" x2="590" y2="47"/>
+  </g>
+  <!-- 본체 칸 -->
+  <rect x="10" y="68" width="120" height="250" rx="6" class="dg-panel"/>
+  <rect x="148" y="68" width="150" height="250" rx="6" class="dg-panel"/>
+  <rect x="316" y="68" width="120" height="250" rx="6" class="dg-hi"/>
+  <rect x="454" y="68" width="120" height="250" rx="6" class="dg-panel"/>
+  <rect x="592" y="68" width="118" height="250" rx="6" class="dg-panel"/>
+  <!-- ① 원료 -->
+  <g font-size="11.5">
+    <text x="20" y="88" class="dg-t" font-weight="700">리튬</text>
+    <text x="20" y="103" class="dg-s" font-size="10.5">탄산(LFP)·수산화(NCM)</text>
+    <text x="20" y="124" class="dg-t" font-weight="700">니켈·코발트·망간</text>
+    <text x="20" y="145" class="dg-t" font-weight="700">흑연</text>
+    <text x="20" y="166" class="dg-t" font-weight="700">구리·알루미늄</text>
+    <line x1="18" y1="240" x2="122" y2="240" class="dg-div"/>
+    <text x="20" y="258" class="dg-s" font-size="10.5" font-weight="700">국내</text>
+    <text x="20" y="274" class="dg-t" font-size="11">POSCO홀딩스</text>
+    <text x="20" y="300" class="dg-s" font-size="10.5">가격은 중국이 정한다</text>
+  </g>
+  <!-- ② 소재 -->
+  <g font-size="11.5">
+    <text x="158" y="88" class="dg-t" font-weight="700">양극재 <tspan class="dg-s" font-size="10.5" font-weight="400">셀 원가 최대</tspan></text>
+    <text x="158" y="103" class="dg-s" font-size="10.5">퓨처엠·엘앤에프·에코프로비엠</text>
+    <text x="158" y="122" class="dg-t" font-weight="700">음극재</text>
+    <text x="158" y="137" class="dg-s" font-size="10.5">퓨처엠·대주전자재료(실리콘)</text>
+    <text x="158" y="156" class="dg-t" font-weight="700">분리막 · 전해액</text>
+    <text x="158" y="171" class="dg-s" font-size="10.5">WCP · 동화·솔브레인</text>
+    <text x="158" y="190" class="dg-t" font-weight="700">동박 · 알루미늄박</text>
+    <text x="158" y="205" class="dg-s" font-size="10.5">롯데에머·SKC · 삼아알미늄</text>
+    <text x="158" y="224" class="dg-t" font-weight="700">캔 · 도전재</text>
+    <text x="158" y="239" class="dg-s" font-size="10.5">상신이디피 · 나노신소재</text>
+    <line x1="156" y1="252" x2="290" y2="252" class="dg-div"/>
+    <text x="158" y="270" class="dg-s" font-size="10.5">메탈 값에 판가가 연동</text>
+    <text x="158" y="285" class="dg-s" font-size="10.5">→ 리튬이 내리면 역래깅</text>
+    <text x="158" y="306" class="dg-s" font-size="10.5">LFP 양극재 = 미국 ESS 병목?</text>
+  </g>
+  <!-- ③ 셀 -->
+  <g font-size="11.5">
+    <text x="326" y="88" class="dg-t" font-weight="800">삼성SDI</text>
+    <text x="326" y="103" class="dg-s" font-size="10.5">각형 · ESS·BBU·전고체</text>
+    <text x="326" y="124" class="dg-t" font-weight="800">LG에너지솔루션</text>
+    <text x="326" y="139" class="dg-s" font-size="10.5">파우치·46·LFP ESS</text>
+    <text x="326" y="160" class="dg-t" font-weight="800">SK온 <tspan class="dg-s" font-size="10.5" font-weight="400">(SK이노 자회사)</tspan></text>
+    <line x1="324" y1="176" x2="428" y2="176" class="dg-div"/>
+    <text x="326" y="194" class="dg-s" font-size="10.5" font-weight="700">경쟁: CATL·BYD·EVE</text>
+    <text x="326" y="209" class="dg-s" font-size="10.5" font-weight="700">Hithium·CALB …</text>
+    <line x1="324" y1="222" x2="428" y2="222" class="dg-div"/>
+    <text x="326" y="240" class="dg-t" font-size="10.5" font-weight="700">미국에서 만들면</text>
+    <text x="326" y="255" class="dg-t" font-size="10.5" font-weight="700">AMPC $35/kWh</text>
+    <text x="326" y="276" class="dg-s" font-size="10.5">2027 영업이익의</text>
+    <text x="326" y="291" class="dg-s" font-size="10.5">절반 이상이 AMPC</text>
+  </g>
+  <!-- ④ 팩·시스템 -->
+  <g font-size="11.5">
+    <text x="464" y="88" class="dg-t" font-weight="700">EV 팩</text>
+    <text x="464" y="103" class="dg-s" font-size="10.5">완성차·셀사가 조립</text>
+    <text x="464" y="124" class="dg-t" font-weight="700">BESS 컨테이너</text>
+    <text x="464" y="139" class="dg-s" font-size="10.5">셀+랙+PCS+BMS+냉각</text>
+    <text x="464" y="160" class="dg-t" font-weight="700">SI (통합 납품)</text>
+    <text x="464" y="175" class="dg-s" font-size="10.5">Tesla·Fluence·Sungrow</text>
+    <line x1="462" y1="188" x2="566" y2="188" class="dg-div"/>
+    <text x="464" y="206" class="dg-s" font-size="10.5" font-weight="700">국내 ESS 부품</text>
+    <text x="464" y="221" class="dg-t" font-size="10.5">서진시스템(함체)</text>
+    <text x="464" y="236" class="dg-t" font-size="10.5">한중엔시에스(냉각)</text>
+    <text x="464" y="251" class="dg-t" font-size="10.5">세방전지(패키징)</text>
+    <text x="464" y="266" class="dg-t" font-size="10.5">LS일렉·효성중공업</text>
+    <text x="464" y="288" class="dg-s" font-size="10.5">PCS·BMS = 행정명령</text>
+    <text x="464" y="303" class="dg-s" font-size="10.5">탈중국의 첫 표적</text>
+  </g>
+  <!-- ⑤ 수요처 -->
+  <g font-size="11.5">
+    <rect x="600" y="76" width="102" height="48" rx="5" class="dg-mid"/>
+    <text x="608" y="94" class="dg-t" font-weight="800">EV</text>
+    <text x="608" y="110" class="dg-s" font-size="10.5">2027 +9~15%</text>
+    <rect x="600" y="132" width="102" height="62" rx="5" class="dg-hi"/>
+    <text x="608" y="150" class="dg-t" font-weight="800">전력망 ESS</text>
+    <text x="608" y="166" class="dg-s" font-size="10.5">2027 +16~35%</text>
+    <text x="608" y="182" class="dg-s" font-size="10.5">북미 = 비중국 시장</text>
+    <rect x="600" y="202" width="102" height="48" rx="5" class="dg-mid"/>
+    <text x="608" y="220" class="dg-t" font-weight="800">AI DC</text>
+    <text x="608" y="236" class="dg-s" font-size="10.5">BTM ESS·BBU</text>
+    <rect x="600" y="258" width="102" height="48" rx="5" class="dg-lo"/>
+    <text x="608" y="276" class="dg-t" font-weight="800">로봇·기타</text>
+    <text x="608" y="292" class="dg-s" font-size="10.5">원통형·전고체</text>
+  </g>
+  <!-- 아래 설명 띠 -->
+  <rect x="10" y="330" width="700" height="58" rx="6" class="dg-band"/>
+  <text x="22" y="350" class="dg-t" font-size="11.5" font-weight="700">2027년의 그림: 수요의 무게중심이 ⑤의 EV → ESS로, 이익의 무게중심이 ② 소재 → ③ 셀로 옮겨 간다.</text>
+  <text x="22" y="368" class="dg-s" font-size="11">셀은 ESS 판가가 메탈에 덜 묶여 있고 미국 생산 보조금(AMPC)을 받는다. 소재는 판가가 메탈에 연동돼 리튬 하락에 약하다.</text>
+  <text x="22" y="383" class="dg-m" font-size="10">출처: 신한 p.23, iM p.20·24, 미래 p.8 등을 합쳐 그림. 회사 배치는 리포트 언급 기준(빠진 회사 있음).</text>
+</svg>

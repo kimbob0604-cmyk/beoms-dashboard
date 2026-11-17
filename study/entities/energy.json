@@ -1,0 +1,398 @@
+{
+ "_note": "Study › 2차전지·에너지 색인 (energy-2027 종합 문서)",
+ "c:obbba": {
+  "name": "OBBBA",
+  "en": "One Big Beautiful Bill Act",
+  "desc": "2025.7.4 제정된 미국 감세법. EV 소비자 공제(30D)를 없애고 45X·48E는 남기되, 중국계 기업(PFE)을 빼는 요건을 붙였다."
+ },
+ "c:30d": {
+  "name": "30D·45W (EV 구매 공제)",
+  "en": "Clean vehicle credit",
+  "desc": "미국 EV 구매(개인 30D / 상업용 45W) 세액공제 $7,500. 2025.9.30 종료됐다."
+ },
+ "c:ampc": {
+  "name": "45X·AMPC (생산세액공제)",
+  "en": "Advanced Manufacturing Production Credit",
+  "desc": "미국에서 만든 배터리에 주는 생산세액공제. 셀 $35/kWh, 모듈 $10/kWh. 2029년까지 전액, 2030~32년 75→50→25%. 한국 셀사는 이 돈을 영업이익에 넣는다 — 그래서 '영업이익 중 AMPC가 얼마인가'가 늘 따라붙는다."
+ },
+ "c:48e": {
+  "name": "48E (투자세액공제)",
+  "en": "Clean Electricity Investment Credit",
+  "desc": "ESS 같은 청정전력 설비를 사는 쪽(디벨로퍼)이 받는 투자세액공제. 기본 6%, 임금·도제 요건을 채우면 30%, 국내조달·에너지커뮤니티 가산으로 최대 50%. ESS는 2033년까지 전액. '기본 6%(iM)'와 '기본 30%(유안타)'는 요건 충족 여부를 다르게 쓴 것이다."
+ },
+ "c:pfe": {
+  "name": "PFE (금지외국기관)",
+  "en": "Prohibited Foreign Entity",
+  "desc": "세액공제에서 빠지는 중국계 기업. 우려국 정부·기업(SFE), 지분 50% 초과로 지배받는 곳(FCE), 지분 25%·40%나 부채 15% 등으로 영향받는 곳(FIE)으로 나뉜다. IRA 시절 FEOC를 대체·확장한 개념."
+ },
+ "c:macr": {
+  "name": "MACR (비PFE 원가 비율)",
+  "en": "Material Assistance Cost Ratio",
+  "desc": "설비·부품 원가 중 PFE가 아닌 곳에서 조달한 비율. 이 비율을 넘어야 공제를 받는다. 48E는 55%(2026)→75%(2030), 45X는 60%→80~85%로 해마다 오른다."
+ },
+ "c:feoc": {
+  "name": "FEOC",
+  "en": "Foreign Entity of Concern",
+  "desc": "IRA 시절의 '우려 해외 기업' 개념. OBBBA에서 PFE로 대체·확장됐다."
+ },
+ "c:safe-harbor": {
+  "name": "세이프하버",
+  "en": "Safe harbor",
+  "desc": "기한 전에 착공·구매해 옛 규정을 적용받는 장치. 2026년 미국 ESS 출하를 부풀렸고 2027년 상반기에 소진된다(유안타 21GWh)."
+ },
+ "c:sec301": {
+  "name": "301조 관세",
+  "en": "Section 301 tariff",
+  "desc": "미국 무역법 301조로 매기는 대중국 관세. ESS용 리튬이온 배터리는 기본 3.4% + 301조 25% + 신규 12.5% = 40.9%(2026.7.24~). 유안타는 상단을 48.4%로 본다."
+ },
+ "c:overcap301": {
+  "name": "과잉설비 301조 조사",
+  "en": "Section 301 overcapacity",
+  "desc": "한국 포함 16개 경제권의 과잉생산 조사. 2027.3.11 결정 예정."
+ },
+ "c:eo-grid": {
+  "name": "전력망 안보 행정명령",
+  "en": "Grid security executive order (2026.8.26)",
+  "desc": "69kV 이상 대규모 전력망에 우려국 BESS·인버터·핵심 부품을 새로 설치하지 못하게 하고, 이미 깔린 것도 교체를 명령할 수 있게 한 행정명령. DOE 시행규칙은 12/24 발표 예정. 번호는 미래·DB·신한 14421, iM·유안타 14420으로 다르게 적혀 있다(같은 날·같은 내용)."
+ },
+ "c:cfe": {
+  "name": "CFE (규제 대상 외국 주체)",
+  "en": "Covered Foreign Entity",
+  "desc": "전력망 행정명령이 겨냥하는 외국 주체. 제재국 관련 주체와 정부가 지정한 주체다."
+ },
+ "c:fcc-list": {
+  "name": "FCC Covered List",
+  "en": "FCC Covered List",
+  "desc": "미국 통신규제기관의 금지 장비 목록. 2026.7 외국산 전력 인버터가 추가됐다."
+ },
+ "c:ndaa": {
+  "name": "NDAA §154·§842",
+  "en": "National Defense Authorization Act",
+  "desc": "미국 국방수권법. 2027.10.1부터 국방부의 중국 6대 배터리사 조달을 금지한다(§154). 방산·드론용 FEOC 셀도 뺀다(§842)."
+ },
+ "c:uflpa": {
+  "name": "UFLPA",
+  "en": "Uyghur Forced Labor Prevention Act",
+  "desc": "위구르 강제노동방지법. 신장 관련 리튬·음극재를 수입 금지 명단에 올렸다."
+ },
+ "c:iaa": {
+  "name": "EU IAA (산업가속화법)",
+  "en": "Industrial Accelerator Act",
+  "desc": "EU가 EV·ESS에 역내산 셀·양극재·BMS를 요구하고 중국 FDI에 조건(지분 49% 이하, EU 인력 60% 등)을 붙이는 법. 2H27 발효 전망."
+ },
+ "c:eu-co2": {
+  "name": "EU CO2 3년 정산",
+  "en": "EU CO2 fleet target (2025~27 averaging)",
+  "desc": "완성차 CO2 배출을 2025~27년 3년 평균으로 평가하는 한시 특례. 기준 93.6g/km, 초과분 g당 95유로 벌금. 유럽 완성차가 BEV를 밀어내야 하는 이유."
+ },
+ "c:battery-passport": {
+  "name": "배터리 패스포트",
+  "en": "EU Battery Passport",
+  "desc": "2kWh 이상 배터리에 QR로 이력·탄소·소재 정보를 담는 EU 의무. 2027.2.18 시행."
+ },
+ "c:csa2": {
+  "name": "EU CSA2",
+  "en": "Cybersecurity Act 2",
+  "desc": "EU 사이버보안법 개정안. 에너지저장을 고중요 산업으로 지정하고 고위험 공급업체를 퇴출할 근거를 둔다."
+ },
+ "c:cn-rebate": {
+  "name": "중국 수출 증치세 환급",
+  "en": "China VAT export rebate",
+  "desc": "수출품의 부가세를 돌려주는 제도. 배터리 환급률이 13→9→6%(2026.4)→0%(2027.1)로 줄어 중국 셀의 수출 원가가 오른다."
+ },
+ "c:cn-tax": {
+  "name": "중국 배터리 소비세",
+  "en": "China battery consumption tax",
+  "desc": "리튬이온 배터리 내수 소비세 부활. 2026.9 2%, 2027.9 4%. 소듐·전고체는 2028년 말까지 면제."
+ },
+ "c:bess": {
+  "name": "BESS",
+  "en": "Battery Energy Storage System",
+  "desc": "배터리 에너지저장 시스템. 셀·랙·PCS·BMS·냉각을 컨테이너에 담은 완제품."
+ },
+ "c:pcs": {
+  "name": "PCS (전력변환장치)",
+  "en": "Power Conversion System",
+  "desc": "배터리의 직류와 전력망의 교류를 바꿔 주는 장치. 중국산 비중이 높아 규제의 첫 표적이다."
+ },
+ "c:bms": {
+  "name": "BMS (배터리 관리 시스템)",
+  "en": "Battery Management System",
+  "desc": "셀 전압·온도를 감시하고 충방전을 제어한다. 셀과 함께 인증(UL9540)받아 따로 바꾸기 어렵다 — DB가 'BMS 탈중국 = 셀 탈중국'이라고 보는 근거."
+ },
+ "c:si": {
+  "name": "SI (시스템 통합)",
+  "en": "System Integrator",
+  "desc": "셀·PCS·BMS를 묶어 BESS를 설계·납품하는 회사(Tesla·Fluence·Sungrow 등). 셀사의 고객이다."
+ },
+ "c:ftm-btm": {
+  "name": "FTM / BTM",
+  "en": "Front / Behind the meter",
+  "desc": "FTM은 전력망 쪽(유틸리티) 설치, BTM은 수요처(공장·데이터센터) 자가 설치."
+ },
+ "c:queue": {
+  "name": "계통연계 대기열 (POI·큐)",
+  "en": "Interconnection queue",
+  "desc": "발전·저장 설비가 전력망에 접속하려고 기다리는 줄. 미국 대기 용량은 2025년 약 2,061GW, 신청에서 가동까지 평균 약 75개월."
+ },
+ "c:pue": {
+  "name": "PUE",
+  "en": "Power Usage Effectiveness",
+  "desc": "데이터센터 총전력 ÷ IT 전력. 1.2면 냉각 등에 20%를 더 쓴다는 뜻."
+ },
+ "c:duration": {
+  "name": "지속시간 (h)",
+  "en": "Duration",
+  "desc": "ESS가 정격 출력으로 몇 시간 방전하는지. GW × 시간 = GWh. 미국 평균은 2.8h에서 3.5h로 길어지는 중이라, 같은 GW라도 GWh 환산이 25% 달라진다."
+ },
+ "c:bbu": {
+  "name": "BBU (배터리 백업 유닛)",
+  "en": "Battery Backup Unit",
+  "desc": "서버 랙에 붙는 비상 배터리. 작지만 고부가인 원통형 2170 수요처."
+ },
+ "c:lfp": {
+  "name": "LFP",
+  "en": "Lithium Iron Phosphate",
+  "desc": "리튬인산철 양극. 싸고 안전하지만 에너지밀도가 낮다(셀 약 150~200Wh/kg). ESS의 표준이고 중국이 지배한다. 탄산리튬을 쓴다."
+ },
+ "c:ncm": {
+  "name": "NCM·High-Ni (삼원계)",
+  "en": "Nickel-Cobalt-Manganese",
+  "desc": "니켈·코발트·망간 양극. 니켈이 많을수록 밀도가 높다. 한국 업체의 주력이고 수산화리튬을 쓴다."
+ },
+ "c:lmr": {
+  "name": "LMR",
+  "en": "Lithium Manganese Rich",
+  "desc": "리튬·망간 과잉 양극. 니켈·코발트를 줄인 차세대 양극으로 GM이 2028년 각형에 적용을 준비한다."
+ },
+ "c:46series": {
+  "name": "46시리즈 (4680·4695)",
+  "en": "46-series cylindrical",
+  "desc": "지름 46mm 대형 원통형 셀. BMW·Tesla가 채택했고 2027년 양산이 늘어난다."
+ },
+ "c:form-factor": {
+  "name": "각형·파우치·원통형",
+  "en": "Prismatic / Pouch / Cylindrical",
+  "desc": "셀 외형. 각형은 알루미늄 캔(삼성SDI, ESS에서 선호), 파우치는 필름(LGES·SK온), 원통형은 원기둥(BBU·46시리즈)."
+ },
+ "c:ssb": {
+  "name": "전고체 전지",
+  "en": "All-solid-state battery",
+  "desc": "액체 전해질 대신 고체(주로 황화물)를 쓰는 전지. 2027년은 로봇용 소량, EV 대량은 2029~30년 무렵. 원료 황화리튬이 병목."
+ },
+ "c:sib": {
+  "name": "나트륨(소듐)이온 전지",
+  "en": "Sodium-ion battery",
+  "desc": "리튬 대신 나트륨을 쓴다. 원료가 싸고 저온에 강하지만 밀도가 낮다. 리튬값이 내리면 매력이 줄어든다."
+ },
+ "c:lce": {
+  "name": "LCE·탄산리튬·수산화리튬",
+  "en": "Lithium carbonate equivalent",
+  "desc": "리튬 물량 단위(탄산리튬 환산톤). 탄산리튬은 LFP용, 수산화리튬은 하이니켈용."
+ },
+ "c:cost-curve": {
+  "name": "원가곡선",
+  "en": "Cost curve",
+  "desc": "생산자를 원가가 싼 순서로 줄 세운 그래프. 가격이 곡선 오른쪽(고원가 광산)의 원가 아래로 내려가면 그 광산이 감산해 가격의 '바닥'이 된다."
+ },
+ "c:t-value": {
+  "name": "동박 T값",
+  "en": "Copper foil processing fee",
+  "desc": "동박 판가에서 구리값을 뺀 가공비(달러/kg). 동박사의 실질 수익 지표."
+ },
+ "c:reverse-lag": {
+  "name": "역래깅",
+  "en": "Negative lagging effect",
+  "desc": "원재료 값이 내릴 때, 비싸게 사 둔 재고가 낮아진 판가에 팔려 소재사 마진이 줄어드는 현상. 반대(값이 오를 때 이익)는 래깅 효과."
+ },
+ "c:por": {
+  "name": "POR (시총 ÷ 영업이익)",
+  "en": "Price to Operating profit Ratio",
+  "desc": "시가총액을 영업이익으로 나눈 배수. 순이익·세율 가정이 하우스마다 달라 P/E가 43~294배로 흩어질 때, 영업이익 기준으로 맞춰 보는 지표."
+ },
+ "co:samsung-sdi": {
+  "name": "삼성SDI",
+  "en": "Samsung SDI",
+  "desc": "각형 셀. ESS(북미 LFP 전환)·BBU·전고체(2H27 로봇용). 7곳 중 4곳의 최선호주.",
+  "code": "006400"
+ },
+ "co:lges": {
+  "name": "LG에너지솔루션",
+  "en": "LG Energy Solution",
+  "desc": "파우치·46시리즈·LFP ESS. 북미 최대 ESS 설비와 수주잔고(약 160GWh). 메리츠 최선호.",
+  "code": "373220"
+ },
+ "co:sk-innovation": {
+  "name": "SK이노베이션 (SK온)",
+  "en": "SK Innovation",
+  "desc": "배터리 자회사 SK온(비상장)과 정유. 국내 ESS 중앙계약 50.3% 낙찰.",
+  "code": "096770"
+ },
+ "co:posco-fm": {
+  "name": "포스코퓨처엠",
+  "en": "POSCO Future M",
+  "desc": "양극재(LFP 전환)·음극재. LGES와 ESS용 LFP 양극재 MOU, 삼성SDI 장기 계약.",
+  "code": "003670"
+ },
+ "co:lnf": {
+  "name": "엘앤에프",
+  "en": "L&F",
+  "desc": "양극재. LFP로 북미 ESS 진입(셀 3사 모두 고객 확보). 메리츠 최선호 소재주.",
+  "code": "066970"
+ },
+ "co:ecopro-bm": {
+  "name": "에코프로비엠",
+  "en": "EcoPro BM",
+  "desc": "하이니켈 양극재. 헝가리 가동 중단, 인도네시아 LFP.",
+  "code": "247540"
+ },
+ "co:lg-chem": {
+  "name": "LG화학",
+  "en": "LG Chem",
+  "desc": "LGES의 모회사이자 양극재 사업. LGES 지분 유동화(약 2.5조원)가 셀 주가의 부담 요인으로 거론된다.",
+  "code": "051910"
+ },
+ "co:posco-h": {
+  "name": "POSCO홀딩스",
+  "en": "POSCO Holdings",
+  "desc": "지주. 리튬(광석·염호) 사업.",
+  "code": "005490"
+ },
+ "co:lotte-em": {
+  "name": "롯데에너지머티리얼즈",
+  "en": "Lotte Energy Materials",
+  "desc": "동박. 비중국 동박 공급부족 전환의 수혜 후보(T값 2027 +23%).",
+  "code": "020150"
+ },
+ "co:skc": {
+  "name": "SKC",
+  "en": "SKC",
+  "desc": "동박(SK넥실리스). 메리츠 최선호 소재주.",
+  "code": "011790"
+ },
+ "co:wcp": {
+  "name": "더블유씨피",
+  "en": "WCP",
+  "desc": "분리막.",
+  "code": "393890"
+ },
+ "co:sangsin": {
+  "name": "상신이디피",
+  "en": "Sangsin EDP",
+  "desc": "각형 캔. ESS 출하 비중 40%(2025)→70%(2027) 전망(미래).",
+  "code": "091580"
+ },
+ "co:dongwha": {
+  "name": "동화기업",
+  "en": "Dongwha Enterprise",
+  "desc": "전해액 자회사 동화일렉트로라이트(비상장)를 둔다.",
+  "code": "025900"
+ },
+ "co:nano-new": {
+  "name": "나노신소재",
+  "en": "Nano New Material",
+  "desc": "CNT 도전재. 유안타 소재 최선호.",
+  "code": "121600"
+ },
+ "co:daejoo": {
+  "name": "대주전자재료",
+  "en": "Daejoo Electronic Materials",
+  "desc": "실리콘 음극재.",
+  "code": "078600"
+ },
+ "co:hanjung": {
+  "name": "한중엔시에스",
+  "en": "Hanjung NCS",
+  "desc": "ESS 수냉식 냉각·소화 부품.",
+  "code": "107640"
+ },
+ "co:seojin": {
+  "name": "서진시스템",
+  "en": "Seojin System",
+  "desc": "ESS 완제품·함체 EMS.",
+  "code": "178320"
+ },
+ "co:sebang": {
+  "name": "세방전지",
+  "en": "Sebang Global Battery",
+  "desc": "LGES ESS 패키징.",
+  "code": "004490"
+ },
+ "co:sama": {
+  "name": "삼아알미늄",
+  "en": "Sam-A Aluminium",
+  "desc": "양극 알루미늄박.",
+  "code": "006110"
+ },
+ "co:isu-spc": {
+  "name": "이수스페셜티케미컬",
+  "en": "ISU Specialty Chemical",
+  "desc": "황화리튬(전고체 전해질 원료). 메리츠 최선호.",
+  "code": "457190"
+ },
+ "co:aekyung": {
+  "name": "애경케미칼",
+  "en": "Aekyung Chemical",
+  "desc": "하드카본(나트륨 전지 음극).",
+  "code": "161000"
+ },
+ "co:hyosung-hi": {
+  "name": "효성중공업",
+  "en": "Hyosung Heavy Industries",
+  "desc": "변압기·전력기기.",
+  "code": "298040"
+ },
+ "co:ls-electric": {
+  "name": "LS일렉트릭",
+  "en": "LS Electric",
+  "desc": "전력기기·PCS.",
+  "code": "010120"
+ },
+ "co:hanwha-sol": {
+  "name": "한화솔루션",
+  "en": "Hanwha Solutions",
+  "desc": "태양광(한화큐셀)·미국 ESS.",
+  "code": "009830"
+ },
+ "co:catl": {
+  "name": "CATL",
+  "en": "CATL",
+  "desc": "중국 1위 셀. 글로벌 ESS 점유율 27%. 2026.4 LFP 밀도 한계를 인정하고 나트륨 대량 양산(2027.6 해외 인도).",
+  "ticker": "300750.SZ"
+ },
+ "co:byd": {
+  "name": "BYD",
+  "en": "BYD",
+  "desc": "중국 셀·완성차. 중국 제외 EV 배터리 점유율 1.8%(2023)→11.0%(2026).",
+  "ticker": "1211.HK"
+ },
+ "co:hithium": {
+  "name": "Hithium",
+  "en": "Hithium",
+  "desc": "중국 ESS 셀 전문(비상장). 북미 ESS 점유율 2위(17.2%)."
+ },
+ "co:tesla": {
+  "name": "Tesla",
+  "en": "Tesla",
+  "desc": "ESS 최대 SI(메가팩)이자 자체 LFP·4680 셀. 미국 ESS 셀 소싱을 비중국으로 바꾸는 중.",
+  "ticker": "TSLA"
+ },
+ "co:fluence": {
+  "name": "Fluence",
+  "en": "Fluence Energy",
+  "desc": "미국 ESS SI.",
+  "ticker": "FLNC"
+ },
+ "co:sungrow": {
+  "name": "Sungrow",
+  "en": "Sungrow",
+  "desc": "중국 PCS·ESS SI. 미국 사업 축소.",
+  "ticker": "300274.SZ"
+ },
+ "co:nextera": {
+  "name": "NextEra Energy",
+  "en": "NextEra Energy",
+  "desc": "미국 최대 재생에너지 사업자. 2030~32년 ESS까지 수주 잔고를 쌓는다.",
+  "ticker": "NEE"
+ }
+}

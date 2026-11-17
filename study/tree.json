@@ -1,64 +1,120 @@
 {
-  "_note": "Beom's Study 분류 트리. 주제 기준(문서 기준 아님). 노드 경로 = id 를 / 로 이은 것 (예: bio/onc/solid/pd1/pd1-ind). 문서 카드의 node 가 여기 있어야 한다.",
-  "sectors": [
+ "_note": "Beom's Study 분류 트리. 주제 기준(문서 기준 아님). 노드 경로 = id 를 / 로 이은 것 (예: bio/onc/solid/pd1/pd1-ind). 문서 카드의 node 가 여기 있어야 한다.",
+ "sectors": [
+  {
+   "id": "semi",
+   "name": "반도체",
+   "desc": "자료가 들어오면 채운다. 예정 가지: 메모리·HBM, 파운드리, 장비, 소재·부품, 후공정",
+   "children": []
+  },
+  {
+   "id": "bio",
+   "name": "바이오",
+   "children": [
     {
-      "id": "semi", "name": "반도체",
-      "desc": "자료가 들어오면 채운다. 예정 가지: 메모리·HBM, 파운드리, 장비, 소재·부품, 후공정",
-      "children": []
-    },
-    {
-      "id": "bio", "name": "바이오",
-      "children": [
+     "id": "onc",
+     "name": "항암",
+     "children": [
+      {
+       "id": "solid",
+       "name": "고형암",
+       "children": [
         {
-          "id": "onc", "name": "항암",
-          "children": [
-            {
-              "id": "solid", "name": "고형암",
-              "children": [
-                { "id": "market", "name": "시장 지도: 단일항체 vs 저분자" },
-                {
-                  "id": "pd1", "name": "면역관문억제제 PD-(L)1",
-                  "children": [
-                    { "id": "pd1-basics", "name": "작동 원리·반응 예측" },
-                    { "id": "pd1-ind", "name": "적응증별 표준치료" },
-                    { "id": "pd1-power", "name": "패권과 특허 만료" }
-                  ]
-                },
-                {
-                  "id": "next", "name": "Next PD-(L)1",
-                  "children": [
-                    { "id": "next-map", "name": "전략 지도" },
-                    { "id": "adc", "name": "ADC (TROP2·CLDN18.2·B7-H3)" },
-                    { "id": "mrna", "name": "mRNA 항암백신" },
-                    { "id": "tce", "name": "T세포 인게이저" },
-                    { "id": "pd1xvegf", "name": "PD-1×VEGF 이중항체" },
-                    { "id": "her2-egfr-mab", "name": "HER2·EGFR 단일항체" }
-                  ]
-                },
-                {
-                  "id": "sm", "name": "저분자",
-                  "children": [
-                    { "id": "cdk46", "name": "유방암 CDK4/6" },
-                    { "id": "prostate", "name": "전립선암" },
-                    { "id": "egfr", "name": "EGFR 변이 비소세포폐암" }
-                  ]
-                }
-              ]
-            }
-          ]
+         "id": "market",
+         "name": "시장 지도: 단일항체 vs 저분자"
         },
         {
-          "id": "company", "name": "기업 분석",
-          "children": [
-            { "id": "voronoi", "name": "보로노이" }
-          ]
+         "id": "pd1",
+         "name": "면역관문억제제 PD-(L)1",
+         "children": [
+          {
+           "id": "pd1-basics",
+           "name": "작동 원리·반응 예측"
+          },
+          {
+           "id": "pd1-ind",
+           "name": "적응증별 표준치료"
+          },
+          {
+           "id": "pd1-power",
+           "name": "패권과 특허 만료"
+          }
+         ]
+        },
+        {
+         "id": "next",
+         "name": "Next PD-(L)1",
+         "children": [
+          {
+           "id": "next-map",
+           "name": "전략 지도"
+          },
+          {
+           "id": "adc",
+           "name": "ADC (TROP2·CLDN18.2·B7-H3)"
+          },
+          {
+           "id": "mrna",
+           "name": "mRNA 항암백신"
+          },
+          {
+           "id": "tce",
+           "name": "T세포 인게이저"
+          },
+          {
+           "id": "pd1xvegf",
+           "name": "PD-1×VEGF 이중항체"
+          },
+          {
+           "id": "her2-egfr-mab",
+           "name": "HER2·EGFR 단일항체"
+          }
+         ]
+        },
+        {
+         "id": "sm",
+         "name": "저분자",
+         "children": [
+          {
+           "id": "cdk46",
+           "name": "유방암 CDK4/6"
+          },
+          {
+           "id": "prostate",
+           "name": "전립선암"
+          },
+          {
+           "id": "egfr",
+           "name": "EGFR 변이 비소세포폐암"
+          }
+         ]
         }
-      ]
+       ]
+      }
+     ]
     },
     {
-      "id": "cons", "name": "소비재",
-      "desc": "자료가 들어오면 채운다. 예정 가지: 화장품, 음식료, 유통",
-      "children": []
+     "id": "company",
+     "name": "기업 분석",
+     "children": [
+      {
+       "id": "voronoi",
+       "name": "보로노이"
+      }
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "id": "energy",
+   "name": "2차전지·에너지",
+   "desc": "증권사 리포트 여러 개를 합쳐 겹치는 내용은 한 번만, 견해가 갈리는 곳은 따로 정리한다."
+  },
+  {
+   "id": "cons",
+   "name": "소비재",
+   "desc": "자료가 들어오면 채운다. 예정 가지: 화장품, 음식료, 유통",
+   "children": []
+  }
+ ]
 }

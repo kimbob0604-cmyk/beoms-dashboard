@@ -1,0 +1,39 @@
+<svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="리튬 가격 하락이 셀, 양극재, 나트륨 전지에 각각 다르게 전달되는 경로">
+  <defs><marker id="liArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">리튬이 내리면 누구에게 좋은가 — 같은 하락, 세 갈래</text>
+  <!-- 출발: 리튬 -->
+  <rect x="10" y="40" width="200" height="150" rx="8" class="dg-hi"/>
+  <text x="110" y="62" text-anchor="middle" class="dg-t" font-size="13" font-weight="800">탄산리튬 가격</text>
+  <text x="22" y="86" class="dg-s" font-size="11">2026.5 고점 약 20만위안/t</text>
+  <text x="22" y="104" class="dg-t" font-size="11" font-weight="700">→ 지금 9~10만 (약 -50%)</text>
+  <line x1="20" y1="116" x2="200" y2="116" class="dg-div"/>
+  <text x="22" y="134" class="dg-s" font-size="11">2027 박스권 8.5~12만</text>
+  <text x="22" y="152" class="dg-s" font-size="11">바닥 = 생산원가 9~10만</text>
+  <text x="22" y="170" class="dg-s" font-size="10.5">(레피돌라이트 한계원가)</text>
+  <!-- 화살표 -->
+  <path d="M210 90 C240 80, 250 66, 272 66" class="dg-arrow" marker-end="url(#liArr)"/>
+  <path d="M210 115 L270 168" class="dg-arrow" marker-end="url(#liArr)"/>
+  <path d="M210 140 C240 200, 250 268, 272 268" class="dg-arrow" marker-end="url(#liArr)"/>
+  <!-- 셀 -->
+  <rect x="276" y="36" width="434" height="70" rx="8" class="dg-normal"/>
+  <text x="290" y="56" class="dg-t" font-size="12.5" font-weight="800">셀 (삼성SDI·LGES) — 좋다</text>
+  <text x="290" y="74" class="dg-s" font-size="11">ESS 판가는 메탈 가격에 덜 묶여 있다 → 원가만 내려가 마진이 커진다</text>
+  <text x="290" y="91" class="dg-s" font-size="11">유안타: 1H27부터 반영. 리튬 하락 = 셀 원가 하락 = 'ESS 경제성 개선'(신한)</text>
+  <!-- 양극재 -->
+  <rect x="276" y="122" width="434" height="104" rx="8" class="dg-tumor"/>
+  <text x="290" y="142" class="dg-t" font-size="12.5" font-weight="800">양극재 (엘앤에프·퓨처엠·에코프로비엠) — 나쁘다(단기)</text>
+  <text x="290" y="160" class="dg-s" font-size="11">판가가 메탈에 연동돼 매출이 줄고,</text>
+  <text x="290" y="176" class="dg-s" font-size="11">비싸게 사 둔 재고가 싼 값에 팔린다 = 역래깅 + 재고평가손</text>
+  <text x="290" y="193" class="dg-t" font-size="11" font-weight="700">예: 엘앤에프 3Q26 재고 관련 손실 426억원 (DB)</text>
+  <text x="290" y="211" class="dg-s" font-size="11">소재 이익 회복은 2H27로 본다(신한) — 셀 다음 순서</text>
+  <!-- 나트륨 -->
+  <rect x="276" y="242" width="434" height="62" rx="8" class="dg-panel"/>
+  <text x="290" y="262" class="dg-t" font-size="12.5" font-weight="800">나트륨 전지 — 매력이 줄어든다</text>
+  <text x="290" y="280" class="dg-s" font-size="11">'리튬이 비싸서' 대안이었는데, 리튬이 싸지면 원가 우위가 줄어든다</text>
+  <text x="290" y="296" class="dg-s" font-size="11">DB·대신: 리튬이온 지배가 길어진다 ↔ 메리츠: CATL이 그래도 밀어붙인다</text>
+  <!-- 아래 -->
+  <rect x="10" y="316" width="700" height="56" rx="6" class="dg-band"/>
+  <text x="22" y="335" class="dg-t" font-size="11.5" font-weight="700">그래서 6/7 하우스가 '소재보다 셀'이다. 메리츠만 반대로 LFP 양극재 병목을 근거로 엘앤에프를 최선호로 꼽는다.</text>
+  <text x="22" y="352" class="dg-s" font-size="11">리튬이 다시 오르면 화살표 방향이 바뀐다: 소재는 래깅 이익, 셀은 원가 부담.</text>
+  <text x="22" y="366" class="dg-m" font-size="10">출처: 미래 p.22·30, DB p.33, 대신 10월 p.38, 메리츠 p.14, 유안타 p.25~26, 신한 p.13·20.</text>
+</svg>

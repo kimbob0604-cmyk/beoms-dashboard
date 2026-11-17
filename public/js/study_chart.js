@@ -53,8 +53,12 @@ const SChart = (() => {
     const W = 640, H = 270, L = 46, R = 10, T = 22, B = spec.x.some(x => String(x).includes('\n')) ? 46 : 30;
     const S = spec.series, n = spec.x.length, k = S.length;
     const max = Math.max(...S.flatMap(s => s.values)) || 1;
-    const ticks = niceTicks(max * 1.08), top = ticks[ticks.length - 1];
-    const y = v => T + (H - T - B) * (1 - v / top);
+    const min = Math.min(0, ...S.flatMap(s => s.values));   // 음수 막대(적자 등)
+    let ticks = niceTicks(max * 1.08);
+    const top = ticks[ticks.length - 1], stp = ticks.length > 1 ? ticks[1] - ticks[0] : top;
+    const bot = min < 0 ? -stp * Math.ceil(-min * 1.08 / stp) : 0;
+    for (let t = -stp; t >= bot - 1e-9; t -= stp) ticks.unshift(+t.toPrecision(12));
+    const y = v => T + (H - T - B) * (top - v) / (top - bot);
     const band = (W - L - R) / n;
     const bw = Math.min(24 * (k > 1 ? 1 : 1.6), (band * 0.72 - 2 * (k - 1)) / k);
     const gw = bw * k + 2 * (k - 1);
@@ -66,10 +70,10 @@ const SChart = (() => {
       const slot = slotOf(spec, s.name, si);
       s.values.forEach((v, i) => {
         const x = L + band * i + (band - gw) / 2 + si * (bw + 2);
-        const yy = y(v);
-        g += `<path d="${barPath(x, yy, bw, y(0) - yy, 'v')}" fill="${fill(slot)}" ${tip(`${String(spec.x[i]).replace('\n', ' ')} · ${s.name}: ${fmt(v, dec)}${spec.unit ? ' ' + spec.unit : ''}`)}/>`;
+        const yy = y(Math.max(v, 0)), hh = Math.abs(y(0) - y(v));
+        g += `<path d="${v < 0 ? `M${x},${y(0)} H${x + bw} V${y(v)} H${x} Z` : barPath(x, yy, bw, hh, 'v')}" fill="${fill(slot)}" ${tip(`${String(spec.x[i]).replace('\n', ' ')} · ${s.name}: ${fmt(v, dec)}${spec.unit ? ' ' + spec.unit : ''}`)}/>`;
         const show = total <= 10 || (k === 1 && spec.mark && ((spec.mark.max && i === imax) || (spec.mark.last && i === n - 1) || i === 0));
-        if (show) g += `<text x="${x + bw / 2}" y="${yy - 5}" class="sc-val" text-anchor="middle">${fmt(v, dec)}</text>`;
+        if (show) g += `<text x="${x + bw / 2}" y="${v < 0 ? y(v) + 13 : yy - 5}" class="sc-val" text-anchor="middle">${fmt(v, dec)}</text>`;
       });
     });
     spec.x.forEach((c, i) => {

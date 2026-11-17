@@ -212,6 +212,13 @@ def main():
                     for sp in (c.get('tech') or {}).get('spots', []):
                         if not (0 <= sp.get('x', -1) <= 100 and 0 <= sp.get('y', -1) <= 100):
                             errs.append(f'{where}: 해설 번호 {sp.get("n")} 위치가 0~100% 밖')
+                if c['t'] == 'calc':    # 가정 조절 계산 카드: 입력·출력 모양만 검사
+                    ks = [x.get('k') for x in c.get('inputs', [])]
+                    if not ks or not c.get('out'):
+                        errs.append(f'{where}: 계산 카드에 inputs·out 이 없음')
+                    for o in c.get('out', []):
+                        if not o.get('f'):
+                            errs.append(f'{where}: 계산 결과 {o.get("label")} 에 식(f)이 없음')
                 if c['t'] == 'dia':
                     svg = SRC / 'diagrams' / f'{c.get("dia")}.svg'
                     if not svg.exists():

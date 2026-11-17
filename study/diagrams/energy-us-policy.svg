@@ -1,0 +1,95 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="미국 배터리·ESS 정책 지도: 혜택·자격·금지·관세 네 층과 2025~2033 일정">
+  <defs><marker id="upArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">미국 정책 지도 — 당근(공제)은 남기고, 중국은 네 겹으로 막는다</text>
+  <!-- 네 층 -->
+  <g font-size="11.5">
+    <rect x="10" y="34" width="172" height="196" rx="7" class="dg-normal"/>
+    <text x="96" y="54" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">① 혜택 (돈)</text>
+    <text x="20" y="76" class="dg-t" font-weight="700">45X·AMPC → 셀 만드는 쪽</text>
+    <text x="20" y="91" class="dg-s" font-size="10.5">셀 $35 + 모듈 $10 /kWh</text>
+    <text x="20" y="106" class="dg-s" font-size="10.5">~2029 100% → 75·50·25%</text>
+    <text x="20" y="128" class="dg-t" font-weight="700">48E → ESS 사는 쪽</text>
+    <text x="20" y="143" class="dg-s" font-size="10.5">기본 6%, 요건 충족 30%</text>
+    <text x="20" y="158" class="dg-s" font-size="10.5">가산 최대 50%, ~2033 전액</text>
+    <text x="20" y="180" class="dg-t" font-weight="700">30D(EV 구매) <tspan class="dg-no">종료</tspan></text>
+    <text x="20" y="195" class="dg-s" font-size="10.5">$7,500, 2025.9.30 끝</text>
+    <text x="20" y="218" class="dg-s" font-size="10.5">→ EV는 약하고 ESS는 강하다</text>
+
+    <rect x="190" y="34" width="172" height="196" rx="7" class="dg-io"/>
+    <text x="276" y="54" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">② 자격 (누가 받나)</text>
+    <text x="200" y="76" class="dg-t" font-weight="700">PFE = 공제에서 제외</text>
+    <text x="200" y="91" class="dg-s" font-size="10.5">SFE 우려국 정부·기업</text>
+    <text x="200" y="106" class="dg-s" font-size="10.5">FCE 지분 50% 초과 지배</text>
+    <text x="200" y="121" class="dg-s" font-size="10.5">FIE 지분 25·40%, 부채 15%</text>
+    <text x="200" y="143" class="dg-t" font-weight="700">MACR = 비PFE 원가 비율</text>
+    <text x="200" y="158" class="dg-s" font-size="10.5">48E 55→60→65→70→75%</text>
+    <text x="200" y="173" class="dg-s" font-size="10.5">45X 60→65→70→80~85%</text>
+    <text x="200" y="188" class="dg-s" font-size="10.5">(2026 → 2030, 해마다 상승)</text>
+    <text x="200" y="210" class="dg-s" font-size="10.5">→ 중국 부품을 쓸수록</text>
+    <text x="200" y="224" class="dg-s" font-size="10.5">   공제가 사라진다</text>
+
+    <rect x="370" y="34" width="172" height="196" rx="7" class="dg-tumor"/>
+    <text x="456" y="54" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">③ 금지 (설치 자체)</text>
+    <text x="380" y="76" class="dg-t" font-weight="700">전력망 행정명령 (8/26)</text>
+    <text x="380" y="91" class="dg-s" font-size="10.5">69kV 이상에 우려국 BESS·</text>
+    <text x="380" y="106" class="dg-s" font-size="10.5">인버터 설치 금지, 교체 명령</text>
+    <text x="380" y="121" class="dg-s" font-size="10.5">DOE 시행규칙 12/24</text>
+    <text x="380" y="143" class="dg-t" font-weight="700">FCC Covered List</text>
+    <text x="380" y="158" class="dg-s" font-size="10.5">외국산 전력 인버터 (2026.7)</text>
+    <text x="380" y="180" class="dg-t" font-weight="700">NDAA §154 · §842</text>
+    <text x="380" y="195" class="dg-s" font-size="10.5">국방부 중국 6사 조달 금지</text>
+    <text x="380" y="210" class="dg-s" font-size="10.5">2027.10.1~</text>
+    <text x="380" y="224" class="dg-s" font-size="10.5">UFLPA: 신장 리튬·음극재</text>
+
+    <rect x="550" y="34" width="160" height="196" rx="7" class="dg-tki"/>
+    <text x="630" y="54" text-anchor="middle" class="dg-t" font-size="12.5" font-weight="800">④ 관세 (가격)</text>
+    <text x="560" y="76" class="dg-t" font-weight="700">중국산 ESS 배터리</text>
+    <text x="560" y="96" class="dg-s" font-size="10.5">기본 3.4%</text>
+    <text x="560" y="111" class="dg-s" font-size="10.5">+ 301조 25%</text>
+    <text x="560" y="126" class="dg-s" font-size="10.5">+ 신규 301조 12.5%</text>
+    <text x="560" y="146" class="dg-t" font-size="13" font-weight="800">= 40.9%</text>
+    <text x="560" y="161" class="dg-s" font-size="10.5">(2026.7.24~, 상단 48.4%)</text>
+    <text x="560" y="183" class="dg-t" font-weight="700">과잉설비 301조</text>
+    <text x="560" y="198" class="dg-s" font-size="10.5">한국 포함 16개국 조사</text>
+    <text x="560" y="213" class="dg-s" font-size="10.5">2027.3.11 결정</text>
+  </g>
+  <!-- 결과 -->
+  <rect x="10" y="240" width="700" height="34" rx="6" class="dg-band"/>
+  <text x="360" y="262" text-anchor="middle" class="dg-t" font-size="12" font-weight="700">결과: 미국 ESS는 '비중국 셀'만 들어갈 수 있는 별도 시장 → 한국 셀사가 사실상 유일한 대안 공급자 (7/7 하우스)</text>
+  <!-- 타임라인 -->
+  <text x="10" y="296" class="dg-t" font-size="12.5" font-weight="800">일정</text>
+  <line x1="20" y1="340" x2="706" y2="340" class="dg-arrow" marker-end="url(#upArr)"/>
+  <g font-size="10.5">
+    <!-- 2025 -->
+    <text x="50" y="314" text-anchor="middle" class="dg-t" font-size="11.5" font-weight="800">2025</text>
+    <circle cx="35" cy="340" r="5" class="dg-hi"/><text x="35" y="358" text-anchor="middle" class="dg-t" font-weight="700">7.4</text><text x="35" y="372" text-anchor="middle" class="dg-s">OBBBA</text>
+    <circle cx="75" cy="340" r="5" class="dg-hi"/><text x="75" y="358" text-anchor="middle" class="dg-t" font-weight="700">9.30</text><text x="75" y="372" text-anchor="middle" class="dg-s">30D 종료</text>
+    <line x1="105" y1="300" x2="105" y2="420" class="dg-div"/>
+    <!-- 2026 -->
+    <text x="235" y="314" text-anchor="middle" class="dg-t" font-size="11.5" font-weight="800">2026</text>
+    <circle cx="125" cy="340" r="5" class="dg-hi"/><text x="125" y="358" text-anchor="middle" class="dg-t" font-weight="700">7.24</text><text x="125" y="372" text-anchor="middle" class="dg-s">관세 40.9%</text>
+    <circle cx="175" cy="340" r="5" class="dg-tumor"/><text x="175" y="392" text-anchor="middle" class="dg-t" font-weight="700">8.26</text><text x="175" y="406" text-anchor="middle" class="dg-s">행정명령</text>
+    <circle cx="225" cy="340" r="5" class="dg-hi"/><text x="225" y="358" text-anchor="middle" class="dg-t" font-weight="700">11.3</text><text x="225" y="372" text-anchor="middle" class="dg-s">중간선거</text>
+    <circle cx="275" cy="340" r="5" class="dg-tumor"/><text x="275" y="392" text-anchor="middle" class="dg-t" font-weight="700">12.24</text><text x="275" y="406" text-anchor="middle" class="dg-s">DOE 규칙</text>
+    <circle cx="335" cy="340" r="5" class="dg-hi"/><text x="335" y="358" text-anchor="middle" class="dg-t" font-weight="700">12.31</text><text x="335" y="372" text-anchor="middle" class="dg-s">안전항만표</text>
+    <line x1="365" y1="300" x2="365" y2="420" class="dg-div"/>
+    <!-- 2027 -->
+    <text x="470" y="314" text-anchor="middle" class="dg-t" font-size="11.5" font-weight="800">2027</text>
+    <circle cx="390" cy="340" r="5" class="dg-hi"/><text x="390" y="358" text-anchor="middle" class="dg-t" font-weight="700">1.1</text><text x="390" y="372" text-anchor="middle" class="dg-s">중국 환급 0%</text>
+    <circle cx="450" cy="340" r="5" class="dg-hi"/><text x="450" y="392" text-anchor="middle" class="dg-t" font-weight="700">3.11</text><text x="450" y="406" text-anchor="middle" class="dg-s">과잉설비 301조</text>
+    <circle cx="510" cy="340" r="5" class="dg-hi"/><text x="510" y="358" text-anchor="middle" class="dg-t" font-weight="700">상반기</text><text x="510" y="372" text-anchor="middle" class="dg-s">세이프하버 소진</text>
+    <circle cx="555" cy="340" r="5" class="dg-tumor"/><text x="555" y="392" text-anchor="middle" class="dg-t" font-weight="700">10.1</text><text x="555" y="406" text-anchor="middle" class="dg-s">NDAA §154</text>
+    <line x1="580" y1="300" x2="580" y2="420" class="dg-div"/>
+    <!-- 이후 -->
+    <text x="640" y="314" text-anchor="middle" class="dg-t" font-size="11.5" font-weight="800">이후</text>
+    <circle cx="605" cy="340" r="5" class="dg-hi"/><text x="605" y="358" text-anchor="middle" class="dg-t" font-weight="700">2029</text><text x="605" y="372" text-anchor="middle" class="dg-s">45X 100% 끝</text>
+    <circle cx="650" cy="340" r="5" class="dg-mid"/><text x="650" y="392" text-anchor="middle" class="dg-t" font-weight="700">2030~32</text><text x="650" y="406" text-anchor="middle" class="dg-s">75·50·25%</text>
+    <circle cx="690" cy="340" r="5" class="dg-mid"/><text x="690" y="358" text-anchor="middle" class="dg-t" font-weight="700">2033</text><text x="690" y="372" text-anchor="middle" class="dg-s">48E 전액 끝</text>
+  </g>
+  <g font-size="10">
+    <circle cx="24" cy="440" r="5" class="dg-hi"/><text x="34" y="444" class="dg-s">혜택·관세·일반 일정</text>
+    <circle cx="160" cy="440" r="5" class="dg-tumor"/><text x="170" y="444" class="dg-s">금지 규제</text>
+    <text x="250" y="444" class="dg-m">출처: 유안타 p.11~19, 신한 p.10·19, 메리츠 p.20~21, 미래 p.27, DB p.7, iM p.4 종합.</text>
+    <text x="250" y="459" class="dg-m">행정명령 번호는 하우스마다 14421·14420으로 갈려 날짜로만 적었다.</text>
+  </g>
+</svg>

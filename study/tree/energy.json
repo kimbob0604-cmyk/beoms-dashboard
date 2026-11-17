@@ -1,0 +1,51 @@
+{
+ "_note": "Study › 2차전지·에너지 가지 (docs/study-energy-plan.md). 리포트 여러 개를 주제별로 합친 종합 스터디.",
+ "sector": "energy",
+ "children": [
+  {
+   "id": "market-map",
+   "name": "시장 지도",
+   "desc": "밸류체인, EV에서 ESS로 넘어가는 수요·이익 구조, 2027년이 변곡점인 이유"
+  },
+  {
+   "id": "policy-map",
+   "name": "정책 지도 (미·유·중)",
+   "desc": "45X·48E·PFE/MACR·관세·전력망 행정명령·중간선거, EU IAA·CO2, 중국 환급·소비세"
+  },
+  {
+   "id": "ev-demand",
+   "name": "EV 수요",
+   "desc": "지역별 2027 판매, 유럽 회복·미국 바닥, 가격 패리티, LFP 확산, 한국 점유율 하락"
+  },
+  {
+   "id": "ess-demand",
+   "name": "ESS 수요",
+   "desc": "글로벌·미국 수요, 숫자 정의 차이(75~185GWh), AI 데이터센터, 계통 대기, 비중국 셀 수급"
+  },
+  {
+   "id": "cell-competition",
+   "name": "셀 경쟁·실적",
+   "desc": "점유율, 북미 ESS 캐파·수주잔고, 2027 영업이익과 AMPC 의존도"
+  },
+  {
+   "id": "materials-metals",
+   "name": "소재·메탈",
+   "desc": "리튬 가격·수급·원가곡선, 리튬이 누구에게 좋은가, LFP 양극재 병목, 동박"
+  },
+  {
+   "id": "tech-roadmap",
+   "name": "기술 로드맵",
+   "desc": "에너지밀도, 46시리즈·BBU, 전고체, 나트륨"
+  },
+  {
+   "id": "valuation-picks",
+   "name": "기업·밸류에이션",
+   "desc": "투자의견·목표주가, 시총과 POR(AMPC 포함·제외), 멀티플 논쟁"
+  },
+  {
+   "id": "refining-petchem",
+   "name": "정유·석화 (요약)",
+   "desc": "메리츠 단독. 유가 경로·정제마진·해양·석화 구조조정"
+  }
+ ]
+}

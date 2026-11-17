@@ -596,6 +596,15 @@ python3 build_study.py --check    # 검증만
 - **설명 그림**: `study/diagrams/<이름>.svg` 를 직접 그리고 카드 `{"t": "dia", "dia": "<이름>"}` 로 넣는다. 색은 `dg-*` 클래스(study.css)라 다크 모드를 따라간다.
 - 차트 색은 dataviz 기본 팔레트(라이트·다크 검증 통과)를 고정 순서로 쓴다. 모달리티는 항상 같은 색(단일항체 파랑, 저분자 주황, ADC 초록 …), 대조군은 회색.
 - 기업 색인에 `code`가 있으면 종목 상세 패널, `bio`가 있으면 바이오 탭(`bio.html?m=kr&c=…`)으로 이어진다.
+- **여러 리포트 종합(섹터 스터디)**: 같은 섹터 리포트 여러 건을 주제별로 합쳐 한 문서로 만든다(`source.kind: "multi"`). 2차전지·에너지가 첫 사례(`docs/study-energy-plan.md`).
+  ```bash
+  python3 study_tg_fetch.py report_figure_by_offset 14662 14636 …   # 채널 글 번호로 PDF 받기 → study_src/pdf/rg-<글번호>.pdf (본인 텔레그램 세션)
+  python3 study_crop.py --doc energy-2027            # study_src/<doc>/crops.json(리포트·쪽·0~1 비율 상자)대로 잘라 figures.json
+  python3 study_crop.py --doc energy-2027 --sheet    # 검수용 접촉 시트,  --only k1,k2 는 일부만 다시 자르기
+  ```
+  그림 제목 앞 `[하우스]`는 crops.json 의 `part`, 원문 번호(`도표 3`·`그림 19`)는 `no`. 카드의 `src`(예: "신한 p.18")는 쪽 표시 자리에 나온다.
+- **계산 카드**: `{"t": "calc", "inputs": [{k, label, v, unit, note}], "out": [{label, f, show, unit, d, k, hi}]}`. `f` 는 입력 키로 쓴 식,
+  `show` 는 `{키}` 자리에 실제 숫자를 넣어 보여 줄 식이다. 앞 결과에 `k` 를 주면 뒤 식에서 쓸 수 있다. 입력을 바꾸면 화면에서 바로 다시 계산된다.
 
 ### 교보·다올 채널식 기능 (2026-11-17)
 

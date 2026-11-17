@@ -10,6 +10,26 @@
   const NUM_RE = new RegExp(`(?<![\\w\\-–()./&#])([+\\-−]?\\d[\\d,]*(?:\\.\\d+)?)(\\s?${UNIT})`, 'g');
   const num = s => esc(s).replace(NUM_RE, (m, n, u) => `<b class="n">${n}${u}</b>`);
   let IX = null;
+  const CALC = {};   // 계산 카드 정의 (카드 id → 카드)
+
+  // 계산 카드: 입력값으로 결과를 다시 계산하고, 식에 실제 숫자를 넣어 보여 준다
+  const calcNum = (x, d) => Number.isFinite(x) ? x.toLocaleString('ko-KR', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
+  function calcRun(box) {
+    const c = CALC[box.id.slice(2)];
+    if (!c) return;
+    const v = {};
+    box.querySelectorAll('input[data-k]').forEach(i => { v[i.dataset.k] = parseFloat(i.value); });
+    c.out.forEach((o, i) => {
+      const ks = Object.keys(v);
+      let r;
+      try { r = Function(...ks, `return (${o.f});`)(...ks.map(k => v[k])); } catch (err) { r = NaN; }
+      const show = (o.show || '').replace(/\{(\w+)\}/g, (m, k) => k in v ? calcNum(v[k], Number.isInteger(v[k]) ? 0 : (Math.abs(v[k]) < 10 ? 2 : 1)) : m);
+      if (o.k) v[o.k] = r;
+      box.querySelector(`.cc-f[data-i="${i}"]`).textContent = show;
+      box.querySelector(`.cc-v[data-i="${i}"]`).textContent = `${calcNum(r, o.d ?? 1)}${o.unit ? ' ' + o.unit : ''}`;
+    });
+  }
+  document.addEventListener('input', e => { const b = e.target.closest && e.target.closest('.sd-calc'); if (b) calcRun(b); });
   const DOCS = {};
   const KIND_LABEL = { c: '개념', d: '약물', co: '기업', tr: '임상', ind: '적응증', n: '국가' };
 
@@ -46,8 +66,8 @@
     const b = (c.addTags || []).map(k => chip(k, true)).join('');
     return (a || b ? `<div class="sd-chips">${a}${b}</div>` : '') + semiLinks(c.semi_cells);
   };
-  const srcLine = d => d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(d.source.date || '')}`;
-  const figLabel = f => `${f.part ? '[' + esc(f.part) + '] ' : ''}${f.no === '' ? '' : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
+  const srcLine = d => d.source.kind === 'multi' ? `리포트 ${d.source.n}건 종합 (${esc(d.source.houses || '')}) · ${esc(d.source.date || '')}` : d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(d.source.date || '')}`;
+  const figLabel = f => `${f.part ? '[' + esc(f.part) + '] ' : ''}${f.no === '' ? '' : /^[^\d]/.test(f.no) ? `&lt;${esc(f.no)}&gt; ` : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
 
   function tableHtml(rows) {
     if (!rows || !rows.length) return '';
@@ -63,10 +83,18 @@
   function cardHtml(doc, ti, ci, c) {
     const id = `${doc.id}:${ti}:${ci}`;
     const add = c.add ? `<p class="sd-add"><span>${outside(doc)}</span>${num(c.add)}</p>` : '';
-    const page = c.p != null ? `<span class="sd-p">p.${c.p}</span>` : '';
+    const page = c.p != null ? `<span class="sd-p">${c.src ? esc(c.src) + ' ' : (c.fig && c.fig.part ? esc(c.fig.part) + ' ' : '')}p.${c.p}</span>` : (c.src ? `<span class="sd-p">${esc(c.src)}</span>` : '');
     if (c.t === 'sec') {
       return `<div class="sd-card sd-sec" id="c-${id}"><h3>${esc(c.h)} ${page}</h3>
         <ul>${c.body.map(b => `<li>${num(b)}</li>`).join('')}</ul>${add}${chips(c)}</div>`;
+    }
+    if (c.t === 'calc') {   // 가정을 바꾸면 다시 계산되는 계산 카드
+      CALC[id] = c;
+      return `<div class="sd-card sd-calc" id="c-${id}"><h3>${esc(c.h)} <span class="sd-badge">계산 · 가정 조절</span></h3>
+        ${c.body ? `<p class="sd-diatxt">${num(c.body)}</p>` : ''}
+        <div class="cc-in">${c.inputs.map(x => `<label><span>${esc(x.label)}</span><input type="number" data-k="${esc(x.k)}" value="${x.v}" step="${x.step || 'any'}"><small>${esc(x.unit || '')}</small>${x.note ? `<em>${esc(x.note)}</em>` : ''}</label>`).join('')}</div>
+        <table class="cc-out"><tbody>${c.out.map((o, i) => `<tr class="${o.hi ? 'hi' : ''}"><th>${esc(o.label)}</th><td class="cc-f" data-i="${i}"></td><td class="cc-v" data-i="${i}"></td></tr>`).join('')}</tbody></table>
+        ${add}${chips(c)}</div>`;
     }
     if (c.t === 'dia') {   // 직접 그린 설명 그림 (study/diagrams/*.svg)
       return `<div class="sd-card sd-dia" id="c-${id}"><h3>${esc(c.h)} <span class="sd-badge">설명 그림 · 직접 그림</span></h3>
@@ -212,7 +240,7 @@
       <section class="card col sd-docs"><h3>문서</h3>${docs.map(d => `<a class="sd-doc" href="?d=${encodeURIComponent(d.id)}">
         <b>${esc(d.title)}</b><span class="muted small">${srcLine(d)} · ${d.source.pages}쪽</span>
         <span class="sd-prog"><i style="width:${(100 * d.nfig_done / Math.max(d.nfig_total, 1)).toFixed(1)}%"></i></span>
-        <span class="small">그림·표 ${d.nfig_done}/${d.nfig_total} 카드화 · 카드 ${d.ncards}개 · 작성 p.${d.done[0]}~${d.done[1]}</span></a>`).join('')}</section>
+        <span class="small">그림·표 ${d.nfig_done}/${d.nfig_total} 카드화 · 카드 ${d.ncards}개${d.source.kind === 'multi' ? '' : ` · 작성 p.${d.done[0]}~${d.done[1]}`}</span></a>`).join('')}</section>
       <section class="card col"><h3>색인</h3><div class="sd-chips">${kinds}</div>
         <p class="muted small">색인 목록은 왼쪽 검색창에 아무 글자나 넣으면 나옵니다.</p></section>`;
   }
@@ -288,14 +316,14 @@
     if (!m) return showHome();
     const o = m.overview || {};
     $('body').innerHTML = `<nav class="sd-crumb"><a href="?">Study</a> › 문서</nav>
-      <div class="page-head"><h1>${esc(m.title)}</h1><p>${srcLine(m)} · ${esc(m.source.series || '')} · ${m.source.pages}쪽</p></div>
+      <div class="page-head"><h1>${esc(m.title)}</h1><p>${srcLine(m)}${m.source.series ? ' · ' + esc(m.source.series) : ''} · ${m.source.pages}쪽</p></div>
       <section class="card col sd-sum">
         <h3>한눈에</h3><ul>${(o.points || []).map(p => `<li>${num(p)}</li>`).join('')}</ul>
         ${o.how_to_read ? `<p><b class="sd-lab">읽는 법</b>${num(o.how_to_read)}</p>` : ''}
-        <p class="small muted">진행: 그림·표 ${m.nfig_done}/${m.nfig_total} 카드화 · ${m.done[1] >= m.done[0] ? `작성 범위 p.${m.done[0]}~${m.done[1]}` : '아직 작성 전'}</p>
+        <p class="small muted">진행: 그림·표 ${m.nfig_done}/${m.nfig_total} 카드화 · ${m.source.kind === 'multi' ? `리포트 ${m.source.n}건` : m.done[1] >= m.done[0] ? `작성 범위 p.${m.done[0]}~${m.done[1]}` : '아직 작성 전'}</p>
       </section>
       <section class="card col"><h3>목차 (작성된 주제)</h3><ol class="sd-toc">${m.topics.map(t => `<li><a href="${nodeHref(t.node)}">${esc(t.title)}</a>
-        <small class="muted">p.${t.pages[0]}~${t.pages[1]} · ${esc(nodeMap[t.node].trail.map(x => x.name).join(' › '))}</small></li>`).join('')}</ol></section>`;
+        <small class="muted">${t.pages ? `p.${t.pages[0]}~${t.pages[1]} · ` : ''}${esc(nodeMap[t.node].trail.map(x => x.name).join(' › '))}</small></li>`).join('')}</ol></section>`;
     window.scrollTo(0, 0);
   }
 
@@ -330,6 +358,7 @@
     } catch (err) {
       $('body').innerHTML = `<p class="msg">불러오지 못했습니다. (${esc(err.message)})</p>`;
     }
+    document.querySelectorAll('.sd-calc').forEach(calcRun);
   }
 
   // 재구성 / 원본 탭
