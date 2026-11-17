@@ -84,6 +84,26 @@ def nature_periods(tables, basis, own=None, topics=(('nature_x', 'xbrl'), ('natu
             d['total'] = sum(d.values())
     for pe in [pe for pe, d in periods.items() if src[pe] == 'xbrl' and set(d) <= {'total'}]:
         del periods[pe], src[pe]        # 주석 XBRL 에 합계만 있고 줄이 없다 (일부 항목만 표시하는 회사) — 쓰지 않는다
+    from itertools import combinations
+    for pe, d in periods.items():       # 줄의 합이 합계보다 크면: 합이 그 차이와 같은 줄 1~3개(소계로 읽힌 줄)를 뺀다
+        tot = d.get('total')
+        if tot is None:
+            continue
+        lines = [(k, v) for k, v in d.items() if k != 'total']
+        excess = sum(v for _, v in lines) - tot
+        if excess <= max(0.5, abs(tot) * 0.005) or len(lines) > 30:
+            continue
+        hit = None
+        for n in (1, 2, 3):
+            for sub in combinations(lines, n):
+                if abs(sum(v for _, v in sub) - excess) <= max(0.05, abs(tot) * 0.0005):
+                    hit = sub
+                    break
+            if hit:
+                break
+        if hit:
+            for k, _ in hit:
+                del d[k]
     for pe, d in periods.items():       # 표 하나 안에서 줄의 합 = 합계인가 (안 맞으면 그 표에서 줄을 덜 읽었거나 소계를 줄로 셌다)
         tot = d.get('total')
         s = sum(v for k, v in d.items() if k != 'total')
@@ -118,21 +138,35 @@ def company(conn, code):
                 ps = {pe: {**d, 'cogs_fn': cg[pe], 'total': d['total'] + cg[pe]} for pe, d in ps.items() if pe in cg and 'total' in d}
                 bd = {pe: m for pe, m in bd.items() if pe in ps}
                 mt['cogs_fn'] = ('매출원가', -1)
-            ok = 0
+            ok = gapable = 0
             for pe, d in ps.items():
                 r = ref_of(b, pe)
                 if r and d.get('total') is not None and abs(d['total'] - r) <= abs(r) * 0.03:
                     ok += 1
-            score = (ok, len(ps) if ok == 0 else 0, -rank, -brank)
+                elif r and d.get('total') is not None and 0.1 * r < d['total'] < 0.97 * r:
+                    gapable += 1            # 일부만 공시 — 차액 한 줄로 채울 수 있는 기간 (맞는 기간의 절반 값어치)
+            score = (ok + 0.5 * gapable, ok, len(ps), -rank, -brank)
             if ps and (best is None or score > best[0]):
                 best = (score, mode_, b, ps, mt, sr, bd)
     if best is None:
         return None
-    _, mode, basis, periods, meta, src, bad = best
+    (_, ok, *_), mode, basis, periods, meta, src, bad = best
+    gapfill = False
+    if True:        # 손익계산서와 안 맞는 기간 중 합계가 모자란 기간 = 회사가 비용의 일부만 공시: 차액을 '공시 안 된 비용' 한 줄로 드러내 채운다
+        for pe, d in periods.items():
+            r = ref_of(basis, pe)
+            t = d.get('total')
+            if r and t is not None and 0.1 * r < t < 0.97 * r:
+                d['gap'] = r - t
+                d['total'] = r
+                gapfill = True
+        if gapfill:
+            meta['gap'] = ('공시 안 된 비용 (손익계산서와의 차액)', 998)
+            bad = {pe: m for pe, m in bad.items() if 'gap' not in periods[pe]}
     if not periods:
         return None
     keys = sorted({k for d in periods.values() for k in d if k != 'total'}, key=lambda k: (meta[k][1], k))
-    group_of = {k: ('매출원가' if k == 'cogs_fn' else fund.key_of(meta[k][0])[1]) for k in keys}
+    group_of = {k: ('매출원가' if k == 'cogs_fn' else '공시 안 된 비용' if k == 'gap' else fund.key_of(meta[k][0])[1]) for k in keys}
     # 묶음: 기간마다 묶음 합을 내고(그 표에 없는 묶음은 0) 분기로 — 표마다 줄 나눔이 달라도 합이 맞는다
     gper = {pe: {g: sum(v for k, v in d.items() if k != 'total' and group_of[k] == g) for g in set(group_of.values())} for pe, d in periods.items()}
     gq = fund.quarter_series(gper, sorted(set(group_of.values())), fill=True)
@@ -183,7 +217,7 @@ def company(conn, code):
         'SELECT period_end, rcept_no FROM fund_report WHERE code = ? ORDER BY rcept_no', (code,))}
     r1 = lambda v: None if v is None else round(v, 1)
     return {
-        'c': code, 'basis': '연결' if basis == 'C' else '별도', 'mode': mode, 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
+        'c': code, 'basis': '연결' if basis == 'C' else '별도', 'mode': mode, 'gapfill': gapfill, 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
         'rev': [r1(inc['rev'].get(e)) for e in ends], 'op': [r1(inc['op'].get(e)) for e in ends], 'np': [r1(inc['np'].get(e)) for e in ends],
         'tot': [r1(totq.get(e)) for e in ends],
         'lines': [{'k': k, 'l': lines[k]['l'], 'g': lines[k]['g'], 'v': [r1(lines[k]['v'].get(e)) for e in ends]} for k in order],

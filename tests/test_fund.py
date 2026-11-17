@@ -43,8 +43,11 @@ class TableTest(unittest.TestCase):
         every = fund.note_tables(OLD)
         ts = [t for t in every if t['first']]
         self.assertEqual([t['basis'] for t in ts], ['C', 'S'])
-        self.assertEqual([t['first'] for t in every], [True, False, True])    # 뒤따르는 표(종업원급여 내역)는 first 가 아니다 — 기준값과 맞을 때만 쓰인다
-        self.assertEqual(fund.table_facts(every[1], '2023-09-30', 'Q', first=False), [])
+        self.assertEqual([t['first'] for t in every], [True, True])           # 뒤따르는 종업원급여 내역 표(비용 종류가 하나)는 비용 표가 아니다
+        roll = {'mult': 1.0, 'cols': ['당분기'], 'rows': [('기초 순장부금액', [10]), ('취득', [2]), ('무형자산상각비', [-1]), ('기말 순장부금액', [11])]}
+        self.assertFalse(fund.is_nature_table(roll))                          # 무형자산 변동표 (카페24)
+        new = {'cols': ['당기 장부금액 공시금액 3개월', '당기 장부금액 공시금액 누적'], 'rows': [('원재료', [1, 2]), ('급여', [1, 2]), ('합계', [2, 4])]}
+        self.assertTrue(fund.is_nature_table(new))                            # 새 형식 머리말 '장부금액 공시금액'은 변동표가 아니다
         self.assertEqual(ts[0]['unit'], '원')
         self.assertEqual(ts[1]['unit'], '백만원')            # 설명 뒤의 단위만 든 표를 건너뛰고 단위를 이어받는다
         self.assertEqual(len(ts[0]['rows']), 5)              # 뒤의 종업원급여 내역 표는 안 섞인다

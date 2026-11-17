@@ -38,7 +38,7 @@ RULES: List[Tuple[str, str, str]] = [
     (r'광고|마케팅|홍보', 'ad', '광고선전비'),
     (r'기타', 'other', '기타'),
 ]
-GROUP_ORDER = ['매출원가', '원가', '외주비', '인건비', '감가상각비', '지급수수료', '판매수수료', 'R&D', '지급임차료', '수도광열비', '소모품비', '운반비',
+GROUP_ORDER = ['공시 안 된 비용', '매출원가', '원가', '외주비', '인건비', '감가상각비', '지급수수료', '판매수수료', 'R&D', '지급임차료', '수도광열비', '소모품비', '운반비',
                '수선비', '광고선전비', '기타']
 FIXED = {'인건비', '감가상각비', '지급임차료'}       # 매출이 변해도 금액이 잘 안 변하는 묶음 (모델에서 금액 유지)
 
@@ -166,11 +166,18 @@ def parse_table(table: str) -> Optional[Dict]:
 
 
 def is_nature_table(t: Dict) -> bool:
-    """성격별 비용 표인가: 인건비 줄이나 감가상각 줄이 있어야 한다. '성격별'이라는 말은 재고자산 표(사업의 내용) 앞에도 나오고,
+    """비용 표인가: 인건비나 감가상각 줄이 있고, 비용 종류가 둘 이상이며, 자산 변동표(기초·취득·처분·기말)가 아니어야 한다.
+    '성격별'·'영업비용'이라는 말은 재고자산 표(사업의 내용)·무형자산 변동표(상각비가 영업비용에 포함) 앞에도 나오고,
     주석 뒤에는 주당이익·금융손익 표가 이어진다 — 그런 표를 비용 표로 읽지 않으려고"""
+    rows = [label.replace(' ', '') for label, _ in t['rows']]
+    cols = [h.replace(' ', '') for h in t.get('cols', [])]
+    # 줄 이름이 기초·취득·기말… 이거나 열 머리말이 취득원가·상각누계액·기초… 이면 자산 변동표. ('장부금액 공시금액'은 새 형식 비용 표 머리말이라 보지 않는다)
+    if sum(1 for l in rows if re.match(r'(기초|기말|취득|처분|순장부)', l)) >= 2 or \
+            sum(1 for h in cols if re.search(r'(기초|기말|취득원가|취득$|처분|상각누계|정부보조금)', h)) >= 2:
+        return False
     keys = {key_of(label)[0] for label, _ in t['rows']}
-    return bool(keys & {'emp', 'dep', 'amort', 'rou'})
-
+    kinds = keys & {'emp', 'dep', 'amort', 'rou', 'raw', 'inv', 'fee', 'freight', 'ad', 'promo', 'rent', 'util', 'supp', 'repair', 'outs', 'rnd', 'other'}
+    return bool(keys & {'emp', 'dep', 'amort', 'rou'}) and len(kinds) >= 2
 
 def col_role(head: str) -> Tuple[Optional[str], Optional[str]]:
     """열 머리말 → (cur|prev, q|ytd|None). '당분기 3개월' → (cur, q), '전기' → (prev, None)"""
