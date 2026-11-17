@@ -1,6 +1,8 @@
 // 수급 탭: data/flow/{거래일}.json — 종목별 외국인·기관 순매수 금액(억원, 수량×종가 어림)
 // - 수급 시그널 카드: 쌍끌이 순매수·순매도, 외국인 연속 순매수·순매도, 수급 반전 (build_naver.flow_signals 가 고른 종목)
 //   아래 필터(주체·기간·시장)와 상관없이 그날 전 종목에서 고른다
+// - ETF 기계적 수급: data/etf_flow.json (build_etf_flow.py ← KBJ). ETF 순설정·환매 × 구성 비중을 종목에 나눈 금액
+// - 수급 지도(찬집·빈집): 가로 = 중기(60·120일) 누적 순매수 ÷ 시총, 세로 = 단기(5·20일) ÷ 시총. 주체·시장·시총·검색 필터를 따른다
 (() => {
   const MAIN = { f: '외국인', o: '기관', fo: '외국인+기관' };
   // 기관 세부·기타법인: build_naver.DETAIL (KIS 실제 거래대금, KRX+넥스트레이드). data.det 가 있을 때만 고를 수 있다
@@ -11,12 +13,12 @@
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   const STREAK_MIN = 3;
   const PAGE = 40;
-  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '' };
+  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '', mapS: '20', mapM: '120', ep: '5', es: 'in' };
 
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => { shown = {}; typing ? renderBody() : render(); });
   const st = pg.state;
-  let data = null, shown = {};
+  let data = null, shown = {}, etf = null;
 
   // 선택한 주체·기간의 순매수 금액. 시총 대비면 % (소수)
   const amt = (s, who = st.who, d = st.days) =>
@@ -191,9 +193,92 @@
       <p>투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
   }
 
+  // ---------- 수급 지도 · 찬집 / 빈집 ----------
+  // 얼마나 찼나(중기 누적 ÷ 시총)와 지금 담나 비우나(단기 누적 ÷ 시총)를 한 장에. 점이 너무 많으면 시총 큰 순으로 MAP_N 개
+  const MAP_N = 250;
+  const QUADS = [
+    ['emptyIn', '빈집에 담기 시작', '중기로는 덜어냈는데 최근에 다시 담는 종목', (x, y) => x < 0 && y > 0],
+    ['fullIn', '찬집에 더 담는 중', '중기로 많이 담았고 최근에도 담는 종목', (x, y) => x >= 0 && y > 0],
+    ['fullOut', '찬집에서 비우는 중', '중기로 많이 담았는데 최근에 덜어내는 종목', (x, y) => x >= 0 && y <= 0],
+    ['emptyOut', '빈집에서 더 빠지는 중', '중기로 덜어냈고 최근에도 빠지는 종목', (x, y) => x < 0 && y <= 0],
+  ];
+  function renderMap() {
+    const box = $('flowmap');
+    const mid = +st.mapM, short = +st.mapS;
+    const who = MAIN[st.who] ? st.who : 'fo';
+    if (mid === 120 && !data.map_mid) {                     // 예전 날짜 파일에는 120일 누적이 없다
+      $('map-title').innerHTML = '<h2>수급 지도</h2>';
+      box.innerHTML = '<p class="muted small" style="padding:12px 16px">이 날짜 데이터에는 120일 누적이 없습니다. 60일을 고르거나 최근 날짜로 보세요.</p>' + mapSeg();
+      return;
+    }
+    const q = st.q.trim().toLowerCase(), cap = CAPS[st.cap];
+    const pts = data.stocks.filter(s => s.mc > 0 && (st.market === 'all' || s.mk === st.market) && (!cap || (s.mc >= cap[0] && s.mc < cap[1]))
+        && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q)))
+      .map(s => ({ s, x: amt(s, who, mid), y: amt(s, who, short) }))
+      .filter(p => p.x != null && p.y != null)
+      .sort((a, b) => b.s.mc - a.s.mc).slice(0, MAP_N)
+      .map(p => ({ ...p, x: p.x / p.s.mc, y: p.y / p.s.mc }));
+    $('map-title').innerHTML = `<h2>수급 지도 · 찬집 / 빈집</h2><span class="muted small">${MAIN[who]} · 가로 ${mid}일 누적 ÷ 시총(얼마나 찼나) · 세로 ${short}일 누적 ÷ 시총(지금 담나 비우나) · ${pts.length}종목${pts.length === MAP_N ? ' (시총 큰 순)' : ''}</span>`;
+    if (!pts.length) { box.innerHTML = mapSeg() + '<p class="muted small" style="padding:12px 16px">해당 종목 없음</p>'; return; }
+    // 축은 원점 대칭, 양 끝 3% 는 가장자리에 붙인다(속이 빈 점) — 한두 종목 때문에 나머지가 한 점에 뭉치지 않게
+    const lim = (vs) => { const a = vs.map(Math.abs).sort((u, v) => u - v); return Math.max(a[Math.floor(a.length * 0.97)] || a[a.length - 1], 1e-4); };
+    const LX = lim(pts.map(p => p.x)), LY = lim(pts.map(p => p.y));
+    const W = 760, H = 420, P = 34;
+    const X = v => P + (Math.max(-LX, Math.min(LX, v)) + LX) / (2 * LX) * (W - 2 * P);
+    const Y = v => H - P - (Math.max(-LY, Math.min(LY, v)) + LY) / (2 * LY) * (H - 2 * P);
+    const mcMax = Math.max(...pts.map(p => p.s.mc));
+    const r = mc => 2.5 + Math.sqrt(mc / mcMax) * 9;
+    const qOf = p => QUADS.find(qd => qd[3](p.x, p.y))[0];
+    const pc = v => `${v > 0 ? '+' : ''}${(v * 100).toFixed(2)}%`;
+    const named = new Set([...pts].sort((a, b) => b.s.mc - a.s.mc).slice(0, 12).map(p => p.s.c));
+    const dots = pts.map(p => {
+      const out = Math.abs(p.x) > LX || Math.abs(p.y) > LY;
+      return `<a href="https://finance.naver.com/item/main.naver?code=${p.s.c}" data-code="${p.s.c}" target="_blank" rel="noopener"><circle class="fm-${qOf(p)}${out ? ' out' : ''}" cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="${r(p.s.mc).toFixed(1)}"><title>${U.esc(p.s.n)} · 시총 ${U.eok(p.s.mc).replace(/<[^>]+>/g, '')}\n${mid}일 ${pc(p.x)} · ${short}일 ${pc(p.y)}</title></circle>${named.has(p.s.c) ? `<text x="${(X(p.x) + r(p.s.mc) + 2).toFixed(1)}" y="${(Y(p.y) + 3).toFixed(1)}">${U.esc(p.s.n)}</text>` : ''}</a>`;
+    }).join('');
+    const axis = `<line class="fm-axis" x1="${P}" x2="${W - P}" y1="${Y(0)}" y2="${Y(0)}"/><line class="fm-axis" x1="${X(0)}" x2="${X(0)}" y1="${P}" y2="${H - P}"/>
+      <text class="fm-lab" x="${W - P}" y="${Y(0) - 6}" text-anchor="end">찬집 → ${pc(LX)}</text><text class="fm-lab" x="${P}" y="${Y(0) - 6}">← 빈집 ${pc(-LX)}</text>
+      <text class="fm-lab" x="${X(0) + 6}" y="${P - 8}">담는 중 ${pc(LY)}</text><text class="fm-lab" x="${X(0) + 6}" y="${H - P + 18}">비우는 중 ${pc(-LY)}</text>`;
+    const lists = QUADS.map(([k, label, tip]) => {
+      const xs = pts.filter(p => qOf(p) === k).sort((a, b) => Math.abs(b.y) - Math.abs(a.y)).slice(0, 6);
+      return `<div class="fm-q"><h4 class="fm-${k}" title="${tip}">${label} <small class="muted">${pts.filter(p => qOf(p) === k).length}</small></h4>
+        <ol>${xs.map(p => `<li>${Stock.link(p.s)} <small class="muted">${mid}일 ${pc(p.x)} · ${short}일</small> <b class="${p.y > 0 ? 'up' : 'down'}">${pc(p.y)}</b></li>`).join('') || '<li class="muted">없음</li>'}</ol></div>`;
+    }).join('');
+    box.innerHTML = `${mapSeg()}<svg class="fm-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${axis}${dots}</svg><div class="fm-qs">${lists}</div>
+      <p class="muted small fm-note">순매수 금액은 수량 × 종가 어림. 점 크기 = 시총, 이름은 시총 상위 12종목. 속이 빈 점은 축 범위를 넘어 가장자리에 붙인 것. 주체가 기관 세부일 때는 외국인+기관으로 그립니다.</p>`;
+  }
+  const mapSeg = () => `<div class="frow fm-ctl">${pg.seg('mapM', [['120', '중기 120일'], ['60', '중기 60일']])}${pg.seg('mapS', [['20', '단기 20일'], ['5', '단기 5일']])}</div>`;
+
+  // ---------- ETF 기계적 수급 (KBJ 내보내기) ----------
+  const ESORT = { in: ['순유입 큰 순', r => -(r.in ?? 0)], out: ['순유출 큰 순', r => r.in ?? 0], pct: ['거래대금 대비 큰 순', r => -Math.abs(r.pct ?? 0)] };
+  function renderEtf() {
+    const box = $('etfflow');
+    if (!etf) { $('etf-title').innerHTML = ''; box.hidden = true; return; }
+    box.hidden = false;
+    const P = etf.periods[st.ep] || etf.periods['5'];
+    const by = Object.fromEntries(data.stocks.map(s => [s.c, s]));
+    const q = st.q.trim().toLowerCase(), cap = CAPS[st.cap];
+    const rows = P.rows.filter(r => { const s = by[r.c]; if (st.market !== 'all' && s && s.mk !== st.market) return false;
+        if (cap && s && (s.mc < cap[0] || s.mc >= cap[1])) return false; return !q || (r.n || '').toLowerCase().includes(q) || r.c.includes(q); })
+      .filter(r => (st.es === 'out' ? r.in < 0 : st.es === 'in' ? r.in > 0 : true))
+      .sort((a, b) => ESORT[st.es][1](a) - ESORT[st.es][1](b)).slice(0, 30);
+    const d = +st.ep, fo = s => (s && s[`f${d}`] != null && s[`o${d}`] != null ? s[`f${d}`] + s[`o${d}`] : null);
+    const pc = v => (v == null ? '–' : `<b class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(1)}%</b>`);
+    $('etf-title').innerHTML = `<h2>ETF 기계적 수급</h2><span class="muted small">ETF 설정·환매 × 구성 비중 → 종목 · ${P.start}~${P.end} · 구성종목을 아는 ETF ${P.n_etfs}개가 순유입의 ${P.coverage?.toFixed(0)}% 를 덮음(값은 하한) · KBJ ${U.timeLabel(etf.generated_at)} 내보냄 · PDF ${etf.holdings_asof}</span>`;
+    box.innerHTML = `<div class="frow fm-ctl">${pg.seg('ep', [['1', '1일'], ['5', '5일'], ['20', '20일']])}${pg.seg('es', Object.entries(ESORT).map(([k, v]) => [k, v[0]]))}</div>
+      <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>종목</th><th class="num">시총</th><th class="num">ETF 순유입 몫</th><th class="num" title="순유입 몫 ÷ 같은 기간 종목 거래대금">÷ 거래대금</th><th class="num">÷ 시총</th>
+        <th class="num" title="같은 기간 외국인+기관 순매수(수량×종가 어림) — 수급 탭 날짜 기준">외국인+기관</th><th class="num">ETF 수</th><th>순유입 큰 ETF</th></tr></thead>
+      <tbody>${rows.map(r => { const s = by[r.c];
+        return `<tr><td>${Stock.link({ c: r.c, n: r.n || s?.n || r.c })}</td><td class="num">${s ? U.eok(s.mc) : '–'}</td><td class="num">${r.in == null ? '–' : U.eok(r.in, true)}</td><td class="num">${pc(r.pct)}</td>
+          <td class="num">${s && r.in != null ? pc(r.in / s.mc * 100) : '–'}</td><td class="num">${fo(s) == null ? '–' : U.eok(fo(s), true)}</td><td class="num">${r.ne ?? '–'}</td>
+          <td class="small">${r.top.map(t => `${U.esc(t[0])} <span class="muted">${t[1] == null ? '' : `${t[1] > 0 ? '+' : ''}${t[1].toLocaleString('ko-KR')}억`}</span>`).join(' · ')}</td></tr>`; }).join('') || '<tr><td colspan="8" class="muted empty">해당 없음</td></tr>'}</tbody></table></div>
+      <p class="muted small fm-note">순유입 몫 = ETF 순설정(+)·환매(−) 금액 × 그 ETF 가 담은 이 종목 비중(운용사 PDF). LP·운용사의 바스켓 매매 추정이라 외국인·기관 순매수에 섞여 있을 수 있습니다. 선물·스왑으로 담는 레버리지·인버스 노출은 빠집니다. 시장·시총·검색 필터를 따릅니다.</p>`;
+  }
+
   function renderBody() {
     renderSummary();
     renderList();
+    renderMap();
+    renderEtf();
   }
 
   function render() {
@@ -220,6 +305,8 @@
   }
 
   pg.bind($('filters'));
+  pg.bind($('flowmap'));
+  pg.bind($('etfflow'));
   U.initTheme($('theme'));
   try { $('summary-box').open = (localStorage.getItem('flSummaryOpen') ?? '1') === '1'; } catch (e) {}
   $('summary-box').addEventListener('toggle', () => { try { localStorage.setItem('flSummaryOpen', $('summary-box').open ? '1' : ''); } catch (e) {} });
@@ -230,6 +317,7 @@
     } catch (e) {
       return showError('데이터 목록을 불러오지 못했습니다.');
     }
+    try { etf = await U.json('data/etf_flow.json'); } catch (e) { etf = null; }
     load(st.date);
   })();
 })();

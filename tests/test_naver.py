@@ -102,6 +102,14 @@ class FlowTest(unittest.TestCase):
         self.assertEqual(s['fp3'], 0.3)       # 직전 3거래일(오늘 제외) 외국인 합
         self.assertIsNone(B.summarize_flow(rows[:3])['fp3'])
 
+    def test_summarize_map_mid_and_streak_window(self):
+        rows = [{'frgn': 1000, 'org': 2000, 'ind': 0, 'close': 10000, 'frgn_ratio': 10.0} for _ in range(B.MAP_MID + 10)]
+        s = B.summarize_flow(rows)
+        self.assertEqual(s[f'f{B.MAP_MID}'], round(0.1 * B.MAP_MID, 1))     # 수급 지도 중기 누적
+        self.assertEqual(s[f'o{B.MAP_MID}'], round(0.2 * B.MAP_MID, 1))
+        self.assertEqual(s['fs'], max(B.FLOW_DAYS))                         # 연속 일수는 예전처럼 60일까지만 센다
+        self.assertIsNone(B.summarize_flow(rows[:B.MAP_MID - 1])[f'f{B.MAP_MID}'])
+
     def test_flow_signals(self):
         st = lambda c, f1, o1, fs=1, fp3=0: {'c': c, 'f1': f1, 'o1': o1, 'fs': fs, 'fp3': fp3}
         stocks = [

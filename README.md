@@ -503,3 +503,45 @@ python3 build_consumer.py           # → public/data/consumer.json, consumer_ca
   회사가 주석 XBRL 을 시작한 뒤의 분기만 있다. XBRL 압축은 `.cache/fund_xbrl/` 에 남기고(`--xbrl-cache` 로 채움) `--reparse` 가 원문·XBRL 을 함께 다시 읽는다.
   이중 집계는 맨 아래 구성요소만 쓰기 → 주석 표 코드별 분류 벌 중 전체 매출과 맞는 벌 고르기 → 맞는 줄 묶음 찾기(`fund.best_subset`) 순으로 막고, 줄의 합 = 전체 매출 검증을 화면에 표시한다.
   화면은 비용 구조 아래 '부문별 매출'(매출·비중·전년 대비·영업이익·이익률, 매출 증가 기여, 부문 이름이 든 리포트 문장).
+
+### 월간 수출 확정치 · 텔레그램 알림, EU 수입, 수급 지도 (2026-11-16)
+
+다올 박종현 애널리스트의 수출데이터 메시지·커버리지 대시보드(newsbot)에서 쓸 만한 구성을 가져왔다. 숫자는 옮기지 않고 전부 공공 통계로 직접 계산한다.
+
+```bash
+python3 export_watch.py                  # 최신 달 메시지 미리보기 (보내지 않음)
+python3 export_watch.py --notify         # 새 달이면 텔레그램으로 (daily.py 가 수출 통계 수집 뒤에 부른다)
+python3 export_watch.py --notify --force # 이미 보낸 달이어도 다시
+python3 export_watch.py --mark 2026-10   # 그 달은 보낸 것으로 표시만
+python3 collect_eu.py [--force|--status] # Eurostat EU 화장품 수입 → db/trade.db eu 표
+```
+
+- **월간 수출 확정치** (`export_watch.json`, `export_watch.py`): 품목 10개(톡신·필러·미용 의료기기·임플란트·치과 영상장비·지혈제·콘택트렌즈·화장품·진단시약·체성분 분석기) ×
+  회사 공장·신고 지역(시군구 × HS6)의 월 금액·YoY·MoM과 분기(QTD + 8개 분기). 2026년 10월 값이 원래 메시지 17줄과 모두 일치했다.
+  HS 는 API 로 맞춰 찾았다 — 진단시약 382219(씨젠 송파구), 체성분 분석기 901819(인바디 강남구), 지혈제 300610(넥스트바이오메디컬 연수구), 치과 영상장비 902212+902213(바텍·레이, 내 선택),
+  실리콘투는 성남시 + 강남구 + **인천** 중구. 새 HS 는 `consumer_hs.json` 의 '지역 전용(sgg_only)' 묶음으로 넣었다. 화면은 소비재 탭 '월간 수출 확정치'(월별 ↔ 분기별).
+- **매달 자동 갱신**: 확정치는 15일 전후. `collect_trade.py` 는 14~21일에 하루 한 번 다시 받고, 그날 이미 받았어도 전월이 아직 없으면 실행마다 한 번(서울 × 330499) 불러 봐서 올라왔으면 다시 받는다.
+  실패 없이 다시 받은 뒤에만 `meta.complete_ym` 이 그 달이 되고, 알림·표는 그 달까지만 쓴다(끊긴 수집의 반쪽 숫자를 보내지 않는다).
+  알림은 새 달마다 한 번(`meta.watch_notified`). 실패하면 표시하지 않아 다음 실행이 다시 보낸다.
+- **텔레그램 설정** (`.env`): `EXPORT_TG_ENABLED=1` 이어야 보낸다. 봇은 `TELEGRAM_BOT_TOKEN`(없으면 stock-dashboard `.env` 의 값), 방은 `EXPORT_TG_CHAT_ID`(없으면 `TELEGRAM_CHAT_ID`).
+  꺼져 있으면 daily 로그에 미리보기만 남긴다.
+- **EU 수입 — 한국 vs 중국** (`collect_eu.py` → `eu_trade.py`, 소비재 탭): Eurostat Comext DS-045409(키 없음), 원산지 기준. K뷰티 바스켓 9개 HS6 + 톡신(300249),
+  보고국 EU27·독일·프랑스·이탈리아·스페인·네덜란드·폴란드, 원산지 한국·중국·일본·미국·역외 전체. 최근 3개월 금액·전년비·역외 점유율·단가(€/kg), 보고국별 표, HS 별 바스켓 전년비 기여도(%p).
+  보통 두 달 늦다(11월 중순에 9월). 하루 한 번, 최근 14개월만 다시 받는다.
+- **수급 지도 · 찬집 / 빈집** (수급 탭, `flow.js` `renderMap`): 가로 = 중기(120·60일) 누적 순매수 ÷ 시총, 세로 = 단기(20·5일) ÷ 시총. 주체(외국인·기관·합)·시장·시총·검색 필터를 따르고
+  시총 큰 순 250종목까지 그린다. 네 칸(빈집에 담기 시작 · 찬집에 더 담는 중 · 찬집에서 비우는 중 · 빈집에서 더 빠지는 중)마다 단기 크기 순 6종목. 120일 누적은 `build_naver.MAP_MID`.
+- **구글 검색 관심도** (`trends_watch.json`, `collect_trends.py` → `data/trends.json`, 소비재 탭): pytrends 없이 구글 트렌드 화면의 두 요청(explore → widgetdata)을 직접 부른다.
+  톡신(미국: 레티보·주보·Daxxify·Xeomin·Dysport), 스킨부스터(유럽 5개국 평균: 리쥬란·Profhilo·Sculptra·Plinest·Sunekos), K뷰티 브랜드(미국 9개, 메디큐브 anchor 로 이어 붙임).
+  주간 5년, 끝나지 않은 주는 뺀다. 주 1회. 막히면(HTTP 429) 그 묶음만 직전 값을 둔다. 묶음 안에서만 비교하는 상대 지수다.
+- **Amazon · TikTok · Reddit** (`collect_altdata.py` → `data/altdata.json`, 소비재 탭): 유료·자체 수집 원자료라 직접 만들 수 없어, 사용자 요청으로 newsbot 이 공개한
+  `kbeauty_altdata.json` 을 하루 한 번 그대로 받는다(Amazon 순위 가중 SKU 점유율 국가별, TikTok Shop GMV 지수·WoW, Reddit 언급·감성·글). **공개 배포에서 뺐다**(publish FILES 에 없음 + `publish_hold.txt`).
+- **ETF 기계적 수급** (`build_etf_flow.py` → `data/etf_flow.json`, 수급 탭): KBJ(`kbj/engines/etf/stock_flows.py`)가 `~/kbj-site/data/etf/stocks*.json` 으로 내보낸
+  종목별 ETF 순유입 몫(순설정·환매 × 운용사 PDF 비중)을 기간(1·5·20일)마다 합친다. 거래대금·시총 대비, 같은 기간 외국인+기관 순매수, 순유입 큰 ETF. 구성종목을 아는 ETF 만 덮어(14~41%) 값은 하한.
+- **방한 외래관광객** (`collect_tourism.py` → `tourism.py`, 소비재 탭): 한국문화관광연구원 출입국관광통계서비스(공공데이터포털, 2026-11-16 활용 승인).
+  `getEdrcntTourismStatsList` YM + ED_CD=E 로 달마다 국적별 줄 전부. 2015년부터, 하루 한 번 최근 13개월 재수집. 전체(합계 줄이 있으면 그 줄, 없으면 국적 합 — 대륙 소계 '…주' 제외)·국적 상위 12의
+  전년비·2019년 대비·누계. 키 등록 전이면 4 로 건너뛴다.
+- **외국인 의료 소비** (`collect_medical.py` → `medical.py`, 소비재 탭): 한국관광 데이터랩 '의료관광 현황'. 공개 API 는 없지만 화면이 부르는 조회 주소
+  (`POST /visualize/getTempleteData.do`, qid `BY_TH_MEDIC_003_001_AMT`·`_CNT`, 로그인 없음)를 그대로 부른다. 국적(글로벌 + 25개국 + 기타) × 진료과목 8개 × 월 소비액(원)·건수, 2018-01~.
+  하루 한 번 최근 13개월 재수집. 2026년 1~9월 합계 1조 8,398억(+57.9%)이 기사 수치와 일치. 데이터랩 화면이 바뀌면 qid 가 바뀔 수 있다(실패 → 직전 값 유지).
+- **미국 수입** (`collect_us.py` → `us_trade.py`, 소비재 탭 EU 카드에서 'EU ↔ 미국' 전환): US Census API 대신 UN Comtrade 공개 미리보기(`comtradeapi.un.org/public/v1/preview`, 키 없음, 한 번에 한 달).
+  미국 보고 수입, 원산지 세계·한국·중국·일본·프랑스, EU 와 같은 9개 HS6 바스켓 + 톡신(300249). 2021-01~, 하루 한 번 최근 6개월. 두 달 늦다.

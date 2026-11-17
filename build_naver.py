@@ -26,6 +26,7 @@ DATA = Path(__file__).parent / 'public' / 'data'
 REPORT_DAYS = 90       # 종목 상세에 보일 리포트 기간
 RECENT_DAYS = 30       # 컨센 리비전 탭의 목표가 변경 목록 기간
 FLOW_DAYS = (1, 5, 20, 60)
+MAP_MID = 120       # 수급 지도(찬집·빈집)의 중기 누적 거래일. 단기는 FLOW_DAYS 의 5·20일을 쓴다
 
 OPINION = {
     'buy': '매수', '매수': '매수', 'strongbuy': '매수', 'outperform': '매수', 'tradingbuy': '매수', 'overweight': '매수',
@@ -65,9 +66,13 @@ def summarize_flow(rows):
         for d in FLOW_DAYS:
             vals = [v for v in amt[key][:d] if v is not None]
             out[f'{short}{d}'] = round(sum(vals), 1) if len(rows) >= d else None
-        out[f'{short}s'] = streak([r[key] for r in rows])
+        out[f'{short}s'] = streak([r[key] for r in rows[:max(FLOW_DAYS)]])
     # 직전 3거래일(오늘 제외) 외국인 순매수 합 — 수급 반전(순매도 → 순매수 전환) 판정용
     out['fp3'] = round(sum(v or 0 for v in amt['frgn'][1:4]), 1) if len(rows) >= 4 else None
+    # 수급 지도의 중기 누적 (외국인·기관). 행이 모자라면(신규 상장 등) None
+    for key, short in (('frgn', 'f'), ('org', 'o')):
+        vals = [v for v in amt[key][:MAP_MID] if v is not None]
+        out[f'{short}{MAP_MID}'] = round(sum(vals), 1) if len(rows) >= MAP_MID else None
     ratios = [r['frgn_ratio'] for r in rows]
     out['fr'] = ratios[0] if ratios else None
     out['frd'] = round(ratios[0] - ratios[20], 2) if len(ratios) > 20 and None not in (ratios[0], ratios[20]) else None
@@ -242,7 +247,7 @@ def write_dates(folder: Path):
 # 수급
 # ------------------------------------------------------------
 
-def flow_by_code(conn, d, limit=max(FLOW_DAYS)):
+def flow_by_code(conn, d, limit=max(*FLOW_DAYS, MAP_MID)):
     rows = defaultdict(list)
     for r in conn.execute('SELECT * FROM flow_daily WHERE date <= ? ORDER BY code, date DESC', (d,)):
         if len(rows[r['code']]) < limit:
@@ -263,7 +268,7 @@ def build_flow(conn, d):
         stocks.append({'c': code, **public(info[code]), **summarize_flow(rows), **extra, 'gx': gx.get(code)})
     n_det = sum(1 for s in stocks if 'sc1' in s)
     return {'date': d, 'stocks': stocks, 'sig': flow_signals(stocks), 'sig_min': SIG_MIN, 'sig_streak': SIG_STREAK,
-            'det': n_det or None}
+            'det': n_det or None, 'map_mid': MAP_MID}
 
 
 # ------------------------------------------------------------

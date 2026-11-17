@@ -14,11 +14,11 @@
     scan: ['자동 탐색 후보', '이 종목의 분기 매출과 같이 움직인 수출 지역을 자동으로 찾은 것 — 같은 업황이라 우연히 맞았을 수 있다'] };
   const HEAT = [['US', '미국'], ['CN', '중국'], ['JP', '일본'], ['HK', '홍콩'], ['VN', '베트남'], ['TW', '대만'], ['RU', '러시아'], ['AE', 'UAE'], ['EU', 'EU 6국']];
   const SHOWS = [['all', '전체'], ['ok', '수출 연동 ✓', '회사 수출로 확인된 지역 흐름이 있는 종목'], ['flow', '지역 흐름 있는 종목', '대표 흐름이 회사 지역 흐름인 종목'], ['prev', '프리뷰 있는 종목'], ['gap', '수출↑ 시총↓', '회사 지역 흐름(매출의 10% 이상)의 3개월 전년비가 +15% 이상인데 시총은 3개월 -10% 이하'], ['notes', '컨콜·탐방 있는 종목']];
-  const DEFAULTS = { sector: 'all', g: '', s: '', f: '', q: '', show: 'all' };
+  const DEFAULTS = { sector: 'all', g: '', s: '', f: '', q: '', show: 'all', wv: 'm', tg: '', tr: '104', im: 'eu' };
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => (typing ? renderTable() : render()));
   const st = pg.state;
-  let data = null, calls = null;
+  let data = null, calls = null, trends = null, alt = null;
 
   // ---------- 포맷 ----------
   const usd = v => (v == null ? '–' : Math.abs(v) >= 1e8 ? `${(v / 1e8).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}억$` : `${Math.round(v / 1e4).toLocaleString('ko-KR')}만$`);
@@ -88,6 +88,212 @@
     ].filter(Boolean);
     $('brief').innerHTML = `<div class="card cs-brief"><h3>${ymLabel(data.last_ym)}월 요점 <small class="muted">숫자는 최근 3개월 전년비 · 규칙으로 뽑은 것이라 해석은 붙이지 않습니다</small></h3>
       <dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div>`;
+  }
+
+  // ---------- 월간 확정치 (관심 품목 × 회사 지역) ----------
+  // export_watch.py 가 만든 표. 같은 내용이 확정치가 들어온 날 텔레그램으로 간다
+  function bars(v, w = 104, h = 24) {
+    const xs = v.map(x => (x == null ? 0 : x)), hi = Math.max(...xs, 1), bw = w / xs.length;
+    return `<svg class="cs-bars" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${xs.map((x, i) =>
+      `<rect x="${(i * bw + 0.5).toFixed(1)}" y="${(h - x / hi * h).toFixed(1)}" width="${(bw - 1).toFixed(1)}" height="${(x / hi * h).toFixed(1)}"${i === xs.length - 1 ? ' class="last"' : ''}/>`).join('')}</svg>`;
+  }
+  function renderWatch() {
+    const w = data.watch;
+    if (!w || !w.cats?.length) { $('watch').innerHTML = ''; return; }
+    if (st.sector !== 'all' && st.sector !== '미용 의료·의료기기' && st.sector !== '화장품') { $('watch').innerHTML = ''; return; }
+    const musd = v => (v == null ? '–' : `${(v / 1e6).toLocaleString('ko-KR', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}`);
+    const who = it => {
+      const s = it.c && data.stocks.find(x => x.c === it.c);
+      const name = it.c ? (s ? pick(it.c, it.n) : `${Stock.link({ c: it.c, n: it.n })}`) : `${U.esc(it.n)} <small class="muted">비상장</small>`;
+      const por = s ? porNext(s) : null;
+      return `${name}${it.mc ? ` <small class="muted">시총 ${U.eok(it.mc)}${por ? ` · POR ${por.toFixed(1)}배` : ''}</small>` : ''}`;
+    };
+    const q0 = w.cats[0].items[0].q;                       // 분기 열 (모든 줄이 같은 달까지라 첫 줄 기준)
+    const qcols = q0.slice(0, 5);
+    const head = st.wv === 'q'
+      ? `<th>품목</th><th>회사</th><th>지역</th>${qcols.map(q => `<th class="num">${q.qtd ? `${q.q} QTD<br><small class="muted">${q.nm}개월</small>` : q.q}</th>`).join('')}<th class="nosort">8분기</th>`
+      : `<th>품목</th><th>회사</th><th>지역</th><th class="num">${ymLabel(w.last_ym)}월<br><small class="muted">백만$</small></th><th class="num">YoY</th><th class="num">MoM</th><th class="nosort">13개월</th>`;
+    const row = (c, it, first) => {
+      const lead = `<td>${first ? `<b>${U.esc(c.name)}</b> <small class="muted">HS ${c.hs6.join('·')}</small>` : ''}</td><td>${who(it)}</td><td>${U.esc(it.label)}</td>`;
+      if (st.wv === 'q') {
+        const cells = qcols.map((_, i) => { const q = it.q[i]; return q ? `<td class="num" data-v="${q.v}">${musd(q.v)}<br><small>${pctB(q.yoy, 0)}${q.qoq != null ? ` <span class="muted">QoQ</span> ${pctB(q.qoq, 0)}` : ''}</small></td>` : '<td class="num muted">–</td>'; }).join('');
+        return `<tr>${lead}${cells}<td>${bars(it.q.filter(q => !q.qtd).slice(0, 8).reverse().map(q => q.v))}</td></tr>`;
+      }
+      return `<tr>${lead}<td class="num" data-v="${it.usd ?? ''}"><b>${musd(it.usd)}</b></td><td class="num" data-v="${it.yoy ?? ''}">${pctB(it.yoy)}</td><td class="num" data-v="${it.mom ?? ''}">${pctB(it.mom)}</td><td>${bars(it.m)}</td></tr>`;
+    };
+    $('watch').innerHTML = `<details class="card cs-chain" id="watch-card" open><summary class="cs-d-head"><h3>월간 수출 확정치 <small class="muted">${ymLabel(w.last_ym)}월 · 관심 품목 × 회사 공장·신고 지역(시군구 × HS6) · 확정치가 들어온 날 텔레그램으로도 보냅니다</small></h3></summary>
+      <div class="col-head">${pg.seg('wv', [['m', '월별'], ['q', '분기별', 'QTD 는 들어온 달까지, 전년비는 작년 같은 달들과 비교']])}</div>
+      <div class="tbl-wrap"><table class="tbl cs-watch" data-nosort><thead><tr>${head}</tr></thead>
+      <tbody>${w.cats.map(c => c.items.map((it, i) => row(c, it, i === 0)).join('')).join('')}</tbody></table></div>
+      <p class="muted small">시군구는 수출 신고인 소재지라 같은 지역의 다른 회사 물량이 섞일 수 있습니다(예: 강남구 미용기기·체성분 분석기). 품목·지역 짝은 <code>export_watch.json</code>.</p></details>`;
+  }
+
+  // ---------- EU 수입: 한국 vs 중국 (eu_trade.py, Eurostat 원산지 기준) ----------
+  function euChart(e, n = 36) {
+    const ms = e.months.slice(-n), kr = e.kr.slice(-n), cn = e.cn.slice(-n);
+    const W = 640, H = 170, P = 30, hi = Math.max(...kr, ...cn, 1);
+    const X = i => P + i / (ms.length - 1) * (W - P - 8), Y = v => H - 18 - v / hi * (H - 30);
+    const line = (v, cls) => `<polyline class="${cls}" points="${v.map((x, i) => (x == null ? '' : `${X(i).toFixed(1)},${Y(x).toFixed(1)}`)).filter(Boolean).join(' ')}"/>`;
+    const ticks = ms.map((m, i) => (m.endsWith('-01') ? `<text x="${X(i).toFixed(1)}" y="${H - 4}" text-anchor="middle">${m.slice(0, 4)}</text><line class="eu-grid" x1="${X(i).toFixed(1)}" x2="${X(i).toFixed(1)}" y1="8" y2="${H - 18}"/>` : '')).join('');
+    const ylab = [0.5, 1].map(f => `<text x="2" y="${(Y(hi * f) + 4).toFixed(1)}">${e.cur || '€'}${Math.round(hi * f / 1e6)}M</text>`).join('');
+    return `<svg class="eu-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${ticks}${ylab}${line(cn, 'cn')}${line(kr, 'kr')}</svg>`;
+  }
+  function renderEU() {
+    const us = st.im === 'us' && data.us, e = us ? data.us : data.eu;
+    if (!e || (st.sector !== 'all' && st.sector !== '화장품')) { $('eu').innerHTML = ''; return; }
+    const ext = e.ext_label || '역외 전체', mk = us ? '미국' : 'EU';
+    const n = e.months.length, s3 = (v, end = n) => { const xs = v.slice(end - 3, end); return xs.length === 3 && xs.every(x => x != null) ? xs.reduce((a, b) => a + b, 0) : null; };
+    const r = (a, b) => (a == null || !b ? null : a / b - 1);
+    const eur = v => (v == null ? '–' : `${e.cur || '€'}${(v / 1e6).toLocaleString('ko-KR', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}M`);
+    const pp = v => (v == null ? '–' : `${(v * 100).toFixed(1)}%`);
+    const kr3 = s3(e.kr), cn3 = s3(e.cn), ext3 = s3(e.ext), krp = s3(e.kr, n - 12), cnp = s3(e.cn, n - 12), extp = s3(e.ext, n - 12);
+    const up = (v, kg) => { const a = s3(v), b = s3(kg); return a && b ? a / b : null; };
+    const kp = up(e.kr, e.kr_kg), cp = up(e.cn, e.cn_kg);
+    const b3p = krp;                                      // 기여도 분모: 작년 같은 3개월 한국 바스켓
+    const hsRows = e.hs.map(h => ({ ...h, k3: s3(h.kr), kp: s3(h.kr, n - 12), c3: s3(h.cn), cpv: s3(h.cn, n - 12) }))
+      .map(h => ({ ...h, contrib: h.k3 != null && h.kp != null && b3p ? (h.k3 - h.kp) / b3p : null }))
+      .sort((a, b) => (b.k3 || 0) - (a.k3 || 0));
+    const tox3 = s3(e.tox.kr), toxp = s3(e.tox.kr, n - 12);
+    const lm = ymLabel(e.last_ym);
+    $('eu').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>${mk} 화장품 수입 — 한국 vs 중국 <small class="muted">${e.src || 'Eurostat Comext'} · 원산지 기준 · ${lm}월까지 · 바스켓 ${e.hs.length}개 HS6 · 숫자는 최근 3개월</small></h3></summary>
+      ${data.us ? `<div class="col-head">${pg.seg('im', [['eu', 'EU'], ['us', '미국']])}</div>` : ''}
+      <div class="eu-top">
+        <dl class="eu-kpi">
+          <dt><i class="eu-dot kr"></i>한국산</dt><dd><b>${eur(kr3)}</b> ${pctB(r(kr3, krp))} <span class="muted">· ${ext} 수입 중</span> ${pp(kr3 / ext3)} <span class="muted">(작년 ${pp(krp / extp)})</span> <span class="muted">· 단가</span> ${e.cur || '€'}${kp ? kp.toFixed(1) : '–'}/kg</dd>
+          <dt><i class="eu-dot cn"></i>중국산</dt><dd><b>${eur(cn3)}</b> ${pctB(r(cn3, cnp))} <span class="muted">· ${ext} 수입 중</span> ${pp(cn3 / ext3)} <span class="muted">(작년 ${pp(cnp / extp)})</span> <span class="muted">· 단가</span> ${e.cur || '€'}${cp ? cp.toFixed(1) : '–'}/kg</dd>
+          <dt>${ext}</dt><dd>${eur(ext3)} ${pctB(r(ext3, extp))}${(e.oth || []).map(([lb, v]) => ` <span class="muted">· ${lb}</span> ${eur(s3(v))} ${pctB(r(s3(v), s3(v, n - 12)))}`).join('')}</dd>
+          <dt>톡신(300249)</dt><dd>한국산 ${eur(tox3)} ${pctB(r(tox3, toxp))} <span class="muted">· ${ext} 톡신 중</span> ${pp(tox3 && s3(e.tox.ext) ? tox3 / s3(e.tox.ext) : null)}</dd>
+        </dl>
+        ${euChart(e)}
+      </div>
+      <div class="eu-tables${e.rep.length ? '' : ' one'}">
+        ${e.rep.length ? `<div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>보고국</th><th class="num">한국산</th><th class="num">전년비</th><th class="num">점유율</th><th class="num">중국산</th><th class="num">전년비</th><th class="num">점유율</th></tr></thead>
+          <tbody>${e.rep.map(x => `<tr><td>${x.name}</td><td class="num">${eur(x.kr3)}</td><td class="num">${pctB(x.kr_yoy3, 0)}</td><td class="num">${pp(x.kr_sh3)}</td><td class="num">${eur(x.cn3)}</td><td class="num">${pctB(x.cn_yoy3, 0)}</td><td class="num">${pp(x.cn_sh3)}</td></tr>`).join('')}</tbody></table></div>` : ''}
+        <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>HS (${us ? '미국' : 'EU 27'})</th><th class="num">한국산</th><th class="num">전년비</th><th class="num" title="(올해 − 작년) ÷ 작년 한국 바스켓 — 다 더하면 바스켓 전년비">기여도</th><th class="num">중국산</th><th class="num">전년비</th></tr></thead>
+          <tbody>${hsRows.map(h => `<tr><td>${U.esc(h.label)} <small class="muted">${h.hs}</small></td><td class="num">${eur(h.k3)}</td><td class="num">${pctB(r(h.k3, h.kp), 0)}</td><td class="num">${h.contrib == null ? '–' : `<b class="${U.cls(h.contrib)}">${h.contrib > 0 ? '+' : ''}${(h.contrib * 100).toFixed(1)}%p</b>`}</td><td class="num">${eur(h.c3)}</td><td class="num">${pctB(r(h.c3, h.cpv), 0)}</td></tr>`).join('')}</tbody></table></div>
+      </div>
+      <p class="muted small">원산지 기준이라 한국산 제품이지 한국 회사가 아닙니다(한국 회사의 해외 생산분은 안 잡히고, 제3국 경유 물량은 원산지로 집계). ${us ? '미국 값은 미국이 UN Comtrade 에 보고한 수입액(달러, 키 없는 공개 미리보기)입니다' : 'EU 는 CIF 성격(유로)이라 한국 관세청 수출(FOB, 달러)과 금액 수준을 바로 비교하지 않습니다'}. 보통 두 달 늦게 올라옵니다.</p></details>`;
+  }
+
+  // ---------- 방한 외래관광객 (tourism.py, 출입국관광통계) ----------
+  function renderTour() {
+    const t = data.tour;
+    if (!t || (st.sector !== 'all' && st.sector !== '화장품' && st.sector !== '미용 의료·의료기기')) { $('tour').innerHTML = ''; return; }
+    const ms = t.months, n = ms.length, last = ms[n - 1], mm = last.slice(5);
+    const at = (v, ym) => { const i = ms.indexOf(ym); return i < 0 ? null : v[i]; };
+    const r = (a, b) => (a == null || !b ? null : a / b - 1);
+    const ytd = (v, y) => { const xs = ms.map((m, i) => [m, v[i]]).filter(([m]) => m.startsWith(y) && m.slice(5) <= mm); return xs.length && xs.every(x => x[1] != null) ? xs.reduce((a, x) => a + x[1], 0) : null; };
+    const y0 = last.slice(0, 4), y1 = String(+y0 - 1);
+    const man = v => (v == null ? '–' : `${(v / 1e4).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}만`);
+    const cur = t.total[n - 1], py = at(t.total, `${y1}-${mm}`), p19 = at(t.total, `2019-${mm}`);
+    const W = 680, H = 160, N = Math.min(36, n), vs = t.total.slice(-N), hi = Math.max(...vs.filter(x => x != null), 1), bw = (W - 30) / N;
+    const bars = vs.map((v, i) => { const m = ms[n - N + i], b19 = at(t.total, `2019-${m.slice(5)}`);
+      return `<rect class="${i === N - 1 ? 'last' : ''}" x="${(26 + i * bw).toFixed(1)}" y="${(H - 18 - (v || 0) / hi * (H - 28)).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${((v || 0) / hi * (H - 28)).toFixed(1)}"><title>${m} ${man(v)} (2019년 같은 달 ${man(b19)})</title></rect>`
+        + (b19 ? `<line class="tour19" x1="${(26 + i * bw).toFixed(1)}" x2="${(26 + i * bw + bw - 2).toFixed(1)}" y1="${(H - 18 - b19 / hi * (H - 28)).toFixed(1)}" y2="${(H - 18 - b19 / hi * (H - 28)).toFixed(1)}"/>` : '')
+        + (m.endsWith('-01') ? `<text x="${(26 + i * bw).toFixed(1)}" y="${H - 4}">${m.slice(0, 4)}</text>` : ''); }).join('');
+    const rows = t.nats.map(x => { const c = x.v[n - 1], p = at(x.v, `${y1}-${mm}`), b = at(x.v, `2019-${mm}`);
+      return `<tr><td>${U.esc(x.n)}</td><td class="num">${man(c)}</td><td class="num">${pctB(r(c, p), 0)}</td><td class="num">${pctB(r(c, b), 0)}</td><td class="num">${cur ? `${(c / cur * 100).toFixed(1)}%` : '–'}</td><td class="num">${man(ytd(x.v, y0))}</td><td class="num">${pctB(r(ytd(x.v, y0), ytd(x.v, y1)), 0)}</td><td>${spark(x.v.slice(-24), 90, 20)}</td></tr>`; }).join('');
+    $('tour').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>방한 외래관광객 <small class="muted">한국문화관광연구원 출입국관광통계 · ${ymLabel(last)}월까지 · 화장품 면세·로드숍, 피부과·성형외과 의료관광의 수요</small></h3></summary>
+      <dl class="eu-kpi tour-kpi"><dt>${+mm}월</dt><dd><b>${man(cur)}</b>명 <span class="muted">전년비</span> ${pctB(r(cur, py), 1)} <span class="muted">· 2019년 대비</span> ${pctB(r(cur, p19), 1)}</dd>
+        <dt>${y0}년 누계</dt><dd>${man(ytd(t.total, y0))}명 <span class="muted">(1~${+mm}월) 전년비</span> ${pctB(r(ytd(t.total, y0), ytd(t.total, y1)), 1)} <span class="muted">· 2019년 대비</span> ${pctB(r(ytd(t.total, y0), ytd(t.total, '2019')), 1)}</dd></dl>
+      <svg class="eu-chart cs-bars tour-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><text x="0" y="12">${man(hi)}</text>${bars}</svg>
+      <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>국적</th><th class="num">${+mm}월</th><th class="num">전년비</th><th class="num">2019년 대비</th><th class="num">비중</th><th class="num">누계</th><th class="num">누계 전년비</th><th class="nosort">24개월</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="muted small">막대 = 월 입국자, 가로 선 = 2019년 같은 달. ${t.total_src === 'sum' ? '전체는 국적 줄의 합(대륙 소계 제외)입니다. ' : ''}매 수집마다 최근 13개월을 다시 받아 정정을 반영합니다.</p></details>`;
+  }
+
+  // ---------- 외국인 의료 소비 (medical.py ← 한국관광 데이터랩, 외국인 카드 결제) ----------
+  function renderMed() {
+    const m = data.med;
+    if (!m || (st.sector !== 'all' && st.sector !== '화장품' && st.sector !== '미용 의료·의료기기')) { $('med').innerHTML = ''; return; }
+    const ms = m.months, n = ms.length, last = ms[n - 1], mm = last.slice(5), y0 = last.slice(0, 4), y1 = String(+y0 - 1);
+    const sum = (v, a, b) => { const xs = v.slice(a, b); return xs.length && xs.every(x => x != null) ? xs.reduce((p, q) => p + q, 0) : null; };
+    const ytd = (v, y) => { const xs = ms.map((x, i) => [x, v[i]]).filter(([x]) => x.startsWith(y) && x.slice(5) <= mm); return xs.length && xs.every(x => x[1] != null) ? xs.reduce((p, x) => p + x[1], 0) : null; };
+    const r = (a, b) => (a == null || !b ? null : a / b - 1);
+    const eok = v => (v == null ? '–' : U.eok(v / 100));                       // 백만원 → 억원
+    const tot = ms.map((_, i) => m.cats.reduce((p, c) => (p == null || c.v[i] == null ? null : p + c.v[i]), 0));
+    const cat = k => (m.cats.find(c => c.cat === k) || { v: ms.map(() => null) }).v;
+    const kpi = ['피부과', '성형외과', '약국'].map(k => { const v = cat(k); return `${k} ${eok(v[n - 1])} ${pctB(r(v[n - 1], v[n - 13]), 0)} <span class="muted">(비중 ${tot[n - 1] ? (v[n - 1] / tot[n - 1] * 100).toFixed(0) : '–'}%)</span>`; }).join(' · ');
+    const N = 36, ser = m.cats.slice(0, 5).map(c => ({ kw: c.cat, v: c.v.slice(-N) }));
+    const rows = m.nats.slice(0, 14).map(x => {
+      const a3 = sum(x.amt, n - 3, n), p3 = sum(x.amt, n - 15, n - 12), d3 = sum(x['피부과'], n - 3, n);
+      const c3 = sum(x.cnt, n - 3, n);
+      const y3 = k => r(sum(x[k], n - 3, n), sum(x[k], n - 15, n - 12));
+      return `<tr><td>${U.esc(x.n)}</td><td class="num">${eok(x.amt[n - 1])}</td><td class="num">${pctB(r(x.amt[n - 1], x.amt[n - 13]), 0)}</td><td class="num">${eok(a3)}</td><td class="num">${pctB(r(a3, p3), 0)}</td>
+        <td class="num">${a3 ? `${(d3 / a3 * 100).toFixed(0)}%` : '–'}</td><td class="num">${pctB(y3('피부과'), 0)}</td><td class="num">${pctB(y3('성형외과'), 0)}</td><td class="num">${pctB(y3('약국'), 0)}</td>
+        <td class="num">${a3 && c3 ? `${Math.round(a3 * 1e6 / c3 / 1e4).toLocaleString('ko-KR')}만` : '–'}</td><td class="num">${pctB(r(ytd(x.amt, y0), ytd(x.amt, y1)), 0)}</td><td>${spark(x.amt.slice(-24), 90, 20)}</td></tr>`;
+    }).join('');
+    $('med').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>외국인 의료 소비 <small class="muted">한국관광 데이터랩 의료관광 현황 · 외국인 카드 결제 · ${ymLabel(last)}월까지 · 피부 미용 의료기기(클래시스·원텍 …)·스킨부스터(파마리서치)·톡신·약국 화장품 수요</small></h3></summary>
+      <dl class="eu-kpi tour-kpi"><dt>${+mm}월 전체</dt><dd><b>${eok(tot[n - 1])}</b> ${pctB(r(tot[n - 1], tot[n - 13]), 1)} <span class="muted">· ${y0}년 누계</span> ${eok(ytd(tot, y0))} ${pctB(r(ytd(tot, y0), ytd(tot, y1)), 1)}</dd>
+        <dt>진료과목</dt><dd>${kpi}</dd></dl>
+      ${lineChart(ms.slice(-N), ser, 680, 200, v => U.eok(v / 100))}
+      <p class="muted small" style="margin:2px 0 6px">${ser.map((x, k) => `<i class="eu-dot" style="background:${PAL[k % PAL.length]}"></i>${U.esc(x.kw)}`).join(' &nbsp; ')} <span class="muted">(월 소비액)</span></p>
+      <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>국적</th><th class="num">${+mm}월</th><th class="num">전년비</th><th class="num">3개월</th><th class="num">전년비</th><th class="num">피부과 비중</th><th class="num">피부과</th><th class="num">성형외과</th><th class="num">약국</th><th class="num" title="최근 3개월 소비액 ÷ 건수">건당</th><th class="num">누계 전년비</th><th class="nosort">24개월</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="muted small">진료과목별 전년비는 최근 3개월 기준. 카드 결제(국내 카드사 집계 외국인 카드) 표본 기반이라 현금·해외 결제앱은 빠집니다. 데이터랩 공개 화면의 조회 주소를 그대로 부릅니다.</p></details>`;
+  }
+
+  // ---------- 구글 검색 관심도 (collect_trends.py → data/trends.json) ----------
+  const PAL = ['#3182f6', '#f04452', '#1fa774', '#e8a33d', '#8b5cf6', '#14b8c4', '#ec4899', '#64748b', '#a3a020'];
+  function lineChart(labels, series, W = 680, H = 200, fmt = v => Math.round(v)) {
+    const all = series.flatMap(x => x.v).filter(v => v != null), hi = Math.max(...all, 1);
+    const P = 26, X = i => P + i / Math.max(labels.length - 1, 1) * (W - P - 8), Y = v => H - 18 - v / hi * (H - 28);
+    const yr = labels.map((d, i) => (i && d.slice(0, 4) !== labels[i - 1].slice(0, 4) ? `<line class="eu-grid" x1="${X(i).toFixed(1)}" x2="${X(i).toFixed(1)}" y1="6" y2="${H - 18}"/><text x="${X(i).toFixed(1)}" y="${H - 4}" text-anchor="middle">${d.slice(0, 4)}</text>` : '')).join('');
+    const ln = (x, k) => `<polyline style="stroke:${PAL[k % PAL.length]}" points="${x.v.map((v, i) => (v == null ? '' : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean).join(' ')}"><title>${U.esc(x.kw)}</title></polyline>`;
+    return `<svg class="eu-chart tr-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${yr}<text x="2" y="12">${fmt(hi)}</text>${series.map(ln).join('')}</svg>`;
+  }
+  function renderTrends() {
+    if (!trends?.groups?.length || (st.sector !== 'all' && st.sector !== '화장품' && st.sector !== '미용 의료·의료기기')) { $('trends').innerHTML = ''; return; }
+    const g = trends.groups.find(x => x.id === st.tg) || trends.groups[0];
+    const n = +st.tr, labels = g.labels.slice(-n), ser = g.series.map(x => ({ ...x, v: x.v.slice(-n) }));
+    const avg = (v, a, b) => { const xs = v.slice(a, b).filter(x => x != null); return xs.length ? xs.reduce((p, q) => p + q, 0) / xs.length : null; };
+    const L = g.labels.length;
+    const rows = g.series.map((x, k) => {
+      const now = avg(x.v, L - 4, L), prev = avg(x.v, L - 8, L - 4), ly = avg(x.v, L - 56, L - 52), peak = Math.max(...x.v.slice(-52));
+      const r = (a, b) => (a == null || !b ? null : a / b - 1);
+      const s = x.c && data.stocks.find(y => y.c === x.c);
+      return `<tr><td><i class="eu-dot" style="background:${PAL[k % PAL.length]}"></i>${U.esc(x.kw)}</td><td>${x.c ? (s ? pick(x.c, x.n || s.n) : Stock.link({ c: x.c, n: x.n || x.c })) : '<span class="muted">–</span>'}</td>
+        <td class="num">${now == null ? '–' : now.toFixed(1)}</td><td class="num">${pctB(r(now, prev), 0)}</td><td class="num">${pctB(r(now, ly), 0)}</td><td class="num">${peak ? `${Math.round(now / peak * 100)}%` : '–'}</td></tr>`;
+    }).join('');
+    $('trends').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>구글 검색 관심도 <small class="muted">구글 트렌드 주간 · 묶음 안에서만 비교(최고 = 100) · 판매량 아님 · ${U.esc(g.labels[L - 1])} 주까지${g.stale ? ' · <b class="down">이번 수집 실패 — 직전 값</b>' : ''}</small></h3></summary>
+      <div class="col-head">${pg.seg('tg', trends.groups.map(x => [x.id, x.label]))} ${pg.seg('tr', [['104', '2년'], ['262', '5년']])}</div>
+      ${g.note ? `<p class="muted small" style="margin:4px 0">${U.esc(g.note)}</p>` : ''}
+      ${lineChart(labels, ser)}
+      <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>검색어</th><th>종목</th><th class="num">최근 4주</th><th class="num">직전 4주 대비</th><th class="num">1년 전 대비</th><th class="num">1년 최고 대비</th></tr></thead><tbody>${rows}</tbody></table></div></details>`;
+  }
+
+  // ---------- Amazon · TikTok · Reddit (newsbot 집계, data/altdata.json — 이 컴퓨터에서만) ----------
+  function renderAlt() {
+    if (!alt?.companies || (st.sector !== 'all' && st.sector !== '화장품' && st.sector !== '미용 의료·의료기기')) { $('alt').innerHTML = ''; return; }
+    const avg = (v, a, b) => { const xs = v.slice(a, b).filter(x => x != null); return xs.length ? xs.reduce((p, q) => p + q, 0) / xs.length : null; };
+    const pp = v => (v == null ? '' : ` <small class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(1)}%p</small>`);
+    const rows = Object.entries(alt.companies).map(([c, x]) => {
+      const s = data.stocks.find(y => y.c === c);
+      const name = s ? pick(c, x.name) : Stock.link({ c, n: x.name });
+      const cap = s ? ` <small class="muted">시총 ${U.eok(s.mc)}${porNext(s) ? ` · POR ${porNext(s).toFixed(1)}배` : ''}</small>` : '';
+      const brands = (x.brands || []).slice(0, 4).map(b => b.kr || b.kw).join(', ') + ((x.brands || []).length > 4 ? ` 외 ${x.brands.length - 4}` : '');
+      let amz = '<span class="muted">–</span>';
+      if (x.amazon) {
+        const a = x.amazon, n = a.labels.length;
+        amz = (a.order || Object.keys(a.by_country)).map(k => { const v = a.by_country[k]; const now = avg(v, n - 7, n), was = avg(v, n - 35, n - 28);
+          return `<span class="alt-ms"><b>${k}</b> ${now == null ? '–' : now.toFixed(1) + '%'}${now != null && was != null ? pp(now - was) : ''}</span>`; }).join(' ')
+          + `<div>${spark((a.by_country[a.order?.[0]] || []).slice(-60), 110, 22)}</div>`;
+      }
+      let tt = '<span class="muted">–</span>';
+      if (x.tiktok?.index) {
+        const t = x.tiktok;
+        tt = x.tiktok.thin ? `<span class="muted small">${U.esc(t.detail || '표본 적음')}</span>`
+          : `<b>${t.index[t.index.length - 1]?.toFixed(0)}</b> <small class="muted">(${t.base_from.slice(5)}~${t.base_to.slice(5)} = 100)</small> <span class="muted small">WoW</span> ${pctB(t.wow != null ? t.wow / 100 : null, 0)}<div>${spark(t.index.slice(-60), 110, 22, t.wow >= 0 ? 'up' : 'down')}</div>`;
+      }
+      let rd = '<span class="muted">–</span>';
+      if (x.reddit) {
+        const r = x.reddit, se = r.sentiment;
+        rd = `${r.thin ? '<span class="muted small">표본 적음 · </span>' : ''}7일 <b>${r.d7}</b>건 <small class="muted">(직전 ${r.d7_prev})</small> · 90일 ${r.n90}${se ? ` <div class="small">감성 ${se.net > 0 ? '+' : ''}${se.net} <span class="muted">(긍 ${se.pos}·중 ${se.neu}·부 ${se.neg}${se.topic ? ` · ${U.esc(se.topic)}` : ''})</span></div>` : ''}
+          ${(r.posts || []).slice(0, 2).map(p => `<div class="small alt-post"><a href="${U.esc(p.url)}" target="_blank" rel="noopener">${U.esc(p.title.slice(0, 48))}</a> <span class="muted">${p.d.slice(5)}${p.intent ? ` · ${U.esc(p.intent)}` : ''}</span></div>`).join('')}`;
+      }
+      return `<tr><td>${name}${cap}<div class="muted small">${U.esc(brands)}</div></td><td>${amz}</td><td>${tt}</td><td>${rd}</td></tr>`;
+    }).join('');
+    $('alt').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>Amazon · TikTok · Reddit <small class="muted">newsbot 커버리지 대시보드 집계를 그대로 표시 · 원자료 ${U.esc(alt.data_through || '')}까지 · 이 컴퓨터에서만(공개 배포 제외)</small></h3></summary>
+      <div class="tbl-wrap"><table class="tbl alt-tbl" data-nosort><thead><tr><th>회사 · 브랜드</th><th>Amazon 점유율 <small class="muted">순위 가중 SKU · 최근 7일 평균, 4주 전 대비</small></th><th>TikTok Shop GMV 지수</th><th>Reddit 언급</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="muted small">출처: <a href="${U.esc(alt.page)}" target="_blank" rel="noopener">newsbot 커버리지</a> (${U.esc(alt.source?.amazon || '')} · ${U.esc((alt.source?.tiktok || '').split('·')[0])}). 받은 때 ${U.timeLabel(alt.fetched_at)}. 절대 GMV 는 공개되지 않아 지수만 있습니다.</p></details>`;
   }
 
   // ---------- 품목 × 국가 ----------
@@ -446,7 +652,13 @@
   function render() {
     renderFilters();
     renderBrief();
+    renderWatch();
     renderHeat();
+    renderEU();
+    renderTour();
+    renderMed();
+    renderTrends();
+    renderAlt();
     renderGroups();
     renderChain();
     renderTable();
@@ -526,6 +738,8 @@
       return;
     }
     try { calls = await U.json('data/consumer_calls.json'); } catch (e) { calls = null; }
+    try { trends = await U.json('data/trends.json'); } catch (e) { trends = null; }
+    try { alt = await U.json('data/altdata.json'); } catch (e) { alt = null; }     // 공개 사이트에는 없다 → 카드 숨김
     $('msg').hidden = true;
     render();
   })();

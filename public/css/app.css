@@ -1149,6 +1149,8 @@ tr.scr-mine td { background: var(--hover); }
 .cs-g-main b.down, .cs-kpis b.down, .cs-mini b.down, .cs-chip b.down, .cs-flow b.down, .cs-tbl b.down, .cs-prev b.down { color: var(--down); }
 .cs-spark { display: block; max-width: 100%; } .cs-spark polyline { fill: none; stroke: var(--muted); stroke-width: 1.4; }
 .cs-spark.up polyline { stroke: var(--up); } .cs-spark.down polyline { stroke: var(--down); }
+.cs-bars { display: block; } .cs-bars rect { fill: color-mix(in srgb, var(--muted) 45%, transparent); } .cs-bars rect.last { fill: var(--accent, var(--up)); }
+.cs-watch td small { font-size: 11px; } .cs-watch td:first-child { white-space: nowrap; }
 .cs-detail { padding: 16px 20px 14px; margin-bottom: 14px; } .cs-detail[hidden] { display: none; }
 .cs-d-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
 .cs-d-head h3 { margin: 0; font-size: 17px; font-weight: 800; } .cs-d-head h3 small { font-size: 12px; font-weight: 500; margin-left: 6px; }
@@ -1306,4 +1308,47 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .fd-wrap2 { overflow-x: auto; }
 .fd-seg .fd-br { margin-top: 12px; max-width: 560px; }
 .fd-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 수급 지도 (flow.js renderMap) */
+.fm { padding: 10px 16px 12px; }
+.fm-ctl { margin-bottom: 4px; }
+.fm-svg { width: 100%; height: auto; display: block; }
+.fm-svg circle { fill-opacity: .55; stroke-width: 1; cursor: pointer; }
+.fm-svg circle.out { fill-opacity: 0; stroke-width: 1.6; }
+.fm-svg a:hover circle { fill-opacity: .9; }
+.fm-svg text { font-size: 10px; fill: var(--text); pointer-events: none; }
+.fm-svg .fm-lab { font-size: 11px; fill: var(--muted); }
+.fm-axis { stroke: var(--line, #d9dce1); stroke-width: 1; }
+.fm-emptyIn { fill: #1fa774; stroke: #1fa774; color: #1fa774; }
+.fm-fullIn { fill: var(--up); stroke: var(--up); color: var(--up); }
+.fm-fullOut { fill: #e8a33d; stroke: #e8a33d; color: #e8a33d; }
+.fm-emptyOut { fill: var(--down); stroke: var(--down); color: var(--down); }
+.fm-qs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+.fm-q h4 { margin: 0 0 4px; font-size: 13px; fill: none; stroke: none; }
+.fm-q ol { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.75; }
+.fm-q b.up { color: var(--up); } .fm-q b.down { color: var(--down); }
+.fm-note { margin: 8px 0 0; }
+@media (max-width: 900px) { .fm-qs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* EU 수입 카드 (consumer.js renderEU) */
+.eu-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; align-items: center; margin: 6px 0 10px; }
+.eu-kpi { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 6px 10px; margin: 0; font-size: 13px; line-height: 1.6; }
+.eu-kpi dt { color: var(--muted); font-size: 12px; } .eu-kpi dd { margin: 0; }
+.eu-kpi b.up { color: var(--up); } .eu-kpi b.down { color: var(--down); }
+.eu-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+.eu-dot.kr, .eu-chart .kr { background: var(--accent); stroke: var(--accent); }
+.eu-dot.cn, .eu-chart .cn { background: #e8a33d; stroke: #e8a33d; }
+.eu-chart { width: 100%; height: auto; } .eu-chart polyline { fill: none; stroke-width: 2; }
+.eu-chart text { font-size: 10px; fill: var(--muted); } .eu-grid { stroke: var(--line); }
+.eu-tables { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 900px) { .eu-top, .eu-tables { grid-template-columns: 1fr; } }
+
+/* 구글 트렌드·대체데이터 카드 (consumer.js renderTrends·renderAlt) */
+.tr-chart polyline { stroke-width: 1.8; }
+.alt-ms { display: inline-block; margin-right: 8px; white-space: nowrap; font-size: 12.5px; }
+.alt-ms small.up { color: var(--up); } .alt-ms small.down { color: var(--down); }
+.alt-tbl td { vertical-align: top; } .alt-post { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ef { padding: 10px 16px 12px; }
+.tour-kpi { margin: 6px 0; } .tour-chart rect { fill: color-mix(in srgb, var(--muted) 45%, transparent); } .tour-chart rect.last { fill: var(--accent); } .tour19 { stroke: var(--up); stroke-width: 1.5; }
+.eu-tables.one { grid-template-columns: 1fr; }
 .fd-info { display: inline-block; margin-left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--muted); color: var(--card); font: 700 9px/13px sans-serif; text-align: center; font-style: normal; opacity: .75; }

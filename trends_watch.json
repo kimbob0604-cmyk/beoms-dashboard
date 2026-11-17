@@ -1,0 +1,17 @@
+{
+  "note": "구글 트렌드 검색 관심도 묶음. 묶음 안에서만 비교한다(구글이 요청마다 0~100 으로 정규화). 5개 넘는 묶음은 anchor 를 매번 같이 넣어 이어 붙인다. geos 가 여럿이면 나라마다 받은 지수의 평균. c = 연결 종목코드(없으면 null). 구성은 newsbot 커버리지 대시보드의 구글 트렌드 탭을 참고했다.",
+  "time": "today 5-y",
+  "groups": [
+    {"id": "toxin_us", "label": "톡신 — 미국", "note": "레티보(휴젤)·주보(대웅제약, 에볼루스) vs 신흥·기존 경쟁", "geos": ["US"],
+     "kws": [{"kw": "Letybo", "c": "145020", "n": "휴젤"}, {"kw": "Jeuveau", "c": "069620", "n": "대웅제약"},
+             {"kw": "Daxxify", "c": null}, {"kw": "Xeomin", "c": null}, {"kw": "Dysport", "c": null}]},
+    {"id": "booster_eu", "label": "스킨부스터 — 유럽 5개국", "note": "리쥬란(파마리서치) vs 프로필로·스컬트라·플리네스트·수네코스. 독일·프랑스·이탈리아·스페인·영국 지수의 평균", "geos": ["DE", "FR", "IT", "ES", "GB"],
+     "kws": [{"kw": "Rejuran", "c": "214450", "n": "파마리서치"}, {"kw": "Profhilo", "c": null}, {"kw": "Sculptra", "c": null},
+             {"kw": "Plinest", "c": null}, {"kw": "Sunekos", "c": null}]},
+    {"id": "kbeauty_us", "label": "K뷰티 브랜드 — 미국", "note": "메디큐브를 기준(anchor)으로 묶음을 이어 붙였다", "geos": ["US"], "anchor": "Medicube",
+     "kws": [{"kw": "Medicube", "c": "278470", "n": "에이피알"}, {"kw": "COSRX", "c": "090430", "n": "아모레퍼시픽"},
+             {"kw": "Laneige", "c": "090430", "n": "아모레퍼시픽"}, {"kw": "Beauty of Joseon", "c": null}, {"kw": "Anua", "c": null},
+             {"kw": "Aestura", "c": "090430", "n": "아모레퍼시픽"}, {"kw": "d'Alba", "c": "483650", "n": "달바글로벌"},
+             {"kw": "Torriden", "c": null}, {"kw": "SKIN1004", "c": null}]}
+  ]
+}

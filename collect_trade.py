@@ -8,6 +8,8 @@
 품목·국가 목록은 consumer_hs.json. 키는 config.DATAGO_KEY(.env 의 DATAGO_KEY, 없으면 KBJ 프로젝트 키).
 한 번에 12개월까지만 받을 수 있어 해(연도) 단위 창으로 부른다. 지난 해는 한 번 받으면 다시 받지 않고(done 표),
 올해 창은 매월 15일경 전월 확정치가 올라오므로 14~21일에 하루 한 번, 그 밖에는 7일에 한 번 다시 받는다(정정 반영).
+14~21일에 그날 이미 받았어도 전월이 아직 없으면 실행마다 한 번 불러 보고(released) 올라왔으면 다시 받는다.
+실패 없이 다시 받으면 meta complete_ym(빠짐없이 받은 마지막 달)을 적는다 — 월간 알림(export_watch.py)이 이 달까지만 쓴다.
 
   python3 collect_trade.py              # 올해 창 갱신 (받을 때가 아니면 건너뜀), 빠진 지난 해 창이 있으면 이어 받음
   python3 collect_trade.py --force      # 올해 창을 지금 다시
@@ -81,14 +83,37 @@ def windows(year: int, today: date) -> list:
     return [(a, min(b, str(last))) for a, b in out if int(a) <= last]
 
 
-def due(conn, today: date) -> bool:
-    """올해 창을 다시 받을 때인가: 14~21일엔 하루 한 번, 그 밖엔 7일에 한 번"""
+def prev_ym(today: date) -> str:
+    y, m = (today.year, today.month - 1) if today.month > 1 else (today.year - 1, 12)
+    return f'{y}-{m:02d}'
+
+
+def released(ym: str) -> bool:
+    """그 달 시군구 확정치가 올라왔나 — 서울 × 기초화장품(330499) 한 번만 불러 본다"""
+    if not config.DATAGO_KEY:
+        return False
+    try:
+        rows = C.fetch_sigungu(requests.Session(), config.DATAGO_KEY, ym.replace('-', ''), ym.replace('-', ''), '11', '330499')
+    except (C.CustomsError, requests.RequestException):
+        return False
+    return any(r['ym'] == ym and r['usd'] for r in rows)
+
+
+def due(conn, today: date, probe=released) -> bool:
+    """올해 창을 다시 받을 때인가: 14~21일엔 하루 한 번, 그 밖엔 7일에 한 번.
+    14~21일에 오늘 이미 받았어도 전월 확정치가 아직 없으면, 한 번 불러 봐서 올라왔을 때 다시 받는다
+    (아침에 받은 뒤 낮에 올라오면 그날 저녁 실행에서 바로 들어오게. 매번 전체를 받으면 하루 호출 한도에 걸린다)"""
     row = conn.execute("SELECT v FROM meta WHERE k = 'refreshed_at'").fetchone()
     if not row:
         return True
     last = date.fromisoformat(row[0][:10])
     if last == today:
-        return False
+        if not 14 <= today.day <= 21:
+            return False
+        want = prev_ym(today)
+        if conn.execute('SELECT 1 FROM sgg WHERE ym = ? LIMIT 1', (want,)).fetchone():
+            return False
+        return probe(want)
     return 14 <= today.day <= 21 or (today - last).days >= 7
 
 
@@ -193,6 +218,8 @@ def collect(conn, force: bool = False, today: date = None, log=print) -> int:
             submit_next()
     if refresh and not fail:
         conn.execute("INSERT OR REPLACE INTO meta VALUES ('refreshed_at', ?)", (datetime.now().isoformat(timespec='seconds'),))
+        # 실패 없이 다시 받은 마지막 달 — 월간 알림(export_watch.py)은 이 달까지만 쓴다 (끊긴 수집의 반쪽 숫자를 보내지 않게)
+        conn.execute("INSERT OR REPLACE INTO meta VALUES ('complete_ym', (SELECT MAX(ym) FROM sgg))")
     conn.commit()
     log(f'수출 통계: 호출 {n_ok}/{len(todo)} 성공, {n_rows:,}줄, 실패 {fail} ({time.time() - t0:.0f}초)')
     return 1 if fail else 0
