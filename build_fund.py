@@ -47,7 +47,7 @@ def load(conn, code):
         by[(r['basis'], r['topic'], r['item'], r['start'], r['end'])][r['rcept_no']] = r['value']
         if r['topic'] != 'is':
             labels.setdefault((r['basis'], r['topic'], r['item']), (r['label'], r['ord']))      # 이름표는 가장 최근 것
-        if r['topic'] in ('nature', 'nature_x', 'sga', 'sga_x'):
+        if r['topic'] in ('nature', 'nature_x', 'sga', 'sga_x', 'isnat_x'):
             tables[(r['basis'], r['topic'])][(r['start'], r['end'])][r['rcept_no']][r['item']] = (r['value'], r['label'], r['ord'])
     facts = defaultdict(lambda: defaultdict(dict))
     for (basis, topic, item, st, en), vals in by.items():
@@ -79,6 +79,9 @@ def nature_periods(tables, basis, own=None, topics=(('nature_x', 'xbrl'), ('natu
                 meta.setdefault(k, (lab, o))
             for k, (_, lab, o) in by_rcept[rno].items():
                 meta.setdefault(k, (lab, o))
+    for pe, d in periods.items():       # 주석 XBRL 에 합계 항목이 없는 회사(SK텔레콤 등): 줄의 합이 합계 (XBRL 은 줄이 겹치지 않는다)
+        if src[pe] == 'xbrl' and 'total' not in d and len(d) >= 3:
+            d['total'] = sum(d.values())
     for pe in [pe for pe, d in periods.items() if src[pe] == 'xbrl' and set(d) <= {'total'}]:
         del periods[pe], src[pe]        # 주석 XBRL 에 합계만 있고 줄이 없다 (일부 항목만 표시하는 회사) — 쓰지 않는다
     for pe, d in periods.items():       # 표 하나 안에서 줄의 합 = 합계인가 (안 맞으면 그 표에서 줄을 덜 읽었거나 소계를 줄로 셌다)
@@ -91,22 +94,41 @@ def nature_periods(tables, basis, own=None, topics=(('nature_x', 'xbrl'), ('natu
 
 def company(conn, code):
     facts, labels, tables, own, by = load(conn, code)
-    # 연결 우선. 다만 연결 표를 분기 보고서에서 못 읽어 연간 값만 있으면(별도 쪽 기간이 훨씬 많으면) 별도 기준으로 — 빈 표보다 낫다
-    mode = 'nature'
-    nper = lambda b, t=('nature', 'nature_x'): len(set().union(*(set(tables.get((b, x), {})) for x in t)))
-    sper = lambda b: len(set().union(*(set(tables.get((b, x), {})) for x in ('sga', 'sga_x'))))
-    # 성격별 분류가 없거나 사업보고서에만 있는 회사(분기 보고서엔 판관비 내역뿐): 판관비 내역 + 손익계산서 매출원가 한 줄
-    if max(nper('C'), nper('S')) * 2 < max(sper('C'), sper('S')):
-        mode = 'sga'
-        nper = sper
-    basis = 'C' if nper('C') and nper('C') >= 0.6 * nper('S') else 'S'
-    topics = (('nature_x', 'xbrl'), ('nature', 'html')) if mode == 'nature' else (('sga_x', 'xbrl'), ('sga', 'html'))
-    periods, meta, src, bad = nature_periods(tables, basis, own, topics)
-    if mode == 'sga':
-        cg = facts.get((basis, 'is'), {}).get('cogs') or facts.get(('X', 'is'), {}).get('cogs') or {}
-        periods = {pe: {**d, 'cogs_fn': cg[pe], 'total': d['total'] + cg[pe]} for pe, d in periods.items() if pe in cg and 'total' in d}
-        bad = {pe: m for pe, m in bad.items() if pe in periods}
-        meta['cogs_fn'] = ('매출원가', -1)
+    # 출처 후보: 성격별 주석 / 성격별 손익계산서의 영업비용 줄 / 판관비 내역 + 매출원가 한 줄, 각각 연결·별도.
+    # 기간 합계가 손익계산서(매출원가+판관비, 없으면 매출−영업이익)와 3% 안에서 맞는 기간이 가장 많은 것을 쓴다.
+    # 일부 항목만 공시한 주석(감가상각·종업원급여만 등)은 합계가 안 맞아 자연히 밀린다
+    def ref_of(b, pe):
+        isf = facts.get((b, 'is')) or facts.get(('X', 'is')) or {}
+        g = lambda k: (isf.get(k) or {}).get(pe)
+        if g('cogs') is not None and g('sga') is not None:
+            return g('cogs') + g('sga')
+        if g('rev') is not None and g('op') is not None:
+            return g('rev') - g('op')
+        return None
+
+    CAND = [('nature', (('nature_x', 'xbrl'), ('nature', 'html'))), ('isnat', (('isnat_x', 'xbrl'),)), ('sga', (('sga_x', 'xbrl'), ('sga', 'html')))]
+    best = None
+    for rank, (mode_, topics) in enumerate(CAND):
+        for brank, b in enumerate(('C', 'S')):
+            if not any(tables.get((b, t)) for t, _ in topics):
+                continue
+            ps, mt, sr, bd = nature_periods(tables, b, own, topics)
+            if mode_ == 'sga':
+                cg = facts.get((b, 'is'), {}).get('cogs') or facts.get(('X', 'is'), {}).get('cogs') or {}
+                ps = {pe: {**d, 'cogs_fn': cg[pe], 'total': d['total'] + cg[pe]} for pe, d in ps.items() if pe in cg and 'total' in d}
+                bd = {pe: m for pe, m in bd.items() if pe in ps}
+                mt['cogs_fn'] = ('매출원가', -1)
+            ok = 0
+            for pe, d in ps.items():
+                r = ref_of(b, pe)
+                if r and d.get('total') is not None and abs(d['total'] - r) <= abs(r) * 0.03:
+                    ok += 1
+            score = (ok, len(ps) if ok == 0 else 0, -rank, -brank)
+            if ps and (best is None or score > best[0]):
+                best = (score, mode_, b, ps, mt, sr, bd)
+    if best is None:
+        return None
+    _, mode, basis, periods, meta, src, bad = best
     if not periods:
         return None
     keys = sorted({k for d in periods.values() for k in d if k != 'total'}, key=lambda k: (meta[k][1], k))
@@ -379,7 +401,12 @@ def build():
     index, built = [], datetime.now().isoformat(timespec='seconds')
     codes = [r[0] for r in conn.execute('SELECT DISTINCT code FROM fund_report ORDER BY code')]
     skipped = []
+    fin_kw = ('금융', '은행', '증권', '생명', '해상', '화재', '손해보험', '카드', '보험', '캐피탈', '투자')
     for code in codes:
+        nm0 = info.get(code, {}).get('n') or code
+        if any(k in nm0 for k in fin_kw):   # 금융사는 성격별 비용 주석이 없다 — '영업비용' 주석(이자비용 등)을 잘못 집지 않게 뺀다
+            skipped.append({'c': code, 'n': nm0, 'r': 0, 'fin': True})
+            continue
         d = company(conn, code)
         if not d:      # 보고서는 받았는데 표가 없다 — 대개 성격별 분류를 공시하지 않는 회사(기능별 공시만)
             n = conn.execute('SELECT COUNT(*) FROM fund_report WHERE code = ?', (code,)).fetchone()[0]

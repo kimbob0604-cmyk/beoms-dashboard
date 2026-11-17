@@ -179,6 +179,45 @@ def nature_items(pre_root, roles: Dict[str, str], words=('비용의성격별', '
     return out
 
 
+def is_expense_items(pre_root, roles: Dict[str, str]) -> List[str]:
+    """손익계산서를 성격별로 쓰는 회사(통신·플랫폼·게임): 손익계산서 역할에서 매출과 영업이익 사이의 줄(영업비용 내역).
+    매출원가가 있으면 기능별 손익계산서라 빈 목록"""
+    for pl in pre_root.iter(LINK + 'presentationLink'):
+        d = re.sub(r'\s+', '', roles.get(pl.get(XL + 'role'), ''))
+        if '손익계산서' not in d or '주석' in d:
+            continue
+        locs = {x.get(XL + 'label'): x.get(XL + 'href').split('#')[1] for x in pl.findall(LINK + 'loc')}
+        kids = {}
+        for a in pl.findall(LINK + 'presentationArc'):
+            kids.setdefault(locs.get(a.get(XL + 'from')), []).append((float(a.get('order') or 0), locs.get(a.get(XL + 'to'))))
+        seq = []
+
+        def walk(node, seen):
+            for _, c in sorted(kids.get(node, [])):
+                if c in seen:
+                    continue
+                seen.add(c)
+                seq.append(c)
+                walk(c, seen)
+        roots = set(kids) - {c for v in kids.values() for _, c in v}
+        for r in roots:
+            walk(r, set())
+        if 'ifrs-full_CostOfSales' in seq:
+            return []
+        rev = next((i for i, x in enumerate(seq) if x in ('ifrs-full_Revenue', 'ifrs-full_RevenueFromContractsWithCustomers')), None)
+        op = next((i for i, x in enumerate(seq) if x == 'dart_OperatingIncomeLoss'), None)
+        if rev is None or op is None or op <= rev:
+            continue
+        out = [x for x in seq[rev + 1:op] if not x.endswith(('Abstract', 'Table', 'LineItems', 'Axis', 'Member', 'Domain'))
+               and x not in IS_ITEMS]
+        if len(out) >= 3:
+            return out
+    return []
+
+
+IS_OPEX_TOTAL = ('dart_OperatingExpenses', 'ifrs-full_OperatingExpense', 'dart_TotalOperatingExpenses')
+
+
 def parse(zbytes: bytes) -> Dict:
     """압축 → {'facts': [(item, basis, start, end, 억원)], 'labels': {item: 한글}, 'nature': [줄 순서]}"""
     z = zipfile.ZipFile(io.BytesIO(zbytes))
@@ -193,7 +232,8 @@ def parse(zbytes: bytes) -> Dict:
     nature = nature_items(pre, roles) if pre is not None else []
     sga = [x for x in nature_items(pre, roles, ('판매비와관리비', '판매비와일반관리비', '판매관리비'), SGA_TOTAL) if x not in nature] \
         if pre is not None and not nature else []        # 성격별 분류가 없는 회사만: 판관비 내역
-    want = set(nature) | set(sga) | set(IS_ITEMS)
+    isx = is_expense_items(pre, roles) if pre is not None else []      # 성격별 손익계산서의 영업비용 줄
+    want = set(nature) | set(sga) | set(isx) | set(IS_ITEMS)
     kids, parent = member_children(ET.fromstring(z.read(get('_def.xml')))) if get('_def.xml') else ({}, {})
 
     ctx, sctx = {}, {}
@@ -245,4 +285,4 @@ def parse(zbytes: bytes) -> Dict:
     grp = lambda mem: '' if mem == '__adj__' else parent.get(mem, '')
     segs = {(view, item, name(mem), grp(mem), b, st, en): v for (view, item, mem, b, st, en), v in leaves_only(segs, kids).items()}
     return {'facts': [(*k, v) for k, v in facts.items()], 'labels': {k: labels.get(k, k) for k in want},
-            'nature': nature, 'sga': sga, 'segs': [(*k, v) for k, v in settle_views(segs).items()]}      # segs: (보기, rev|op, 이름, 분류, basis, 시작, 끝, 억원)
+            'nature': nature, 'sga': sga, 'isx': isx, 'segs': [(*k, v) for k, v in settle_views(segs).items()]}      # segs: (보기, rev|op, 이름, 분류, basis, 시작, 끝, 억원)

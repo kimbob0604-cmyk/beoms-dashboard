@@ -167,8 +167,16 @@ def xbrl_zip(session, key, rcept_no: str, code: str) -> bytes:
 def xbrl_rows(zbytes: bytes, rno: str) -> list:
     """XBRL → fund_fact 줄: 손익(is), 주석 XBRL 성격별 비용(nature_x), 부문·제품·지역별 매출/영업이익(seg:rev · prod:rev · geo:rev · seg:op …)"""
     x = fund_xbrl.parse(zbytes)
-    rows, agg, sagg = [], {}, {}
+    rows, agg, sagg, iagg = [], {}, {}, {}
     for item, basis, st, en, v in x['facts']:
+        if item in x.get('isx', []):        # 성격별 손익계산서의 영업비용 줄 (통신·플랫폼·게임)
+            lab = x['labels'].get(item, item)
+            if re.search(r'매출|영업수익|수익$', lab.replace(' ', '')) and '비용' not in lab:
+                continue                    # 매출 세부 줄은 비용이 아니다
+            k = 'total' if item in fund_xbrl.IS_OPEX_TOTAL or fund.key_of(lab)[0] == 'total' or lab.replace(' ', '') in ('영업비용', '영업비용합계') else fund.key_of(lab)[0]
+            a = iagg.setdefault((basis, k, st, en), [lab, 0.0, x['isx'].index(item)])
+            a[1] += v
+            continue
         if item in x['sga'] or (item == fund_xbrl.SGA_TOTAL and x['sga']):   # 판관비 내역 (성격별 분류가 없는 회사)
             lab = x['labels'].get(item, item)
             k = 'total' if item == fund_xbrl.SGA_TOTAL else fund.key_of(lab)[0]
@@ -181,8 +189,19 @@ def xbrl_rows(zbytes: bytes, rno: str) -> list:
             k = 'total' if item == fund_xbrl.TOTAL else fund.key_of(lab)[0]
             a = agg.setdefault((basis, k, st, en), [lab, 0.0, x['nature'].index(item) if item in x['nature'] else 99])
             a[1] += v
+    # 합계 후보가 여럿이면(성격별 비용 합계 · '영업비용' 줄) 줄의 합과 가장 가까운 것 하나만 합계로 (크래프톤: 합계 항목이 두 배로 공시됨)
+    for (b, st, en) in {(b, st, en) for (b, k, st, en) in agg}:
+        cands = [k for k in ('total', 'x:영업') if (b, k, st, en) in agg]
+        if len(cands) < 2:
+            continue
+        lines = sum(v for (b2, k, s2, e2), (_, v, _) in agg.items() if (b2, s2, e2) == (b, st, en) and k not in cands)
+        keep = min(cands, key=lambda k: abs(agg[(b, k, st, en)][1] - lines))
+        if keep != 'total':
+            agg[(b, 'total', st, en)] = agg[(b, keep, st, en)]
+        del agg[(b, 'x:영업', st, en)]
     rows += [(b, 'nature_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in agg.items()]
     rows += [(b, 'sga_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in sagg.items()]
+    rows += [(b, 'isnat_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in iagg.items()]
     # 부문: item = '분류¦이름' (같은 이름이 다른 분류 벌에 또 나와도 덮어쓰지 않게), label = 이름
     rows += [(b, f'{view}:{item}', f'{grp}¦{name}', name, st, en, v, rno, 0) for view, item, name, grp, b, st, en, v in x['segs']]
     return rows
@@ -270,7 +289,7 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
     return '; '.join(notes)
 
 
-def reparse(conn) -> int:
+def reparse(conn, codes=None) -> int:
     """캐시한 원문으로 주석 표(topic nature)만 다시 읽는다 — 파서·규칙을 고친 뒤. 네트워크 없음"""
     import gzip
     fy = {}
@@ -278,13 +297,17 @@ def reparse(conn) -> int:
         fy[code] = int(end[5:7])
     n = miss = 0
     with conn:
-        conn.execute("DELETE FROM fund_fact WHERE topic IN ('nature', 'sga')")      # 원문 유래 값은 전부 다시
-        zs = {r[0]: XBRLS / f'{r[0]}.zip' for r in conn.execute('SELECT rcept_no FROM fund_report')}
+        cq = f" AND code IN ({','.join('?' * len(codes))})" if codes else ''
+        conn.execute(f"DELETE FROM fund_fact WHERE topic IN ('nature', 'sga'){cq}", list(codes or []))      # 원문 유래 값은 전부 다시
+        zs = {r[0]: XBRLS / f'{r[0]}.zip' for r in conn.execute('SELECT rcept_no FROM fund_report' + (
+            f" WHERE code IN ({','.join('?' * len(codes))})" if codes else ''), list(codes or []))}
         have_x = [rno for rno, f in zs.items() if f.exists()]
         if have_x:      # XBRL 캐시가 있는 보고서의 XBRL 유래 값도 다시 (손익·주석 XBRL·부문)
             q = ','.join('?' * len(have_x))
             conn.execute(f"DELETE FROM fund_fact WHERE topic != 'nature' AND rcept_no IN ({q})", have_x)
         for r in conn.execute('SELECT rcept_no, code, name, period_end, kind, note FROM fund_report ORDER BY rcept_no').fetchall():
+            if codes and r['code'] not in codes:
+                continue
             f = DOCS / f"{r['rcept_no']}.xml.gz"
             if not f.exists() and not zs[r['rcept_no']].exists():
                 continue
@@ -344,7 +367,7 @@ def main() -> int:
         log.info('XBRL 캐시: %d건 받음', n)
         return 0
     if args.reparse:
-        return reparse(connect())
+        return reparse(connect(), [args.code] if args.code else (args.add or None))
     if not key:
         log.info('DART_API_KEY 없음 — 건너뜀')
         return 4
