@@ -1,4 +1,6 @@
 // 리포트 탭: data/digest/{작성일}.json — 그날 나온 증권사 종목 리포트를 종목별 카드로
+// + '@DOC_POOL 자료' 보기: data/docpool/{올라온 날}.json — 텔레그램 @DOC_POOL 채널에 올라온 리포트 글의 제목 목록
+//   (build_docpool.py. 이 데이터가 없으면 보기 버튼이 나오지 않는다)
 (() => {
   const CAPS = { L: [10000, Infinity], M: [3000, 10000], S: [0, 3000] };
   const GROUPS = {
@@ -13,9 +15,13 @@
     mc: ['시총 순', s => s.mc || 0],
   };
   const SHOW = 3;   // 카드에 처음 보일 리포트 수
-  const DEFAULTS = { date: '', v: 'day', wk: '0', side: 'up', g: 'all', market: 'all', cap: 'all', sort: 'n', q: '', kw: '', lone: '' };
+  const SHOW_O = 6;   // @DOC_POOL 보기의 증권사 카드(산업·전략·시황)에 처음 보일 글 수
+  // pd·pk·pb·pn: @DOC_POOL 보기의 올라온 날 · 종류 · 증권사 · '네이버에 없는 것만'
+  const DEFAULTS = { date: '', v: 'day', wk: '0', side: 'up', g: 'all', market: 'all', cap: 'all', sort: 'n', q: '', kw: '', lone: '',
+    pd: '', pk: 'all', pb: '', pn: '' };
   const VIEWS = [['day', '일별'], ['dates', '날짜별 한눈에'], ['week', '주간 핵심 리포트']];
   let idx = null, wkly = null;   // data/digest_index.json · digest_weekly.json (처음 볼 때 받음)
+  let pool = null, poolData = null;   // data/docpool/dates.json (없으면 null) · 고른 날의 글 목록
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => (typing ? renderBody() : render()));
   const st = pg.state;
@@ -41,7 +47,20 @@
   }
 
   function renderFilters() {
-    const views = pg.seg('v', VIEWS);
+    const views = pg.seg('v', pool ? [...VIEWS, ['pool', '@DOC_POOL 자료', '텔레그램 @DOC_POOL 채널에 올라온 리포트 글 목록']] : VIEWS);
+    if (st.v === 'pool') {
+      const pd = poolDay();
+      $('filters').innerHTML = `<div class="frow">${views}
+          <select data-sel="pd" aria-label="올라온 날">${pool.map(d => `<option value="${d}"${d === pd ? ' selected' : ''}>${U.dateLabel(d)} 올라온 글</option>`).join('')}</select></div>
+        <div class="frow">
+          ${pg.seg('pk', [['all', '전체'], ['stock', '종목 리포트'], ['other', '산업·전략·시황']])}
+          <select data-sel="pb" aria-label="증권사"><option value="">증권사 전체</option>${(poolData ? poolData.brokers : []).map(([b, n]) => `<option value="${U.esc(b)}"${b === st.pb ? ' selected' : ''}>${U.esc(b)} ${n}</option>`).join('')}</select>
+          ${pg.seg('cap', [['all', '시총 전체'], ['L', '1조 이상'], ['M', '3천억~1조'], ['S', '3천억 미만']])}
+          <input type="search" data-q="q" placeholder="종목명·제목 검색" value="${U.esc(st.q)}" autocomplete="off">
+          ${pg.chk('pn', '네이버에 없는 것만', '같은 리포트가 네이버 증권 리서치 수집분에 없는 글만')}
+        </div>`;
+      return;
+    }
     if (st.v === 'dates') {
       $('filters').innerHTML = `<div class="frow">${views}<span class="muted small">카드를 누르면 그날 리포트로 들어갑니다</span></div>`;
       return;
@@ -129,12 +148,19 @@
   }
 
   function renderBody() {
+    if (st.v === 'pool') return renderPool();
     const stocks = filtered();
     renderSummary(stocks);
     $('deck').innerHTML = stocks.length ? stocks.map(cardHtml).join('') : '<p class="msg">조건에 맞는 리포트가 없습니다.</p>';
   }
 
   function renderFoot() {
+    if (st.v === 'pool') {
+      $('foot').innerHTML = `
+        <p>출처: 텔레그램 @DOC_POOL — 증권사 리포트를 모아 올리는 공개 채널입니다. 여기에는 글의 제목·증권사·의견·목표가만 싣고, 요약 본문과 PDF 는 싣지 않습니다. 원문은 제목을 눌러 텔레그램에서 보세요.</p>
+        <p>'네이버 ✓'는 같은 증권사·같은 종목의 리포트가 작성일 3일 안쪽으로 네이버 증권 리서치 수집분에도 있다는 표시입니다. 종목은 글 머리의 종목명·코드로 가려내고, 가려내지 못한 글(산업·전략·시황·해외 종목·IR 자료)은 증권사별로 묶습니다. 상승여력은 지금 주가 대비.</p>`;
+      return;
+    }
     $('foot').innerHTML = `
       <p>리포트: 네이버 증권 리서치(증권사 제공 종목분석). 요약은 리포트 본문 요약의 앞부분, 키워드는 최근 90일 리포트에 비해 이 리포트가 유난히 많이 쓴 말입니다. 원문은 제목·PDF 링크로 보세요.</p>
       <p>목표가 변화는 같은 증권사의 직전 리포트 대비, 상승여력은 지금 주가 대비. '소외주 첫 리포트'는 최근 90일 동안 리포트가 없던 종목입니다.</p>`;
@@ -153,6 +179,12 @@
   async function renderOther() {
     $('date').hidden = true;
     try {
+      if (st.v === 'pool') {
+        if (!pool) { st.v = 'day'; pg.write(); return render(); }
+        const next = await U.json(`data/docpool/${poolDay()}.json`);
+        if (!poolData || next.date !== poolData.date) open.clear();   // 날을 바꾸면 '더 보기'는 접는다
+        poolData = next;
+      }
       if (st.v === 'dates' && !idx) idx = await U.json('data/digest_index.json');
       if (st.v === 'week' && !wkly) {
         wkly = await U.json('data/digest_weekly.json');
@@ -164,8 +196,82 @@
       return;
     }
     renderFilters();
-    if (st.v === 'dates') renderDates(); else renderWeek();
+    if (st.v === 'dates') renderDates(); else if (st.v === 'week') renderWeek(); else renderPool();
     renderFoot();
+  }
+
+  // ---------- @DOC_POOL 자료 ----------
+  const poolDay = () => (pool.includes(st.pd) ? st.pd : pool[0]);
+  const tgUrl = id => `https://t.me/DOC_POOL/${id}`;
+
+  function poolFiltered() {
+    const q = st.q.trim().toLowerCase();
+    const cap = CAPS[st.cap];
+    const okR = r => (!st.pb || r.b === st.pb) && (!st.pn || !r.nv);
+    const stocks = st.pk === 'other' ? [] : poolData.stocks
+      .map(s => ({ ...s, r: s.r.filter(r => okR(r) && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q) || r.ti.toLowerCase().includes(q))) }))
+      .filter(s => s.r.length && (!cap || (s.mc != null && s.mc >= cap[0] && s.mc < cap[1])));
+    // 시총 필터는 종목 리포트에만 뜻이 있어서, 고르면 종목 아닌 글은 숨긴다
+    const others = st.pk === 'stock' || cap ? [] : poolData.others.filter(r => okR(r) && (!q || `${r.tp} ${r.ti}`.toLowerCase().includes(q)));
+    return { stocks, others };
+  }
+
+  // s 가 있으면 종목 카드 안(증권사를 보여 줌), 없으면 증권사 카드 안(주제를 보여 줌)
+  function poolRepHtml(r, s) {
+    const up = s && r.g && s.p ? r.g / s.p - 1 : null;
+    return `<div class="rp-rep">
+      <div class="rp-meta"><span class="muted">${r.t}</span>
+        ${s ? `<b>${U.esc(r.b || '증권사 미상')}</b>` : (r.tp ? `<span class="chip">${U.esc(r.tp)}</span>` : '')}
+        ${r.op ? `<span class="pill">${U.esc(r.op)}</span>` : ''}
+        ${r.nv ? `<a class="dt-tag" href="${researchUrl(r.nv)}" target="_blank" rel="noopener" title="같은 리포트가 네이버 증권 리서치 수집분에도 있습니다 (눌러서 네이버에서 보기)">네이버 ✓</a>` : ''}
+        ${r.g ? `<span class="rp-goal"><span class="muted">목표가</span> <b>${U.price(r.g)}</b></span>` : ''}</div>
+      <a class="rp-title" href="${tgUrl(r.id)}" target="_blank" rel="noopener">${U.esc(r.ti || '(제목 없음)')}</a>
+      ${up != null || r.rd ? `<div class="rp-foot">${r.rd ? `<span class="muted small">작성 ${U.md(r.rd)}</span>` : ''}
+        ${up != null ? `<span class="muted small">상승여력 <b class="${U.cls(up)}">${U.pct(up, 0)}</b></span>` : ''}</div>` : ''}
+    </div>`;
+  }
+
+  function poolStockCard(s) {
+    const all = open.has(s.c);
+    const only = s.r.filter(r => !r.nv).length;
+    return `<article class="rp-card" ${Stock.hintAttr(s)}>
+      <header class="rp-head">
+        <div class="rp-name">${Stock.link(s)}<small class="muted">${[s.mk === 'KOSPI' ? '코스피' : s.mk === 'KOSDAQ' ? '코스닥' : '', s.w, s.mc != null ? U.eok(s.mc) : ''].filter(Boolean).map(U.esc).join(' · ')}</small></div>
+        <div class="rp-px">${s.p != null ? `<b>${U.price(s.p)}</b>` : ''}${s.ch != null ? `<span class="${U.cls(s.ch)}">${s.ch > 0 ? '+' : ''}${s.ch.toFixed(2)}%</span>` : ''}</div>
+      </header>
+      <div class="rp-badges"><span class="chip">리포트 ${s.r.length}건</span>${only ? `<span class="dt-tag up">네이버에 없음 ${only}</span>` : ''}</div>
+      ${(all ? s.r : s.r.slice(0, SHOW)).map(r => poolRepHtml(r, s)).join('')}
+      ${s.r.length > SHOW ? `<button class="more rp-more" data-open="${s.c}">${all ? '접기' : `리포트 ${s.r.length - SHOW}건 더`}</button>` : ''}
+    </article>`;
+  }
+
+  function poolBrokerCard(b, rows) {
+    const key = `o:${b}`, all = open.has(key);
+    return `<article class="rp-card">
+      <header class="rp-head"><div class="rp-name"><b class="rp-date">${U.esc(b || '증권사 미상')}</b>
+        <small class="muted">산업·전략·시황 ${rows.length}건</small></div></header>
+      ${(all ? rows : rows.slice(0, SHOW_O)).map(r => poolRepHtml(r)).join('')}
+      ${rows.length > SHOW_O ? `<button class="more rp-more" data-open="${U.esc(key)}">${all ? '접기' : `${rows.length - SHOW_O}건 더`}</button>` : ''}
+    </article>`;
+  }
+
+  function renderPool() {
+    const s = poolData.sum;
+    const { stocks, others } = poolFiltered();
+    const shown = stocks.reduce((a, x) => a + x.r.length, 0) + others.length;
+    $('summary').innerHTML = `<div class="dt-sum-head">
+      <div><h2>${DartFmt.md(poolData.date)} @DOC_POOL 자료 <span class="muted small">${s.n}건 · 종목 리포트 ${s.stock}건(${s.stocks}종목) · 증권사 ${s.brokers}곳 · 보이는 것 ${shown}건</span></h2>
+        <p class="muted small">${U.timeLabel(poolData.built)} 갱신 · 텔레그램 @DOC_POOL 채널에 이날 올라온 리포트 글의 제목 목록입니다. 제목을 누르면 텔레그램 글이 열립니다 · 하루 세 번 새 글을 받습니다</p></div>
+      <div class="dt-kpis">
+        <div><span>종목 리포트</span><b>${s.stock}</b></div>
+        <div><span>네이버에도 있음</span><b>${s.nv}</b></div>
+        <div><span>네이버에 없음</span><b class="up">${s.only}</b></div>
+        <div><span>산업·전략·시황</span><b>${s.other}</b></div>
+      </div></div>`;
+    const byBroker = new Map();
+    for (const r of others) byBroker.set(r.b, [...(byBroker.get(r.b) || []), r]);
+    const cards = stocks.map(poolStockCard).concat([...byBroker].sort((a, b) => b[1].length - a[1].length).map(([b, rows]) => poolBrokerCard(b, rows)));
+    $('deck').innerHTML = cards.length ? cards.join('') : '<p class="msg">조건에 맞는 글이 없습니다.</p>';
   }
 
   const goalPill = r => `<span class="muted">${U.price(r.pg)} →</span> <b>${U.price(r.g)}</b> <span class="pill-ch ${U.cls(r.r)}">${U.pct(r.r, 0)}</span>`;
@@ -292,6 +398,11 @@
   pg.bind($('filters'));
   U.initTheme($('theme'));
   (async () => {
+    try {      // @DOC_POOL 데이터가 있는 곳에서만 그 보기를 연다
+      const ds = await U.json('data/docpool/dates.json');
+      pool = ds.length ? ds : null;
+    } catch (e) { pool = null; }
+    if (st.v === 'pool' && !pool) st.v = 'day';
     try {
       await U.dates('digest', pg, $('date'), load);
     } catch (e) {

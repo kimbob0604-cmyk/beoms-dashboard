@@ -94,6 +94,12 @@ def main() -> int:
             built = True
         if run('리포트 정리', ['build_digest.py'], log) != 0:
             problems.append('리포트 탭 JSON 빌드 실패')
+        # @DOC_POOL: 텔레그램 채널에 올라온 리포트 글 목록 (마지막으로 본 글 번호 뒤만 받는다. 로그인이 없으면 4로 건너뛴다).
+        # 네이버 리포트·시총과 견주므로 네이버 빌드 뒤에. 3 = 연결·요청 제한으로 중단 → 다음 실행에서 이어 받는다
+        if run('DOC_POOL 수집', ['collect_docpool.py'], log) not in (0, 4):
+            problems.append('텔레그램 @DOC_POOL 리포트 글 수집 실패 — 다음 실행에서 이어 받음')
+        if run('DOC_POOL 빌드', ['build_docpool.py'], log) != 0:
+            problems.append('@DOC_POOL JSON 빌드 실패')
         # 공시: 어제·오늘 (어제 늦게 올라온 장후 공시 포함). 분기 추정치는 하루 한 번 받으면 다음 실행은 건너뛴다
         if run('DART 공시', ['collect_dart.py', '--days', '1'], log) not in (0, 1):
             problems.append('DART 응답 없음 — 다음 실행에서 이어 받음')

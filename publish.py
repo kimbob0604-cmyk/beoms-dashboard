@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
 DATA = PUBLIC / 'data'
-DATED = ('growth', 'flow', 'high', 'dart', 'digest')   # 날짜별 JSON + dates.json
+DATED = ('growth', 'flow', 'high', 'dart', 'digest', 'docpool')   # 날짜별 JSON + dates.json (docpool = 리포트 탭 @DOC_POOL 글 목록 — 제목·증권사·의견·목표가·링크만, 2026-11-17 사용자 승인으로 공개)
 CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart', 'earn', 'fund')   # 최신 파일만 (vchart = 탐방 탭 차트, earn = 실적 발표 덱 1년)
 FILES = ('home.json', 'names.json', 'quotes.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json',
          'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json', 'semi.json')   # semi.json = 반도체·AI 인프라 탭   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
