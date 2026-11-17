@@ -1,0 +1,54 @@
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="단일항체와 저분자의 작용 위치 비교">
+  <!-- 세포 밖 / 세포막 / 세포 안 -->
+  <rect x="0" y="0" width="720" height="118" class="dg-out"/>
+  <rect x="0" y="118" width="720" height="14" class="dg-mem"/>
+  <rect x="0" y="132" width="720" height="118" class="dg-in"/>
+  <text x="12" y="20" class="dg-m" font-size="12">세포 밖</text>
+  <text x="12" y="128" class="dg-m" font-size="11">세포막</text>
+  <text x="12" y="150" class="dg-m" font-size="12">세포 안</text>
+  <line x1="360" y1="8" x2="360" y2="244" class="dg-div"/>
+
+  <!-- 왼쪽: 단일항체 -->
+  <text x="185" y="22" text-anchor="middle" class="dg-t" font-size="15" font-weight="700">단일항체</text>
+  <text x="185" y="38" text-anchor="middle" class="dg-s" font-size="11.5">저분자보다 수백 배 큰 단백질</text>
+  <!-- 수용체 (막을 관통) -->
+  <rect x="179" y="98" width="12" height="68" rx="4" class="dg-rec"/>
+  <circle cx="185" cy="92" r="9" class="dg-rec"/>
+  <!-- 항체 Y: 두 팔이 수용체 머리를 감싼다 -->
+  <path d="M185 46 L185 62 M185 62 L170 78 L170 92 M185 62 L200 78 L200 92" class="dg-ab" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="120" y="66" class="dg-m" font-size="11">항체</text>
+  <text x="120" y="96" class="dg-m" font-size="11">표적 수용체</text>
+  <text x="250" y="78" class="dg-t" font-size="12">표면 수용체를</text>
+  <text x="250" y="94" class="dg-t" font-size="12">바깥에서 막는다</text>
+  <!-- 신호 끊김 -->
+  <path d="M185 170 L185 205" class="dg-sig" stroke-dasharray="4 4"/>
+  <text x="185" y="225" text-anchor="middle" class="dg-no" font-size="13" font-weight="700">✕ 신호 없음</text>
+  <text x="60" y="190" class="dg-m" font-size="11">세포 안으로는</text>
+  <text x="60" y="204" class="dg-m" font-size="11">못 들어간다</text>
+
+  <!-- 오른쪽: 저분자 -->
+  <text x="545" y="22" text-anchor="middle" class="dg-t" font-size="15" font-weight="700">저분자</text>
+  <text x="545" y="40" text-anchor="middle" class="dg-s" font-size="12">작아서 세포막을 통과</text>
+  <circle cx="480" cy="72" r="7" class="dg-sm"/>
+  <path d="M486 80 Q 505 115 520 158" class="dg-arrow" marker-end="url(#dgArr)"/>
+  <rect x="512" y="166" width="70" height="34" rx="8" class="dg-kin"/>
+  <text x="547" y="187" text-anchor="middle" class="dg-t" font-size="12">성장 신호</text>
+  <circle cx="530" cy="166" r="7" class="dg-sm"/>
+  <text x="600" y="176" class="dg-t" font-size="12">안쪽 단백질에</text>
+  <text x="600" y="192" class="dg-t" font-size="12">직접 붙어 끈다</text>
+  <text x="547" y="225" text-anchor="middle" class="dg-no" font-size="13" font-weight="700">✕ 증식 신호 차단</text>
+
+  <!-- 아래 비교 -->
+  <g font-size="12">
+    <text x="12" y="276" class="dg-m">투여</text>
+    <text x="185" y="276" text-anchor="middle" class="dg-t">주사 (정맥·피하)</text>
+    <text x="545" y="276" text-anchor="middle" class="dg-t">먹는 약 → 장기 복용에 유리</text>
+    <text x="12" y="298" class="dg-m">특허 만료 뒤</text>
+    <text x="185" y="298" text-anchor="middle" class="dg-t">바이오시밀러 침투 완만 · SC 제형으로 방어</text>
+    <text x="545" y="298" text-anchor="middle" class="dg-t">제네릭 진입 → 매출 급감</text>
+    <text x="12" y="320" class="dg-m">반응</text>
+    <text x="185" y="320" text-anchor="middle" class="dg-t">(면역관문억제제) 느리고 일부만, 대신 오래</text>
+    <text x="545" y="320" text-anchor="middle" class="dg-t">빠르고 대부분, 대신 내성</text>
+  </g>
+  <defs><marker id="dgArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+</svg>

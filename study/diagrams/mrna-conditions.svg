@@ -1,0 +1,56 @@
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="mRNA 항암백신 성공 조건 4가지와 임상 결과 대조표">
+  <g font-size="12">
+    <text x="10" y="40" class="dg-t" font-size="13" font-weight="800">임상</text>
+    <text x="300" y="22" text-anchor="middle" class="dg-t" font-weight="700">① 수술 후</text>
+    <text x="300" y="38" text-anchor="middle" class="dg-m" font-size="10.5">보조요법</text>
+    <text x="385" y="22" text-anchor="middle" class="dg-t" font-weight="700">② T세포</text>
+    <text x="385" y="38" text-anchor="middle" class="dg-m" font-size="10.5">침윤 높은 암</text>
+    <text x="470" y="22" text-anchor="middle" class="dg-t" font-weight="700">③ IO 병용</text>
+    <text x="555" y="22" text-anchor="middle" class="dg-t" font-weight="700">④ 개인</text>
+    <text x="555" y="38" text-anchor="middle" class="dg-m" font-size="10.5">맞춤형</text>
+    <text x="650" y="30" text-anchor="middle" class="dg-t" font-weight="700">결과</text>
+  </g>
+  <line x1="4" y1="50" x2="716" y2="50" class="dg-div"/>
+  <!-- 행: y 중심 = 72 + 40*i -->
+  <g font-size="12">
+    <!-- 1 INTerpath-001 -->
+    <rect x="4" y="54" width="712" height="36" rx="6" class="dg-hi" opacity=".45"/>
+    <text x="12" y="70" class="dg-t" font-weight="700">INTerpath-001 · 인티스메란</text>
+    <text x="12" y="84" class="dg-m" font-size="10.5">흑색종 IIB~IV, 수술 후</text>
+    <circle cx="300" cy="72" r="8" class="dg-yes"/><circle cx="385" cy="72" r="8" class="dg-yes"/><circle cx="470" cy="72" r="8" class="dg-yes"/><circle cx="555" cy="72" r="8" class="dg-yes"/>
+    <text x="650" y="77" text-anchor="middle" class="dg-ok" font-weight="800">3상 성공</text>
+    <!-- 2 BNT122 흑색종 -->
+    <text x="12" y="110" class="dg-t" font-weight="700">BNT122 · 바이오엔텍/제넨텍</text>
+    <text x="12" y="124" class="dg-m" font-size="10.5">흑색종 III~IV, 전이성</text>
+    <circle cx="300" cy="112" r="8" class="dg-ring"/><circle cx="385" cy="112" r="8" class="dg-yes"/><circle cx="470" cy="112" r="8" class="dg-yes"/><circle cx="555" cy="112" r="8" class="dg-yes"/>
+    <text x="650" y="117" text-anchor="middle" class="dg-no" font-weight="700">2상 실패 (PFS)</text>
+    <!-- 3 BNT122 대장암 -->
+    <text x="12" y="150" class="dg-t" font-weight="700">BNT122 · 바이오엔텍/제넨텍</text>
+    <text x="12" y="164" class="dg-m" font-size="10.5">대장암 II~III, 수술 후 (ctDNA 양성)</text>
+    <circle cx="300" cy="152" r="8" class="dg-yes"/><circle cx="385" cy="152" r="8" class="dg-ring"/><circle cx="470" cy="152" r="8" class="dg-ring"/><circle cx="555" cy="152" r="8" class="dg-yes"/>
+    <text x="650" y="150" text-anchor="middle" class="dg-no" font-weight="700">2상 실패</text>
+    <text x="650" y="164" text-anchor="middle" class="dg-m" font-size="10">OS 대조군 우위로 조기 종료</text>
+    <!-- 4 GRANITE -->
+    <text x="12" y="190" class="dg-t" font-weight="700">GRANITE · 그릿스톤</text>
+    <text x="12" y="204" class="dg-m" font-size="10.5">MSS 대장암 IV, 전이성</text>
+    <circle cx="300" cy="192" r="8" class="dg-ring"/><circle cx="385" cy="192" r="8" class="dg-ring"/><circle cx="470" cy="192" r="8" class="dg-yes"/><circle cx="555" cy="192" r="8" class="dg-yes"/>
+    <text x="650" y="190" text-anchor="middle" class="dg-no" font-weight="700">2상 PFS 비유의</text>
+    <text x="650" y="204" text-anchor="middle" class="dg-m" font-size="10">회사 파산(2024)</text>
+    <!-- 5 BNT111 -->
+    <text x="12" y="230" class="dg-t" font-weight="700">BNT111 · 바이오엔텍/리제네론</text>
+    <text x="12" y="244" class="dg-m" font-size="10.5">PD-1 불응 흑색종, 전이성 · 범용 항원</text>
+    <circle cx="300" cy="232" r="8" class="dg-ring"/><circle cx="385" cy="232" r="8" class="dg-yes"/><circle cx="470" cy="232" r="8" class="dg-yes"/><circle cx="555" cy="232" r="8" class="dg-ring"/>
+    <text x="650" y="237" text-anchor="middle" class="dg-no" font-weight="700">개발 중단</text>
+    <!-- 6 CV9104 -->
+    <text x="12" y="270" class="dg-t" font-weight="700">CV9104 · 큐어백</text>
+    <text x="12" y="284" class="dg-m" font-size="10.5">거세 저항성 전립선암, 전이성</text>
+    <circle cx="300" cy="272" r="8" class="dg-ring"/><circle cx="385" cy="272" r="8" class="dg-ring"/><circle cx="470" cy="272" r="8" class="dg-ring"/><circle cx="555" cy="272" r="8" class="dg-ring"/>
+    <text x="650" y="277" text-anchor="middle" class="dg-no" font-weight="700">2b상 OS 실패</text>
+  </g>
+  <line x1="4" y1="294" x2="716" y2="294" class="dg-div"/>
+  <g font-size="11" class="dg-s">
+    <circle cx="14" cy="312" r="6" class="dg-yes"/><text x="24" y="316">충족</text>
+    <circle cx="74" cy="312" r="6" class="dg-ring"/><text x="84" y="316">미충족</text>
+    <text x="150" y="316" class="dg-m">네 칸이 모두 찬 임상만 성공했다. 다만 조건이 정말 원인인지는 아직 가설이다(리포트 p.55). 표19를 기호로 옮긴 것.</text>
+  </g>
+</svg>

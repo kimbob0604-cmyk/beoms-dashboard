@@ -545,3 +545,62 @@ python3 collect_eu.py [--force|--status] # Eurostat EU 화장품 수입 → db/t
   하루 한 번 최근 13개월 재수집. 2026년 1~9월 합계 1조 8,398억(+57.9%)이 기사 수치와 일치. 데이터랩 화면이 바뀌면 qid 가 바뀔 수 있다(실패 → 직전 값 유지).
 - **미국 수입** (`collect_us.py` → `us_trade.py`, 소비재 탭 EU 카드에서 'EU ↔ 미국' 전환): US Census API 대신 UN Comtrade 공개 미리보기(`comtradeapi.un.org/public/v1/preview`, 키 없음, 한 번에 한 달).
   미국 보고 수입, 원산지 세계·한국·중국·일본·프랑스, EU 와 같은 9개 HS6 바스켓 + 톡신(300249). 2021-01~, 하루 한 번 최근 6개월. 두 달 늦다.
+
+## Beom's Study (공부 탭, 2026-11-17)
+
+리포트·책 PDF를 그림·표 한 장씩 카드로 풀어 쌓는 화면(`public/study.html`). 계획: `docs/study-plan.md`.
+증권사 그림·문장을 잘라 쓰므로 **이 컴퓨터에서만** 본다(`publish_hold.txt`에 study.html·js/study.js·css/study.css·data/study).
+
+```bash
+python3 study_extract.py study_src/pdf/<doc>.pdf --doc <doc> --offset 2 [--part 120:voronoi]   # 그림·표 잘라내기 + 쪽별 본문
+python3 build_study.py            # study/ 검증 → public/data/study/ (오류면 중단, 카드 없는 그림은 경고)
+python3 build_study.py --check    # 검증만
+```
+
+- 원본(손으로 쓰는 것, git 관리): `study/tree.json`(섹터 → 주제 트리), `study/entities.json`(개념 c: · 약물 d: · 기업 co: · 임상 tr: · 적응증 ind:), `study/docs/<doc>.json`(카드).
+- 원문 PDF와 추출 본문은 `study_src/`(gitignore). 그림 PNG는 `public/data/study/img/` 에 다시 만들 수 있다.
+- 그림은 대부분 벡터라 이미지 추출이 아니라 `<그림N>` 캡션 ~ `자료:` 줄 영역을 렌더한다. 표는 find_tables 칸 경계로 글자를 다시 읽는다(extract()는 쉼표·소수점이 틀어짐).
+- 번호가 다시 1부터 시작하는 부분(기업분석 등)은 `--part 시작쪽:이름` → 키가 `voronoi-fig-003` 처럼 된다.
+- 카드 종류: `sec`(본문 정리) · `fig`/`tbl`(ref=그림·표 키, what/how/nums/so). `add` 는 리포트에 없는 내용(덧붙인 연결·검수 메모)으로 화면에 초록 줄로 따로 보인다.
+- 화면 주소는 쿼리(`?n=노드` `?e=색인키` `?d=문서` `?q=검색어`). 해시(`#종목코드`)는 종목 상세 패널이 쓴다.
+- **재구성 차트**: 그림·표 카드에 `chart`(bar·stack·range·scatter)를 붙이면 '재구성' 탭이 기본, '원본' 탭으로 잘라 온 그림을 본다
+  (`public/js/study_chart.js`, SVG·툴팁·데이터 표). `src` 는 label(원본 숫자 라벨)·pixel(픽셀로 읽음)·table(표)·calc(계산).
+  증권사 차트는 이미지라 숫자가 없으므로 막대는 `study_chart.py` 로 읽는다:
+  ```bash
+  python3 study_chart.py --doc <doc> --key fig-007 --ticks 80000,60000,40000,20000,0          # 왼쪽 눈금 값을 위→아래로
+  python3 study_chart.py --doc <doc> --key fig-019 --ticks ... --stack --color 48,96,240       # 쌓은 막대 (맨 아래 색 지정)
+  ```
+  막대 높이(위 끝 − 바닥)를 눈금 간격으로 환산한다. 고형암편 그림7에서 2025·2026F가 본문 580억·630억 달러와 맞았다.
+- **기술 해설(실제 그림)**: `study_extract.py` 가 그림 영역에 박힌 원본 이미지를 꺼내 여백을 자르고 2배로 키운 정리본(`fig-NNN-hd.png`)을 만든다
+  (고형암편 108개). 그림 카드에 `tech` 를 붙이면 정리본 위에 번호(`spots`: x·y %, 한글·영문 이름, 설명), `steps`(작동 순서), `deep`(심화, 리포트 외 보충)을
+  보여 주고 '재구성'·'원본(리포트 지면)'은 탭으로 남는다. 번호는 그림 속 글자·데이터 점을 가리지 않는 자리에 둔다.
+- **공개 이미지 해설**: 리포트에 그림이 없는 기술은 재사용이 허용된 공개 이미지(위키미디어 공용·RCSB PDB, 퍼블릭 도메인·CC0·CC BY)로 해설한다.
+  ① `study/media/manifest.json` 에 출처 페이지·원본 주소·저작자·라이선스를 적고 ② 원본을 `study_src/media_raw/<키>/raw.*` 에 받고
+  ③ `python3 study_media.py` (여백 자르기·확대 → `study/media/<키>.png`, 크기 기록) ④ 카드 `{"t": "ext", "media": "<키>", "tech": {...}}`.
+  화면에는 '공개 이미지 · 리포트 외' 표시와 출처·저작자·라이선스 줄이 붙는다. 빌드는 출처·라이선스가 빠지면 멈춘다.
+  위키미디어 이미지 서버는 스크립트 요청을 자주 429로 막는다 → 요청 사이 2분 이상 간격(Retry-After)을 둔다.
+- **설명 그림**: `study/diagrams/<이름>.svg` 를 직접 그리고 카드 `{"t": "dia", "dia": "<이름>"}` 로 넣는다. 색은 `dg-*` 클래스(study.css)라 다크 모드를 따라간다.
+- 차트 색은 dataviz 기본 팔레트(라이트·다크 검증 통과)를 고정 순서로 쓴다. 모달리티는 항상 같은 색(단일항체 파랑, 저분자 주황, ADC 초록 …), 대조군은 회색.
+- 기업 색인에 `code`가 있으면 종목 상세 패널, `bio`가 있으면 바이오 탭(`bio.html?m=kr&c=…`)으로 이어진다.
+
+### 교보·다올 채널식 기능 (2026-11-17)
+
+교보 음식료/화장품(@kyobofnbcosmetic)·다올 의료기기/화장품(@alexppark) 텔레그램 채널의 정기 글을 유형별로 세어(약 600건) 자동화할 수 있는 것만 만들었다.
+
+```bash
+python3 earn_alert.py [--notify]      # 실적 공시 속보 (live.py 가 실적 글 수집 직후, daily.py 도)
+python3 medical_alert.py [--notify]   # 월간 외국인 의료관광 소비 알림 (daily.py)
+python3 collect_news.py               # 섹터 데일리 뉴스 → data/news.json
+python3 collect_naver_trends.py       # 네이버 데이터랩 시술·톡신 검색 → data/naver_trends.json
+```
+
+- **텔레그램 공통** (`tg_notify.py`): 수출 확정치·실적 속보·의료관광 알림이 같은 봇·방, 같은 스위치(`.env` `EXPORT_TG_ENABLED=1`)를 쓴다.
+- **실적 공시 속보** (`earn_alert.py`): `db/earn.db` 의 @darthacking 실적 글 가운데 관심 종목(소비재 탭 70종목 + 수출 확정치 종목 + `earn_alert.json` extra)만,
+  예상치 대비(매출 ±5%, 영업이익 ±10% 넘으면 🔺🔻)와 서프/미스 묶음, DART 링크. 같은 회사·같은 분기는 처음 한 번만(잠정실적 뒤 분기보고서는 뺀다). 처음 실행은 기준만 잡는다.
+- **월간 의료관광** (`medical_alert.py`): 데이터랩 새 달이 들어온 날 한 번. 전체·피부과·성형외과·약국 YoY·MoM·비중, 국적 상위 5. 기준 2026-10.
+- **주간 모멘텀 체크** (`momentum.py`, 소비재 탭): 내년 영업이익 컨센서스 1주·1개월 변화 × 주가 1주·1개월 → 동행 상향·추정 선행·추정 하향·동행 하향·보합, RSI(14), 외국인/기관 5·20일.
+  **주의**: 컨센서스(wisereport)가 2026-11-03 무렵부터 기본 User-Agent 요청을 끊어 `collect_consensus.py` 가 매번 코드 3 으로 끝난다 — 컨센서스는 11-02 에 멈춰 있고 카드에 경고가 뜬다.
+- **검색 관심도**: 구글 트렌드에 '시술 — 한국' 묶음(리쥬란 anchor 9개) 추가. 네이버 데이터랩 수집기는 앱에 '데이터랩(검색어트렌드)' 권한이 없어(401, 024) 지금은 건너뛴다 — 권한을 추가하면 같은 카드에 네이버 묶음이 붙는다.
+- **섹터 데일리 뉴스** (`collect_news.py`, 소비재 탭): 네이버 뉴스 검색 API, 종목 이름·섹터 키워드가 **제목에** 든 기사만, 제목·링크·언론사·시각만. 최근 7일, 같은 제목은 하나로.
+- **아마존 K뷰티 데일리**: 아마존 robots.txt 가 AI 에이전트 수집을 막아 직접 긁지 않는다. newsbot 집계(Amazon 순위 가중 점유율)에 전일 대비를 더해 Amazon·TikTok 카드에서 본다.
+- **하지 않은 것**: 화장품·라면 10일 수출 속보(공개 API 에 품목별 10일 자료 없음), 기업 리포트 요약·GLP-1 브리프(애널리스트 작성물).

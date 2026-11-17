@@ -1,0 +1,1864 @@
+{
+ "_note": "공통 색인. 키 앞머리: c=개념, d=약물, co=기업, tr=임상, ind=적응증. desc 는 비전공자 기준 풀이. co 의 code=KRX 6자리(종목 상세 패널), ticker=해외, bio=바이오 탭 연결 {m, c}. add=true 는 리포트에 없는 항목(내가 덧붙임).",
+ "c:modality": {
+  "name": "모달리티",
+  "en": "Modality",
+  "desc": "약을 만드는 방식의 분류. 단일항체·저분자·ADC·이중항체·CAR-T·mRNA처럼 '무엇으로 만든 약인가'를 말한다. 같은 표적이라도 모달리티가 다르면 작용 위치·투여 방식·특허 수명이 달라진다."
+ },
+ "c:mab": {
+  "name": "단일항체",
+  "en": "Monoclonal antibody (mAb)",
+  "desc": "한 가지 표적만 붙잡도록 만든 Y자 모양 단백질 약. 크기가 커서 세포 안으로 못 들어가고, 세포 표면 단백질에 붙어 신호를 막거나 면역세포가 암세포를 공격하게 돕는다. 주사로 맞는다."
+ },
+ "c:small-molecule": {
+  "name": "저분자",
+  "en": "Small molecule",
+  "desc": "화학 합성으로 만든 작은 분자 약. 세포막을 통과해 세포 안의 성장 신호 단백질(키나아제 등)에 직접 붙어 기능을 끈다. 먹는 약(경구)이 많지만 구조를 복제하기 쉬워 특허가 끝나면 제네릭이 빠르게 들어온다."
+ },
+ "c:adc": {
+  "name": "ADC",
+  "en": "Antibody-drug conjugate",
+  "desc": "항체에 독한 화학항암제(페이로드)를 링커로 매단 약. 항체가 암세포 표면 표적을 찾아가 세포 안으로 들어간 뒤 페이로드를 풀어 죽인다. '유도미사일'에 비유된다."
+ },
+ "c:bispecific": {
+  "name": "이중항체",
+  "en": "Bispecific antibody",
+  "desc": "팔 두 개가 서로 다른 표적을 하나씩 잡는 항체. 두 신호를 한 번에 막거나(예: PD-1×VEGF), T세포와 암세포를 물리적으로 이어 붙인다(T세포 인게이저)."
+ },
+ "c:sc": {
+  "name": "SC 제형",
+  "en": "Subcutaneous formulation",
+  "desc": "정맥주사(IV) 대신 피부 밑에 맞는 피하주사 제형. 투여 시간이 몇 분으로 줄고, 제형·효소에 별도 특허가 붙어 IV 바이오시밀러가 대체하지 못한다. 그래서 특허 만료 방어 수단으로 쓰인다."
+ },
+ "c:biosimilar": {
+  "name": "바이오시밀러·제네릭",
+  "en": "Biosimilar / Generic",
+  "desc": "특허가 끝난 약의 복제약. 저분자 복제약은 제네릭(똑같이 만들 수 있음), 항체 같은 바이오의약품 복제약은 바이오시밀러(살아있는 세포로 만들어 완전히 같을 수 없음)라 부른다. 바이오시밀러는 개발·허가가 어려워 오리지널 매출 감소가 상대적으로 완만하다."
+ },
+ "c:ici": {
+  "name": "면역관문억제제",
+  "en": "Immune checkpoint inhibitor (ICI) · 면역항암제(IO)",
+  "desc": "T세포에 걸린 '브레이크'(면역관문)를 풀어 우리 몸 면역이 암을 다시 공격하게 하는 약. 대표가 PD-1/PD-L1 억제제이고 CTLA-4·LAG-3 억제제도 있다. 암세포를 직접 죽이지 않는다."
+ },
+ "c:pd1": {
+  "name": "PD-1 / PD-L1",
+  "en": "Programmed death-1 / ligand-1",
+  "desc": "PD-1은 T세포 표면 수용체, PD-L1은 거기에 붙는 짝(리간드)이다. 정상세포는 PD-L1으로 '아군이니 공격하지 마라' 신호를 보내는데, 종양세포가 PD-L1을 과발현해 이를 악용한다. 둘 중 어느 쪽을 막아도 같은 브레이크가 풀려 PD-(L)1으로 묶어 부른다."
+ },
+ "c:ctla4": {
+  "name": "CTLA-4",
+  "en": "CTLA-4",
+  "desc": "T세포의 또 다른 브레이크(면역관문). 억제제 여보이는 주로 PD-1 억제제와 함께 쓰여(IO+IO 병용) 매출이 PD-(L)1에 딸려 움직인다."
+ },
+ "c:lag3": {
+  "name": "LAG-3",
+  "en": "LAG-3",
+  "desc": "T세포 탈진과 관련된 면역관문. BMS 옵두알라그(옵디보+렐라틀리맙)가 흑색종 1차에 쓰인다."
+ },
+ "c:tcell": {
+  "name": "T세포 (CD8)",
+  "en": "Cytotoxic T cell",
+  "desc": "암세포를 직접 찾아 죽이는 면역세포. CD8은 그 표면 표지다. 면역관문억제제는 결국 이 세포가 일하게 만드는 약이라, 종양 안에 CD8 T세포가 얼마나 있느냐가 반응을 크게 좌우한다."
+ },
+ "c:infiltration": {
+  "name": "T세포 침윤 (뜨거운·차가운 종양)",
+  "en": "T-cell infiltration",
+  "desc": "T세포가 종양 안까지 들어와 있는 정도. 많으면 '뜨거운 종양', 거의 없으면 '차가운 종양'. T세포가 종양 주변 기질에만 머물고 안으로 못 들어가는 경우는 '배제형'이라 한다."
+ },
+ "c:tmb": {
+  "name": "종양변이부담 (TMB)",
+  "en": "Tumor mutational burden",
+  "desc": "종양 DNA에 쌓인 변이의 양. 변이가 많을수록 T세포가 '이물질'로 알아볼 신항원이 많아져 면역항암제가 잘 듣는다. 자외선(흑색종)·흡연(폐암)이 TMB를 높인다."
+ },
+ "c:neoantigen": {
+  "name": "신항원",
+  "en": "Neoantigen",
+  "desc": "종양 변이 때문에 새로 생긴, 정상세포에는 없는 단백질 조각. T세포가 암을 알아보는 표식이다. 점돌연변이보다 염기 삽입·결실(프레임시프트)로 생긴 신항원이 더 '낯설어' 인식이 쉽다."
+ },
+ "c:driver": {
+  "name": "드라이버 변이",
+  "en": "Driver mutation",
+  "desc": "암세포 증식을 혼자서 몰고 가는 핵심 유전자 변이(EGFR·ALK·ROS1·RET·KRAS 등). 이게 있으면 그 변이를 겨냥한 표적치료제(TKI)가 1차 치료가 된다. 대체로 비흡연형이라 TMB가 낮아 면역항암제는 잘 안 듣는다."
+ },
+ "c:tki": {
+  "name": "TKI",
+  "en": "Tyrosine kinase inhibitor",
+  "desc": "티로신 키나아제(세포 성장 신호를 전달하는 효소)를 막는 저분자 표적치료제. EGFR TKI(타그리소), VEGF TKI(인라이타·렌비마·카보메틱스) 등."
+ },
+ "c:vegf": {
+  "name": "VEGF",
+  "en": "Vascular endothelial growth factor",
+  "desc": "혈관을 새로 만들라는 신호 단백질. 종양이 산소·영양을 얻으려고 많이 내뿜고, 동시에 종양 주변 면역도 억누른다. VEGF를 막는 약(아바스틴, VEGF TKI)이 면역항암제와 짝을 이루는 이유다."
+ },
+ "c:her2": {
+  "name": "HER2",
+  "en": "HER2",
+  "desc": "세포 성장 신호 수용체. 유방암 15~20%는 이 유전자가 증폭돼 표면에 정상보다 100배 이상 발현되고 그 신호에 의존한다. 허셉틴·퍼제타(항체), 엔허투·캐싸일라(ADC)가 겨냥한다."
+ },
+ "c:hif2a": {
+  "name": "HIF-2α",
+  "en": "Hypoxia-inducible factor 2α",
+  "desc": "산소가 부족할 때 켜지는 스위치. 투명세포 신장암은 VHL 소실로 이 스위치가 늘 켜져 VEGF가 쏟아진다. 억제제가 머크 웰리렉."
+ },
+ "c:orr": {
+  "name": "ORR (객관적 반응률)",
+  "en": "Objective response rate",
+  "desc": "종양이 일정 기준 이상 줄어든 환자 비율. 약이 '듣는지'를 빨리 보여 주지만 오래 사는지는 말해 주지 않는다. CR은 완전관해(종양이 안 보임)."
+ },
+ "c:pfs": {
+  "name": "PFS (무진행 생존기간)",
+  "en": "Progression-free survival",
+  "desc": "치료 시작부터 암이 다시 커지거나 사망하기 전까지의 기간. 보통 중앙값(mPFS, 개월)으로 비교한다."
+ },
+ "c:os": {
+  "name": "OS (전체 생존기간)",
+  "en": "Overall survival",
+  "desc": "치료 시작부터 사망까지의 기간. 항암제 효능의 최종 기준. 'n년 OS'는 n년 시점에 살아 있는 환자 비율이다. 결과가 덜 쌓였으면 '미성숙'이라 한다."
+ },
+ "c:hr": {
+  "name": "HR (위험비)",
+  "en": "Hazard ratio",
+  "desc": "실험군과 대조군의 사건(진행·사망) 발생 위험 비율. 1보다 작을수록 실험군이 좋다. HR 0.60 = 위험 40% 감소."
+ },
+ "c:efs": {
+  "name": "DFS·EFS·iDFS·RFS",
+  "en": "Disease/Event/Invasive disease/Relapse-free survival",
+  "desc": "수술 전후 치료(조기 암)에서 쓰는 지표. 수술 뒤 재발·사건 없이 지내는 기간이나 비율이다. pCR은 수술 전 치료 후 떼어낸 조직에 암이 남지 않은 비율."
+ },
+ "c:tps": {
+  "name": "TPS",
+  "en": "Tumor proportion score",
+  "desc": "종양세포 중 PD-L1이 발현된 세포의 비율(%). 비소세포폐암에서 키트루다 단독 사용 기준(≥50%)으로 쓰인다."
+ },
+ "c:cps": {
+  "name": "CPS",
+  "en": "Combined positive score",
+  "desc": "종양세포뿐 아니라 주변 면역세포의 PD-L1 발현까지 합쳐 센 점수. 유방암·두경부암·위식도암에서 면역항암제를 쓸지 가르는 기준(≥1, ≥10, ≥20 등)."
+ },
+ "c:msi": {
+  "name": "MSI-H / MSS",
+  "en": "Microsatellite instability",
+  "desc": "DNA 복제 오류 수선 기능이 망가진 상태(MSI-H/dMMR)면 변이가 폭증해 면역항암제가 잘 듣는다. 대장암의 약 85%는 반대인 MSS로 면역항암제가 거의 안 듣는다."
+ },
+ "c:line": {
+  "name": "치료 차수 (1차·2차)",
+  "en": "Line of therapy (1L, 2L)",
+  "desc": "1차(1L)는 진단 후 처음 받는 표준치료, 2차는 1차에 실패·진행한 뒤의 치료. 시장 크기는 1차가 압도적이라 신약은 2차로 들어와 1차로 올라가려 한다."
+ },
+ "c:adjuvant": {
+  "name": "보조요법·수술 전후 요법",
+  "en": "Adjuvant / Neoadjuvant / Perioperative",
+  "desc": "수술 가능한 조기 암에서 재발을 막으려고 수술 뒤(보조), 수술 앞(선행), 또는 앞뒤 모두(수술 전후) 쓰는 치료. 투약 대상이 '완치를 노리는 환자'라 기준이 높다."
+ },
+ "c:unmet": {
+  "name": "미충족 수요",
+  "en": "Unmet medical need",
+  "desc": "지금 표준치료로 해결이 안 되는 부분(생존이 짧음, 다음 치료 선택지 없음, 뇌전이 등). 신약 개발이 몰리는 곳이고, 리포트가 암종마다 짚는 핵심이다."
+ },
+ "c:bcg": {
+  "name": "BCG 방광 내 주입",
+  "en": "Intravesical BCG",
+  "desc": "결핵 예방 백신(BCG)을 방광 안에 직접 넣는 치료. 세균 성분에 놀란 세포들이 면역세포를 불러들여 종양까지 함께 제거한다. 비근침윤 방광암의 표준."
+ },
+ "c:patent-cliff": {
+  "name": "특허 절벽",
+  "en": "Patent cliff",
+  "desc": "대형 약의 특허가 몰려 끝나며 매출이 한꺼번에 빠지는 시기. PD-(L)1 상위 5개 약은 2028~2030년, 미국 메디케어 약가협상도 같은 시기에 걸려 있다."
+ },
+ "c:backbone": {
+  "name": "백본",
+  "en": "Backbone therapy",
+  "desc": "병용요법에서 바탕이 되는 약(예: 키트루다). 그 위에 얹는 약을 파트너라 한다. 특허가 끝난 백본은 싸지지만 파트너 약은 자기 특허로 보호된다."
+ },
+ "c:radioligand": {
+  "name": "방사성리간드",
+  "en": "Radioligand therapy",
+  "desc": "암세포 표면 표적에 붙는 분자에 방사성 동위원소를 달아 안에서 방사선을 쏘는 약. 노바티스 플루빅토(PSMA)가 대표."
+ },
+ "c:ras": {
+  "name": "RAS 억제제",
+  "en": "RAS inhibitor",
+  "desc": "가장 흔한 발암 유전자 RAS를 막는 약. 오랫동안 '약으로 못 막는 표적'이었다. 다락손라십이 2026년 8월 췌장암에서 FDA 승인을 받았다."
+ },
+ "d:keytruda": {
+  "name": "키트루다",
+  "en": "Keytruda (pembrolizumab)",
+  "co": [
+   "co:merck"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-1 억제제. 전 세계 매출 1위 약(2026F 약 317억 달러). 비소세포폐암 1차를 사실상 독점한 것이 지배력의 원천. SC 제형은 키트루다 Qlex(알테오젠 효소)."
+ },
+ "d:keytruda-qlex": {
+  "name": "키트루다 Qlex (SC)",
+  "en": "Keytruda Qlex (pembrolizumab SC)",
+  "co": [
+   "co:merck",
+   "co:alteogen"
+  ],
+  "tags": [
+   "c:pd1",
+   "c:sc"
+  ],
+  "mod": "단일항체(SC)",
+  "desc": "키트루다의 피하주사 제형. 알테오젠의 히알루로니다제 효소 기술을 쓴다. 특허가 2041년까지 이어진다는 분석이 있다. 2026F 매출 21.95억 달러."
+ },
+ "d:opdivo": {
+  "name": "옵디보",
+  "en": "Opdivo (nivolumab)",
+  "co": [
+   "co:bms"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-1 억제제. 비소세포폐암 1차 단독(CheckMate-026)에서 환자 선별 없이 들어갔다가 실패했다. 흑색종·신장암에서 여보이와 병용. SC 제형은 옵디보 Qvantig(할로자임 효소)."
+ },
+ "d:yervoy": {
+  "name": "여보이",
+  "en": "Yervoy (ipilimumab)",
+  "co": [
+   "co:bms"
+  ],
+  "tags": [
+   "c:ctla4"
+  ],
+  "mod": "단일항체",
+  "desc": "CTLA-4 억제제. 주로 옵디보와 함께 쓴다(흑색종 1차, 신장암 1차)."
+ },
+ "d:opdualag": {
+  "name": "옵두알라그",
+  "en": "Opdualag (nivolumab + relatlimab)",
+  "co": [
+   "co:bms"
+  ],
+  "tags": [
+   "c:pd1",
+   "c:lag3"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-1 + LAG-3 고정 용량 복합제. 흑색종 1차."
+ },
+ "d:imfinzi": {
+  "name": "임핀지",
+  "en": "Imfinzi (durvalumab)",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-L1 억제제. 비소세포폐암 3기 공고요법 독점, 소세포폐암, 위암 수술 전후(FLOT 병용), 방광암 등 '비전이성' 자리에 강하다."
+ },
+ "d:tecentriq": {
+  "name": "티쎈트릭",
+  "en": "Tecentriq (atezolizumab)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-L1 억제제. 소세포폐암 1차(화학 병용), 비소세포폐암 보조요법."
+ },
+ "d:libtayo": {
+  "name": "립타요",
+  "en": "Libtayo (cemiplimab)",
+  "co": [
+   "co:regeneron"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-1 억제제. 피부 편평세포암·기저세포암, 비소세포폐암."
+ },
+ "d:jemperli": {
+  "name": "젬퍼리",
+  "en": "Jemperli (dostarlimab)",
+  "co": [
+   "co:gsk"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "PD-1 억제제. 자궁내막암에서 GSK가 리더급인 유일한 시장."
+ },
+ "d:tevimbra": {
+  "name": "테빔브라",
+  "en": "Tevimbra (tislelizumab)",
+  "co": [
+   "co:beone"
+  ],
+  "tags": [
+   "c:pd1"
+  ],
+  "mod": "단일항체",
+  "desc": "BeOne(옛 BeiGene)의 PD-1 억제제. 위·식도암 등 아시아 비중이 큰 암종에서 존재감."
+ },
+ "d:enhertu": {
+  "name": "엔허투",
+  "en": "Enhertu (trastuzumab deruxtecan, T-DXd)",
+  "co": [
+   "co:daiichi",
+   "co:az"
+  ],
+  "tags": [
+   "c:adc",
+   "c:her2"
+  ],
+  "mod": "ADC",
+  "desc": "HER2 ADC. HER2 양성 유방암에서 2차(DESTINY-Breast03)를 거쳐 1차(DESTINY-Breast09, 퍼투주맙 병용)까지 올라섰다."
+ },
+ "d:kadcyla": {
+  "name": "캐싸일라",
+  "en": "Kadcyla (T-DM1)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:adc",
+   "c:her2"
+  ],
+  "mod": "ADC",
+  "desc": "1세대 HER2 ADC. 엔허투에 2차 자리를 내줬고, 조기 유방암 수술 후 잔존암 환자 보조요법에 쓰인다."
+ },
+ "d:herceptin": {
+  "name": "허셉틴",
+  "en": "Herceptin (trastuzumab)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:her2"
+  ],
+  "mod": "단일항체",
+  "desc": "최초의 HER2 항체. HER2 양성 유방암 1세대 표준치료."
+ },
+ "d:perjeta": {
+  "name": "퍼제타",
+  "en": "Perjeta (pertuzumab)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:her2"
+  ],
+  "mod": "단일항체",
+  "desc": "허셉틴과 다른 자리에 붙는 HER2 항체. 허셉틴과 함께 써(CLEOPATRA) 2세대 표준이 됐다. 두 항체를 한 번에 피하주사하는 제형이 페스고."
+ },
+ "d:trodelvy": {
+  "name": "트로델비",
+  "en": "Trodelvy (sacituzumab govitecan)",
+  "co": [
+   "co:gilead"
+  ],
+  "tags": [
+   "c:adc",
+   "c:trop2"
+  ],
+  "mod": "ADC",
+  "desc": "TROP2 ADC. 삼중음성유방암 전이성 1차에서 CPS ≥10이면 키트루다와 병용, CPS <10이면 단독."
+ },
+ "d:datroway": {
+  "name": "다트로웨이",
+  "en": "Datroway (datopotamab deruxtecan, Dato-DXd)",
+  "co": [
+   "co:daiichi",
+   "co:az"
+  ],
+  "tags": [
+   "c:adc",
+   "c:trop2"
+  ],
+  "mod": "ADC",
+  "desc": "TROP2 ADC. 삼중음성유방암 CPS <10 전이성 1차 옵션. AZ가 임핀지와 묶어 개발."
+ },
+ "d:padcev": {
+  "name": "파드셉",
+  "en": "Padcev (enfortumab vedotin, EV)",
+  "co": [
+   "co:astellas",
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:adc",
+   "c:nectin4"
+  ],
+  "mod": "ADC",
+  "desc": "Nectin-4 ADC. 키트루다와 함께 방광암 1차에 올라선 첫 'IO+ADC' 표준치료."
+ },
+ "d:inlyta": {
+  "name": "인라이타",
+  "en": "Inlyta (axitinib)",
+  "co": [
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:tki",
+   "c:vegf"
+  ],
+  "mod": "저분자",
+  "desc": "VEGF 수용체 TKI. 키트루다와 함께 투명세포 신장암 1차."
+ },
+ "d:lenvima": {
+  "name": "렌비마",
+  "en": "Lenvima (lenvatinib)",
+  "co": [
+   "co:eisai",
+   "co:merck"
+  ],
+  "tags": [
+   "c:tki",
+   "c:vegf"
+  ],
+  "mod": "저분자",
+  "desc": "다중 키나아제(VEGFR1-3 등) TKI. 키트루다와 함께 신장암 1차(ORR 71.3%)."
+ },
+ "d:cabometyx": {
+  "name": "카보메틱스",
+  "en": "Cabometyx (cabozantinib)",
+  "co": [
+   "co:exelixis"
+  ],
+  "tags": [
+   "c:tki",
+   "c:vegf"
+  ],
+  "mod": "저분자",
+  "desc": "MET/VEGFR2/AXL/RET TKI. 옵디보와 함께 신장암 1차."
+ },
+ "d:welireg": {
+  "name": "웰리렉",
+  "en": "Welireg (belzutifan)",
+  "co": [
+   "co:merck"
+  ],
+  "tags": [
+   "c:hif2a"
+  ],
+  "mod": "저분자",
+  "desc": "HIF-2α 억제제. 신장암에서 면역관문억제제 병용에 얹어 초기 효능을 보태려는 시도의 핵심."
+ },
+ "d:darzalex": {
+  "name": "다잘렉스",
+  "en": "Darzalex (daratumumab)",
+  "co": [
+   "co:jnj"
+  ],
+  "mod": "단일항체",
+  "desc": "CD38 항체. 다발골수종(혈액암) 약으로 항암제 매출 2위. 고형암을 다루는 이 자료에서는 제외."
+ },
+ "d:tagrisso": {
+  "name": "타그리소",
+  "en": "Tagrisso (osimertinib)",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:tki",
+   "c:egfr"
+  ],
+  "mod": "저분자",
+  "desc": "3세대 EGFR TKI. EGFR 변이 비소세포폐암 1차 표준. 저분자 항암제 매출 1위(2026F 78.6억 달러)."
+ },
+ "d:pluvicto": {
+  "name": "플루빅토",
+  "en": "Pluvicto (lutetium-177 vipivotide tetraxetan)",
+  "co": [
+   "co:novartis"
+  ],
+  "tags": [
+   "c:radioligand"
+  ],
+  "mod": "방사성리간드",
+  "desc": "PSMA 표적 방사성리간드. 전립선암에서 1차 치료로 올라가며 2차 이후 선택지를 좁혔다."
+ },
+ "d:erbitux": {
+  "name": "얼비툭스",
+  "en": "Erbitux (cetuximab)",
+  "co": [
+   "co:bms",
+   "co:merck-kgaa"
+  ],
+  "mod": "단일항체",
+  "desc": "EGFR 항체. RAS 변이 없는 MSS 대장암 1차(화학 병용), 두경부암(CPS <1)."
+ },
+ "d:avastin": {
+  "name": "아바스틴",
+  "en": "Avastin (bevacizumab)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:vegf"
+  ],
+  "mod": "단일항체",
+  "desc": "VEGF-A 항체. RAS 변이 MSS 대장암 1차(화학 병용) 등."
+ },
+ "d:daraxonrasib": {
+  "name": "다락손라십",
+  "en": "Daraxonrasib (RMC-6236)",
+  "co": [
+   "co:revmed"
+  ],
+  "tags": [
+   "c:ras"
+  ],
+  "mod": "저분자",
+  "desc": "RAS 억제제. 2026년 8월 췌장암에서 FDA 승인, 췌장암에 처음 생긴 '제대로 된 약'. 1차 진입 임상 진행 중이고 MSS 대장암 확장도 주목받는다."
+ },
+ "d:sac-tmt": {
+  "name": "sac-TMT",
+  "en": "Sacituzumab tirumotecan (MK-2870)",
+  "co": [
+   "co:kelun",
+   "co:merck"
+  ],
+  "tags": [
+   "c:adc",
+   "c:trop2"
+  ],
+  "mod": "ADC",
+  "desc": "켈룬이 만들고 머크가 들여온 TROP2 ADC. 키트루다 위에 얹는 대표 병용 자산."
+ },
+ "d:intismeran": {
+  "name": "인티스메란",
+  "en": "Intismeran autogene (mRNA-4157/V940)",
+  "co": [
+   "co:moderna",
+   "co:merck"
+  ],
+  "tags": [
+   "c:neoantigen"
+  ],
+  "mod": "mRNA 항암백신",
+  "desc": "모더나·머크의 개인 맞춤형 신항원 mRNA 항암백신. 키트루다와 병용."
+ },
+ "d:ivonescimab": {
+  "name": "이보네시맙",
+  "en": "Ivonescimab (SMT112/AK112)",
+  "co": [
+   "co:akeso",
+   "co:summit"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:vegf"
+  ],
+  "mod": "이중항체",
+  "desc": "PD-1×VEGF 이중항체. 아케소가 만들고 서밋이 서구 권리를 가졌다. AZ가 서밋에 20억 달러를 투자했다."
+ },
+ "d:pumitamig": {
+  "name": "푸미타미그",
+  "en": "Pumitamig (BNT327)",
+  "co": [
+   "co:biontech",
+   "co:bms"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:vegf"
+  ],
+  "mod": "이중항체",
+  "desc": "바이오엔텍의 PD-L1×VEGF 이중항체. BMS가 계약금 15억 달러와 2028년까지 20억 달러 확정 지급으로 확보."
+ },
+ "d:mk2010": {
+  "name": "MK-2010",
+  "en": "MK-2010 (LM-299)",
+  "co": [
+   "co:lanova",
+   "co:merck"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:vegf"
+  ],
+  "mod": "이중항체",
+  "desc": "머크가 LaNova에서 들여온 PD-1×VEGF 이중항체. 차기 1차 폐암 시험에서 키트루다 대신 파트너로 쓰는 안까지 검토 중."
+ },
+ "d:zolbetuximab": {
+  "name": "졸베툭시맙",
+  "en": "Zolbetuximab (Vyloy)",
+  "co": [
+   "co:astellas"
+  ],
+  "tags": [
+   "c:cldn182"
+  ],
+  "mod": "단일항체",
+  "desc": "CLDN18.2 항체. HER2 음성·CPS <1 위식도 선암 1차에서 화학과 병용."
+ },
+ "d:zanidatamab": {
+  "name": "자니다타맙",
+  "en": "Zanidatamab (Ziihera)",
+  "co": [
+   "co:jazz"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:her2"
+  ],
+  "mod": "이중항체",
+  "desc": "HER2의 두 자리를 동시에 잡는 이중항체. HER2 양성 위식도 선암 1차에서 티슬렐리주맙·화학과 병용(PD-L1 무관)."
+ },
+ "c:trop2": {
+  "name": "TROP2",
+  "en": "TROP2",
+  "desc": "고형암 대부분의 표면에 많이 나오는 단백질. ADC 표적으로 가장 경쟁이 치열하다(트로델비, 다트로웨이, sac-TMT)."
+ },
+ "c:nectin4": {
+  "name": "Nectin-4",
+  "en": "Nectin-4",
+  "desc": "방광암(요로상피암) 표면에 많이 나오는 단백질. 파드셉의 표적."
+ },
+ "c:cldn182": {
+  "name": "CLDN18.2",
+  "en": "Claudin 18.2",
+  "desc": "위 점막 세포 사이를 잇는 단백질. 위암에서 겉으로 드러나 항체·ADC 표적이 된다."
+ },
+ "co:merck": {
+  "name": "머크 (MSD)",
+  "en": "Merck & Co",
+  "ticker": "MRK",
+  "desc": "키트루다 보유. PD-(L)1 매출의 54%. 특허 만료에 대비해 SC 전환, ADC(켈룬·다이이찌산쿄), 백신(모더나), PD-1×VEGF(LaNova)를 쌓는 중."
+ },
+ "co:bms": {
+  "name": "BMS",
+  "en": "Bristol Myers Squibb",
+  "ticker": "BMY",
+  "desc": "옵디보·여보이·옵두알라그 보유. 흑색종에서 가장 강한 라인업. 바이오엔텍 푸미타미그로 대체 전략."
+ },
+ "co:az": {
+  "name": "아스트라제네카",
+  "en": "AstraZeneca",
+  "ticker": "AZN",
+  "desc": "임핀지(비전이성 자리), 타그리소, 엔허투·다트로웨이(다이이찌산쿄와 공동). 서밋에 20억 달러 투자."
+ },
+ "co:roche": {
+  "name": "로슈",
+  "en": "Roche",
+  "ticker": "RHHBY",
+  "desc": "티쎈트릭, 허셉틴·퍼제타·페스고·캐싸일라(HER2 계열), 아바스틴."
+ },
+ "co:regeneron": {
+  "name": "리제네론",
+  "en": "Regeneron",
+  "ticker": "REGN",
+  "desc": "립타요(PD-1) 보유."
+ },
+ "co:gsk": {
+  "name": "GSK",
+  "en": "GSK",
+  "ticker": "GSK",
+  "desc": "젬퍼리(PD-1) 보유. 자궁내막암 리더."
+ },
+ "co:beone": {
+  "name": "BeOne Medicines",
+  "en": "BeOne Medicines (옛 BeiGene)",
+  "ticker": "ONC",
+  "desc": "테빔브라(PD-1), 브루킨사(BTK) 보유."
+ },
+ "co:pfizer": {
+  "name": "화이자",
+  "en": "Pfizer",
+  "ticker": "PFE",
+  "desc": "파드셉(아스텔라스와 공동, Seagen 인수로 확보), 인라이타, 입랜스."
+ },
+ "co:astellas": {
+  "name": "아스텔라스",
+  "en": "Astellas",
+  "ticker": "4503.T",
+  "desc": "파드셉(화이자와 공동), 엑스탄디, 졸베툭시맙."
+ },
+ "co:daiichi": {
+  "name": "다이이찌산쿄",
+  "en": "Daiichi Sankyo",
+  "ticker": "4568.T",
+  "desc": "DXd 페이로드 ADC의 원조. 엔허투·다트로웨이(AZ와 공동), 머크에 DXd ADC 3종(계약금 40억 달러)."
+ },
+ "co:gilead": {
+  "name": "길리어드",
+  "en": "Gilead Sciences",
+  "ticker": "GILD",
+  "desc": "트로델비(TROP2 ADC) 보유."
+ },
+ "co:eisai": {
+  "name": "에자이",
+  "en": "Eisai",
+  "ticker": "4523.T",
+  "desc": "렌비마(머크와 공동)."
+ },
+ "co:exelixis": {
+  "name": "엑셀리시스",
+  "en": "Exelixis",
+  "ticker": "EXEL",
+  "bio": {
+   "m": "us",
+   "c": "EXEL"
+  },
+  "desc": "카보메틱스 보유. 신장암에서 TKI 소유자로 몫을 가져간다."
+ },
+ "co:jnj": {
+  "name": "J&J",
+  "en": "Johnson & Johnson",
+  "ticker": "JNJ",
+  "desc": "다잘렉스, 얼리다, 라이브리반트(EGFR×MET 이중항체)+렉라자 병용."
+ },
+ "co:novartis": {
+  "name": "노바티스",
+  "en": "Novartis",
+  "ticker": "NVS",
+  "desc": "키스칼리(CDK4/6), 플루빅토(방사성리간드)."
+ },
+ "co:revmed": {
+  "name": "Revolution Medicines",
+  "en": "Revolution Medicines",
+  "ticker": "RVMD",
+  "desc": "다락손라십(RAS 억제제) 개발사."
+ },
+ "co:kelun": {
+  "name": "켈룬 (Kelun-Biotech)",
+  "en": "Sichuan Kelun-Biotech",
+  "ticker": "6990.HK",
+  "desc": "중국 ADC 회사. 머크에 sac-TMT 포함 ADC 7종을 넘겼다."
+ },
+ "co:moderna": {
+  "name": "모더나",
+  "en": "Moderna",
+  "ticker": "MRNA",
+  "desc": "머크와 개인 맞춤형 mRNA 항암백신 인티스메란 개발."
+ },
+ "co:akeso": {
+  "name": "아케소",
+  "en": "Akeso",
+  "ticker": "9926.HK",
+  "desc": "이보네시맙 원개발사(중국)."
+ },
+ "co:summit": {
+  "name": "서밋 테라퓨틱스",
+  "en": "Summit Therapeutics",
+  "ticker": "SMMT",
+  "bio": {
+   "m": "us",
+   "c": "SMMT"
+  },
+  "desc": "이보네시맙 서구 권리 보유. AZ가 20억 달러 투자."
+ },
+ "co:biontech": {
+  "name": "바이오엔텍",
+  "en": "BioNTech",
+  "ticker": "BNTX",
+  "desc": "PD-L1×VEGF 이중항체 푸미타미그(BMS와 공동), mRNA 항암백신."
+ },
+ "co:lanova": {
+  "name": "LaNova Medicines",
+  "en": "LaNova Medicines",
+  "desc": "중국 바이오텍. 머크에 PD-1×VEGF 이중항체 MK-2010을 넘겼다."
+ },
+ "co:jazz": {
+  "name": "재즈 파마슈티컬스",
+  "en": "Jazz Pharmaceuticals",
+  "ticker": "JAZZ",
+  "add": true,
+  "desc": "자니다타맙 개발·상업화(자임웍스에서 도입). 리포트 표12에는 약 이름만 나온다."
+ },
+ "co:alteogen": {
+  "name": "알테오젠",
+  "en": "Alteogen",
+  "code": "196170",
+  "bio": {
+   "m": "kr",
+   "c": "196170"
+  },
+  "desc": "정맥주사 항체를 피하주사로 바꾸는 히알루로니다제(ALT-B4) 플랫폼. 키트루다 Qlex에 쓰인다."
+ },
+ "co:halozyme": {
+  "name": "할로자임",
+  "en": "Halozyme",
+  "ticker": "HALO",
+  "desc": "피하주사 전환 효소(ENHANZE) 플랫폼. 옵디보 Qvantig에 쓰인다."
+ },
+ "co:celltrion": {
+  "name": "셀트리온",
+  "en": "Celltrion",
+  "code": "068270",
+  "add": true,
+  "desc": "키트루다 바이오시밀러(CT-P51)를 개발 중이다. 리포트에는 나오지 않는다."
+ },
+ "co:samsung-bioepis": {
+  "name": "삼성바이오에피스",
+  "en": "Samsung Bioepis",
+  "add": true,
+  "desc": "키트루다 바이오시밀러(SB27)를 개발 중이다. 리포트에는 나오지 않는다."
+ },
+ "tr:checkmate-026": {
+  "name": "CheckMate-026",
+  "desc": "옵디보 비소세포폐암 1차 단독 vs 백금 2제. PD-L1 ≥5%로 느슨하게 선별 → 실패(PFS HR 1.15, OS HR 1.02)."
+ },
+ "tr:keynote-024": {
+  "name": "KEYNOTE-024",
+  "desc": "키트루다 비소세포폐암 1차 단독 vs 백금 2제. TPS ≥50%만 선별 → 성공(ORR 45% vs 28%, OS HR 0.60, 5년 OS 31.9% vs 16.3%). 키트루다 독주의 출발점."
+ },
+ "tr:keynote-189": {
+  "name": "KEYNOTE-189",
+  "desc": "비편평 비소세포폐암 1차 키트루다+백금+페메트렉시드 vs 위약+화학. OS HR 0.49(첫 분석), 5년 OS 19.4% vs 11.3%. PD-L1과 무관한 병용 표준의 근거."
+ },
+ "tr:keynote-407": {
+  "name": "KEYNOTE-407",
+  "desc": "편평 비소세포폐암 1차 키트루다+카보플라틴+파클리탁셀. OS HR 0.64(첫 분석), 5년 OS 18.4% vs 9.7%."
+ },
+ "tr:cleopatra": {
+  "name": "CLEOPATRA",
+  "desc": "HER2 양성 유방암 1차에 퍼투주맙 추가. mPFS 18.7 vs 12.4개월, mOS 57.1 vs 40.8개월."
+ },
+ "tr:destiny-breast03": {
+  "name": "DESTINY-Breast03",
+  "desc": "HER2 양성 유방암 2차 엔허투 vs 캐싸일라. mPFS 28.8 vs 6.8개월."
+ },
+ "tr:destiny-breast09": {
+  "name": "DESTINY-Breast09",
+  "desc": "HER2 양성 유방암 1차 엔허투+퍼투주맙 vs 탁산+트라스투주맙+퍼투주맙. mPFS 40.7 vs 26.9개월, OS 미성숙."
+ },
+ "ind:nsclc": {
+  "name": "비소세포폐암 (NSCLC)",
+  "desc": "폐암의 약 85%. 편평(흡연·고TMB), 비편평 드라이버 변이 없음(흡연·고TMB, KRAS 포함), 비편평 드라이버 변이 있음(비흡연·저TMB)으로 나뉘고 치료가 다르다. 면역관문억제제 매출의 41%."
+ },
+ "ind:sclc": {
+  "name": "소세포폐암 (SCLC)",
+  "desc": "폐암의 약 15%. 진행이 매우 빠르고 MHC-I 발현이 낮아 면역항암제 효과가 제한적. 1차는 백금+에토포사이드+티쎈트릭/임핀지."
+ },
+ "ind:melanoma": {
+  "name": "흑색종",
+  "desc": "자외선 변이로 TMB가 전 암종 최상위, 피부라 T세포 활동도 활발 → 면역항암제가 가장 잘 듣는 암. 환자 90% 이상이 서구권. 면역관문억제제 매출의 12%."
+ },
+ "ind:rcc": {
+  "name": "신장암 (RCC)",
+  "desc": "75%가 투명세포형(ccRCC). VHL 소실 → VEGF 과잉, T세포 침윤 최상위. 1차는 면역관문억제제+VEGF TKI 또는 IO+IO. 면역관문억제제 매출의 9%."
+ },
+ "ind:breast": {
+  "name": "유방암",
+  "desc": "HR+/HER2-(65~70%, 호르몬 의존·차가운 종양), HER2+(15~20%), 삼중음성 TNBC(10~15%)로 나뉜다. 면역관문억제제는 TNBC에서만 쓰여 매출의 7%."
+ },
+ "ind:bladder": {
+  "name": "방광암 (요로상피암)",
+  "desc": "90% 이상 요로상피세포암이라 병기(비근침윤·근침윤·전이성)로 치료가 갈린다. 파드셉+키트루다가 IO+ADC 첫 1차 표준. 면역관문억제제 매출의 5%."
+ },
+ "ind:hnscc": {
+  "name": "두경부암",
+  "desc": "90% 이상 편평세포암. 재발·전이성 1차는 CPS로 나눠 키트루다 단독(≥20)·화학 병용(1~19)·세툭시맙 병용(<1)."
+ },
+ "ind:gastric": {
+  "name": "위·식도암",
+  "desc": "선암(위·위식도접합부·식도 선암)과 식도 편평세포암으로 나뉜다. 아시아 비중이 커 중국 PD-1의 존재감이 크다."
+ },
+ "ind:crc": {
+  "name": "대장암",
+  "desc": "85%가 MSS로 면역항암제가 안 듣는다. RAS 변이 여부로 1차가 갈리고(화학+VEGF 항체 / 화학+EGFR 항체), 그 이후 선택지가 비어 있다."
+ },
+ "ind:pancreatic": {
+  "name": "췌장암",
+  "desc": "가장 극단적인 차가운 종양. 1차 생존 중앙값 약 10개월. 2026년 8월 RAS 억제제 다락손라십 승인."
+ },
+ "ind:prostate": {
+  "name": "전립선암",
+  "desc": "면역항암제가 안 듣지만 안드로겐 호르몬 경로에 의존 → ADT·ARPI가 1차. 2차 이후 선택지가 탁산 정도만 남았다."
+ },
+ "c:payload": {
+  "name": "페이로드",
+  "en": "Payload",
+  "desc": "ADC가 실어 나르는 독한 약. 계열이 크게 둘이다: DNA 복제를 막는 TOP1 억제제(DXd·SN-38, 엔허투·다트로웨이·트로델비·sac-TMT)와 세포 분열 뼈대(튜불린)를 무너뜨리는 것(MMAE·DM1·DM4, 파드셉·캐싸일라·엘라히어). 1차에서 한 계열 ADC를 쓰고 진행하면 같은 계열에는 내성이 생길 수 있다."
+ },
+ "c:linker": {
+  "name": "링커",
+  "en": "Linker",
+  "desc": "항체와 페이로드를 잇는 화학 연결고리. 혈액에서는 끊기지 않고(독성 억제) 암세포 안에서만 끊겨야(효능) 한다. 세포 안 효소에 끊기는 절단형과 항체가 통째로 분해돼야 풀리는 비절단형이 있다."
+ },
+ "c:dar": {
+  "name": "DAR (약물-항체 비율)",
+  "en": "Drug-to-antibody ratio",
+  "desc": "항체 하나에 페이로드가 몇 개 달렸나. 엔허투는 약 8, 캐싸일라는 약 3.5. 높으면 한 번에 더 많은 약을 배달하지만 혈중에서 빨리 사라지거나 독성이 커질 수 있다."
+ },
+ "c:bystander": {
+  "name": "방관자 효과",
+  "en": "Bystander effect",
+  "desc": "ADC가 들어간 암세포에서 풀린 페이로드가 세포막을 통과해 옆 세포까지 죽이는 현상. 표적 발현이 고르지 않은 종양에서 유리하다. 막 투과성이 좋은 DXd가 대표적."
+ },
+ "c:internalization": {
+  "name": "내재화",
+  "en": "Internalization",
+  "desc": "항체가 표적에 붙은 뒤 세포 안으로 삼켜지는 과정. ADC는 이게 잘 일어나야 세포 안에서 페이로드를 풀 수 있다. AZ의 QCS-NMR은 TROP2가 세포막보다 세포질에 많은 환자(내재화가 잘 될 것으로 보는)를 고르는 바이오마커다."
+ },
+ "c:b7h3": {
+  "name": "B7-H3",
+  "en": "B7-H3 (CD276)",
+  "desc": "PD-L1과 같은 B7 계열 단백질. 여러 고형암(전립선암·소세포폐암·육종·교모세포종·난소암 등 IO가 안 듣는 암)에 많이 나오고 정상세포에는 적어 ADC 표적이 됐다. 처음엔 면역항암제로 개발됐다가 효과가 제한적이었다."
+ },
+ "c:dll3": {
+  "name": "DLL3",
+  "en": "Delta-like ligand 3",
+  "desc": "소세포폐암 표면에 많이 나오는 단백질. T세포 인게이저 탈라타맙의 표적."
+ },
+ "c:tigit": {
+  "name": "TIGIT",
+  "en": "TIGIT",
+  "desc": "PD-1과 다른 면역관문. 기전상 가장 유망한 차세대 관문으로 꼽혔지만 3상에서 잇따라 실패했다."
+ },
+ "c:il2": {
+  "name": "IL-2",
+  "en": "Interleukin-2",
+  "desc": "T세포 증식·활성화를 촉진하는 사이토카인. 브레이크를 푸는 것을 넘어 '가속 페달'을 밟는 접근(PD-1×IL-2)."
+ },
+ "c:tce": {
+  "name": "T세포 인게이저 (TCE)",
+  "en": "T-cell engager",
+  "desc": "한 팔은 T세포의 CD3, 다른 팔은 암세포 표면 표적을 잡는 이중항체. T세포가 항원을 알아보는 과정(MHC·TCR)을 건너뛰고 암세포 옆에 강제로 붙여 죽이게 한다. 부작용으로 사이토카인 방출 증후군(CRS)·신경독성(ICANS)이 있다."
+ },
+ "c:mrna-vaccine": {
+  "name": "mRNA 항암백신",
+  "en": "mRNA cancer vaccine",
+  "desc": "환자 종양의 신항원 정보를 mRNA에 담아 주사해, 그 항원을 알아보는 T세포를 늘리는 백신. 개인 맞춤형(환자마다 따로 제작)과 범용형이 있다."
+ },
+ "c:km": {
+  "name": "생존 곡선 (KM 곡선)",
+  "en": "Kaplan-Meier curve",
+  "desc": "시간에 따라 사건(진행·사망) 없이 남아 있는 환자 비율을 그린 계단식 곡선. 두 곡선이 벌어질수록 차이가 크고, 50% 선과 만나는 시점이 중앙값이다. 아래 '위험에 노출된 환자 수' 표가 작아지는 뒤쪽은 불확실하다."
+ },
+ "c:rct": {
+  "name": "무작위 대조 임상 (3상 설계)",
+  "en": "Randomized controlled trial",
+  "desc": "환자를 무작위로 실험군·대조군에 나눠(예: 1:1) 비교하는 설계. 1차 평가변수(성패를 가르는 지표)를 미리 정하고, 층화 요인으로 두 군의 구성을 맞춘다. 공개(open-label) 임상은 독립 중앙 판독(BICR)으로 편향을 줄인다."
+ },
+ "c:bicr": {
+  "name": "BICR (독립 중앙 판독)",
+  "en": "Blinded independent central review",
+  "desc": "어느 군인지 모르는 외부 판독자가 영상을 보고 진행 여부를 판정하는 것. 의사가 군을 아는 공개 임상에서 PFS 판정의 신뢰도를 높인다."
+ },
+ "d:sone-ve": {
+  "name": "Sone-Ve (소니사투그 베도틴)",
+  "en": "Sonesitatug vedotin (AZD0901)",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:adc",
+   "c:cldn182"
+  ],
+  "mod": "ADC",
+  "desc": "AZ의 CLDN18.2 ADC. 위·위식도접합부 선암 2차 이상에서 라무시루맙+파클리탁셀 대비 OS 개선(CLARITY-Gastric01). 1차 진입 시도 중."
+ },
+ "d:ris-rez": {
+  "name": "Ris-Rez (리스부타투그 레제테칸)",
+  "en": "Risvutatug rezetecan (GSK'227, HS-20093)",
+  "co": [
+   "co:gsk",
+   "co:hansoh"
+  ],
+  "tags": [
+   "c:adc",
+   "c:b7h3"
+  ],
+  "mod": "ADC",
+  "desc": "B7-H3 ADC. 중국 한소제약이 만들고 GSK가 도입했다. 소세포폐암 2차 이상(ARTEMIS-008)과 재발성 골육종(ARTEMIS-011) 3상에서 처음으로 B7-H3 ADC의 유효성을 입증."
+ },
+ "d:tarlatamab": {
+  "name": "탈라타맙 (임델트라)",
+  "en": "Tarlatamab (Imdelltra)",
+  "co": [
+   "co:amgen"
+  ],
+  "tags": [
+   "c:tce",
+   "c:dll3"
+  ],
+  "mod": "이중항체(TCE)",
+  "desc": "암젠의 DLL3×CD3 T세포 인게이저. 소세포폐암 2차 표준을 토포테칸에서 바꿨고(DeLLphi-304) 1차 진입을 앞두고 있다."
+ },
+ "d:elahere": {
+  "name": "엘라히어",
+  "en": "Elahere (mirvetuximab soravtansine)",
+  "co": [
+   "co:abbvie"
+  ],
+  "tags": [
+   "c:adc"
+  ],
+  "mod": "ADC",
+  "desc": "애브비의 FRα ADC(페이로드 DM4). 백금 저항성 난소암."
+ },
+ "d:rilvegostomig": {
+  "name": "릴베고스토미그",
+  "en": "Rilvegostomig",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:tigit"
+  ],
+  "mod": "이중항체",
+  "desc": "AZ의 PD-1×TIGIT 이중항체. 다트로웨이와 묶어 폐암 1차(TROPION-Lung10)에 도전."
+ },
+ "d:volrustomig": {
+  "name": "볼루스토미그",
+  "en": "Volrustomig",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:ctla4"
+  ],
+  "mod": "이중항체",
+  "desc": "AZ의 PD-1×CTLA-4 이중항체."
+ },
+ "d:cadonilimab": {
+  "name": "카도닐리맙",
+  "en": "Cadonilimab",
+  "co": [
+   "co:akeso"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:ctla4"
+  ],
+  "mod": "이중항체",
+  "desc": "아케소의 PD-1×CTLA-4 이중항체(중국 승인)."
+ },
+ "d:ibi363": {
+  "name": "IBI363",
+  "en": "IBI363",
+  "co": [
+   "co:innovent",
+   "co:takeda"
+  ],
+  "tags": [
+   "c:bispecific",
+   "c:pd1",
+   "c:il2"
+  ],
+  "mod": "이중 기능 융합단백질",
+  "desc": "이노벤트의 PD-1×IL-2 융합 항체. 브레이크를 풀면서 탈진 T세포를 다시 증식시키려는 설계. 다케다가 파트너."
+ },
+ "d:xaluritamig": {
+  "name": "잘루리타미그",
+  "en": "Xaluritamig",
+  "co": [
+   "co:amgen"
+  ],
+  "tags": [
+   "c:tce"
+  ],
+  "mod": "이중항체(TCE)",
+  "desc": "암젠의 STEAP1×CD3 T세포 인게이저. 전립선암 3상 진행 중."
+ },
+ "d:autogene-cevumeran": {
+  "name": "오토진 세부메란",
+  "en": "Autogene cevumeran (BNT122)",
+  "co": [
+   "co:biontech",
+   "co:roche"
+  ],
+  "tags": [
+   "c:mrna-vaccine",
+   "c:neoantigen"
+  ],
+  "mod": "mRNA 항암백신",
+  "desc": "바이오엔텍·로슈(제넨텍)의 개인 맞춤형 신항원 mRNA 백신(BNT122). 전이성 흑색종 2상(PFS)·대장암 수술 후 2상 실패, 췌장암 수술 후 2상(IMcode003) 진행 중."
+ },
+ "co:hansoh": {
+  "name": "한소제약",
+  "en": "Hansoh Pharma",
+  "ticker": "3692.HK",
+  "desc": "중국 제약사. B7-H3 ADC(HS-20093 = Ris-Rez)를 GSK에 기술이전.",
+  "add": true
+ },
+ "co:amgen": {
+  "name": "암젠",
+  "en": "Amgen",
+  "ticker": "AMGN",
+  "desc": "T세포 인게이저 강자: 블린사이토(CD19), 임델트라(탈라타맙, DLL3), 잘루리타미그(STEAP1)."
+ },
+ "co:abbvie": {
+  "name": "애브비",
+  "en": "AbbVie",
+  "ticker": "ABBV",
+  "desc": "엘라히어(FRα ADC), 벤클렉스타."
+ },
+ "co:innovent": {
+  "name": "이노벤트",
+  "en": "Innovent Biologics",
+  "ticker": "1801.HK",
+  "desc": "중국 바이오. PD-1 티비트(Tyvyt), PD-1×IL-2 IBI363."
+ },
+ "co:takeda": {
+  "name": "다케다",
+  "en": "Takeda",
+  "ticker": "4502.T",
+  "desc": "IBI363 글로벌 파트너."
+ },
+ "co:ligachem": {
+  "name": "리가켐바이오",
+  "en": "LigaChem Biosciences",
+  "code": "141080",
+  "bio": {
+   "m": "kr",
+   "c": "141080"
+  },
+  "add": true,
+  "desc": "국내 ADC 플랫폼 기업. 자체 링커·페이로드 기술(ConjuALL)을 다국적 제약사에 이전하는 사업 모델. 리포트에는 나오지 않는다."
+ },
+ "co:ablbio": {
+  "name": "에이비엘바이오",
+  "en": "ABL Bio",
+  "code": "298380",
+  "bio": {
+   "m": "kr",
+   "c": "298380"
+  },
+  "add": true,
+  "desc": "국내 이중항체 플랫폼 기업. CLDN18.2×4-1BB 이중항체(ABL111) 등. 리포트에는 나오지 않는다."
+ },
+ "tr:optitrop-lung06": {
+  "name": "OptiTROP-Lung06",
+  "desc": "중국 3상. 비편평 NSCLC PD-L1 TPS<1% 1차, 키트루다+sac-TMT vs 키트루다+화학. mPFS 15.0 vs 5.7개월(HR 0.49), OS 미성숙(HR 0.58)."
+ },
+ "tr:optitrop-lung05": {
+  "name": "OptiTROP-Lung05",
+  "desc": "중국 3상. NSCLC TPS≥1% 1차, 키트루다+sac-TMT vs 키트루다. 12개월 PFS 62.4% vs 29.0%(HR 0.35), 중국 허가 신청."
+ },
+ "tr:evoke-03": {
+  "name": "EVOKE-03",
+  "desc": "글로벌 3상. NSCLC TPS≥50% 1차, 트로델비+키트루다 vs 키트루다. 실패(PFS HR 0.81, OS HR 1.07)."
+ },
+ "tr:trofuse-005": {
+  "name": "TroFuse-005",
+  "desc": "글로벌 3상. 자궁내막암 2차(백금+IO 후), sac-TMT vs 독소루비신/파클리탁셀. mPFS 7.2 vs 3.9개월(HR 0.59), mOS 19.0 vs 12.1개월(HR 0.68)."
+ },
+ "tr:trofuse-007": {
+  "name": "TroFuse-007",
+  "desc": "글로벌 3상. NSCLC TPS≥50% 1차, sac-TMT+키트루다 vs 키트루다. EVOKE-03이 실패한 바로 그 세팅. 2028년 초 결과 예상."
+ },
+ "tr:clarity-gastric01": {
+  "name": "CLARITY-Gastric01",
+  "desc": "3상. CLDN18.2 양성 위·위식도 선암 2차 이상, Sone-Ve vs 라무시루맙+파클리탁셀 등. mOS 10.6 vs 6.4개월(HR 0.58)."
+ },
+ "tr:artemis-008": {
+  "name": "ARTEMIS-008",
+  "desc": "중국 3상. 소세포폐암 2차 이상, Ris-Rez vs 토포테칸. mPFS 7.2 vs 3.0개월(HR 0.33), mOS 18.5 vs 10.3개월(HR 0.46)."
+ },
+ "tr:artemis-011": {
+  "name": "ARTEMIS-011",
+  "desc": "3상. 재발/불응성 골육종, Ris-Rez vs 젬시타빈+도세탁셀. mPFS 5.5 vs 1.4개월(HR 0.33), OS HR 0.51(미성숙). 재발성 골육종 최초의 표준치료."
+ },
+ "tr:tropion-lung01": {
+  "name": "TROPION-Lung01",
+  "desc": "글로벌 3상. NSCLC 2차, 다트로웨이 vs 도세탁셀. OS 실패, 이득은 비편평에 몰림 → 비편평 허가 신청 철회."
+ },
+ "ind:endometrial": {
+  "name": "자궁내막암",
+  "desc": "1차는 백금 화학+IO. 1차에서 IO를 쓴 뒤 진행한 환자의 2차 근거가 약했는데 sac-TMT가 TroFuse-005로 그 공백을 메웠다."
+ },
+ "ind:osteosarcoma": {
+  "name": "골육종",
+  "desc": "뼈에 생기는 희귀암. 재발성은 수십 년간 IO·항체·ADC·TKI가 모두 실패했다가 B7-H3 ADC(ARTEMIS-011)가 첫 성공."
+ },
+ "c:dmfs": {
+  "name": "DMFS (원격 무전이 생존)",
+  "en": "Distant metastasis-free survival",
+  "desc": "수술 뒤 멀리 떨어진 장기로 전이되지 않고 지내는 기간·비율. 국소 재발은 재수술·방사선으로 다시 완치를 노릴 수 있지만 원격 전이는 어렵기 때문에, 보조요법에서는 RFS보다 DMFS 개선이 더 강한 효능으로 여겨지고 OS와의 상관도 더 뚜렷하다."
+ },
+ "c:mhc": {
+  "name": "MHC (HLA)",
+  "en": "Major histocompatibility complex",
+  "desc": "세포가 안에서 만든 단백질 조각을 표면에 올려 보여 주는 '진열대'. T세포는 이 진열대 위의 조각만 읽는다. 사람마다 HLA 유전자형이 달라 같은 항원도 누구에게는 진열되고 누구에게는 안 된다. 소세포폐암은 MHC-I이 낮아 T세포가 못 알아본다."
+ },
+ "c:apc": {
+  "name": "항원제시세포 (APC)",
+  "en": "Antigen-presenting cell",
+  "desc": "수지상세포처럼 항원을 잘게 잘라 MHC에 올려 T세포에게 '이걸 찾아라' 하고 가르치는 세포. mRNA 백신은 이 세포 안에서 신항원을 만들게 한다."
+ },
+ "c:cd3": {
+  "name": "CD3",
+  "en": "CD3",
+  "desc": "모든 T세포 표면에 있는 신호 장치. TCE의 한 팔이 이것을 잡아 T세포를 강제로 켠다."
+ },
+ "d:mrna-4359": {
+  "name": "mRNA-4359",
+  "en": "mRNA-4359",
+  "co": [
+   "co:moderna"
+  ],
+  "tags": [
+   "c:mrna-vaccine"
+  ],
+  "mod": "mRNA 항암백신",
+  "desc": "모더나의 범용(기성품) mRNA 백신. 흑색종 1차 코호트 12명 ORR 83%(2상)."
+ },
+ "d:pasritamig": {
+  "name": "파스리타미그",
+  "en": "Pasritamig",
+  "co": [
+   "co:jnj"
+  ],
+  "tags": [
+   "c:tce"
+  ],
+  "mod": "이중항체(TCE)",
+  "desc": "J&J의 KLK2×CD3 T세포 인게이저. 거세 저항성 전립선암 3상 2개(KLK2-PASenger, KLK2-comPAS)."
+ },
+ "tr:interpath-001": {
+  "name": "INTerpath-001",
+  "desc": "3상. 흑색종 IIB~IV 수술 후, 인티스메란+키트루다 vs 위약+키트루다(1,137명). 24개월 RFS 82.2% vs 70.0%(HR 0.58), DMFS 88.5% vs 80.2%(HR 0.62). mRNA 항암백신 최초의 3상 성공."
+ },
+ "tr:keynote-942": {
+  "name": "KEYNOTE-942 (인티스메란 2b상)",
+  "desc": "흑색종 수술 후 2b상(157명). 5년 업데이트: RFS HR 0.51, DMFS HR 0.41, 5년 OS 92.2% vs 71.3%(HR 0.47)."
+ },
+ "tr:dellphi-304": {
+  "name": "DeLLphi-304",
+  "desc": "글로벌 3상. 소세포폐암 2차, 탈라타맙 vs 화학(토포테칸 등). mPFS 4.2 vs 3.2개월(HR 0.69), mOS 13.6 vs 8.3개월(HR 0.60)."
+ },
+ "tr:dellphi-305": {
+  "name": "DeLLphi-305",
+  "desc": "3상. 소세포폐암 1차 유지요법, 임핀지+탈라타맙 vs 임핀지(유도요법 후). mOS 21.1 vs 12.7개월(HR 0.42), mPFS 7.4 vs 1.9개월(HR 0.34)."
+ },
+ "d:rybrevant": {
+  "name": "라이브리반트",
+  "en": "Rybrevant (amivantamab)",
+  "co": [
+   "co:jnj"
+  ],
+  "tags": [
+   "c:bispecific"
+  ],
+  "mod": "이중항체",
+  "desc": "J&J의 EGFR×MET 이중항체. EGFR 변이 비편평 폐암 1차 표준(렉라자 병용), 2026년 두경부암 2차 FDA 가속승인."
+ },
+ "d:petosemtamab": {
+  "name": "페토셈타맙",
+  "en": "Petosemtamab",
+  "co": [
+   "co:genmab"
+  ],
+  "tags": [
+   "c:bispecific"
+  ],
+  "mod": "이중항체",
+  "desc": "젠맙(멀러스에서 확보)의 EGFR×LGR5 이중항체. 2026년 10월 두경부암 1차 3상(LiGeR-HN1)에서 키트루다 병용이 단독 대비 사망 위험 50% 감소."
+ },
+ "d:imjudo": {
+  "name": "임주도",
+  "en": "Imjudo (tremelimumab)",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:ctla4"
+  ],
+  "mod": "단일항체",
+  "desc": "AZ의 CTLA-4 항체. 단독 적응증 없이 임핀지와 병용으로만 쓴다."
+ },
+ "d:phesgo": {
+  "name": "페스고",
+  "en": "Phesgo (pertuzumab+trastuzumab SC)",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:her2",
+   "c:sc"
+  ],
+  "mod": "단일항체(SC)",
+  "desc": "허셉틴+퍼제타를 한 번에 피하주사하는 제형(할로자임 효소). 바이오시밀러 방어용 — 그런데 엔허투가 판을 바꾸는 중."
+ },
+ "d:vectibix": {
+  "name": "벡티빅스 (파니투무맙)",
+  "en": "Vectibix (panitumumab)",
+  "co": [
+   "co:amgen"
+  ],
+  "mod": "단일항체",
+  "desc": "암젠의 EGFR 항체. RAS 야생형 전이성 대장암."
+ },
+ "co:genmab": {
+  "name": "젠맙",
+  "en": "Genmab",
+  "ticker": "GMAB",
+  "desc": "덴마크 항체 회사. 페토셈타맙(EGFR×LGR5)."
+ },
+ "co:merck-kgaa": {
+  "name": "독일 머크 (머크 KGaA)",
+  "en": "Merck KGaA",
+  "ticker": "MRK.DE",
+  "desc": "미국 밖에서 얼비툭스(세툭시맙)를 판매. 미국 머크(MSD)와 다른 회사."
+ },
+ "tr:harmoni-2": {
+  "name": "HARMONi-2",
+  "desc": "중국 3상(이중맹검). PD-L1 양성(TPS≥1) NSCLC 1차, 이보네시맙 vs 키트루다. PFS 11.1 vs 5.8개월(HR 0.51), OS 30.8 vs 22.6개월(HR 0.73). 키트루다를 직접 비교 3상에서 OS로 이긴 첫 사례."
+ },
+ "tr:harmoni-6": {
+  "name": "HARMONi-6",
+  "desc": "중국 3상. 편평 NSCLC 1차(PD-L1 무관), 이보네시맙+화학 vs 테빔브라+화학. PFS 11.1 vs 6.9개월(HR 0.60), OS 27.9 vs 23.7개월(HR 0.66). PD-1+화학 대조 3상 최초의 OS 개선."
+ },
+ "tr:harmoni-3": {
+  "name": "HARMONi-3",
+  "desc": "글로벌 3상(서밋). NSCLC 1차 편평·비편평, 이보네시맙+화학 vs 키트루다+화학. PFS·OS 공동 1차. 편평 PFS 4Q26, 비편평 1H27 — PD-1×VEGF 계열 전체의 가치가 걸린 결과."
+ },
+ "tr:harmoni-7": {
+  "name": "HARMONi-7",
+  "desc": "글로벌 3상. PD-L1 고발현 NSCLC 1차, 이보네시맙 단독 vs 키트루다 단독. 2027년 등록 완료 예상."
+ },
+ "tr:harmoni": {
+  "name": "HARMONi (글로벌, EGFR)",
+  "desc": "글로벌 3상. EGFR TKI 실패 후 EGFR 변이 비편평 NSCLC, 이보네시맙+화학 vs 위약+화학. PFS는 중국 임상 수준으로 재현, OS는 1차 분석에서 유의성 미달(HR 0.79). FDA 심사 중."
+ },
+ "ind:biliary": {
+  "name": "담도암",
+  "desc": "HARMONi-GI1(중국 3상)에서 이보네시맙+화학이 임핀지+화학 대비 PFS 8.4 vs 5.8개월(HR 0.61), OS 14.9 vs 12.1개월(HR 0.75)."
+ },
+ "c:cdk46": {
+  "name": "CDK4/6",
+  "en": "Cyclin-dependent kinase 4/6",
+  "desc": "세포분열 스위치. cyclin D와 짝을 지으면 Rb 브레이크를 풀어 DNA 복제(S기)로 넘어가게 한다. HR+ 유방암에서 에스트로겐 명령을 실제로 실행하는 단계라 억제제가 내분비요법과 병용된다."
+ },
+ "c:er": {
+  "name": "에스트로겐 수용체 (ER)",
+  "en": "Estrogen receptor",
+  "desc": "에스트로겐이 붙으면 '분열하라'는 명령을 내리는 수용체. HR+/HER2- 유방암(전체의 약 70%)은 이 신호에 기대어 자란다."
+ },
+ "c:endocrine": {
+  "name": "내분비요법",
+  "en": "Endocrine therapy",
+  "desc": "호르몬 신호를 끊는 치료. 유방암: 난소기능 억제, AI(에스트로겐 생성 차단), SERM(타목시펜, 수용체 결합 차단), SERD(풀베스트란트·경구 ER 분해제, 수용체 분해). 전립선암에서는 ADT가 같은 역할."
+ },
+ "c:serd": {
+  "name": "경구 ER 분해제 (SERD)",
+  "en": "Oral selective estrogen receptor degrader",
+  "desc": "에스트로겐 수용체 자체를 분해하는 먹는 약. ESR1 변이로 AI가 무력해진 환자에서 AI·풀베스트란트를 대체(에트카마·인루리요·오서듀). 변이 무관 1차 전면 교체 3상은 모두 실패, 수술 후 보조요법(기레데스트란트)에서 처음 성공."
+ },
+ "c:esr1": {
+  "name": "ESR1 변이",
+  "en": "ESR1 mutation",
+  "desc": "치료 도중 생기는 에스트로겐 수용체 변이. 에스트로겐 없이도 수용체가 스스로 켜져 AI를 무력화한다. 영상 진행보다 약 9개월 먼저 혈액(ctDNA)에서 잡혀, 진행 전에 약을 바꾸는 방식(SERENA-6)이 쓰이기 시작했다."
+ },
+ "c:pik3ca": {
+  "name": "PIK3CA 변이 · PI3K 경로",
+  "en": "PIK3CA / PI3K-AKT-mTOR",
+  "desc": "에스트로겐과 별개로 성장 신호를 보내는 PI3K→AKT→mTOR 경로. PIK3CA 변이는 처음부터 이 길을 켜 둬 에스트로겐을 끊어도 명령이 계속 들어온다 → PI3Kα 억제제를 얹는다. 전립선암의 PTEN 결손도 같은 경로를 켠다."
+ },
+ "c:ar": {
+  "name": "안드로겐 수용체 (AR)",
+  "en": "Androgen receptor",
+  "desc": "안드로겐(남성호르몬)이 붙으면 핵으로 들어가 성장 유전자를 켜는 스위치. 전립선암은 이 신호에 전적으로 의존한다 — HR+ 유방암의 남성판."
+ },
+ "c:adt": {
+  "name": "ADT (안드로겐 박탈요법)",
+  "en": "Androgen deprivation therapy",
+  "desc": "뇌하수체→고환 자극을 끊어 테스토스테론 생산을 멈추는 치료(GnRH 작용제·길항제, 수술적 거세). 전립선암 전 단계의 백본으로 끝까지 유지한다."
+ },
+ "c:arpi": {
+  "name": "ARPI (AR 경로 억제제)",
+  "en": "Androgen receptor pathway inhibitor",
+  "desc": "ADT 뒤에도 부신·종양이 만드는 남은 안드로겐 신호를 막는다. 합성 억제(자이티가)와 수용체 길항(엑스탄디·얼리다·뉴베카). 계열끼리 교차내성이 있어 하나에 내성이 생기면 다른 것도 잘 안 듣는다."
+ },
+ "c:crpc": {
+  "name": "호르몬 감수성 / 거세 저항성",
+  "en": "mHSPC / CRPC",
+  "desc": "전립선암 단계 구분. ADT에 반응하는 동안이 호르몬 감수성(HSPC), ADT를 유지하는데도 진행하면 거세 저항성(CRPC). 영상 전이 없이 PSA만 오르면 비전이성(nm)CRPC. 대부분 HSPC 단계에서 ARPI를 소진해, mCRPC에서는 호르몬 축 밖(방사성리간드·화학)으로 넘어간다."
+ },
+ "c:psma": {
+  "name": "PSMA",
+  "en": "Prostate-specific membrane antigen",
+  "desc": "전립선암 세포 표면에 많은 단백질. 방사성리간드 플루빅토가 이것을 주소로 방사선을 배달한다. STEAP1·KLK2와 함께 전립선암에 '축 밖' 모달리티가 많은 이유."
+ },
+ "c:parp": {
+  "name": "PARP 억제제 · BRCA/HRR",
+  "en": "PARP inhibitor / homologous recombination repair",
+  "desc": "BRCA2 등 HRR 변이 종양은 DNA 두 가닥 손상을 제대로 못 고친다. PARP(한 가닥 손상 수리)까지 막으면 두 가닥 손상이 쏟아져 종양이 죽는다(합성 치사). 전립선암 HRR 변이에 ARPI+PARP 억제제."
+ },
+ "c:egfr": {
+  "name": "EGFR 변이",
+  "en": "EGFR mutation",
+  "desc": "EGFR(상피세포 성장인자 수용체)의 ATP 자리 주변(엑손 19~21)에 생긴 변이. 엑손19 결실과 L858R이 대부분이며 스위치를 켜진 채로 고정한다. 1·2세대 TKI 내성의 절반이 T790M, 타그리소 내성 일부가 C797S. 엑손20 삽입·G719X 등은 '비정형' 변이."
+ },
+ "c:met": {
+  "name": "MET",
+  "en": "MET",
+  "desc": "EGFR을 막으면 종양이 쓰는 대표 우회로. 타그리소 이후 내성의 10~15%가 MET 증폭이다. 라이브리반트(EGFR×MET)와 오르파티스(MET TKI)가 겨냥한다."
+ },
+ "c:her3": {
+  "name": "HER3",
+  "en": "HER3",
+  "desc": "EGFR·MET과 짝을 지어 생존 신호를 켜는 수용체. EGFR을 막으면 발현이 올라가고, 내성 종류와 관계없이 대부분 종양에 많아 iza-bren(EGFR×HER3 이중항체 ADC)의 표적이 됐다."
+ },
+ "c:ira": {
+  "name": "메디케어 약가협상",
+  "en": "IRA Medicare drug price negotiation",
+  "desc": "미국 메디케어가 허가 후 일정 기간(저분자 9년, 바이오 13년)이 지난 약 중 지출이 큰 것을 매년 골라 가격을 협상한다. 저분자가 더 일찍 걸린다. 희귀질환 하나에만 적응증이 있으면 예외(타그리소)."
+ },
+ "d:verzenio": {
+  "name": "버제니오",
+  "en": "Verzenio (abemaciclib)",
+  "co": [
+   "co:lilly"
+  ],
+  "tags": [
+   "c:cdk46"
+  ],
+  "mod": "저분자",
+  "desc": "릴리의 CDK4/6 억제제. 보조요법에서 OS 개선을 입증한 유일한 CDK4/6(monarchE). 2028년 1월 메디케어 협상가, 특허 2031년 전후."
+ },
+ "d:kisqali": {
+  "name": "키스칼리",
+  "en": "Kisqali (ribociclib)",
+  "co": [
+   "co:novartis"
+  ],
+  "tags": [
+   "c:cdk46"
+  ],
+  "mod": "저분자",
+  "desc": "노바티스의 CDK4/6 억제제. 전이성 3상 3건 모두 OS 개선, 보조요법 라벨이 가장 넓다(림프절 음성 2기 일부까지). 2026년 매출 1위 전망, 특허 2031년 이후."
+ },
+ "d:ibrance": {
+  "name": "입랜스",
+  "en": "Ibrance (palbociclib)",
+  "co": [
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:cdk46"
+  ],
+  "mod": "저분자",
+  "desc": "화이자의 최초 CDK4/6 억제제(2015). OS 입증 실패, 보조요법 라벨 없음. 2027년 1월 메디케어 협상가 + 3월 미국 물질특허 만료."
+ },
+ "d:etkama": {
+  "name": "에트카마",
+  "en": "camizestrant",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:serd",
+   "c:esr1"
+  ],
+  "mod": "저분자",
+  "desc": "AZ의 경구 ER 분해제. 1차 치료 중 ESR1 변이가 혈액에서 잡힌 환자에서 교체(SERENA-6) 승인. 전이성 1차 전면 교체 3상은 실패, 보조요법에 집중."
+ },
+ "d:inluriyo": {
+  "name": "인루리요",
+  "en": "imlunestrant",
+  "co": [
+   "co:lilly"
+  ],
+  "tags": [
+   "c:serd",
+   "c:esr1"
+  ],
+  "mod": "저분자",
+  "desc": "릴리의 경구 ER 분해제. ESR1 변이 2차 단독, 변이 무관 2차 버제니오 병용(EMBER-3)."
+ },
+ "d:orserdu": {
+  "name": "오서듀",
+  "en": "elacestrant",
+  "co": [
+   "co:menarini"
+  ],
+  "tags": [
+   "c:serd"
+  ],
+  "mod": "저분자",
+  "desc": "메나리니의 최초 경구 ER 분해제. ESR1 변이 2차, 보조요법 3상 진행."
+ },
+ "d:vepdegestrant": {
+  "name": "벱파누",
+  "en": "vepdegestrant",
+  "co": [
+   "co:arvinas",
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:serd"
+  ],
+  "mod": "저분자(PROTAC)",
+  "desc": "아비나스의 PROTAC ER 분해제 — 세포의 단백질 분해 장치를 끌어와 ER을 없앤다. ESR1 변이 2차(VERITAC-2)."
+ },
+ "d:giredestrant": {
+  "name": "기레데스트란트",
+  "en": "giredestrant",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:serd"
+  ],
+  "mod": "저분자",
+  "desc": "로슈의 경구 ER 분해제. 수술 후 보조요법 3상에서 처음 성공, FDA 결정 대기."
+ },
+ "d:itovebi": {
+  "name": "이토베비",
+  "en": "inavolisib",
+  "co": [
+   "co:roche"
+  ],
+  "tags": [
+   "c:pik3ca"
+  ],
+  "mod": "저분자",
+  "desc": "로슈의 선택적 PI3Kα 억제제. 정상 단백질을 덜 건드려 고혈당이 적어 CDK4/6과 3제 병용 가능 → PIK3CA 변이·내분비 저항 1차 진입(INAVO120)."
+ },
+ "d:piqray": {
+  "name": "피크레이",
+  "en": "alpelisib",
+  "co": [
+   "co:novartis"
+  ],
+  "tags": [
+   "c:pik3ca"
+  ],
+  "mod": "저분자",
+  "desc": "노바티스의 1세대 PI3Kα 억제제. 고혈당 부작용으로 CDK4/6과 함께 쓰기 어려웠다. 2차(SOLAR-1)."
+ },
+ "d:truqap": {
+  "name": "트루캅",
+  "en": "capivasertib",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:pik3ca"
+  ],
+  "mod": "저분자",
+  "desc": "AZ의 AKT 억제제. 유방암 2차(PIK3CA·AKT1·PTEN 변이), 전립선암 PTEN 결손 1차(CAPItello-281)."
+ },
+ "d:gedatolisib": {
+  "name": "레브토르픽",
+  "en": "gedatolisib",
+  "co": [
+   "co:celcuity"
+  ],
+  "tags": [
+   "c:pik3ca"
+  ],
+  "mod": "저분자",
+  "desc": "셀큐이티의 PI3K·mTOR 동시 억제제. PIK3CA 변이가 없는 환자에게 처음으로 약을 제공(VIKTORIA-1), 1차 3상 진입."
+ },
+ "d:zovegalisib": {
+  "name": "조베갈리십",
+  "en": "zovegalisib (RLY-2608)",
+  "co": [
+   "co:relay"
+  ],
+  "tags": [
+   "c:pik3ca"
+  ],
+  "mod": "저분자",
+  "desc": "릴레이의 변이형 PI3Kα만 막는 억제제. 2차에서 트루캅과 직접 비교 3상."
+ },
+ "d:atirmociclib": {
+  "name": "아티르모시클립",
+  "en": "atirmociclib",
+  "co": [
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:cdk46"
+  ],
+  "mod": "저분자",
+  "desc": "화이자의 CDK4 선택적 억제제. CDK6을 건드리지 않아 호중구 감소가 적고 더 높은 용량으로 지속 억제 — 1차에서 기존 CDK4/6과 직접 비교 3상."
+ },
+ "d:xtandi": {
+  "name": "엑스탄디",
+  "en": "Xtandi (enzalutamide)",
+  "co": [
+   "co:astellas",
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "AR 길항제. 2012년 첫 출시로 생화학적 재발~거세 저항성까지 가장 넓은 라벨. 2025년 정점, 2027년 메디케어 협상 + 특허 만료."
+ },
+ "d:erleada": {
+  "name": "얼리다",
+  "en": "Erleada (apalutamide)",
+  "co": [
+   "co:jnj"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "J&J의 AR 길항제. 2028년 메디케어 협상."
+ },
+ "d:nubeqa": {
+  "name": "뉴베카",
+  "en": "Nubeqa (darolutamide)",
+  "co": [
+   "co:bayer",
+   "co:orion"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "바이엘/오리온의 AR 길항제. 뇌로 거의 안 들어가 피로·인지 저하가 적고 약물 상호작용도 작다 → 연 60% 가까이 성장, 2026년 3분기 얼리다를 추월."
+ },
+ "d:zytiga": {
+  "name": "자이티가",
+  "en": "Zytiga (abiraterone)",
+  "co": [
+   "co:jnj"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "안드로겐 합성(CYP17) 억제제. 부신·종양의 안드로겐 생성까지 차단."
+ },
+ "d:talzenna": {
+  "name": "탈제나",
+  "en": "Talzenna (talazoparib)",
+  "co": [
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:parp"
+  ],
+  "mod": "저분자",
+  "desc": "화이자의 PARP 억제제. 엑스탄디 병용(TALAPRO-3)."
+ },
+ "d:lynparza": {
+  "name": "린파자",
+  "en": "Lynparza (olaparib)",
+  "co": [
+   "co:az"
+  ],
+  "tags": [
+   "c:parp"
+  ],
+  "mod": "저분자",
+  "desc": "AZ의 PARP 억제제."
+ },
+ "d:lazcluze": {
+  "name": "렉라자 (라즈클루즈)",
+  "en": "Lazcluze (lazertinib)",
+  "co": [
+   "co:yuhan",
+   "co:jnj"
+  ],
+  "tags": [
+   "c:egfr",
+   "c:tki"
+  ],
+  "mod": "저분자",
+  "desc": "유한양행이 개발해 J&J에 기술이전한 3세대 EGFR TKI. 미국 브랜드 라즈클루즈. 라이브리반트와 병용으로 EGFR 폐암 1차 표준(MARIPOSA)."
+ },
+ "d:orpathys": {
+  "name": "오르파티스",
+  "en": "Orpathys (savolitinib)",
+  "co": [
+   "co:az",
+   "co:hutchmed"
+  ],
+  "tags": [
+   "c:met"
+  ],
+  "mod": "저분자",
+  "desc": "MET TKI. 타그리소 이후 MET 과발현·증폭 환자에서 타그리소 병용(SAFFRON) — 타그리소 이후 글로벌 3상 중 유일한 OS 유의 개선."
+ },
+ "d:iza-bren": {
+  "name": "iza-bren (이잘론타맙 브렌지테칸)",
+  "en": "izalontamab brengitecan",
+  "co": [
+   "co:systimmune",
+   "co:bms"
+  ],
+  "tags": [
+   "c:adc",
+   "c:bispecific",
+   "c:her3",
+   "c:egfr"
+  ],
+  "mod": "이중항체 ADC",
+  "desc": "EGFR×HER3 이중항체에 페이로드를 단 ADC. 타그리소 이후 2차 중국 3상(PANKU-Lung01) mPFS 11.1 vs 5.7개월(HR 0.40). 혈액 독성이 커 1차 장기 병용이 과제."
+ },
+ "co:lilly": {
+  "name": "일라이 릴리",
+  "en": "Eli Lilly",
+  "ticker": "LLY",
+  "desc": "버제니오(CDK4/6), 인루리요(경구 SERD)."
+ },
+ "co:menarini": {
+  "name": "메나리니",
+  "en": "Menarini",
+  "desc": "이탈리아 제약사. 오서듀(최초 경구 SERD)."
+ },
+ "co:arvinas": {
+  "name": "아비나스",
+  "en": "Arvinas",
+  "ticker": "ARVN",
+  "desc": "PROTAC 단백질 분해제 회사. 벱파누."
+ },
+ "co:celcuity": {
+  "name": "셀큐이티",
+  "en": "Celcuity",
+  "ticker": "CELC",
+  "desc": "레브토르픽(PI3K·mTOR)."
+ },
+ "co:relay": {
+  "name": "릴레이",
+  "en": "Relay Therapeutics",
+  "ticker": "RLAY",
+  "desc": "조베갈리십(변이형 PI3Kα)."
+ },
+ "co:bayer": {
+  "name": "바이엘",
+  "en": "Bayer",
+  "ticker": "BAYN.DE",
+  "desc": "뉴베카(오리온과 공동)."
+ },
+ "co:orion": {
+  "name": "오리온 (핀란드)",
+  "en": "Orion Corporation",
+  "ticker": "ORNBV.HE",
+  "desc": "핀란드 제약사. 뉴베카 공동 개발, 머크와 오페베소스타트. 한국 오리온(식품)과 다른 회사."
+ },
+ "co:yuhan": {
+  "name": "유한양행",
+  "en": "Yuhan",
+  "code": "000100",
+  "bio": {
+   "m": "kr",
+   "c": "000100"
+  },
+  "desc": "렉라자(레이저티닙)를 개발해 J&J에 기술이전. 라이브리반트+렉라자가 EGFR 폐암 1차 표준이 되며 로열티 수령."
+ },
+ "co:hutchmed": {
+  "name": "허치메드",
+  "en": "HUTCHMED",
+  "ticker": "HCM",
+  "desc": "중국 바이오. 오르파티스(사볼리티닙)를 AZ와 공동 개발."
+ },
+ "co:systimmune": {
+  "name": "시스트이뮨 (바이리제약)",
+  "en": "SystImmune / Sichuan Baili",
+  "desc": "중국 바이오. iza-bren 개발, BMS와 공동.",
+  "add": true
+ },
+ "tr:monaleesa-2": {
+  "name": "MONALEESA-2",
+  "desc": "HR+ 전이성 1차, 키스칼리+AI vs AI. mPFS 25.3 vs 16.0개월, mOS 63.9 vs 51.4개월(HR 0.76, 유의)."
+ },
+ "tr:monarche": {
+  "name": "monarchE",
+  "desc": "고위험 조기 HR+ 수술 후, 버제니오 2년 추가. 7년 iDFS 77.4% vs 70.9%, 7년 OS 86.8% vs 85.0%(HR 0.84, 유의) — 보조요법 OS를 입증한 유일한 CDK4/6."
+ },
+ "tr:natalee": {
+  "name": "NATALEE",
+  "desc": "조기 HR+ 수술 후, 키스칼리 3년 추가. 5년 iDFS 85.5% vs 81.0%(HR 0.72), OS HR 0.80(유의성 미달)."
+ },
+ "tr:serena-6": {
+  "name": "SERENA-6",
+  "desc": "1차 치료 중 혈액에서 ESR1 변이가 잡힌(영상 진행 전) 환자에서 AI → 에트카마 교체. mPFS 16.0 vs 9.2개월(HR 0.44)."
+ },
+ "tr:inavo120": {
+  "name": "INAVO120",
+  "desc": "PIK3CA 변이·내분비 저항 1차, 이토베비+입랜스+풀베스트란트. mPFS 17.2 vs 7.3개월(HR 0.42), mOS 34.0 vs 27.0개월(HR 0.67)."
+ },
+ "tr:vision": {
+  "name": "VISION",
+  "desc": "mCRPC 탁산 후, 플루빅토+표준치료. rPFS 8.7 vs 3.4개월(HR 0.40), OS 15.3 vs 11.3개월(HR 0.62)."
+ },
+ "tr:arasens": {
+  "name": "ARASENS",
+  "desc": "mHSPC, 뉴베카+도세탁셀 vs 위약+도세탁셀. OS 미도달 vs 48.9개월(HR 0.68)."
+ },
+ "tr:flaura": {
+  "name": "FLAURA / FLAURA2",
+  "desc": "EGFR 폐암 1차. FLAURA: 타그리소 단독 vs 1세대 TKI mPFS 18.9 vs 10.2개월(HR 0.46). FLAURA2: 타그리소+화학 vs 타그리소 mPFS 25.5 vs 16.7개월(HR 0.62), OS 47.5 vs 37.6개월(HR 0.77)."
+ },
+ "tr:mariposa": {
+  "name": "MARIPOSA",
+  "desc": "EGFR 폐암 1차, 라이브리반트+렉라자 vs 타그리소. mPFS 23.7 vs 16.6개월(HR 0.70), OS 미도달 vs 36.7개월(HR 0.75)."
+ },
+ "tr:adaura": {
+  "name": "ADAURA",
+  "desc": "EGFR 폐암 1B~3A기 수술 후 타그리소 3년. DFS HR 0.17(2~3A기), 5년 OS 88% vs 78%(HR 0.49)."
+ },
+ "tr:saffron": {
+  "name": "SAFFRON",
+  "desc": "글로벌 3상. 타그리소 후 MET 과발현·증폭 EGFR 폐암, 타그리소+오르파티스 vs 백금 화학. PFS 7.6 vs 5.4개월(HR 0.55), OS 17.8 vs 12.9개월(HR 0.68). 중국판 SACHI는 PFS 8.2 vs 4.5개월(HR 0.34)."
+ },
+ "tr:panku-lung01": {
+  "name": "PANKU-Lung01",
+  "desc": "중국 3상. 3세대 TKI 후 EGFR 폐암, iza-bren vs 백금 화학. mPFS 11.1 vs 5.7개월(HR 0.40), 3등급 이상 이상반응 78.7% vs 62.1%."
+ },
+ "d:akeega": {
+  "name": "아키가",
+  "en": "Akeega (niraparib + abiraterone)",
+  "co": [
+   "co:jnj"
+  ],
+  "tags": [
+   "c:parp",
+   "c:arpi"
+  ],
+  "mod": "저분자 복합제",
+  "desc": "J&J의 PARP 억제제+자이티가 복합제. BRCA2 변이 mHSPC(AMPLITUDE)."
+ },
+ "d:opevesostat": {
+  "name": "오페베소스타트",
+  "en": "Opevesostat (MK-5684)",
+  "co": [
+   "co:merck",
+   "co:orion"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "머크·오리온의 CYP11A1 억제제 — 안드로겐뿐 아니라 모든 스테로이드 생산을 끊는다. ARPI 내성 mCRPC에서 ARPI 교체와 비교하는 3상."
+ },
+ "d:mevrometostat": {
+  "name": "메브로메토스타트",
+  "en": "Mevrometostat",
+  "co": [
+   "co:pfizer"
+  ],
+  "tags": [
+   "c:arpi"
+  ],
+  "mod": "저분자",
+  "desc": "화이자의 EZH2 억제제. 수용체 신호를 돕는 EZH2를 막아 엑스탄디 효과를 늘리는 병용 — 3상 3건."
+ },
+ "co:voronoi": {
+  "name": "보로노이",
+  "en": "Voronoi",
+  "code": "310210",
+  "bio": {
+   "m": "kr",
+   "c": "310210"
+  },
+  "desc": "국내 저분자 신약 개발사. EGFR TKI VRN11(타그리소와 1차 정면 경쟁 목표, C797S 등 겨냥), 비정형 EGFR 변이 VRN07, HER2 변이 VRN10. 리포트 기업분석(p.118~)."
+ },
+ "tr:sachi": {
+  "name": "SACHI",
+  "desc": "중국 3상. 타그리소 후 MET 증폭 EGFR 폐암, 타그리소+오르파티스 vs 백금 화학. PFS 8.2 vs 4.5개월(HR 0.34)."
+ }
+}

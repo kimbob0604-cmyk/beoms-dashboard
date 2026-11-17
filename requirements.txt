@@ -1,1 +1,2 @@
 requests>=2.31
+pymupdf>=1.24   # study_extract.py (Beom's Study PDF 그림·표 잘라내기)

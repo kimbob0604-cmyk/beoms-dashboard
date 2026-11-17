@@ -1,0 +1,32 @@
+<svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="면역항암제 매출 공식: 환자 수 곱하기 실제 사용 비율 곱하기 투약 기간, 흑색종과 폐암 비교">
+  <g font-size="13">
+    <text x="120" y="26" text-anchor="middle" class="dg-t" font-size="15" font-weight="800">매출</text>
+    <text x="175" y="26" text-anchor="middle" class="dg-m" font-size="15">=</text>
+    <text x="270" y="26" text-anchor="middle" class="dg-t" font-size="15" font-weight="800">환자 수</text>
+    <text x="355" y="26" text-anchor="middle" class="dg-m" font-size="15">×</text>
+    <text x="460" y="26" text-anchor="middle" class="dg-t" font-size="15" font-weight="800">IO를 실제로 쓰는 비율</text>
+    <text x="565" y="26" text-anchor="middle" class="dg-m" font-size="15">×</text>
+    <text x="640" y="26" text-anchor="middle" class="dg-t" font-size="15" font-weight="800">투약 기간</text>
+    <text x="460" y="44" text-anchor="middle" class="dg-m" font-size="11">허가 범위·아형·경쟁 약물에 따라</text>
+  </g>
+  <line x1="4" y1="58" x2="716" y2="58" class="dg-div"/>
+  <g font-size="12.5">
+    <text x="10" y="90" class="dg-t" font-weight="700">흑색종</text>
+    <text x="10" y="108" class="dg-m" font-size="11">IO 매출 12% (2위)</text>
+    <rect x="215" y="76" width="110" height="34" rx="8" class="dg-lo"/><text x="270" y="98" text-anchor="middle" class="dg-t">적다</text>
+    <rect x="395" y="76" width="130" height="34" rx="8" class="dg-hi"/><text x="460" y="98" text-anchor="middle" class="dg-t">거의 모두</text>
+    <rect x="585" y="76" width="110" height="34" rx="8" class="dg-hi"/><text x="640" y="98" text-anchor="middle" class="dg-t">길다</text>
+    <text x="640" y="126" text-anchor="middle" class="dg-m" font-size="10.5">10년 OS 43%</text>
+    <text x="270" y="126" text-anchor="middle" class="dg-m" font-size="10.5">90% 이상 서구권</text>
+
+    <line x1="4" y1="140" x2="716" y2="140" class="dg-div"/>
+    <text x="10" y="172" class="dg-t" font-weight="700">비소세포폐암</text>
+    <text x="10" y="190" class="dg-m" font-size="11">IO 매출 41% (1위)</text>
+    <rect x="215" y="158" width="110" height="34" rx="8" class="dg-hi"/><text x="270" y="180" text-anchor="middle" class="dg-t">가장 많다</text>
+    <rect x="395" y="158" width="130" height="34" rx="8" class="dg-mid"/><text x="460" y="180" text-anchor="middle" class="dg-t">드라이버 ✕만</text>
+    <rect x="585" y="158" width="110" height="34" rx="8" class="dg-mid"/><text x="640" y="180" text-anchor="middle" class="dg-t">중간</text>
+    <text x="640" y="208" text-anchor="middle" class="dg-m" font-size="10.5">5년 OS 19~32%</text>
+    <text x="460" y="208" text-anchor="middle" class="dg-m" font-size="10.5">드라이버 ○(35%)는 TKI로</text>
+  </g>
+  <text x="10" y="226" class="dg-m" font-size="11">그래서 매출 순위 ≠ 효능 순위. 흑색종은 가장 잘 듣지만 2위, 폐암은 환자 수로 1위.</text>
+</svg>

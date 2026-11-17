@@ -1,0 +1,65 @@
+<svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="면역관문억제제 반응 3축 점검표: 암종별로 T세포 침윤, 항원(TMB), PD-L1 의존도를 비교">
+  <!-- 머리: 세 관문 -->
+  <g font-size="12">
+    <rect x="165" y="6" width="130" height="58" rx="10" class="dg-gate"/>
+    <text x="230" y="28" text-anchor="middle" class="dg-t" font-weight="700">① T세포가 있나?</text>
+    <text x="230" y="46" text-anchor="middle" class="dg-m" font-size="11">T세포 침윤 (CD8)</text>
+    <rect x="295" y="6" width="130" height="58" rx="10" class="dg-gate"/>
+    <text x="360" y="28" text-anchor="middle" class="dg-t" font-weight="700">② 알아볼 항원이 있나?</text>
+    <text x="360" y="46" text-anchor="middle" class="dg-m" font-size="11">종양변이부담 (TMB)</text>
+    <rect x="425" y="6" width="130" height="58" rx="10" class="dg-gate"/>
+    <text x="490" y="28" text-anchor="middle" class="dg-t" font-weight="700">③ 브레이크가 PD-L1인가?</text>
+    <text x="490" y="46" text-anchor="middle" class="dg-m" font-size="11">다른 억제축이 없나</text>
+    <text x="566" y="40" class="dg-m" font-size="11">→ 결과</text>
+  </g>
+  <!-- 범례 -->
+  <g font-size="11" class="dg-s">
+    <circle cx="14" cy="22" r="6" class="dg-yes"/><text x="24" y="26">높음</text>
+    <path d="M14 36 a6 6 0 0 1 0 12 z" class="dg-yes"/><circle cx="14" cy="42" r="6" class="dg-ring"/><text x="24" y="46">중간·환자마다 다름</text>
+    <circle cx="14" cy="62" r="6" class="dg-ring"/><text x="24" y="66">낮음</text>
+  </g>
+  <!-- 줄 -->
+  <g font-size="12.5">
+    <!-- 흑색종 -->
+    <line x1="4" y1="84" x2="716" y2="84" class="dg-div"/>
+    <text x="10" y="106" class="dg-t" font-weight="700">흑색종 (피부형)</text>
+    <circle cx="230" cy="101" r="8" class="dg-yes"/><circle cx="360" cy="101" r="8" class="dg-yes"/><circle cx="490" cy="101" r="8" class="dg-yes"/>
+    <text x="566" y="106" class="dg-ok" font-weight="700">IO 단독도 잘 듣는다</text>
+    <!-- 편평 폐암 -->
+    <line x1="4" y1="122" x2="716" y2="122" class="dg-div"/>
+    <text x="10" y="144" class="dg-t" font-weight="700">비소세포폐암 (편평·KRAS)</text>
+    <path d="M230 131 a8 8 0 0 1 0 16 z" class="dg-yes"/><circle cx="230" cy="139" r="8" class="dg-ring"/>
+    <circle cx="360" cy="139" r="8" class="dg-yes"/>
+    <path d="M490 131 a8 8 0 0 1 0 16 z" class="dg-yes"/><circle cx="490" cy="139" r="8" class="dg-ring"/>
+    <text x="566" y="136" class="dg-t" font-size="11.5">PD-L1 ≥50%만 단독</text>
+    <text x="566" y="151" class="dg-t" font-size="11.5">나머지는 +화학</text>
+    <!-- 투명세포 신장암 -->
+    <line x1="4" y1="162" x2="716" y2="162" class="dg-div"/>
+    <text x="10" y="184" class="dg-t" font-weight="700">투명세포 신장암</text>
+    <circle cx="230" cy="179" r="8" class="dg-yes"/>
+    <path d="M360 171 a8 8 0 0 1 0 16 z" class="dg-yes"/><circle cx="360" cy="179" r="8" class="dg-ring"/>
+    <circle cx="490" cy="179" r="8" class="dg-ring"/>
+    <text x="566" y="176" class="dg-t" font-size="11.5">VEGF 브레이크도 있어</text>
+    <text x="566" y="191" class="dg-t" font-size="11.5">+VEGF TKI</text>
+    <text x="255" y="198" class="dg-m" font-size="10.5">양은 적지만 질 좋은 신항원</text>
+    <!-- 방광암 -->
+    <line x1="4" y1="204" x2="716" y2="204" class="dg-div"/>
+    <text x="10" y="226" class="dg-t" font-weight="700">방광암 (근침윤·전이성)</text>
+    <path d="M230 213 a8 8 0 0 1 0 16 z" class="dg-yes"/><circle cx="230" cy="221" r="8" class="dg-ring"/>
+    <circle cx="360" cy="221" r="8" class="dg-yes"/>
+    <text x="244" y="240" class="dg-m" font-size="10.5">배제형 많음</text>
+    <text x="566" y="226" class="dg-t" font-size="11.5">+ADC (파드셉)</text>
+    <!-- 드라이버 폐암 -->
+    <line x1="4" y1="246" x2="716" y2="246" class="dg-div"/>
+    <text x="10" y="268" class="dg-t" font-weight="700">비소세포폐암 (EGFR·ALK 등)</text>
+    <circle cx="230" cy="263" r="8" class="dg-ring"/><circle cx="360" cy="263" r="8" class="dg-ring"/>
+    <text x="566" y="268" class="dg-t" font-size="11.5">표적치료(TKI)</text>
+    <!-- 차가운 종양 -->
+    <line x1="4" y1="284" x2="716" y2="284" class="dg-div"/>
+    <text x="10" y="306" class="dg-t" font-weight="700">췌장암 · 전립선암 · MSS 대장암</text>
+    <circle cx="230" cy="301" r="8" class="dg-ring"/><circle cx="360" cy="301" r="8" class="dg-ring"/>
+    <text x="566" y="306" class="dg-no" font-weight="700">IO 안 듣는다</text>
+    <line x1="4" y1="322" x2="716" y2="322" class="dg-div"/>
+  </g>
+  <text x="10" y="346" class="dg-m" font-size="11">빈칸은 리포트에 언급이 없는 축. 연구(Lee &amp; Ruppin, 2019)에서 ①·② 두 변수가 암종별 반응률 차이의 85%를 설명했다.</text>
+</svg>

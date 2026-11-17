@@ -1,0 +1,82 @@
+{
+ "_note": "Beom's Study 공개 이미지 목록. 재사용이 허용된 것만(퍼블릭 도메인·CC0·CC BY). author·license 는 화면 출처 줄에 그대로 나간다. 파일·w·h·mods 는 study_media.py 가 채운다.",
+ "tcell-attack": {
+  "title": "킬러 T세포가 암세포를 둘러싼 모습 (초고해상도 현미경)",
+  "source": "Wikimedia Commons (NIH Image Gallery)",
+  "page": "https://commons.wikimedia.org/wiki/File:Killer_T_cells_surround_a_cancer_cell.png",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Killer_T_cells_surround_a_cancer_cell.png",
+  "author": "National Institutes of Health (NIH)",
+  "license": "Public domain",
+  "file": "tcell-attack.jpg",
+  "w": 1202,
+  "h": 802,
+  "mods": "2배 확대",
+  "kind": "photo"
+ },
+ "pdb-5jxe": {
+  "title": "키트루다(펨브롤리주맙) Fab이 PD-1을 붙잡은 결정 구조 — PDB 5JXE",
+  "source": "RCSB PDB",
+  "page": "https://www.rcsb.org/structure/5JXE",
+  "url": "https://cdn.rcsb.org/images/structures/pdb/5jxe_assembly-1.jpeg",
+  "author": "Na Z, Bharath SR, Song H — Cell Research 2017 (구조 데이터) / RCSB PDB 이미지",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "file": "pdb-5jxe.png",
+  "w": 500,
+  "h": 946,
+  "mods": "여백 자름 · 2배 확대"
+ },
+ "pdb-4zqk": {
+  "title": "사람 PD-1과 PD-L1이 맞물린 결정 구조 — PDB 4ZQK",
+  "source": "RCSB PDB",
+  "page": "https://www.rcsb.org/structure/4ZQK",
+  "url": "https://cdn.rcsb.org/images/structures/pdb/4zqk_assembly-1.jpeg",
+  "author": "Zak KM, Dubin G, Holak TA 외 — Structure 2015 (구조 데이터) / RCSB PDB 이미지",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "file": "pdb-4zqk.png",
+  "w": 606,
+  "h": 830,
+  "mods": "여백 자름 · 2배 확대"
+ },
+ "needle-angles": {
+  "title": "주사 경로별 바늘 각도: 근육·피하·정맥·피내",
+  "source": "Wikimedia Commons (BCIT Clinical Procedures for Safer Patient Care)",
+  "page": "https://commons.wikimedia.org/wiki/File:Needle-insertion-angles-1.png",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Needle-insertion-angles-1.png",
+  "author": "British Columbia Institute of Technology (BCIT)",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "file": "needle-angles.png",
+  "w": 798,
+  "h": 862,
+  "mods": "2배 확대"
+ },
+ "til-examples": {
+  "title": "종양 침윤 림프구(TIL) 밀도 평가 예시 — 대장암 조직",
+  "source": "PLOS ONE (Fig 1)",
+  "page": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0192744",
+  "url": "https://journals.plos.org/plosone/article/figure/image?size=large&id=10.1371/journal.pone.0192744.g001",
+  "author": "Iseki Y, Shibutani M, Maeda K 외 (PLOS ONE 13(2): e0192744, 2018)",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "file": "til-examples.jpg",
+  "w": 1800,
+  "h": 1364,
+  "mods": "축소",
+  "kind": "photo"
+ },
+ "pdb-1igt": {
+  "title": "항체 분자 전체(생쥐 IgG2a)의 결정 구조 — PDB 1IGT",
+  "source": "RCSB PDB",
+  "page": "https://www.rcsb.org/structure/1IGT",
+  "url": "https://cdn.rcsb.org/images/structures/pdb/1igt_assembly-1.jpeg",
+  "author": "Harris LJ, Larson SB, Hasel KW, McPherson A — Biochemistry 1997 (구조 데이터) / RCSB PDB 이미지",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "file": "pdb-1igt.png",
+  "w": 748,
+  "h": 924,
+  "mods": "여백 자름 · 2배 확대"
+ }
+}

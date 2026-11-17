@@ -1,0 +1,60 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Next PD-(L)1 전략 지도: 반응 3축 중 부족한 것과 이를 메우는 병용·대체 전략">
+  <defs><marker id="nmArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <!-- 범례 -->
+  <g font-size="11.5">
+    <rect x="430" y="8" width="14" height="14" rx="3" class="dg-lane2"/><text x="450" y="19" class="dg-s">병용: IO는 그대로, 파트너를 바꾼다</text>
+    <rect x="430" y="28" width="14" height="14" rx="3" class="dg-lane3"/><text x="450" y="39" class="dg-s">대체: IO 자체를 새 분자로</text>
+  </g>
+  <text x="10" y="22" class="dg-t" font-size="14" font-weight="800">무엇이 부족한가 →</text>
+  <text x="200" y="22" class="dg-t" font-size="14" font-weight="800">어떻게 메우나</text>
+
+  <!-- ① -->
+  <rect x="6" y="56" width="168" height="54" rx="10" class="dg-gate"/>
+  <text x="16" y="78" class="dg-t" font-size="12.5" font-weight="700">① T세포가 종양에 있나</text>
+  <text x="16" y="96" class="dg-m" font-size="11">침윤</text>
+  <path d="M176 83 L196 83" class="dg-arrow" marker-end="url(#nmArr)"/>
+  <rect x="200" y="62" width="510" height="42" rx="8" class="dg-lo"/>
+  <text x="212" y="80" class="dg-s" font-size="12">전용 전략은 사실상 없다</text>
+  <text x="212" y="96" class="dg-m" font-size="11">TCE의 물리적 연결, VEGF 억제로 환경 정상화가 간접적으로 돕는다</text>
+
+  <!-- ② -->
+  <rect x="6" y="122" width="168" height="112" rx="10" class="dg-gate"/>
+  <text x="16" y="146" class="dg-t" font-size="12.5" font-weight="700">② 알아볼 항원이 있나</text>
+  <text x="16" y="164" class="dg-m" font-size="11">TMB·신항원</text>
+  <path d="M176 178 L196 178" class="dg-arrow" marker-end="url(#nmArr)"/>
+  <g font-size="12">
+    <rect x="200" y="122" width="510" height="34" rx="8" class="dg-lane2"/>
+    <text x="212" y="143" class="dg-t" font-weight="700">mRNA 항암백신</text><text x="330" y="143" class="dg-s" font-size="11">신항원을 알아보는 T세포를 늘린다 · 인티스메란, 오토진 세부메란</text>
+    <rect x="200" y="161" width="510" height="34" rx="8" class="dg-lane2"/>
+    <text x="212" y="182" class="dg-t" font-weight="700">T세포 인게이저</text><text x="330" y="182" class="dg-s" font-size="11">인식 단계를 건너뛰고 강제로 연결 · 탈라타맙(DLL3), 잘루리타미그</text>
+    <rect x="200" y="200" width="510" height="34" rx="8" class="dg-lane2"/>
+    <text x="212" y="221" class="dg-t" font-weight="700">ADC</text><text x="330" y="221" class="dg-s" font-size="11">종양을 죽여 항원을 쏟게 한다(본질은 화학 대체) · 파드셉, sac-TMT, Dato-DXd</text>
+  </g>
+
+  <!-- ③ -->
+  <rect x="6" y="246" width="168" height="112" rx="10" class="dg-gate"/>
+  <text x="16" y="270" class="dg-t" font-size="12.5" font-weight="700">③ 브레이크가 PD-L1뿐인가</text>
+  <text x="16" y="288" class="dg-m" font-size="11">다른 억제 축</text>
+  <path d="M176 302 L196 302" class="dg-arrow" marker-end="url(#nmArr)"/>
+  <g font-size="12">
+    <rect x="200" y="246" width="250" height="52" rx="8" class="dg-lane3"/>
+    <text x="210" y="266" class="dg-t" font-weight="700">PD-1 × VEGF</text>
+    <text x="210" y="282" class="dg-s" font-size="10.5">VEGF의 면역 억제까지 · 이보네시맙</text>
+    <text x="210" y="294" class="dg-s" font-size="10.5">푸미타미그, SSGJ-707</text>
+    <rect x="460" y="246" width="250" height="52" rx="8" class="dg-lane3"/>
+    <text x="470" y="266" class="dg-t" font-weight="700">PD-1 × CTLA-4</text>
+    <text x="470" y="282" class="dg-s" font-size="10.5">프라이밍 단계 브레이크 · 카도닐리맙</text>
+    <text x="470" y="294" class="dg-s" font-size="10.5">볼루스토미그</text>
+    <rect x="200" y="306" width="250" height="52" rx="8" class="dg-lane3"/>
+    <text x="210" y="326" class="dg-t" font-weight="700">PD-1 × TIGIT</text>
+    <text x="210" y="342" class="dg-s" font-size="10.5">다른 관문 추가 차단 · 릴베고스토미그</text>
+    <text x="210" y="354" class="dg-m" font-size="10">TIGIT 단독 병용은 3상 잇단 실패</text>
+    <rect x="460" y="306" width="250" height="52" rx="8" class="dg-lane3"/>
+    <text x="470" y="326" class="dg-t" font-weight="700">PD-1 × IL-2</text>
+    <text x="470" y="342" class="dg-s" font-size="10.5">브레이크 해제 + 가속 페달 · IBI363</text>
+  </g>
+
+  <!-- ④ -->
+  <text x="10" y="386" class="dg-t" font-size="12" font-weight="700">④ 교차</text>
+  <text x="70" y="386" class="dg-s" font-size="11">이중항체 백본 + ADC (릴베고스토미그 + Dato-DXd 등) · TCE + IO (탈라타맙 + 임핀지) — 두 축을 한 번에</text>
+</svg>

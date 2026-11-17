@@ -1,0 +1,49 @@
+<svg viewBox="0 0 720 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PD-1 브레이크 세 단계: 정상, 종양의 악용, 억제제가 브레이크를 푼다">
+  <defs>
+    <marker id="pbArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker>
+  </defs>
+  <!-- 세 칸 -->
+  <g font-size="12">
+    <rect x="4" y="4" width="230" height="282" rx="12" class="dg-panel"/>
+    <rect x="245" y="4" width="230" height="282" rx="12" class="dg-panel"/>
+    <rect x="486" y="4" width="230" height="282" rx="12" class="dg-panel"/>
+    <text x="119" y="28" text-anchor="middle" class="dg-t" font-size="14" font-weight="700">① 정상: 아군 표시</text>
+    <text x="360" y="28" text-anchor="middle" class="dg-t" font-size="14" font-weight="700">② 종양이 표시를 악용</text>
+    <text x="601" y="28" text-anchor="middle" class="dg-t" font-size="14" font-weight="700">③ 억제제가 브레이크를 푼다</text>
+  </g>
+
+  <!-- ① 정상 -->
+  <circle cx="62" cy="120" r="40" class="dg-tcell"/><text x="62" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">T세포</text>
+  <circle cx="178" cy="120" r="40" class="dg-normal"/><text x="178" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">정상세포</text>
+  <rect x="100" y="112" width="14" height="16" rx="3" class="dg-pd1"/>
+  <path d="M138 112 L124 120 L138 128" class="dg-pdl1" stroke-width="5" fill="none" stroke-linejoin="round"/>
+  <text x="96" y="176" text-anchor="middle" class="dg-m" font-size="10.5">PD-1 ↑</text>
+  <text x="142" y="176" text-anchor="middle" class="dg-m" font-size="10.5">↑ PD-L1</text>
+  <text x="119" y="200" text-anchor="middle" class="dg-ok" font-size="13" font-weight="700">공격하지 않음 (정상)</text>
+  <text x="119" y="222" text-anchor="middle" class="dg-s">PD-L1 = "나는 아군이니</text>
+  <text x="119" y="238" text-anchor="middle" class="dg-s">공격하지 마라"</text>
+
+  <!-- ② 종양 -->
+  <circle cx="303" cy="120" r="40" class="dg-tcell"/><text x="303" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">T세포</text>
+  <circle cx="419" cy="120" r="40" class="dg-tumor"/><text x="419" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">종양세포</text>
+  <rect x="341" y="112" width="14" height="16" rx="3" class="dg-pd1"/>
+  <path d="M379 112 L365 120 L379 128" class="dg-pdl1" stroke-width="5" fill="none" stroke-linejoin="round"/>
+  <path d="M392 88 L383 94 L392 100 M392 140 L383 146 L392 152 M410 80 L402 84 L410 90 M410 152 L402 156 L410 162" class="dg-pdl1" stroke-width="4" fill="none"/>
+  <text x="360" y="186" text-anchor="middle" class="dg-no" font-size="13" font-weight="700">✕ 브레이크 → 그냥 지나침</text>
+  <text x="360" y="212" text-anchor="middle" class="dg-s">종양은 PD-L1을 과발현해</text>
+  <text x="360" y="228" text-anchor="middle" class="dg-s">T세포가 바로 옆에 와도</text>
+  <text x="360" y="244" text-anchor="middle" class="dg-s">아군으로 착각하게 만든다</text>
+
+  <!-- ③ 억제제 -->
+  <circle cx="544" cy="120" r="40" class="dg-tcell"/><text x="544" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">T세포</text>
+  <circle cx="660" cy="120" r="40" class="dg-tumor"/><text x="660" y="124" text-anchor="middle" class="dg-t" font-size="13" font-weight="700">종양세포</text>
+  <rect x="582" y="112" width="14" height="16" rx="3" class="dg-pd1"/>
+  <!-- 항체가 PD-1을 덮음 -->
+  <path d="M612 90 L612 104 M612 104 L601 114 M612 104 L623 114" class="dg-ab" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <text x="612" y="82" text-anchor="middle" class="dg-t" font-size="11" font-weight="700">항PD-1 항체</text>
+  <path d="M556 168 Q 600 196 640 166" class="dg-arrow" marker-end="url(#pbArr)"/>
+  <text x="601" y="214" text-anchor="middle" class="dg-ok" font-size="13" font-weight="700">공격 재개</text>
+  <text x="601" y="236" text-anchor="middle" class="dg-s">PD-1·PD-L1 어느 쪽을 막아도</text>
+  <text x="601" y="252" text-anchor="middle" class="dg-s">같은 브레이크가 풀린다</text>
+  <text x="601" y="268" text-anchor="middle" class="dg-m" font-size="10.5">→ 암세포를 직접 죽이지 않는다</text>
+</svg>

@@ -11,3 +11,6 @@ db/*.db-*
 # 텔레그램 로그인 정보 (계정 열쇠)
 *.session
 *.session-journal
+
+# Beom's Study: 원본 PDF·추출 본문 (저작권 자료, 커밋 안 함)
+study_src/

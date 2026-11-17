@@ -1,0 +1,51 @@
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="폐암 분류 트리와 아형별 1차 치료">
+  <g class="dg-link" fill="none">
+    <path d="M70 150 C 110 150, 110 70, 150 70"/>
+    <path d="M70 150 C 110 150, 110 230, 150 230"/>
+    <path d="M270 70 C 300 70, 300 40, 330 40"/>
+    <path d="M270 70 C 300 70, 300 120, 330 120"/>
+    <path d="M450 120 C 470 120, 470 98, 490 98"/>
+    <path d="M450 120 C 470 120, 470 168, 490 168"/>
+  </g>
+  <g font-size="12.5">
+    <rect x="4" y="128" width="66" height="44" rx="10" class="dg-gate"/>
+    <text x="37" y="155" text-anchor="middle" class="dg-t" font-weight="700">폐암</text>
+
+    <rect x="150" y="48" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="210" y="67" text-anchor="middle" class="dg-t" font-weight="700">비소세포폐암</text>
+    <text x="210" y="84" text-anchor="middle" class="dg-m" font-size="11">85%</text>
+    <rect x="150" y="208" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="210" y="227" text-anchor="middle" class="dg-t" font-weight="700">소세포폐암</text>
+    <text x="210" y="244" text-anchor="middle" class="dg-m" font-size="11">15% · 흡연·고TMB</text>
+
+    <rect x="330" y="18" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="390" y="37" text-anchor="middle" class="dg-t" font-weight="700">편평세포</text>
+    <text x="390" y="54" text-anchor="middle" class="dg-m" font-size="11">25% · 흡연·고TMB</text>
+    <rect x="330" y="98" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="390" y="117" text-anchor="middle" class="dg-t" font-weight="700">비편평 (선암)</text>
+    <text x="390" y="134" text-anchor="middle" class="dg-m" font-size="11">75%</text>
+
+    <rect x="490" y="76" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="550" y="95" text-anchor="middle" class="dg-t" font-weight="700">드라이버 변이 ✕</text>
+    <text x="550" y="112" text-anchor="middle" class="dg-m" font-size="11">약 40% · KRAS 포함</text>
+    <rect x="490" y="146" width="120" height="44" rx="10" class="dg-gate"/>
+    <text x="550" y="165" text-anchor="middle" class="dg-t" font-weight="700">드라이버 변이 ○</text>
+    <text x="550" y="182" text-anchor="middle" class="dg-m" font-size="11">약 35% · 비흡연·저TMB</text>
+  </g>
+  <!-- 1차 치료 꼬리표 -->
+  <g font-size="11.5">
+    <rect x="462" y="22" width="250" height="36" rx="8" class="dg-io"/>
+    <text x="472" y="37" class="dg-t" font-weight="700">IO (+화학)</text>
+    <text x="472" y="51" class="dg-s" font-size="10.5">PD-L1 ≥50% 키트루다 단독 / 그 외 +화학</text>
+    <rect x="618" y="78" width="98" height="40" rx="8" class="dg-io"/>
+    <text x="626" y="95" class="dg-t" font-weight="700">IO (+화학)</text>
+    <text x="626" y="110" class="dg-s" font-size="10.5">KEYNOTE-189</text>
+    <rect x="618" y="148" width="98" height="40" rx="8" class="dg-tki"/>
+    <text x="626" y="165" class="dg-t" font-weight="700">표적치료 TKI</text>
+    <text x="626" y="180" class="dg-s" font-size="10.5">EGFR→타그리소</text>
+    <rect x="282" y="210" width="250" height="40" rx="8" class="dg-io"/>
+    <text x="292" y="227" class="dg-t" font-weight="700">화학 + 티쎈트릭/임핀지</text>
+    <text x="292" y="242" class="dg-s" font-size="10.5">MHC-I 낮아 IO 효과 제한적</text>
+  </g>
+  <text x="4" y="292" class="dg-m" font-size="11">비중은 리포트 그림14·표6 기준(드라이버 변이 ✕는 표6의 약 40%). 아시아는 드라이버 변이 ○ 비중이 약 45%로 서구(25%)보다 높다.</text>
+</svg>

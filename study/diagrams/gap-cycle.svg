@@ -1,0 +1,38 @@
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="저분자 항암제의 2차 치료 공백이 반복되는 구조">
+  <defs><marker id="gcArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="22" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">표적이 하나라서 생기는 순환 — 2차 자리는 늘 비어 있다</text>
+  <!-- 네 상자: 원형 배치 -->
+  <g font-size="12.5">
+    <rect x="250" y="40" width="220" height="56" rx="12" class="dg-lane1"/>
+    <text x="360" y="62" text-anchor="middle" class="dg-t" font-weight="800">① 1차 표준 약</text>
+    <text x="360" y="80" text-anchor="middle" class="dg-s" font-size="11">신호 하나를 끊어 대부분 반응</text>
+
+    <rect x="490" y="132" width="220" height="56" rx="12" class="dg-tki"/>
+    <text x="600" y="154" text-anchor="middle" class="dg-t" font-weight="800">② 내성</text>
+    <text x="600" y="172" text-anchor="middle" class="dg-s" font-size="11">종양이 우회로·수용체 변이를 찾는다</text>
+
+    <rect x="250" y="224" width="220" height="56" rx="12" class="dg-lane3"/>
+    <text x="360" y="246" text-anchor="middle" class="dg-t" font-weight="800">③ 차세대 약이 2차로</text>
+    <text x="360" y="264" text-anchor="middle" class="dg-s" font-size="11">그 내성까지 막도록 설계</text>
+
+    <rect x="10" y="132" width="220" height="56" rx="12" class="dg-lane2"/>
+    <text x="120" y="154" text-anchor="middle" class="dg-t" font-weight="800">④ 1차로 올라간다</text>
+    <text x="120" y="172" text-anchor="middle" class="dg-s" font-size="11">더 좋은 약이니 앞 단계로</text>
+  </g>
+  <g class="dg-arrow" fill="none">
+    <path d="M470 80 Q 560 90 590 128" marker-end="url(#gcArr)"/>
+    <path d="M590 192 Q 560 250 474 256" marker-end="url(#gcArr)"/>
+    <path d="M246 256 Q 150 250 124 192" marker-end="url(#gcArr)"/>
+    <path d="M124 128 Q 150 70 246 66" marker-end="url(#gcArr)"/>
+  </g>
+  <!-- 가운데: 공백 -->
+  <circle cx="360" cy="160" r="46" class="dg-band"/>
+  <text x="360" y="155" text-anchor="middle" class="dg-no" font-size="13" font-weight="800">2차 공백</text>
+  <text x="360" y="172" text-anchor="middle" class="dg-m" font-size="10.5">남는 것은 아직</text>
+  <text x="360" y="185" text-anchor="middle" class="dg-m" font-size="10.5">못 올라간 약뿐</text>
+  <!-- 사례 -->
+  <g font-size="11">
+    <text x="10" y="306" class="dg-t" font-weight="700">유방암</text><text x="58" y="306" class="dg-s">타목시펜 → AI → (ESR1 변이) → 경구 ER 분해제 · CDK4/6 억제제 · PI3K 억제제도 2차에서 1차로</text>
+    <text x="10" y="322" class="dg-t" font-weight="700">전립선암</text><text x="66" y="322" class="dg-s">ARPI가 거세 저항성(후기)에서 7년에 걸쳐 호르몬 감수성(1차)으로 · 폐암: 1·2세대 TKI → (T790M) → 타그리소가 1차로</text>
+  </g>
+</svg>
