@@ -27,7 +27,7 @@ DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart', 'digest')   # 날짜별 JSON + dates.json
 CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart', 'earn', 'fund')   # 최신 파일만 (vchart = 탐방 탭 차트, earn = 실적 발표 덱 1년)
 FILES = ('home.json', 'names.json', 'quotes.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json',
-         'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json')   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
+         'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json', 'semi.json')   # semi.json = 반도체·AI 인프라 탭   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
 # 공개용으로 따로 만든 파일 → 배포본에서의 이름. 탐방 탭: 이 컴퓨터용 visits.json(1:1 대화·공개 채널 원문 포함)은 올리지 않고
 # build_visits.public_view 가 줄인 visits_pub.json 을 data/visits.json 으로 올린다
 RENAMED = {'visits_pub.json': 'visits.json', 'consumer.json': 'consumer.json',
