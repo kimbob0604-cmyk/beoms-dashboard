@@ -3,6 +3,7 @@
 //   bar   { x:[항목], series:[{name, values}], orient:'v'|'h', unit, dec, color_by:[항목별 그룹], groups:[색 고정 순서], mark:{max,last} }
 //   stack { x, series(아래→위), unit, dec }
 //   range { x:[행], series:[{name, lo:[], hi:[]}], unit }
+//   line  { x:[항목], series:[{name, values(null=빈칸)}], unit, dec, xstep:눈금 간격, labels:'all'|'ends' }
 //   scatter { points:[{id,label,x,y,r}], xlab, ylab, rlab, labels:[항상 이름 붙일 id], quad:{x,y,tr,bl} }
 // 색: 범주형 고정 순서 --s1..--s8 (dataviz 기본 팔레트, 검증 통과). '대조' 가 들어간 계열은 회색(맥락).
 // 마크: 막대 굵기 ≤24, 끝 4px 둥글게(바닥은 각지게), 맞닿는 막대 사이 2px 틈, 얇은 격자. 값은 마우스를 올리면 보인다.
@@ -133,6 +134,49 @@ const SChart = (() => {
     return svgWrap(W, H, g, spec);
   }
 
+  // ---------- 선 (시계열) ----------
+  function line(spec) {
+    const S = spec.series, n = spec.x.length, k = S.length;
+    const W = 640, H = 280, L = 46, R = k > 1 ? 86 : 16, T = 22, B = 30;
+    const all = S.flatMap(s => s.values).filter(v => v != null);
+    const ticks = niceTicks(Math.max(...all) * 1.06), top = ticks[ticks.length - 1];
+    const X = i => L + 12 + (W - L - R - 24) * (n === 1 ? 0.5 : i / (n - 1));   // 첫·끝 점이 축에 붙지 않게
+    const Y = v => T + (H - T - B) * (1 - v / top);
+    const dec = spec.dec, u = spec.unit ? ' ' + spec.unit : '';
+    let g = ticks.map(t => `<line x1="${L}" x2="${W - R}" y1="${Y(t)}" y2="${Y(t)}" class="sc-grid"/><text x="${L - 6}" y="${Y(t) + 4}" class="sc-ax" text-anchor="end">${fmt(t)}</text>`).join('');
+    const step = spec.xstep || Math.max(1, Math.ceil(n / 12));
+    spec.x.forEach((c, i) => {
+      if (i % step && i !== n - 1) return;
+      g += `<text x="${X(i)}" y="${H - B + 16}" class="sc-ax" text-anchor="middle">${esc(c)}</text>`;
+    });
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" class="sc-base"/>`;
+    const ends = [];
+    S.forEach((s, si) => {
+      const col = fill(slotOf(spec, s.name, si));
+      let d = '', pen = false;
+      s.values.forEach((v, i) => {
+        if (v == null) { pen = false; return; }
+        d += `${pen ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)} `;
+        pen = true;
+      });
+      g += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+      const vals = s.values.map((v, i) => [v, i]).filter(([v]) => v != null);
+      const imax = vals.reduce((a, b) => (b[0] > a[0] ? b : a), vals[0])[1];
+      vals.forEach(([v, i]) => {
+        const t = `${spec.x[i]} · ${s.name}: ${fmt(v, dec)}${u}`;
+        g += `<circle cx="${X(i)}" cy="${Y(v)}" r="${n <= 24 ? 3 : 5}" fill="${n <= 24 ? col : 'transparent'}" ${n <= 24 ? 'class="sc-ring"' : ''} ${tip(t)}/>`;
+        const lab = spec.labels === 'all' ? n <= 16 : (k === 1 && (i === vals[0][1] || i === imax || i === vals[vals.length - 1][1]));
+        if (lab) g += `<text x="${X(i)}" y="${Y(v) - 7}" class="sc-val" text-anchor="middle">${fmt(v, dec)}</text>`;
+      });
+      if (k > 1) { const [v, i] = vals[vals.length - 1]; ends.push({ y: Y(v), x: X(i), name: s.name, col }); }
+    });
+    // 끝 이름표: 겹치지 않게 위아래로 밀기
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 13) ends[i].y = ends[i - 1].y + 13;
+    ends.forEach(e => { g += `<text x="${e.x + 6}" y="${e.y + 4}" class="sc-lab" fill="${e.col}">${esc(e.name)}</text>`; });
+    return svgWrap(W, H, g, spec);
+  }
+
   // ---------- 범위 (가로) ----------
   function range(spec) {
     const S = spec.series, n = spec.x.length, k = S.length;
@@ -222,6 +266,7 @@ const SChart = (() => {
     const body = spec.type === 'scatter' ? scatter(spec)
       : spec.type === 'stack' ? stack(spec)
       : spec.type === 'range' ? range(spec)
+      : spec.type === 'line' ? line(spec)
       : spec.orient === 'h' ? hbar(spec) : vbar(spec);
     return `<div class="sc">
       ${spec.title ? `<p class="sc-title">${esc(spec.title)}</p>` : ''}

@@ -32,7 +32,7 @@ SRC = ROOT / 'study'
 EXTRACT = ROOT / 'study_src'
 OUT = ROOT / 'public' / 'data' / 'study'
 
-KINDS = {'c': '개념', 'd': '약물', 'co': '기업', 'tr': '임상', 'ind': '적응증'}
+KINDS = {'c': '개념', 'd': '약물', 'co': '기업', 'tr': '임상', 'ind': '적응증', 'n': '국가'}
 
 
 def load(p):
@@ -43,7 +43,7 @@ def check_chart(ch):
     """재구성 차트 데이터 모양 검사 → 문제 목록"""
     out = []
     t = ch.get('type')
-    if t in ('bar', 'stack'):
+    if t in ('bar', 'stack', 'line'):
         n = len(ch.get('x', []))
         for s in ch.get('series', []):
             if len(s.get('values', [])) != n:
@@ -102,6 +102,21 @@ def main():
             if k in ents:
                 errs.append(f'{f.name}: 색인 {k} 가 이미 있음 (entities.json 또는 다른 조각)')
             ents[k] = v
+    # 반도체 탭 칸 (semi_assets.json, 다른 세션 소유 — 읽기만): 색인·카드의 semi: [칸 id] → 이름 붙여 링크
+    semi_cells = {}
+    sa = ROOT / 'semi_assets.json'
+    if sa.exists():
+        semi_cells = {c['id']: c['name'] for c in load(sa).get('cells', [])}
+
+    def link_cells(obj, where):
+        ids = obj.get('semi') or []
+        if isinstance(ids, str):
+            ids = [ids]
+        bad = [i for i in ids if i not in semi_cells]
+        if bad and semi_cells:
+            warns.append(f'{where}: 반도체 탭에 없는 칸 {", ".join(bad)}')
+        obj['semi_cells'] = [{'id': i, 'name': semi_cells[i]} for i in ids if i in semi_cells]
+
     nodes = {}
     for s in tree['sectors']:
         for path, n in walk([s]):
@@ -117,6 +132,8 @@ def main():
             if r not in ents:
                 errs.append(f'색인 {k}: 연결된 {r} 가 색인에 없음')
         e['refs'] = []
+        if e.get('semi'):
+            link_cells(e, f'색인 {k}')
 
     # 공개 이미지 목록 (위키미디어·RCSB PDB 등, 출처·라이선스 포함)
     media = {}
@@ -162,7 +179,7 @@ def main():
                     used[ref] = where
                     x = figs[ref]
                     c['fig'] = {k: x[k] for k in ('key', 'kind', 'no', 'title', 'page', 'img', 'w', 'h', 'source', 'part')}
-                    c['fig'].update({k: x[k] for k in ('hd', 'hd_w', 'hd_h') if k in x})
+                    c['fig'].update({k: x[k] for k in ('hd', 'hd_w', 'hd_h', 'scan', 'raw', 'raw_w', 'raw_h') if k in x})
                     if c.get('tech') and not x.get('hd'):
                         errs.append(f'{where}: 해설(tech)에 쓸 정리본 이미지(-hd)가 없음 — 벡터 그림이면 원본 렌더로 대체 필요')
                     for sp in (c.get('tech') or {}).get('spots', []):
@@ -171,6 +188,20 @@ def main():
                     if x.get('rows'):
                         c['fig']['rows'] = x['rows']
                     c.setdefault('p', x['page'])
+                if c['t'] == 'seq':     # 단계 넘기기: 그림 여러 장을 차례로 (같은 그림을 다른 카드에서 또 써도 된다)
+                    if not c.get('steps'):
+                        errs.append(f'{where}: 단계 넘기기에 steps 가 없음')
+                    for si, st in enumerate(c.get('steps', [])):
+                        x = figs.get(st.get('ref'))
+                        if not x:
+                            errs.append(f'{where}: 단계 {si + 1} 그림 {st.get("ref")} 없음')
+                            continue
+                        used.setdefault(st['ref'], where)
+                        st['fig'] = {k: x[k] for k in ('key', 'kind', 'no', 'title', 'page', 'img', 'w', 'h', 'part') if k in x}
+                        st['fig'].update({k: x[k] for k in ('hd', 'hd_w', 'hd_h', 'scan') if k in x})
+                        for sp in st.get('spots', []):
+                            if not (0 <= sp.get('x', -1) <= 100 and 0 <= sp.get('y', -1) <= 100):
+                                errs.append(f'{where}: 단계 {si + 1} 번호 {sp.get("n")} 위치가 0~100% 밖')
                 if c['t'] == 'ext':     # 공개 이미지 해설 (study/media)
                     m = media.get(c.get('media'))
                     if not m:
@@ -189,6 +220,8 @@ def main():
                         c['svg'] = svg.read_text(encoding='utf-8')
                 if c.get('chart'):
                     errs += [f'{where}: 차트 {m}' for m in check_chart(c['chart'])]
+                if c.get('semi'):
+                    link_cells(c, where)
                 for k in c.get('tags', []) + c.get('addTags', []):
                     if k not in ents:
                         errs.append(f'{where}: 색인에 없는 키 {k}')

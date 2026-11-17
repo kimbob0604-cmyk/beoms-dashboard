@@ -1,0 +1,48 @@
+{
+ "_note": "Study › 반도체 가지 (docs/study-semi-plan.md §1). 주제 기준 트리 — 책 순서와 거의 같지만 '한 걸음 더' 꼭지는 주제가 맞는 가지로 옮긴다.",
+ "sector": "semi",
+ "children": [
+  {"id": "basics", "name": "기초", "children": [
+   {"id": "material", "name": "도체·부도체·반도체", "desc": "자유 전자, 원자 구조, 공유 결합과 옥텟 규칙"},
+   {"id": "doping", "name": "도핑: N형·P형", "desc": "불순물을 넣어 자유 전자(N형)·정공(P형)을 만든다"},
+   {"id": "device", "name": "소자: 다이오드·BJT·MOSFET", "desc": "P와 N을 어떻게 붙이느냐에 따라 정류·증폭·스위치"},
+   {"id": "history", "name": "역사: 진공관 → 트랜지스터 → IC", "desc": "실리콘밸리, 강대원 박사, MOSFET"},
+   {"id": "scaling", "name": "집적과 미세화", "desc": "면적·적층·축소, 선폭, 웨이퍼당 칩 수, Planar → FinFET → GAA"}
+  ]},
+  {"id": "system", "name": "시스템 반도체", "children": [
+   {"id": "computer", "name": "컴퓨터가 일하는 방식", "desc": "입력·처리·출력, CPU·RAM·ROM의 분업"},
+   {"id": "cpu-gpu", "name": "CPU·GPU", "desc": "코어·클럭·스레드·아키텍처, 직렬 vs 병렬, 인텔 vs ARM"},
+   {"id": "ap", "name": "AP (SoC)", "desc": "메인보드를 칩 하나에 — 스마트폰의 두뇌"},
+   {"id": "ai-chip", "name": "AI 반도체", "desc": "NPU·FPGA·ASIC·뉴로모픽, 1·2·3세대"},
+   {"id": "cis-etc", "name": "CIS와 기타", "desc": "CCD vs CIS, DSP·ISP·DDI·PMIC·MCU"}
+  ]},
+  {"id": "memory", "name": "메모리", "children": [
+   {"id": "dram", "name": "DRAM", "desc": "SRAM vs DRAM, 1T1C와 리프레시, DDR 세대"},
+   {"id": "nand", "name": "NAND·SSD", "desc": "HDD → SSD, 플로팅 게이트, NAND vs NOR, 3D NAND"},
+   {"id": "hierarchy", "name": "메모리 계층 구조", "desc": "레지스터·캐시·RAM·저장장치 — 속도·용량·가격의 맞바꿈"},
+   {"id": "chicken", "name": "치킨 게임", "desc": "1984·2007·2010 세 번의 가격 전쟁과 한국의 승리 요인"},
+   {"id": "cycle", "name": "슈퍼 사이클", "desc": "수요·공급, 선생산 후판매, 승자 독식"},
+   {"id": "hbm", "name": "HBM", "desc": "책에 없음 — 2026 업데이트 층에서만 채운다"}
+  ]},
+  {"id": "industry", "name": "산업 구조", "children": [
+   {"id": "idm-vs-split", "name": "IDM vs 분업", "desc": "빵집 비유, 설계·제조·테스트/패키지·유통 4단계"},
+   {"id": "players", "name": "설계·제조·후공정의 주체", "desc": "IP·팹리스·디자인하우스(PDK)·파운드리·OSAT"}
+  ]},
+  {"id": "process", "name": "8대 공정", "children": [
+   {"id": "overview", "name": "한눈에 보기", "desc": "전공정·후공정, N-MOSFET 17컷 따라가기, 공정 중요도의 변화"},
+   {"id": "wafer", "name": "① 웨이퍼", "desc": "단결정·잉곳·소잉·폴리싱, 직경"},
+   {"id": "oxide", "name": "② 산화", "desc": "건식·습식, STI·ILD·IMD"},
+   {"id": "photo", "name": "③ 포토", "desc": "파장, 마스크, 8단계, 노광 방식, EUV, 양성·음성 감광층"},
+   {"id": "etch", "name": "④ 에칭", "desc": "습식 vs 건식, 등방성·이방성"},
+   {"id": "depo", "name": "⑤ 증착·이온 주입", "desc": "PVD·CVD·ALD, 단차 피복성, 이온 주입·어닐링"},
+   {"id": "metal", "name": "⑥ 금속 배선·평탄화", "desc": "콘택트·인터커넥션, Al → Cu, 다마신, CMP"},
+   {"id": "test", "name": "⑦ 테스트", "desc": "웨이퍼 테스트 vs 패키지 테스트"},
+   {"id": "package", "name": "⑧ 패키지", "desc": "와이어 본딩 → 플립칩 → TSV, 실장, WLP(FI/FO)·FOPLP, MCP·PoP"}
+  ]},
+  {"id": "players", "name": "기업과 국가", "children": [
+   {"id": "company-map", "name": "기업 지도", "desc": "IDM·IP·팹리스·파운드리·OSAT·장비·부품·소재 순위 (책은 2021년)"},
+   {"id": "nations", "name": "국가별", "desc": "미국·한국·대만·일본·중국·EU·이스라엘"},
+   {"id": "issues", "name": "이슈", "desc": "EDA, 차량용 반도체 품귀, 화합물 반도체·그래핀"}
+  ]}
+ ]
+}

@@ -1,0 +1,57 @@
+<svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="메모리 반도체 치킨 게임 세 차례 요약">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">메모리 치킨 게임 세 번 — 누가 먼저 핸들을 꺾었나</text>
+  <!-- 머리줄 -->
+  <g font-size="11.5" class="dg-m">
+    <text x="12" y="46">회차</text><text x="112" y="46">불을 붙인 쪽</text><text x="262" y="46">값이 얼마나 무너졌나</text><text x="452" y="46">퇴출</text><text x="562" y="46">살아남은 쪽</text>
+  </g>
+  <line x1="6" y1="54" x2="714" y2="54" class="dg-div"/>
+  <!-- 1차 -->
+  <rect x="6" y="60" width="708" height="80" rx="8" class="dg-lane1" opacity=".55"/>
+  <g font-size="12">
+    <text x="12" y="82" class="dg-t" font-weight="800">1차</text>
+    <text x="12" y="98" class="dg-s" font-size="11">1984~1985</text>
+    <text x="112" y="82" class="dg-t" font-weight="700">일본</text>
+    <text x="112" y="98" class="dg-s" font-size="11">NEC·도시바·히타치</text>
+    <text x="112" y="113" class="dg-s" font-size="11">수율 80% vs 미국 50%</text>
+    <text x="262" y="82" class="dg-t" font-weight="700">64K DRAM 3달러 → 0.30달러</text>
+    <text x="262" y="98" class="dg-s" font-size="11">1년 만에 1/10</text>
+    <text x="452" y="82" class="dg-no" font-weight="800">인텔 (미국)</text>
+    <text x="452" y="98" class="dg-s" font-size="11">점유율 1.3%로 철수</text>
+    <text x="562" y="82" class="dg-ok" font-weight="700">일본 15년 전성기</text>
+    <text x="562" y="98" class="dg-s" font-size="11">삼성(1983 진입)은 버팀</text>
+    <text x="12" y="132" class="dg-m" font-size="10.5">뒤처리: 미국이 반덤핑 제소 → 1986 미·일 반도체 협정(원가 공개·일본 내 미국산 20%) → 한국 DRAM에 기회</text>
+  </g>
+  <!-- 2차 -->
+  <rect x="6" y="146" width="708" height="80" rx="8" class="dg-lane2" opacity=".55"/>
+  <g font-size="12">
+    <text x="12" y="168" class="dg-t" font-weight="800">2차</text>
+    <text x="12" y="184" class="dg-s" font-size="11">2007~2009</text>
+    <text x="112" y="168" class="dg-t" font-weight="700">대만</text>
+    <text x="112" y="184" class="dg-s" font-size="11">+ 2008 금융위기</text>
+    <text x="262" y="168" class="dg-t" font-weight="700">512M DRAM 6.80달러 → 0.50달러</text>
+    <text x="262" y="184" class="dg-s" font-size="11">2006 → 2009, 약 1/14</text>
+    <text x="452" y="168" class="dg-no" font-weight="800">키몬다 (독일)</text>
+    <text x="452" y="184" class="dg-s" font-size="11">2009 파산</text>
+    <text x="562" y="168" class="dg-ok" font-weight="700">삼성·하이닉스·마이크론</text>
+    <text x="562" y="184" class="dg-s" font-size="11">엘피다는 공적자금으로 연명</text>
+    <text x="12" y="218" class="dg-m" font-size="10.5">영업이익률(책): 삼성 −14.3% · 하이닉스 −51% · 마이크론 −47.9% · 난야 −105.6% · 이노테라 −57.9%. 한국은 적자에도 투자를 늘렸다</text>
+  </g>
+  <!-- 3차 -->
+  <rect x="6" y="232" width="708" height="80" rx="8" class="dg-lane3" opacity=".55"/>
+  <g font-size="12">
+    <text x="12" y="254" class="dg-t" font-weight="800">3차</text>
+    <text x="12" y="270" class="dg-s" font-size="11">2010~2012</text>
+    <text x="112" y="254" class="dg-t" font-weight="700">대만·일본 증산</text>
+    <text x="112" y="270" class="dg-s" font-size="11">한국이 맞불</text>
+    <text x="262" y="254" class="dg-t" font-weight="700">1G DRAM 2.70달러 → 1달러 미만</text>
+    <text x="262" y="270" class="dg-s" font-size="11">2010년 5월부터 7개월</text>
+    <text x="452" y="254" class="dg-no" font-weight="800">엘피다 (일본)</text>
+    <text x="452" y="270" class="dg-s" font-size="11">2012 파산 → 마이크론</text>
+    <text x="562" y="254" class="dg-ok" font-weight="800">빅3 체제 완성</text>
+    <text x="562" y="270" class="dg-s" font-size="11">대만은 저용량·가전용으로</text>
+    <text x="12" y="304" class="dg-m" font-size="10.5">이후 10년 넘게 치킨 게임 없음 — 셋 다 이미 크게 벌고 있어 싸울 이유가 사라졌다(책)</text>
+  </g>
+  <line x1="6" y1="322" x2="714" y2="322" class="dg-div"/>
+  <text x="12" y="342" class="dg-t" font-size="11.5" font-weight="700">공통 규칙</text>
+  <text x="90" y="342" class="dg-s" font-size="11.5">원가 이하로 팔며 버티기 → 버틸 돈·원가 경쟁력이 없는 쪽이 퇴출 → 남은 쪽이 다음 호황을 독식</text>
+</svg>

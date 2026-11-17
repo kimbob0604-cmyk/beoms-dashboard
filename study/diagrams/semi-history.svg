@@ -1,0 +1,75 @@
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="진공관에서 MOSFET까지 반도체 소자의 역사 연표">
+  <defs><marker id="shArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">진공관 → 트랜지스터 → 집적 회로 → MOSFET</text>
+  <!-- 시대 띠 -->
+  <rect x="20" y="36" width="190" height="26" rx="6" class="dg-lane1"/>
+  <text x="115" y="54" text-anchor="middle" class="dg-t" font-size="12" font-weight="700">진공관 시대</text>
+  <rect x="216" y="36" width="160" height="26" rx="6" class="dg-lane2"/>
+  <text x="296" y="54" text-anchor="middle" class="dg-t" font-size="12" font-weight="700">트랜지스터 (BJT)</text>
+  <rect x="382" y="36" width="318" height="26" rx="6" class="dg-lane3"/>
+  <text x="541" y="54" text-anchor="middle" class="dg-t" font-size="12" font-weight="700">집적 회로 + MOSFET</text>
+  <!-- 축 -->
+  <line x1="20" y1="110" x2="704" y2="110" class="dg-arrow" marker-end="url(#shArr)"/>
+  <g font-size="11.5">
+    <!-- 1904 -->
+    <circle cx="40" cy="110" r="6" class="dg-hi"/>
+    <text x="40" y="96" text-anchor="middle" class="dg-t" font-weight="800">1904</text>
+    <text x="40" y="132" text-anchor="middle" class="dg-t" font-weight="700">2극 진공관</text>
+    <text x="40" y="148" text-anchor="middle" class="dg-s" font-size="10.5">플레밍 · 정류</text>
+    <!-- 1907 -->
+    <circle cx="125" cy="110" r="6" class="dg-hi"/>
+    <text x="125" y="96" text-anchor="middle" class="dg-t" font-weight="800">1907</text>
+    <text x="125" y="132" text-anchor="middle" class="dg-t" font-weight="700">3극 진공관</text>
+    <text x="125" y="148" text-anchor="middle" class="dg-s" font-size="10.5">드 포리스트</text>
+    <text x="125" y="162" text-anchor="middle" class="dg-s" font-size="10.5">증폭 · 스위치</text>
+    <!-- 1946 -->
+    <circle cx="200" cy="110" r="6" class="dg-hi"/>
+    <text x="200" y="96" text-anchor="middle" class="dg-t" font-weight="800">1946</text>
+    <text x="200" y="132" text-anchor="middle" class="dg-t" font-weight="700">ENIAC</text>
+    <text x="200" y="148" text-anchor="middle" class="dg-s" font-size="10.5">진공관 18,000개</text>
+    <text x="200" y="162" text-anchor="middle" class="dg-s" font-size="10.5">30톤 · 180kW</text>
+    <!-- 1947 -->
+    <circle cx="262" cy="110" r="6" class="dg-hi"/>
+    <text x="262" y="96" text-anchor="middle" class="dg-t" font-weight="800">1947</text>
+    <text x="262" y="182" text-anchor="middle" class="dg-t" font-weight="700">점 접촉 트랜지스터</text>
+    <text x="262" y="198" text-anchor="middle" class="dg-s" font-size="10.5">벨 연구소 · 저마늄</text>
+    <line x1="262" y1="118" x2="262" y2="170" class="dg-div"/>
+    <!-- 1958 -->
+    <circle cx="400" cy="110" r="6" class="dg-hi"/>
+    <text x="400" y="96" text-anchor="middle" class="dg-t" font-weight="800">1958</text>
+    <text x="400" y="132" text-anchor="middle" class="dg-t" font-weight="700">킬비의 IC</text>
+    <text x="400" y="148" text-anchor="middle" class="dg-s" font-size="10.5">TI · 손으로 연결</text>
+    <!-- 1959 -->
+    <circle cx="470" cy="110" r="6" class="dg-hi"/>
+    <text x="470" y="96" text-anchor="middle" class="dg-t" font-weight="800">1959</text>
+    <text x="470" y="182" text-anchor="middle" class="dg-t" font-weight="700">평면 IC</text>
+    <text x="470" y="198" text-anchor="middle" class="dg-s" font-size="10.5">페어차일드 · 실리콘+SiO₂</text>
+    <text x="470" y="212" text-anchor="middle" class="dg-s" font-size="10.5">→ 대량 생산 가능</text>
+    <line x1="470" y1="118" x2="470" y2="170" class="dg-div"/>
+    <!-- 1960 -->
+    <circle cx="540" cy="110" r="7" class="dg-ok"/>
+    <text x="540" y="96" text-anchor="middle" class="dg-t" font-weight="800">1960</text>
+    <text x="540" y="132" text-anchor="middle" class="dg-t" font-weight="800">MOSFET</text>
+    <text x="540" y="148" text-anchor="middle" class="dg-s" font-size="10.5">강대원 · 아탈라</text>
+    <!-- 1967 -->
+    <circle cx="610" cy="110" r="6" class="dg-hi"/>
+    <text x="610" y="96" text-anchor="middle" class="dg-t" font-weight="800">1967</text>
+    <text x="610" y="182" text-anchor="middle" class="dg-t" font-weight="700">플로팅 게이트</text>
+    <text x="610" y="198" text-anchor="middle" class="dg-s" font-size="10.5">강대원 · 지</text>
+    <text x="610" y="212" text-anchor="middle" class="dg-s" font-size="10.5">→ 훗날 플래시 메모리</text>
+    <line x1="610" y1="118" x2="610" y2="170" class="dg-div"/>
+    <!-- 1968 -->
+    <circle cx="672" cy="110" r="6" class="dg-hi"/>
+    <text x="672" y="96" text-anchor="middle" class="dg-t" font-weight="800">1968</text>
+    <text x="672" y="132" text-anchor="middle" class="dg-t" font-weight="700">인텔 창업</text>
+    <text x="672" y="148" text-anchor="middle" class="dg-s" font-size="10.5">노이스 · 무어</text>
+  </g>
+  <line x1="4" y1="236" x2="716" y2="236" class="dg-div"/>
+  <g font-size="11.5">
+    <text x="20" y="256" class="dg-t" font-weight="700">바뀐 것</text>
+    <text x="80" y="256" class="dg-s">진공(유리관) → 고체(반도체 덩어리) → 한 판 위에 여러 소자(집적) → 기계로 찍어 내는 생산(평면 공정)</text>
+    <text x="20" y="278" class="dg-t" font-weight="700">그래서</text>
+    <text x="80" y="278" class="dg-s">크기·전력·고장이 계속 줄었고, 1960년 이후로는 "한 칩에 트랜지스터를 몇 개 넣느냐"의 경쟁이 됐다.</text>
+  </g>
+  <text x="716" y="296" text-anchor="end" class="dg-m" font-size="9.5">연도는 통설 기준(책은 2극 진공관 1905). 1958 TI·1968 인텔 창업 연도는 책 외.</text>
+</svg>

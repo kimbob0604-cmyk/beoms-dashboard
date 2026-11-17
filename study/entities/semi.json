@@ -1,0 +1,539 @@
+{
+ "_note": "반도체 색인 조각 (study/entities.json 과 키가 겹치면 빌드 오류). c=개념, co=기업, n=국가. co 의 code=KRX 6자리(종목 패널), ticker=해외, semi=반도체 탭 칸 id(semi_assets.json cells), listed=false 는 비상장. add=true 는 책에 없는 항목.",
+ "n:us": {
+  "name": "미국",
+  "en": "United States",
+  "desc": "시스템 반도체·장비·EDA/IP 강국. 메모리는 마이크론, 첨단 팹은 인텔·TSMC 애리조나."
+ },
+ "n:kr": {
+  "name": "한국",
+  "en": "Korea",
+  "desc": "메모리 강국(삼성전자·SK하이닉스). 시스템 반도체 점유율은 낮다."
+ },
+ "n:tw": {
+  "name": "대만",
+  "en": "Taiwan",
+  "desc": "파운드리(TSMC·UMC)와 OSAT(ASE 등) 강국."
+ },
+ "n:jp": {
+  "name": "일본",
+  "en": "Japan",
+  "desc": "소재·부품·장비 강국(신에츠·섬코·TEL 등). 1980년대 메모리 1위였다."
+ },
+ "n:cn": {
+  "name": "중국",
+  "en": "China",
+  "desc": "파운드리(SMIC)·OSAT(JCET) 성장, 국가 주도 투자. 미국 수출 통제의 대상."
+ },
+ "n:eu": {
+  "name": "EU",
+  "en": "European Union",
+  "desc": "ASML(EUV)·ARM(IP, 영국)·차량용 반도체(인피니언·NXP·ST)."
+ },
+ "n:il": {
+  "name": "이스라엘",
+  "en": "Israel",
+  "desc": "인텔·퀄컴 설계 센터, AMAT·KLA 공장이 있는 연구 거점."
+ },
+ "c:semiconductor": {
+  "name": "반도체",
+  "en": "Semiconductor",
+  "desc": "전기가 통하게도, 안 통하게도 '조절할 수 있는' 물질. '반만 통하는 물질'이 아니다. 순수한 상태에서는 거의 안 통하지만 불순물을 넣거나(도핑) 전압을 걸면 통하게 바꿀 수 있다. 대표 물질은 실리콘(Si), 초기에는 저마늄(Ge)."
+ },
+ "c:conductor": {
+  "name": "도체·부도체",
+  "en": "Conductor / Insulator",
+  "desc": "도체는 원자에 묶이지 않고 움직이는 전자(자유 전자)가 많아 전기가 잘 통하는 물질(구리·금·은). 부도체는 자유 전자가 거의 없어 안 통하는 물질(고무·유리·플라스틱)."
+ },
+ "c:free-electron": {
+  "name": "자유 전자",
+  "en": "Free electron",
+  "desc": "원자에 묶이지 않고 물질 안을 돌아다닐 수 있는 전자. 전압을 걸면 한 방향으로 밀려가며 전류가 된다. 전류가 흐르려면 전압(미는 힘)과 자유 전자(밀릴 것) 둘 다 필요하다."
+ },
+ "c:valence": {
+  "name": "최외각 전자",
+  "en": "Valence electron",
+  "desc": "원자의 가장 바깥 껍질에 있는 전자. 원자가 다른 원자와 결합하는 방식이 이 개수로 정해진다. 실리콘은 4개, 인(P)은 5개, 붕소(B)는 3개 — 반도체의 원리는 이 개수 차이에서 나온다."
+ },
+ "c:covalent": {
+  "name": "공유 결합",
+  "en": "Covalent bond",
+  "desc": "이웃 원자끼리 최외각 전자를 나눠 써서 서로 8개(옥텟)를 채우는 결합. 실리콘 결정은 원자마다 이웃 4개와 공유 결합해 안정되며, 결합에 묶인 전자는 움직이지 않는다."
+ },
+ "c:silicon": {
+  "name": "실리콘 (규소)",
+  "en": "Silicon, Si",
+  "desc": "반도체의 기본 재료. 최외각 전자 4개. 모래(이산화규소)에서 얻어 흔하고, 산소와 만나 좋은 절연막(SiO₂)을 쉽게 만들 수 있어 저마늄을 밀어냈다. Silicone(실리콘 고무·주방용품)과는 다른 말."
+ },
+ "c:doping": {
+  "name": "도핑",
+  "en": "Doping",
+  "desc": "순수한 실리콘에 최외각 전자가 3개나 5개인 원자(도펀트)를 아주 조금 넣어 전기가 통하게 만드는 공정. 넣는 양으로 전기가 통하는 정도를 조절한다. 실제 공정에서는 이온 주입 + 열처리로 한다."
+ },
+ "c:n-type": {
+  "name": "N형 반도체",
+  "en": "N-type",
+  "desc": "최외각 전자 5개인 인(P)·비소(As)를 넣은 실리콘. 결합에 4개를 쓰고 1개가 남아 자유 전자가 된다. 전기를 나르는 것이 음(Negative)전하인 전자라 N형."
+ },
+ "c:p-type": {
+  "name": "P형 반도체",
+  "en": "P-type",
+  "desc": "최외각 전자 3개인 붕소(B)·갈륨(Ga)을 넣은 실리콘. 결합 자리 하나가 비어 정공이 생긴다. 정공이 양(Positive)전하처럼 움직여 P형."
+ },
+ "c:hole": {
+  "name": "정공",
+  "en": "Hole",
+  "desc": "전자가 있어야 할 결합 자리가 비어 있는 곳. 옆 전자가 그 자리로 옮겨 가면 빈자리는 반대 방향으로 옮겨 간 셈이 되어, 정공이 양전하 입자처럼 움직이는 것으로 본다."
+ },
+ "c:diode": {
+  "name": "다이오드 (정류)",
+  "en": "Diode / rectification",
+  "desc": "P형과 N형을 붙인 소자(PN 다이오드). 한쪽 방향으로만 전류를 흘린다(정류). 콘센트의 교류(AC)를 기기용 직류(DC)로 바꾸는 어댑터의 핵심 부품."
+ },
+ "c:transistor": {
+  "name": "트랜지스터",
+  "en": "Transistor",
+  "desc": "작은 신호로 큰 전류를 조절하는 소자. 신호를 키우는 '증폭'과 전류를 켜고 끄는 '스위치' 두 가지 일을 한다. Transfer + Resistor에서 온 이름. 오늘날 칩 속 트랜지스터는 거의 모두 MOSFET."
+ },
+ "c:bjt": {
+  "name": "BJT",
+  "en": "Bipolar Junction Transistor",
+  "desc": "P-N-P 또는 N-P-N 세 층을 붙인 초기형 트랜지스터. 가운데 얇은 층(베이스)에 흐르는 작은 전류로 양끝(이미터→컬렉터) 큰 전류를 조절한다. 지금은 전력·아날로그 등 특수 용도."
+ },
+ "c:mosfet": {
+  "name": "MOSFET",
+  "en": "Metal-Oxide-Semiconductor Field-Effect Transistor",
+  "desc": "게이트에 거는 '전압'으로 소스와 드레인 사이에 전기가 지나갈 길(채널)을 열고 닫는 트랜지스터. 게이트가 얇은 산화막으로 막혀 있어 거의 전류를 먹지 않고, 평면으로 작게 찍어 낼 수 있어 현대 칩의 기본 단위가 됐다."
+ },
+ "c:switch-amp": {
+  "name": "증폭·스위치",
+  "en": "Amplification / Switching",
+  "desc": "증폭은 작은 신호를 같은 모양으로 크게 키우는 일(라디오·앰프). 스위치는 전류를 켜고(1) 끄는(0) 일로, 이 0과 1의 조합이 컴퓨터 계산의 바탕이다."
+ },
+ "c:vacuum-tube": {
+  "name": "진공관",
+  "en": "Vacuum tube",
+  "desc": "진공 유리관 안에서 달군 금속이 내보내는 전자의 흐름을 조절하는 소자. 반도체 이전에 정류(2극관)·증폭·스위치(3극관)를 맡았다. 크고 뜨겁고 잘 깨지고 수명이 짧았다."
+ },
+ "c:binary": {
+  "name": "이진법",
+  "en": "Binary",
+  "desc": "0과 1 두 숫자로 수를 나타내는 방법. 스위치의 꺼짐(0)·켜짐(1)과 그대로 맞아떨어져 컴퓨터가 쓴다. 예: 11110₂ = 16+8+4+2+0 = 30."
+ },
+ "c:ic": {
+  "name": "집적 회로 (IC)",
+  "en": "Integrated Circuit",
+  "desc": "트랜지스터·저항 같은 소자와 그 사이 배선을 한 판(칩) 위에 함께 만든 회로. 부품을 따로 만들어 납땜하던 방식을 대신해 작고 싸고 튼튼한 대량 생산을 가능하게 했다. '반도체 칩'이 바로 이것."
+ },
+ "c:sio2": {
+  "name": "이산화규소 (SiO₂)",
+  "en": "Silicon dioxide",
+  "desc": "실리콘이 산소와 만나 생기는 막. 전기가 안 통하는 좋은 절연체라 소자를 보호하고, 소자 사이·배선 사이를 떼어 놓는다. 실리콘이 반도체 재료로 이긴 큰 이유."
+ },
+ "c:wafer": {
+  "name": "웨이퍼",
+  "en": "Wafer",
+  "desc": "칩을 찍어 내는 얇고 동그란 실리콘 원판. 한 장에 칩 수백~수천 개를 동시에 만든다. 지금 주력은 지름 300mm."
+ },
+ "c:integration": {
+  "name": "집적도",
+  "en": "Integration density",
+  "desc": "같은 면적에 트랜지스터를 얼마나 많이 넣었는가. 높이는 방법은 ① 칩을 크게 ② 여러 층으로 쌓기 ③ 트랜지스터를 작게(미세화). 현업은 셋을 다 쓴다."
+ },
+ "c:linewidth": {
+  "name": "선폭·공정 노드",
+  "en": "Line width / process node",
+  "desc": "원래는 MOSFET 소스–드레인 사이 거리(게이트 길이)처럼 실제 길이를 뜻했다. 지금의 '5나노·3나노·2나노'는 세대 이름에 가깝고 실제 어느 부위의 길이와도 같지 않다. 숫자가 작을수록 최신 세대라는 뜻으로 읽는다."
+ },
+ "c:leakage": {
+  "name": "누설 전류",
+  "en": "Leakage current",
+  "desc": "스위치를 껐는데도 소스와 드레인 사이로 새는 전류. 트랜지스터가 작아질수록 게이트가 채널을 덜 꽉 잡아 커진다. 전력 낭비·발열의 원인이라, 게이트가 채널을 더 많이 감싸는 구조(FinFET → GAA)로 발전했다."
+ },
+ "c:finfet-gaa": {
+  "name": "Planar · FinFET · GAA",
+  "en": "Planar FET / FinFET / Gate-All-Around",
+  "desc": "게이트가 채널을 몇 면에서 잡느냐로 나눈 트랜지스터 구조. 평면형은 위 1면, FinFET은 지느러미처럼 세운 채널을 3면, GAA는 가는 채널(나노시트)을 4면 모두 감싼다. 감싸는 면이 많을수록 누설이 줄어 더 작게 만들 수 있다."
+ },
+ "c:floating-gate": {
+  "name": "플로팅 게이트",
+  "en": "Floating gate",
+  "desc": "절연막 사이에 떠 있는 게이트에 전자를 가둬 전원이 꺼져도 정보를 남기는 구조. 1967년 강대원·지(Simon Sze)가 고안했고, 훗날 플래시 메모리(NAND)의 기본 셀이 됐다."
+ },
+ "co:intel": {
+  "name": "인텔",
+  "en": "Intel",
+  "ticker": "INTC",
+  "desc": "1968년 노이스·무어가 세운 미국 반도체 회사. PC·서버 CPU의 오랜 강자이자 설계와 생산을 함께 하는 종합 반도체 기업(IDM). 최근 파운드리(위탁 생산) 사업을 키우고 있다.",
+  "semi": [
+   "fdry"
+  ]
+ },
+ "co:samsung-elec": {
+  "name": "삼성전자",
+  "en": "Samsung Electronics",
+  "code": "005930",
+  "desc": "메모리(DRAM·NAND) 세계 1위권이자 파운드리·시스템 반도체(엑시노스·이미지센서)를 함께 하는 종합 반도체 기업. 2022년 세계 처음으로 GAA 구조 3나노를 양산했다.",
+  "semi": [
+   "mem",
+   "fdry"
+  ]
+ },
+ "co:tsmc": {
+  "name": "TSMC",
+  "en": "Taiwan Semiconductor Manufacturing Co.",
+  "ticker": "TSM",
+  "desc": "대만의 세계 최대 파운드리(남이 설계한 칩을 대신 생산). 애플·엔비디아·AMD 등 대부분의 최신 칩을 만든다.",
+  "semi": [
+   "fdry"
+  ]
+ },
+ "co:bell-labs": {
+  "name": "벨 연구소",
+  "en": "Bell Labs",
+  "desc": "미국 AT&T의 연구소. 트랜지스터(1947), MOSFET(1960), 플로팅 게이트(1967)가 모두 여기서 나왔다. 상장 기업이 아니라 연구 기관(현재 노키아 소속)."
+ },
+ "co:fairchild": {
+  "name": "페어차일드 반도체",
+  "en": "Fairchild Semiconductor",
+  "desc": "1957년 쇼클리 연구소를 나온 8명이 세운 회사. 평면 공정으로 대량 생산 가능한 집적 회로를 만들었고, 여기서 나온 사람들이 인텔·AMD를 세워 실리콘밸리가 됐다. 지금은 온세미에 합병."
+ },
+ "c:system-semi": {
+  "name": "시스템 반도체",
+  "en": "System semiconductor (logic)",
+  "desc": "정보를 해석·계산·제어하는 반도체. CPU·GPU·AP·AI칩·이미지센서·디스플레이 구동칩·전력관리칩 등 종류가 수천~수만 가지라 '다품종 소량'. 책 기준(2021) 반도체 시장의 55.6%. 한국에서는 '비메모리'라고도 부른다."
+ },
+ "c:ram-rom": {
+  "name": "RAM·ROM (휘발성·비휘발성)",
+  "en": "Volatile / non-volatile memory",
+  "desc": "책의 분류: RAM은 전원을 끄면 지워지는 단기 기억(작업대), ROM은 꺼도 남는 장기 기억(창고). 엄밀히는 SSD·HDD 같은 '저장장치'를 책이 ROM으로 묶어 부른 것이다."
+ },
+ "c:cpu": {
+  "name": "CPU",
+  "en": "Central Processing Unit",
+  "desc": "컴퓨터의 두뇌. 명령을 해석하고(제어 유닛) 계산하고(산술 논리 유닛, ALU) 잠깐 기억한다(캐시·레지스터). 복잡한 일을 순서대로 빨리 처리하는 데 강하다(직렬). 대표 회사 인텔·AMD."
+ },
+ "c:core-clock": {
+  "name": "코어·스레드·클럭·아키텍처",
+  "en": "Core / thread / clock / architecture",
+  "desc": "CPU 성능의 네 요소. 코어 = 일하는 사람 수, 스레드 = 한 사람이 동시에 다루는 일의 수(손 개수), 클럭 = 1초에 박자를 몇 번 치나(GHz), 아키텍처 = 일을 나누고 순서를 정하는 설계 방식."
+ },
+ "c:gpu": {
+  "name": "GPU",
+  "en": "Graphics Processing Unit",
+  "desc": "그래픽 처리용으로 만든, 단순한 계산을 수천 개 코어로 동시에 하는(병렬) 칩. 같은 성질 덕분에 행렬 곱셈이 대부분인 AI 학습·추론의 주력이 됐다."
+ },
+ "c:gpgpu": {
+  "name": "GPGPU",
+  "en": "General-Purpose computing on GPU",
+  "desc": "GPU를 그래픽 말고 다른 계산(암호화폐 채굴, 과학 계산, AI)에 쓰는 것. 엔비디아의 CUDA가 대표적인 GPGPU 개발 환경."
+ },
+ "c:ap-soc": {
+  "name": "AP (SoC)",
+  "en": "Application Processor / System on Chip",
+  "desc": "스마트폰의 두뇌. PC라면 메인보드 위에 따로 있는 CPU·GPU·NPU·모뎀·이미지 처리·보안 칩을 칩 하나에 모은 '단일 칩 시스템(SoC)'. 배터리로 돌아가 저전력이 핵심."
+ },
+ "c:ai-ml-dl": {
+  "name": "인공지능·머신러닝·딥러닝",
+  "en": "AI / ML / DL",
+  "desc": "인공지능 ⊃ 머신러닝(데이터에서 규칙을 찾는 방법) ⊃ 딥러닝(신경망을 깊게 쌓은 머신러닝 알고리즘). 딥러닝은 '왜'는 몰라도 '어떤 조건에서 결과가 어떻게 되는지' 경향을 찾아 준다. 계산 대부분이 곱셈·덧셈의 반복이다."
+ },
+ "c:npu": {
+  "name": "NPU",
+  "en": "Neural Processing Unit",
+  "desc": "딥러닝 계산(곱하고 더하기를 대량으로)에 맞춘 전용 칩. GPU에서 그래픽용 부분을 빼 싸고 전기를 덜 먹는다. 스마트폰 AP 속 NPU가 사진 장면 인식·보정을 한다."
+ },
+ "c:fpga": {
+  "name": "FPGA",
+  "en": "Field-Programmable Gate Array",
+  "desc": "만든 뒤에도 회로 연결을 다시 짤 수 있는 칩. 필요한 연산에 맞게 회로를 바꿔 특정 계산을 빠르게 한다. 칩 설계 검증, 통신 장비, 방산, 하드웨어 가속기에 쓴다. 강자는 자일링스(현 AMD)·알테라."
+ },
+ "c:asic": {
+  "name": "ASIC",
+  "en": "Application-Specific Integrated Circuit",
+  "desc": "한 가지 용도만을 위해 설계한 맞춤형 칩. 그 일만은 가장 빠르고 전력 효율이 좋지만 다른 일에는 못 쓰고, 바꾸려면 다시 설계해야 한다. 암호화폐 채굴 칩, 구글 TPU 같은 AI 가속기가 예."
+ },
+ "c:neuromorphic": {
+  "name": "뉴로모픽 반도체",
+  "en": "Neuromorphic chip",
+  "desc": "뇌의 신경세포·시냅스 구조를 흉내 내 기억과 연산을 한곳에서 동시에 처리하려는 칩. 책의 분류로 '3세대 AI 반도체'. 아직 연구·초기 단계."
+ },
+ "c:cis": {
+  "name": "CMOS 이미지 센서 (CIS)",
+  "en": "CMOS Image Sensor",
+  "desc": "빛을 전기 신호로 바꾸는 카메라의 '망막'. 예전 CCD보다 전력이 적고 주변 회로를 한 칩에 넣기 쉬워 스마트폰 카메라를 장악했다. 강자는 소니·삼성전자·옴니비전."
+ },
+ "c:isp-dsp": {
+  "name": "DSP·ISP",
+  "en": "Digital / Image Signal Processor",
+  "desc": "DSP는 소리·빛 같은 아날로그 신호를 디지털로 바꿔(ADC) 계산하고 다시 되돌리는(DAC) 신호 처리 전용 칩. 그중 영상 전용이 ISP — 이미지 센서 신호의 밝기·색·선명도를 보정해 사진·동영상 파일로 만든다."
+ },
+ "c:ddi": {
+  "name": "디스플레이 구동칩 (DDI)",
+  "en": "Display Driver IC",
+  "desc": "GPU가 만든 디지털 영상 신호를 화면의 수백만~1억 개 화소(서브 픽셀)에 전압으로 나눠 주는 칩. 화면이 클수록 많이 든다(책: 스마트폰 1개, FHD 모니터 약 6개, 4K TV 최대 48개)."
+ },
+ "c:pmic": {
+  "name": "전력관리칩 (PMIC)",
+  "en": "Power Management IC",
+  "desc": "배터리·콘센트 전기를 부품마다 필요한 전압으로 바꿔 안정적으로 나눠 주는 칩. CPU·DRAM은 1V 안팎, 통신 모듈은 3~5V처럼 부품마다 다르다."
+ },
+ "c:mcu": {
+  "name": "MCU (마이크로컨트롤러)",
+  "en": "Microcontroller Unit",
+  "desc": "낮은 사양 CPU + 메모리 + 입출력 장치를 칩 하나에 묶은 작은 컴퓨터. '버튼을 누르면 불을 켜라' 같은 단순 제어용으로 가전·자동차·장난감에 들어간다."
+ },
+ "c:isa": {
+  "name": "x86 vs ARM",
+  "en": "Instruction set architecture",
+  "desc": "CPU가 알아듣는 명령어 체계(설계 규칙)의 두 진영. x86(인텔·AMD)은 PC·서버에서 고성능, ARM은 저전력으로 스마트폰을 장악했다. ARM은 칩을 직접 팔지 않고 설계(IP)를 빌려주고 로열티를 받는다. 지금은 애플 M 시리즈·서버용 ARM 칩으로 경계가 흐려졌다."
+ },
+ "co:amd": {
+  "name": "AMD",
+  "en": "Advanced Micro Devices",
+  "ticker": "AMD",
+  "semi": [
+   "accel"
+  ],
+  "desc": "CPU(라이젠·에픽)와 GPU(라데온·인스팅트)를 설계하는 팹리스. 2009년 공장을 분리해 글로벌파운드리가 됐고, 2022년 FPGA 1위 자일링스 인수를 마쳤다."
+ },
+ "co:nvidia": {
+  "name": "엔비디아",
+  "en": "NVIDIA",
+  "ticker": "NVDA",
+  "semi": [
+   "accel"
+  ],
+  "desc": "GPU 1위 팹리스. 게임용 그래픽카드에서 출발해 CUDA(GPGPU)로 AI 학습·추론 시장을 장악했다. 생산은 TSMC에 맡긴다."
+ },
+ "co:qualcomm": {
+  "name": "퀄컴",
+  "en": "Qualcomm",
+  "ticker": "QCOM",
+  "desc": "스냅드래곤 AP와 통신 모뎀·통신 특허 라이선스가 사업의 두 축인 팹리스. 고가 안드로이드폰 AP의 강자."
+ },
+ "co:mediatek": {
+  "name": "미디어텍",
+  "en": "MediaTek",
+  "ticker": "2454.TW",
+  "semi": [
+   "asic"
+  ],
+  "desc": "대만 팹리스. 중저가 스마트폰 AP로 물량 기준 1위(책: 2022년 1분기 38%). 최근 커스텀 ASIC 사업도 한다."
+ },
+ "co:apple": {
+  "name": "애플",
+  "en": "Apple",
+  "ticker": "AAPL",
+  "desc": "아이폰용 A 시리즈와 맥용 M 시리즈 칩을 직접 설계한다(생산은 TSMC). 완제품 일정·기능을 칩 회사에 맡기지 않으려고 2010년 칩 설계사(인트린시티)를 사며 자체 설계를 시작했다."
+ },
+ "co:unisoc": {
+  "name": "유니SOC",
+  "en": "UNISOC",
+  "listed": false,
+  "desc": "중국 칭화유니 계열 팹리스. 초저가 스마트폰·IoT용 AP (책: 2022년 1분기 AP 11%)."
+ },
+ "co:hisilicon": {
+  "name": "하이실리콘",
+  "en": "HiSilicon (Huawei)",
+  "listed": false,
+  "desc": "화웨이의 칩 설계 자회사(기린 AP). 2020년 미국 제재로 TSMC 생산이 막혀 점유율이 급감했다(책: 2022년 1분기 1%)."
+ },
+ "co:sony": {
+  "name": "소니",
+  "en": "Sony",
+  "ticker": "SONY",
+  "desc": "CMOS 이미지 센서 1위(책: 2021년 39%). 아이폰 등 고급 스마트폰 카메라 센서를 공급한다."
+ },
+ "co:omnivision": {
+  "name": "옴니비전",
+  "en": "OmniVision (Will Semiconductor)",
+  "ticker": "603501.SS",
+  "desc": "이미지 센서 3위(책: 2021년 13%). 2019년 중국 윌세미컨덕터(현 OmniVision 그룹)에 인수됐다."
+ },
+ "co:arm": {
+  "name": "ARM",
+  "en": "Arm Holdings",
+  "ticker": "ARM",
+  "semi": [
+   "ip"
+  ],
+  "desc": "영국의 CPU 설계(IP) 회사. 칩을 만들지 않고 저전력 코어 설계를 애플·퀄컴·미디어텍 등에 빌려주고 로열티를 받는다. 모바일 AP 대부분이 ARM 기반."
+ },
+ "co:xilinx": {
+  "name": "자일링스",
+  "en": "Xilinx",
+  "listed": false,
+  "desc": "FPGA 1위(책: 50% 이상). 2022년 AMD에 인수돼 지금은 AMD의 한 사업부."
+ },
+ "co:lx-semicon": {
+  "name": "LX세미콘",
+  "en": "LX Semicon",
+  "code": "108320",
+  "semi": [
+   "fabless"
+  ],
+  "desc": "국내 최대 팹리스. 디스플레이 구동칩(DDI)이 주력이고 LG디스플레이가 큰 고객이다. 책에는 나오지 않는다(DDI 설명에 덧붙인 연결).",
+  "add": true
+ },
+ "co:pixelplus": {
+  "name": "픽셀플러스",
+  "en": "Pixelplus",
+  "code": "087600",
+  "semi": [
+   "fabless"
+  ],
+  "desc": "CMOS 이미지 센서 팹리스(차량·보안 카메라용). 책에는 나오지 않는다.",
+  "add": true
+ },
+ "co:abov": {
+  "name": "어보브반도체",
+  "en": "ABOV Semiconductor",
+  "code": "102120",
+  "semi": [
+   "fabless"
+  ],
+  "desc": "가전용 MCU 팹리스. 책에는 나오지 않는다(MCU 설명에 덧붙인 연결).",
+  "add": true
+ },
+ "co:telechips": {
+  "name": "텔레칩스",
+  "en": "Telechips",
+  "code": "054450",
+  "semi": [
+   "nchip"
+  ],
+  "desc": "차량용 AP(인포테인먼트)와 NPU를 설계하는 팹리스. 책에는 나오지 않는다.",
+  "add": true
+ },
+ "c:memory-semi": {
+  "name": "메모리 반도체",
+  "en": "Memory semiconductor",
+  "desc": "정보를 저장하고 읽는 데 특화된 반도체. DRAM(일하는 동안 쓰는 빠른 기억)과 NAND 플래시(꺼도 남는 저장)가 두 축이다. 종류가 적고(소품종) 대량 생산으로 원가를 낮추는 싸움이라 가격 변동이 크다. 책 기준 2021년 177조 원, 반도체 시장의 27.7%."
+ },
+ "c:dram": {
+  "name": "DRAM",
+  "en": "Dynamic Random Access Memory",
+  "desc": "트랜지스터 1개 + 커패시터 1개(1T1C)로 한 비트를 저장하는 메모리. 커패시터의 전자가 조금씩 새어 나가 주기적으로 다시 채워야(리프레시) 해서 'Dynamic'. 구조가 단순해 크고 싸게 만들 수 있어 PC·서버·스마트폰의 주기억 장치가 됐다."
+ },
+ "c:sram": {
+  "name": "SRAM",
+  "en": "Static RAM",
+  "desc": "트랜지스터 6개로 한 비트를 저장하는 메모리. 리프레시가 필요 없고 매우 빠르지만 셀이 커서 비싸다. CPU 안 캐시로 필요한 만큼만 쓴다."
+ },
+ "c:ddr": {
+  "name": "DDR",
+  "en": "Double Data Rate",
+  "desc": "클럭 신호가 올라갈 때와 내려갈 때 모두 데이터를 보내 한 박자에 두 번 전송하는 DRAM 방식. DDR → DDR2 → … → DDR5로 세대마다 속도가 약 2배, 전력은 줄었다. 스마트폰용 저전력 판은 LPDDR."
+ },
+ "c:flash": {
+  "name": "플래시 메모리",
+  "en": "Flash memory",
+  "desc": "절연막 속 '떠 있는 게이트'(플로팅 게이트)에 전자를 가둬 전원이 꺼져도 정보를 남기는 비휘발성 메모리. 리프레시가 필요 없지만 쓰기·지우기가 DRAM보다 훨씬 느리고 횟수에 한계가 있다."
+ },
+ "c:nand": {
+  "name": "NAND 플래시",
+  "en": "NAND flash",
+  "desc": "플래시 셀을 줄줄이 직렬로 엮은(스트링) 구조. 읽기는 느리지만 셀을 촘촘히 넣을 수 있어 같은 용량이 싸다 → SSD·스마트폰 저장장치의 표준. NOR 플래시는 셀을 병렬로 펼쳐 읽기가 빠르지만 비싸 코드 저장 등 소량 용도."
+ },
+ "c:3d-nand": {
+  "name": "3D 낸드",
+  "en": "3D NAND / V-NAND",
+  "desc": "평면으로 셀을 줄이는 대신 아파트처럼 위로 쌓은 낸드. 삼성이 2013년 24단을 처음 양산했고, 책 시점에 200단을 넘었다. 2026년에는 300단 이상 경쟁."
+ },
+ "c:ssd": {
+  "name": "SSD",
+  "en": "Solid State Drive",
+  "desc": "NAND 플래시 + 임시 저장용 DRAM + 이들을 제어하는 컨트롤러(시스템 반도체)로 만든 저장장치. 원판을 돌리는 HDD보다 빠르고 조용하고 충격에 강하다."
+ },
+ "c:mem-hierarchy": {
+  "name": "메모리 계층 구조",
+  "en": "Memory hierarchy",
+  "desc": "빠를수록 비싸고 작게, 느릴수록 싸고 크게 — 레지스터 → 캐시 → DRAM → 저장장치 순으로 층을 나눠 쓰는 구조. 자주 쓰는 것을 위층에 둬 '빠르면서 큰' 기억 장치처럼 보이게 한다."
+ },
+ "c:chicken-game": {
+  "name": "메모리 치킨 게임",
+  "en": "Chicken game",
+  "desc": "원가 이하로 팔며 상대가 적자를 못 버티고 물러날 때까지 버티는 가격 전쟁. 메모리에서 1984·2007·2010년 세 번 있었고, 결과로 삼성·SK하이닉스·마이크론의 빅3 체제가 굳었다."
+ },
+ "c:yield": {
+  "name": "수율",
+  "en": "Yield",
+  "desc": "만든 칩 가운데 정상 제품의 비율. 웨이퍼 한 장 값은 같으니 수율이 높을수록 칩 하나의 원가가 낮다(책: 수율 80%면 개당 1.25달러, 50%면 2달러). 메모리 원가 경쟁력의 핵심."
+ },
+ "c:trench-stack": {
+  "name": "트렌치 vs 스택",
+  "en": "Trench / stacked capacitor",
+  "desc": "DRAM 커패시터를 만드는 두 방식. 트렌치는 웨이퍼를 파 내려가고(지하), 스택은 위로 쌓는다(고층). 1980년대 삼성은 만들기·불량 분석이 쉬운 스택을 골랐고, 트렌치를 고른 회사들이 뒤처졌다."
+ },
+ "c:mem-cycle": {
+  "name": "메모리 사이클",
+  "en": "Memory cycle",
+  "desc": "수요 증가 → 가격 상승 → 이익 증가 → 증설 → 공급 과잉 → 가격 하락이 반복되는 흐름. 값이 크게 뛰어 이익이 폭증하는 구간을 '슈퍼 사이클'이라 부른다. 미리 만들어 놓고 파는(선생산 후판매) 구조라 변동이 크다."
+ },
+ "co:skhynix": {
+  "name": "SK하이닉스",
+  "en": "SK hynix",
+  "code": "000660",
+  "semi": [
+   "mem"
+  ],
+  "desc": "세계 2위권 메모리 회사. 1999년 현대전자와 LG반도체의 합병으로 생긴 하이닉스가 2012년 SK에 인수됐다. 2021년 인텔 낸드 사업(현 솔리다임)을 샀고, AI용 HBM에서 앞서 있다."
+ },
+ "co:micron": {
+  "name": "마이크론",
+  "en": "Micron Technology",
+  "ticker": "MU",
+  "semi": [
+   "mem"
+  ],
+  "desc": "미국의 유일한 대형 메모리 회사(DRAM·NAND·HBM). 세 번의 치킨 게임을 모두 살아남았고 2013년 엘피다를 인수했다."
+ },
+ "co:kioxia": {
+  "name": "키옥시아",
+  "en": "Kioxia (구 도시바메모리)",
+  "ticker": "285A.T",
+  "semi": [
+   "mem"
+  ],
+  "desc": "일본 낸드 회사. 도시바가 1980년대 플래시 메모리를 발명한 뿌리를 잇는다. 2018년 도시바에서 분리됐고 2024년 도쿄 증시에 상장했다. 웨스턴디지털(현 샌디스크)과 공장을 함께 쓴다."
+ },
+ "co:wdc": {
+  "name": "웨스턴디지털 / 샌디스크",
+  "en": "Western Digital / Sandisk",
+  "ticker": "WDC · SNDK",
+  "semi": [
+   "ssd",
+   "mem"
+  ],
+  "desc": "HDD와 낸드를 함께 하던 미국 회사. 2025년 낸드·SSD 사업을 샌디스크로 분리 상장해, 지금 웨스턴디지털은 HDD 회사다."
+ },
+ "co:nanya": {
+  "name": "난야",
+  "en": "Nanya Technology",
+  "ticker": "2408.TW",
+  "desc": "대만 DRAM 회사. 2·3차 치킨 게임에서 큰 적자를 보고 범용·저용량 DRAM으로 물러났다."
+ },
+ "co:elpida": {
+  "name": "엘피다",
+  "en": "Elpida Memory",
+  "listed": false,
+  "desc": "NEC·히타치의 DRAM 부문(뒤에 미쓰비시 DRAM)을 합쳐 만든 일본 DRAM 회사. 3차 치킨 게임 끝에 2012년 파산, 2013년 마이크론에 인수됐다."
+ },
+ "co:qimonda": {
+  "name": "키몬다",
+  "en": "Qimonda",
+  "listed": false,
+  "desc": "독일 지멘스→인피니언에서 떨어져 나온 DRAM 회사. 2차 치킨 게임 중 2009년 파산했다."
+ },
+ "co:fadu": {
+  "name": "파두",
+  "en": "FADU",
+  "code": "440110",
+  "semi": [
+   "ssd"
+  ],
+  "add": true,
+  "desc": "데이터센터 SSD 컨트롤러를 설계하는 국내 팹리스. 책에는 나오지 않는다(SSD 컨트롤러 설명에 덧붙인 연결)."
+ }
+}

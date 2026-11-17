@@ -11,7 +11,7 @@
   const num = s => esc(s).replace(NUM_RE, (m, n, u) => `<b class="n">${n}${u}</b>`);
   let IX = null;
   const DOCS = {};
-  const KIND_LABEL = { c: '개념', d: '약물', co: '기업', tr: '임상', ind: '적응증' };
+  const KIND_LABEL = { c: '개념', d: '약물', co: '기업', tr: '임상', ind: '적응증', n: '국가' };
 
   const getDoc = async id => DOCS[id] || (DOCS[id] = await U.json(`data/study/docs/${id}.json`));
   const route = () => Object.fromEntries(new URLSearchParams(location.search));
@@ -39,13 +39,15 @@
     if (!e) return '';
     return `<a class="sd-chip k-${e.kind}${add ? ' add' : ''}" href="?e=${encodeURIComponent(k)}" title="${esc(KIND_LABEL[e.kind])}${e.en ? ' · ' + esc(e.en) : ''}">${esc(e.name)}</a>`;
   };
+  // 반도체 탭 칸으로 가는 링크 (semi.html?cell=칸)
+  const semiLinks = cells => cells?.length ? `<p class="sd-links sd-semi">반도체 탭: ${cells.map(x => `<a href="semi.html?cell=${encodeURIComponent(x.id)}">${esc(x.name)}</a>`).join(' · ')}</p>` : '';
   const chips = (c) => {
     const a = (c.tags || []).map(k => chip(k)).join('');
     const b = (c.addTags || []).map(k => chip(k, true)).join('');
-    return a || b ? `<div class="sd-chips">${a}${b}</div>` : '';
+    return (a || b ? `<div class="sd-chips">${a}${b}</div>` : '') + semiLinks(c.semi_cells);
   };
-  const srcLine = d => `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(d.source.date || '')}`;
-  const figLabel = f => `${f.part ? '[' + esc(f.part) + '] ' : ''}&lt;${f.kind === 'fig' ? '그림' : '표'}${f.no}&gt; ${esc(f.title)}`;
+  const srcLine = d => d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(d.source.date || '')}`;
+  const figLabel = f => `${f.part ? '[' + esc(f.part) + '] ' : ''}${f.no === '' ? '' : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
 
   function tableHtml(rows) {
     if (!rows || !rows.length) return '';
@@ -55,9 +57,12 @@
       <tbody>${body.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
 
+  // 원문 밖 내용 표시: 책이면 '책 외', 리포트면 '리포트 외'
+  const outside = doc => doc?.source?.kind === 'book' ? '책 외' : '리포트 외';
+
   function cardHtml(doc, ti, ci, c) {
     const id = `${doc.id}:${ti}:${ci}`;
-    const add = c.add ? `<p class="sd-add"><span>리포트 외</span>${num(c.add)}</p>` : '';
+    const add = c.add ? `<p class="sd-add"><span>${outside(doc)}</span>${num(c.add)}</p>` : '';
     const page = c.p != null ? `<span class="sd-p">p.${c.p}</span>` : '';
     if (c.t === 'sec') {
       return `<div class="sd-card sd-sec" id="c-${id}"><h3>${esc(c.h)} ${page}</h3>
@@ -74,6 +79,7 @@
         <div class="sd-txt"><h3>${esc(c.h)} <span class="sd-badge">재구성</span></h3>
           ${c.body ? `<p>${num(c.body)}</p>` : ''}${add}${chips(c)}</div></div>`;
     }
+    if (c.t === 'seq') return seqHtml(doc, id, c, add);
     if (c.tech && c.fig?.hd) return techHtml(doc, id, c, add, page);
     if (c.t === 'ext' && c.m) return techHtml(doc, id, c, add, page);
     const f = c.fig;
@@ -111,19 +117,21 @@
     // 번호 위치(%)는 이미지 기준 → 이미지만 감싼 상자에 올린다. 세로로 긴 그림은 높이 560px 안으로
     const maxw = Math.round(560 * f.hd_w / f.hd_h);
     const img = `<div class="tx-img"><div class="tx-in" style="max-width:min(100%, ${maxw}px)"><img src="${esc(f.hd)}" alt="${esc(f.title)}" width="${f.hd_w}" height="${f.hd_h}" data-cap="${esc(f.title)}" loading="lazy">${dots}</div></div>`;
-    const orig = `<div class="sd-img"><img src="${esc(f.img)}" alt="${esc(f.title)}" loading="lazy" width="${f.w}" height="${f.h}" data-cap="${esc(f.title)}"></div>`;
-    const tabs = [['tech', ext ? '해설 사진' : '해설 그림'], ...(c.chart ? [['chart', '재구성']] : []), ...(ext ? [] : [['orig', '원본 (리포트 지면)']])];
+    const orig = f.raw   // 책 사진: 정리 전 사진을 보여 줘야 비교가 된다
+      ? `<div class="sd-img"><img src="${esc(f.raw)}" alt="${esc(f.title)}" loading="lazy" width="${f.raw_w}" height="${f.raw_h}" data-cap="${esc(f.title)}"></div>`
+      : `<div class="sd-img"><img src="${esc(f.img)}" alt="${esc(f.title)}" loading="lazy" width="${f.w}" height="${f.h}" data-cap="${esc(f.title)}"></div>`;
+    const tabs = [['tech', ext ? '해설 사진' : '해설 그림'], ...(c.chart ? [['chart', '재구성']] : []), ...(ext ? [] : [['orig', doc?.source?.kind === 'book' ? '원본 (책 지면)' : '원본 (리포트 지면)']])];
     const panes = { tech: img, chart: c.chart ? SChart.html(c.chart) : '', orig };
     const vis = `<div class="sd-vis"><div class="sd-tabs"${tabs.length < 2 ? ' hidden' : ''}>${tabs.map(([k, l], i) => `<button type="button" class="${i ? '' : 'on'}" data-v="${k}">${l}</button>`).join('')}</div>
       ${tabs.map(([k], i) => `<div class="sd-pane" data-p="${k}"${i ? ' hidden' : ''}>${panes[k]}</div>`).join('')}</div>`;
     const list = `<ol class="tx-spots">${x.spots.map(s => `<li data-n="${s.n}"><span class="tx-n">${s.n}</span><div><b>${esc(s.ko)}</b> <small class="muted">${esc(s.en)}</small><p>${num(s.text)}</p></div></li>`).join('')}</ol>`;
     const steps = x.steps?.length ? `<div class="tx-steps"><h4>작동 순서</h4><ol>${x.steps.map(s => `<li><b>${esc(s.h)}</b><p>${num(s.body)}</p></li>`).join('')}</ol></div>` : '';
-    const deep = x.deep?.length ? `<div class="tx-deep"><h4>더 깊이 <span class="sd-addtag">보충 설명 · 리포트 외</span></h4>${x.deep.map(s => `<details open><summary>${esc(s.h)}</summary><p>${num(s.body)}</p></details>`).join('')}</div>` : '';
+    const deep = x.deep?.length ? `<div class="tx-deep"><h4>더 깊이 <span class="sd-addtag">보충 설명 · ${outside(doc)}</span></h4>${x.deep.map(s => `<details open><summary>${esc(s.h)}</summary><p>${num(s.body)}</p></details>`).join('')}</div>` : '';
     return `<div class="sd-card sd-tech" id="c-${id}">
-      <h3>${ext ? esc(c.h) : figLabel(f)} ${page} <span class="sd-badge">${ext ? '공개 이미지 · 리포트 외' : '기술 해설'}</span></h3>
+      <h3>${ext ? esc(c.h) : figLabel(f)} ${page} <span class="sd-badge">${ext ? `공개 이미지 · ${outside(doc)}` : '기술 해설'}</span></h3>
       <p class="tx-title">${esc(x.title)}</p>
       ${ext ? `<p class="sd-src">${credit(c.m)}</p>`
-        : f.source ? `<p class="sd-src">${esc(f.source)} · 해설 그림은 원본 이미지를 꺼내 여백을 자르고 2배로 키운 것</p>` : ''}
+        : f.scan ? '<p class="sd-src">해설 그림은 책 사진에서 잘라 종이색을 흰색으로 맞추고 선명하게 한 것</p>' : f.source ? `<p class="sd-src">${esc(f.source)} · 해설 그림은 원본 이미지를 꺼내 여백을 자르고 2배로 키운 것</p>` : ''}
       <div class="tx-top">${vis}${list}</div>
       ${steps}${deep}
       ${c.body ? `<p class="sd-diatxt">${num(c.body)}</p>` : ''}
@@ -134,6 +142,30 @@
         ${c.so ? `<p class="sd-so"><b class="sd-lab">그래서</b>${num(c.so)}</p>` : ''}
         ${add}${chips(c)}
       </div>
+    </div>`;
+  }
+
+  // 단계 넘기기: 그림 여러 장을 ◀ ▶ 로 넘기며 단계마다 바뀐 점을 읽는다 (예: 도핑, 포토 8단계, 공정 17컷)
+  function seqHtml(doc, id, c, add) {
+    const n = c.steps.length;
+    const panes = c.steps.map((st, i) => {
+      const f = st.fig, src = f.hd || f.img, w = f.hd ? f.hd_w : f.w, h = f.hd ? f.hd_h : f.h;
+      const maxw = Math.round(440 * w / h);
+      const dots = (st.spots || []).map(sp => `<span class="tx-dot sq-dot" style="left:${sp.x}%;top:${sp.y}%" title="${esc(sp.ko || '')}">${sp.n}</span>`).join('');
+      const spots = st.spots?.length ? `<ol class="sq-spots">${st.spots.map(sp => `<li><span class="tx-n">${sp.n}</span><b>${esc(sp.ko)}</b> ${num(sp.text || '')}</li>`).join('')}</ol>` : '';
+      return `<div class="sq-pane" data-i="${i}"${i ? ' hidden' : ''}>
+        <div class="tx-img"><div class="tx-in" style="max-width:min(100%, ${maxw}px)"><img src="${esc(src)}" alt="${esc(f.title)}" width="${w}" height="${h}" data-cap="${esc(f.title)}"${i ? '' : ' loading="lazy"'}>${dots}</div></div>
+        <div class="sq-txt"><p class="sq-h"><span class="sq-no">${i + 1}</span>${esc(st.h)}</p>${st.body ? `<p>${num(st.body)}</p>` : ''}${spots}
+          <p class="sd-src">${figLabel(f)} · p.${f.page}</p></div></div>`;
+    }).join('');
+    const pips = c.steps.map((st, i) => `<button type="button" class="sq-pip${i ? '' : ' on'}" data-i="${i}" title="${esc(st.h)}">${i + 1}</button>`).join('');
+    return `<div class="sd-card sd-seq" id="c-${id}" data-i="0" data-n="${n}">
+      <h3>${esc(c.h)} <span class="sd-badge">단계 넘기기 · ${n}단계</span></h3>
+      ${c.body ? `<p class="sd-diatxt">${num(c.body)}</p>` : ''}
+      <div class="sq-nav"><button type="button" class="sq-prev" aria-label="이전 단계" disabled>◀</button><div class="sq-pips">${pips}</div><button type="button" class="sq-next" aria-label="다음 단계">▶</button></div>
+      ${panes}
+      ${c.so ? `<p class="sd-so"><b class="sd-lab">그래서</b>${num(c.so)}</p>` : ''}
+      ${add}${chips(c)}
     </div>`;
   }
 
@@ -214,6 +246,8 @@
     if (e.code) out.push(Stock.link({ c: e.code, n: `${e.name} 종목 상세` }));
     if (e.bio) out.push(`<a href="bio.html?m=${e.bio.m}&c=${encodeURIComponent(e.bio.c)}">바이오 탭 자산 카드</a>`);
     if (e.ticker) out.push(`<span class="muted">${esc(e.ticker)}</span>`);
+    (e.semi_cells || []).forEach(x => out.push(`<a href="semi.html?cell=${encodeURIComponent(x.id)}">반도체 탭 · ${esc(x.name)}</a>`));
+    if (e.listed === false) out.push('<span class="muted">비상장</span>');
     return out.length ? `<p class="sd-links">${out.join(' · ')}</p>` : '';
   }
 
@@ -234,13 +268,13 @@
     const groups = {};
     e.refs.forEach(r => { (groups[`${r.doc}|${r.ti}`] = groups[`${r.doc}|${r.ti}`] || []).push(r); });
     const refs = Object.values(groups).map(rs => `<div class="sd-refg"><h4><a href="${nodeHref(rs[0].node)}">${esc(rs[0].topic)}</a> <small class="muted">${esc(IX.docs[rs[0].doc].title)}</small></h4>
-      <ul>${rs.map(r => `<li><a href="${nodeHref(r.node, `${r.doc}:${r.ti}:${r.ci}`)}">${esc(r.h || '본문')}</a>${r.p != null ? ` <span class="sd-p">p.${r.p}</span>` : ''}${r.add ? ' <span class="sd-addtag">리포트 외</span>' : ''}</li>`).join('')}</ul></div>`).join('');
+      <ul>${rs.map(r => `<li><a href="${nodeHref(r.node, `${r.doc}:${r.ti}:${r.ci}`)}">${esc(r.h || '본문')}</a>${r.p != null ? ` <span class="sd-p">p.${r.p}</span>` : ''}${r.add ? ' <span class="sd-addtag">원문 외</span>' : ''}</li>`).join('')}</ul></div>`).join('');
     $('body').innerHTML = `<nav class="sd-crumb"><a href="?">Study</a> › 색인 › ${esc(KIND_LABEL[e.kind])}</nav>
       <div class="page-head"><h1><span class="sd-chip k-${e.kind}">${esc(KIND_LABEL[e.kind])}</span> ${esc(e.name)}</h1>
         ${e.en ? `<p>${esc(e.en)}${e.mod ? ' · ' + esc(e.mod) : ''}</p>` : ''}</div>
       <section class="card col sd-ent">
         <p class="sd-desc">${num(e.desc || '')}</p>
-        ${e.add ? '<p class="sd-add"><span>리포트 외</span>이 항목은 리포트에 나오지 않고 연결을 위해 덧붙였습니다.</p>' : ''}
+        ${e.add ? '<p class="sd-add"><span>원문 외</span>이 항목은 원문(리포트·책)에 나오지 않고 연결을 위해 덧붙였습니다.</p>' : ''}
         ${companyLinks(e)}
         ${rel.length ? `<div class="sd-chips"><b class="sd-lab">연결</b>${rel.map(k => chip(k)).join('')}</div>` : ''}
         ${co.length ? `<div class="sd-chips"><b class="sd-lab">함께 나온</b>${co.map(([k, n]) => chip(k).replace('</a>', `<small>${n}</small></a>`)).join('')}</div>` : ''}
@@ -258,7 +292,7 @@
       <section class="card col sd-sum">
         <h3>한눈에</h3><ul>${(o.points || []).map(p => `<li>${num(p)}</li>`).join('')}</ul>
         ${o.how_to_read ? `<p><b class="sd-lab">읽는 법</b>${num(o.how_to_read)}</p>` : ''}
-        <p class="small muted">진행: 그림·표 ${m.nfig_done}/${m.nfig_total} 카드화 · 작성 범위 p.${m.done[0]}~${m.done[1]}</p>
+        <p class="small muted">진행: 그림·표 ${m.nfig_done}/${m.nfig_total} 카드화 · ${m.done[1] >= m.done[0] ? `작성 범위 p.${m.done[0]}~${m.done[1]}` : '아직 작성 전'}</p>
       </section>
       <section class="card col"><h3>목차 (작성된 주제)</h3><ol class="sd-toc">${m.topics.map(t => `<li><a href="${nodeHref(t.node)}">${esc(t.title)}</a>
         <small class="muted">p.${t.pages[0]}~${t.pages[1]} · ${esc(nodeMap[t.node].trail.map(x => x.name).join(' › '))}</small></li>`).join('')}</ol></section>`;
@@ -305,6 +339,30 @@
     const box = b.closest('.sd-vis');
     box.querySelectorAll('.sd-tabs button').forEach(x => x.classList.toggle('on', x === b));
     box.querySelectorAll('.sd-pane').forEach(x => { x.hidden = x.dataset.p !== b.dataset.v; });
+  });
+
+  // 단계 넘기기: ◀ ▶ · 단계 번호 · 좌우 화살표 키(카드에 마우스가 있을 때)
+  const seqGo = (card, i) => {
+    const n = +card.dataset.n;
+    i = Math.max(0, Math.min(n - 1, i));
+    card.dataset.i = i;
+    card.querySelectorAll('.sq-pane').forEach(p => { p.hidden = +p.dataset.i !== i; });
+    card.querySelectorAll('.sq-pip').forEach(p => p.classList.toggle('on', +p.dataset.i === i));
+    card.querySelector('.sq-prev').disabled = i === 0;
+    card.querySelector('.sq-next').disabled = i === n - 1;
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.sq-prev, .sq-next, .sq-pip');
+    if (!b) return;
+    const card = b.closest('.sd-seq');
+    seqGo(card, b.classList.contains('sq-pip') ? +b.dataset.i : +card.dataset.i + (b.classList.contains('sq-next') ? 1 : -1));
+  });
+  let seqHover = null;
+  document.addEventListener('mouseover', e => { seqHover = e.target.closest && e.target.closest('.sd-seq'); });
+  document.addEventListener('keydown', e => {
+    if (!seqHover || !document.contains(seqHover) || !['ArrowLeft', 'ArrowRight'].includes(e.key) || e.target.closest('input, textarea')) return;
+    e.preventDefault();
+    seqGo(seqHover, +seqHover.dataset.i + (e.key === 'ArrowRight' ? 1 : -1));
   });
 
   // 해설 그림: 번호 ↔ 설명 서로 강조 (마우스를 올리거나 누르면)

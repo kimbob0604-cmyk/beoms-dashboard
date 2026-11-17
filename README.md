@@ -557,7 +557,7 @@ python3 build_study.py            # study/ 검증 → public/data/study/ (오류
 python3 build_study.py --check    # 검증만
 ```
 
-- 원본(손으로 쓰는 것, git 관리): `study/tree.json`(섹터 → 주제 트리), `study/entities.json`(개념 c: · 약물 d: · 기업 co: · 임상 tr: · 적응증 ind:), `study/docs/<doc>.json`(카드).
+- 원본(손으로 쓰는 것, git 관리): `study/tree.json`(섹터 → 주제 트리), `study/entities.json`(개념 c: · 약물 d: · 기업 co: · 임상 tr: · 적응증 ind: · 국가 n:), `study/docs/<doc>.json`(카드).
 - 원문 PDF와 추출 본문은 `study_src/`(gitignore). 그림 PNG는 `public/data/study/img/` 에 다시 만들 수 있다.
 - 그림은 대부분 벡터라 이미지 추출이 아니라 `<그림N>` 캡션 ~ `자료:` 줄 영역을 렌더한다. 표는 find_tables 칸 경계로 글자를 다시 읽는다(extract()는 쉼표·소수점이 틀어짐).
 - 번호가 다시 1부터 시작하는 부분(기업분석 등)은 `--part 시작쪽:이름` → 키가 `voronoi-fig-003` 처럼 된다.
@@ -578,6 +578,17 @@ python3 build_study.py --check    # 검증만
   ① `study/media/manifest.json` 에 출처 페이지·원본 주소·저작자·라이선스를 적고 ② 원본을 `study_src/media_raw/<키>/raw.*` 에 받고
   ③ `python3 study_media.py` (여백 자르기·확대 → `study/media/<키>.png`, 크기 기록) ④ 카드 `{"t": "ext", "media": "<키>", "tech": {...}}`.
   화면에는 '공개 이미지 · 리포트 외' 표시와 출처·저작자·라이선스 줄이 붙는다. 빌드는 출처·라이선스가 빠지면 멈춘다.
+- **사진으로 찍은 책(글자 층 없음)**: 반도체 교재 「진짜 하루만에 이해하는 반도체 산업」(`semi-oneday`, 계획 `docs/study-semi-plan.md`).
+  ```bash
+  python3 -c "import pymupdf,sys; d=pymupdf.open(sys.argv[1]); [open(f'study_src/<doc>/pages/p{i+1:03d}.jpeg','wb').write(d.extract_image(p.get_images()[0][0])['image']) for i,p in enumerate(d)]" study_src/pdf/<doc>.pdf
+  swiftc -O study_ocr.swift -o /tmp/study_ocr && /tmp/study_ocr study_src/<doc>/pages study_src/<doc>/ocr   # macOS Vision 한·영 OCR, 320쪽 약 5분
+  python3 study_scan.py --doc <doc>           # 쪽 글(pages.json) + 그림·표 자르기·정리(figures.json, -hd.png·-raw.jpg)
+  python3 study_scan.py --doc <doc> --sheet   # 검수용 접촉 시트 study_src/<doc>/sheet-NN.jpg
+  ```
+  캡션 줄(「그림 1-7.」)을 OCR 에서 찾아 그 위쪽을 자른다(위 경계 = 가장 가까운 본문 줄). 종이색을 2차 곡면으로 맞춰 나누고(조명 얼룩·뒷장 비침 제거),
+  ±1.5° 기울기 보정 후 선명화한다. 쪽 번호 차이·캡션 오독 고침·캡션 없는 그림 묶음(`cuts`)은 `study_scan.py` 의 `DOCS` 설정에, 잘못 잘린 것은
+  `study_src/<doc>/crops.json` 손 경계로 덮어쓴다. 해설 카드의 '원본 (책 지면)' 탭은 정리 전 사진(-raw.jpg)을 보여 준다.
+  문서 `source.kind: "book"` 이면 화면의 덧붙임 표시가 '책 외'로 바뀐다. 국가 색인은 `n:` 접두어, 선 차트는 `chart.type: "line"`.
   위키미디어 이미지 서버는 스크립트 요청을 자주 429로 막는다 → 요청 사이 2분 이상 간격(Retry-After)을 둔다.
 - **설명 그림**: `study/diagrams/<이름>.svg` 를 직접 그리고 카드 `{"t": "dia", "dia": "<이름>"}` 로 넣는다. 색은 `dg-*` 클래스(study.css)라 다크 모드를 따라간다.
 - 차트 색은 dataviz 기본 팔레트(라이트·다크 검증 통과)를 고정 순서로 쓴다. 모달리티는 항상 같은 색(단일항체 파랑, 저분자 주황, ADC 초록 …), 대조군은 회색.
