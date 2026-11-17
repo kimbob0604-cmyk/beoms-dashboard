@@ -535,5 +535,276 @@
   ],
   "add": true,
   "desc": "데이터센터 SSD 컨트롤러를 설계하는 국내 팹리스. 책에는 나오지 않는다(SSD 컨트롤러 설명에 덧붙인 연결)."
+ },
+ "c:idm": {
+  "name": "종합 반도체 기업 (IDM)",
+  "en": "Integrated Device Manufacturer",
+  "desc": "설계·생산·테스트/패키지·판매를 한 회사가 다 하는 방식. 기술 보안과 빠른 일정 조율이 장점, 막대한 공장 투자와 경기 변동을 혼자 감당해야 하는 것이 단점. 삼성전자·인텔·SK하이닉스·마이크론·키옥시아. 메모리 회사는 규모 경쟁 때문에 IDM을 고수한다."
+ },
+ "c:division": {
+  "name": "반도체 분업 체계",
+  "en": "Fabless–foundry model",
+  "desc": "설계(IP·팹리스·디자인하우스) → 제조(파운드리) → 테스트·패키지(OSAT) → 판매(팹리스)로 나눠 맡는 구조. 종류가 수만 가지인 시스템 반도체에 맞게 발달했다."
+ },
+ "c:ip-chipless": {
+  "name": "IP 기업 (칩리스)",
+  "en": "IP vendor / chipless",
+  "desc": "칩 안에 들어갈 검증된 설계 블록(CPU 코어·인터페이스 등)을 만들어 빌려주고 로열티를 받는 회사. 칩을 만들지 않아 '칩리스'. 레고의 특수 블록을 파는 셈. ARM·시놉시스·케이던스."
+ },
+ "c:fabless": {
+  "name": "팹리스",
+  "en": "Fabless",
+  "desc": "공장(Fab) 없이 칩 설계와 판매만 하는 회사. 공장은 수조~10조 원 이상이라, 설계에 집중하고 생산은 파운드리에 맡긴다. 퀄컴·엔비디아·AMD·미디어텍·애플."
+ },
+ "c:design-house": {
+  "name": "디자인하우스",
+  "en": "Design house / design service",
+  "desc": "팹리스의 설계도를 특정 파운드리 공정에 맞게 고쳐 생산까지 연결해 주는 회사. 파운드리는 소수, 팹리스는 무수히 많아 그 사이를 이어 준다. 국내는 가온칩스·에이디테크놀로지 등(삼성 파운드리 협력사)."
+ },
+ "c:pdk": {
+  "name": "PDK",
+  "en": "Process Design Kit",
+  "desc": "파운드리가 '우리 공정으로는 이런 성능의 소자를 이런 규칙으로 그릴 수 있다'고 알려 주는 설계 도구 묶음. 디자인하우스·팹리스는 이걸 받아 공정에 맞는 설계도를 만든다."
+ },
+ "c:foundry": {
+  "name": "파운드리",
+  "en": "Foundry",
+  "desc": "남이 설계한 칩을 위탁받아 생산만 하는 회사. 최첨단 공정은 투자액이 천문학적이라 소수만 남았다. 책 기준(2021) TSMC 53%, 삼성전자 18%."
+ },
+ "c:osat": {
+  "name": "OSAT (후공정 외주)",
+  "en": "Outsourced Semiconductor Assembly and Test",
+  "desc": "웨이퍼를 받아 칩으로 자르고 포장(패키지)하고 시험(테스트)하는 외주 회사. 포장 방식이 열 방출·속도를 좌우해 단순 하청이 아니다. ASE·앰코·JCET 등, 국내는 하나마이크론·SFA반도체 등."
+ },
+ "c:eda": {
+  "name": "EDA",
+  "en": "Electronic Design Automation",
+  "desc": "칩 설계 소프트웨어. 설계도를 넣으면 소자 배치·배선을 자동으로 해 준다. 고객 노하우가 쌓여 바꾸기 어려워 진입장벽이 높다. 시놉시스·케이던스가 양강."
+ },
+ "c:feol-beol": {
+  "name": "전공정 · 후공정 (FEOL · BEOL)",
+  "en": "Front-end / back-end",
+  "desc": "웨이퍼 상태에서 하는 일이 전공정(웨이퍼 제조~금속 배선), 칩을 시험하고 포장하는 일이 후공정(테스트·패키지). 전공정 중 트랜지스터를 만드는 단계를 FEOL, 그 위 배선을 깔는 단계를 BEOL이라 부른다."
+ },
+ "c:ingot": {
+  "name": "잉곳 (단결정 실리콘)",
+  "en": "Ingot / Czochralski",
+  "desc": "녹인 고순도 실리콘에 씨앗 결정(시드)을 담갔다 돌리며 천천히 끌어올려 만든 원기둥 모양 단결정 덩어리(초크랄스키법). 이걸 얇게 썰고 갈아 웨이퍼를 만든다."
+ },
+ "c:epi-soi": {
+  "name": "에피·SOI 웨이퍼",
+  "en": "Epitaxial / SOI wafer",
+  "desc": "에피 웨이퍼는 연마 웨이퍼 위에 결함이 적은 실리콘 단결정층(수 µm)을 한 겹 더 키운 것. SOI는 실리콘 두 층 사이에 산화막을 끼워 누설·전력·발열을 줄인 것."
+ },
+ "c:oxidation": {
+  "name": "산화 공정",
+  "en": "Oxidation",
+  "desc": "웨이퍼 실리콘을 고온에서 산소와 만나게 해 표면에 이산화규소(SiO₂) 절연막을 키우는 공정. 산소 기체만 쓰는 건식(느리지만 막이 치밀)과 수증기를 섞는 습식(5~10배 빠르지만 성김)이 있다."
+ },
+ "c:sti-ild-imd": {
+  "name": "STI · ILD · IMD",
+  "en": "Shallow Trench Isolation / Inter-Layer / Inter-Metal Dielectric",
+  "desc": "산화막(절연막)이 들어가는 세 자리. STI = 이웃 트랜지스터 사이 홈을 메워 떼어 놓기, ILD = 트랜지스터와 첫 배선층 사이, IMD = 배선층과 배선층 사이."
+ },
+ "c:photo": {
+  "name": "포토 공정 (노광)",
+  "en": "Photolithography",
+  "desc": "빛으로 회로 무늬를 웨이퍼에 옮겨 그리는 공정. 필름 카메라와 같다: 웨이퍼 = 필름, 감광층 = 감광제, 노광 장비 = 카메라, 포토마스크 = 찍을 풍경. 공정 가운데 가장 비싸고 어렵다."
+ },
+ "c:photoresist": {
+  "name": "감광액 (PR)",
+  "en": "Photoresist",
+  "desc": "빛을 받으면 성질이 바뀌는 액체 재료. 웨이퍼에 얇게 바르고 빛을 쬔 뒤 현상하면 무늬가 남는다. 빛 받은 곳이 녹는 양성(주로 사용)과 남는 음성이 있다. 일본(JSR·TOK·신에츠)이 강하고 국내는 동진쎄미켐 등."
+ },
+ "c:photomask": {
+  "name": "포토마스크 · 펠리클",
+  "en": "Photomask / pellicle",
+  "desc": "회로 무늬가 그려진 원판(필름 카메라의 '풍경'). 쿼츠 유리판에 차광막을 입힌 블랭크 마스크 위에 전자빔으로 무늬를 새긴다. 펠리클은 마스크에 먼지가 앉지 않게 씌우는 투명 보호막. EUV용은 빛을 반사시키는 반사형."
+ },
+ "c:light-source": {
+  "name": "노광 광원 (파장)",
+  "en": "Exposure wavelength",
+  "desc": "파장이 짧을수록 더 가는 선을 그릴 수 있다. 수은 램프 G-line 436nm → I-line 365nm → KrF 248nm → ArF 193nm(물에 담가 굴절을 키운 ArF 액침 포함) → EUV 13.5nm."
+ },
+ "c:euv": {
+  "name": "EUV 노광",
+  "en": "Extreme Ultraviolet lithography",
+  "desc": "파장 13.5nm 극자외선으로 회로를 새기는 노광. 빛이 거의 모든 물질에 흡수돼 렌즈 대신 거울로만 빛을 보내고, 진공 속에서 동작한다. ASML이 세계에서 유일하게 만든다. 7나노 이하 최첨단 칩과 최신 DRAM에 쓴다."
+ },
+ "co:synopsys": {
+  "name": "시놉시스",
+  "en": "Synopsys",
+  "ticker": "SNPS",
+  "semi": [
+   "ip"
+  ],
+  "desc": "EDA(칩 설계 소프트웨어) 1위이자 IP 2위. 2025년 시뮬레이션 회사 앤시스를 인수했다."
+ },
+ "co:cadence": {
+  "name": "케이던스",
+  "en": "Cadence Design Systems",
+  "ticker": "CDNS",
+  "semi": [
+   "ip"
+  ],
+  "desc": "시놉시스와 함께 EDA 양강. IP 사업도 한다."
+ },
+ "co:asml": {
+  "name": "ASML",
+  "en": "ASML",
+  "ticker": "ASML",
+  "semi": [
+   "litho"
+  ],
+  "desc": "네덜란드 노광 장비 회사. EUV 노광기를 세계에서 유일하게 만든다. 책: 대당 1,500억 원, 100톤 이상."
+ },
+ "co:umc": {
+  "name": "UMC",
+  "en": "United Microelectronics",
+  "ticker": "UMC",
+  "semi": [
+   "fdry"
+  ],
+  "desc": "대만 파운드리(책: 2021년 3위, 7%). 14나노까지의 성숙 공정에 집중한다."
+ },
+ "co:gf": {
+  "name": "글로벌파운드리",
+  "en": "GlobalFoundries",
+  "ticker": "GFS",
+  "semi": [
+   "fdry"
+  ],
+  "desc": "2009년 AMD의 공장을 떼어 아부다비 자본으로 세운 파운드리. 7나노 개발을 포기하고 12·14나노 이상 특수 공정에 집중한다."
+ },
+ "co:smic": {
+  "name": "SMIC",
+  "en": "Semiconductor Manufacturing International",
+  "ticker": "0981.HK",
+  "semi": [
+   "fdry"
+  ],
+  "desc": "중국 최대 파운드리. 미국 제재로 EUV 장비를 못 사지만 DUV로 7나노급을 만든 것으로 알려졌다."
+ },
+ "co:ase": {
+  "name": "ASE",
+  "en": "ASE Technology",
+  "ticker": "ASX",
+  "semi": [
+   "pkg"
+  ],
+  "desc": "대만의 세계 1위 OSAT(책: 2021년 3분기 TOP10 중 24.2%). 2018년 SPIL을 합병했다."
+ },
+ "co:amkor": {
+  "name": "앰코",
+  "en": "Amkor Technology",
+  "ticker": "AMKR",
+  "semi": [
+   "pkg"
+  ],
+  "desc": "세계 2위 OSAT. 한국 아남반도체에 뿌리를 둔 미국 회사로 한국에 큰 공장이 있다."
+ },
+ "co:jcet": {
+  "name": "JCET",
+  "en": "JCET (창뎬과기)",
+  "ticker": "600584.SS",
+  "semi": [
+   "pkg"
+  ],
+  "desc": "중국 최대 OSAT. 싱가포르 STATS ChipPAC을 인수해 컸다."
+ },
+ "co:gaonchips": {
+  "name": "가온칩스",
+  "en": "Gaonchips",
+  "code": "399720",
+  "semi": [
+   "asic"
+  ],
+  "add": true,
+  "desc": "삼성 파운드리 협력 디자인하우스(커스텀 ASIC 설계). 책에는 나오지 않는다(디자인하우스 설명에 덧붙인 연결)."
+ },
+ "co:adtech": {
+  "name": "에이디테크놀로지",
+  "en": "ADTechnology",
+  "code": "200710",
+  "semi": [
+   "asic"
+  ],
+  "add": true,
+  "desc": "디자인하우스. TSMC 협력사였다가 삼성 파운드리 협력사로 바꿨다. 책에는 나오지 않는다."
+ },
+ "co:hana-micron": {
+  "name": "하나마이크론",
+  "en": "Hana Micron",
+  "code": "067310",
+  "semi": [
+   "pkg"
+  ],
+  "add": true,
+  "desc": "국내 최대 OSAT(메모리·시스템 반도체 패키징·테스트). 책에는 나오지 않는다."
+ },
+ "co:db-hitek": {
+  "name": "DB하이텍",
+  "en": "DB HiTek",
+  "code": "000990",
+  "semi": [
+   "fdry"
+  ],
+  "desc": "국내 최초 파운드리. 8인치(200mm) 성숙 공정으로 전력 반도체·이미지 센서·아날로그 칩을 만든다(책: 2021년 매출 1.2조 원, 점유율 약 1%)."
+ },
+ "co:dongjin": {
+  "name": "동진쎄미켐",
+  "en": "Dongjin Semichem",
+  "code": "005290",
+  "semi": [
+   "photo"
+  ],
+  "desc": "국내 포토레지스트(감광액) 대표 회사. 2019년 일본 수출 규제 이후 국산화의 중심이 됐다."
+ },
+ "co:snstech": {
+  "name": "에스앤에스텍",
+  "en": "S&S Tech",
+  "code": "101490",
+  "semi": [
+   "photo"
+  ],
+  "desc": "블랭크 마스크(포토마스크의 원판) 국내 회사(책: 점유율 8.8%, 5위). EUV용 블랭크 마스크·펠리클을 개발 중."
+ },
+ "co:fst": {
+  "name": "에프에스티",
+  "en": "FST",
+  "code": "036810",
+  "semi": [
+   "photo"
+  ],
+  "add": true,
+  "desc": "펠리클(마스크 보호막)과 칠러를 만드는 국내 회사. 책에는 나오지 않는다(펠리클 설명에 덧붙인 연결)."
+ },
+ "co:shin-etsu": {
+  "name": "신에츠화학",
+  "en": "Shin-Etsu Chemical",
+  "ticker": "4063.T",
+  "semi": [
+   "wafer",
+   "photo"
+  ],
+  "desc": "실리콘 웨이퍼 세계 1위(책: 300mm 29.8%)이자 감광액·블랭크 마스크도 만드는 일본 소재 회사."
+ },
+ "co:sumco": {
+  "name": "섬코",
+  "en": "SUMCO",
+  "ticker": "3436.T",
+  "semi": [
+   "wafer"
+  ],
+  "desc": "일본의 세계 2위 웨이퍼 회사(책: 300mm 24.8%)."
+ },
+ "co:sk-siltron": {
+  "name": "SK실트론",
+  "en": "SK siltron",
+  "listed": false,
+  "semi": [
+   "wafer"
+  ],
+  "desc": "국내 유일 실리콘 웨이퍼 회사, 세계 3위(책: 300mm 18.1%). SK㈜ 자회사로 비상장."
  }
 }
