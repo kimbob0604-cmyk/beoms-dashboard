@@ -107,7 +107,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "svra-label",
@@ -121,7 +139,17 @@
                   "bear": "중증만",
                   "base": "aPAP 성인",
                   "bull": "aPAP 전반"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "svra-price",
@@ -140,7 +168,17 @@
                   "bear": "$350k 미만 (순 $300k)",
                   "base": "$400~450k",
                   "bull": "$500k 이상"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "price_k",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "svra-mhra",
@@ -175,7 +213,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT06431776"
+                "url": "https://clinicaltrials.gov/study/NCT06431776",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "svra-rev",
@@ -190,7 +238,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -408,7 +466,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT07018323"
+                "url": "https://clinicaltrials.gov/study/NCT07018323",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-enr2",
@@ -425,7 +493,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT06727604"
+                "url": "https://clinicaltrials.gov/study/NCT06727604",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-top",
@@ -444,7 +522,25 @@
                   "bear": "1차 평가변수 유의성 미달",
                   "base": "1차 평가변수 충족",
                   "bull": "충족 + 2차 평가변수·지속성까지 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-safe",
@@ -463,7 +559,17 @@
                   "bear": "투약 제한 경고 수준",
                   "base": "관리 가능",
                   "bull": "계열 최고 수준"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-bla",
@@ -482,7 +588,17 @@
                   "bear": "추가 시험 요구",
                   "base": "BLA 제출·표준 심사",
                   "bull": "우선 심사"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 1.5,
+                      "base": 0,
+                      "bull": -0.3
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-label",
@@ -496,7 +612,17 @@
                   "bear": "25% 이하 범위",
                   "base": "27.5%",
                   "bull": "30% 이상"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "gd-rev",
@@ -511,7 +637,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -589,7 +725,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT07039916"
+                "url": "https://clinicaltrials.gov/study/NCT07039916",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "mg-top",
@@ -608,7 +754,25 @@
                   "bear": "1차 평가변수 유의성 미달",
                   "base": "1차 평가변수 충족",
                   "bull": "충족 + 2차 평가변수·지속성까지 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "mg-bla",
@@ -627,7 +791,17 @@
                   "bear": "추가 시험 요구",
                   "base": "BLA 제출·표준 심사",
                   "bull": "우선 심사"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 1.5,
+                      "base": 0,
+                      "bull": -0.3
+                    }
+                  }
+                ]
               },
               {
                 "id": "mg-comp",
@@ -641,7 +815,17 @@
                   "bear": "차별점 없음",
                   "base": "투약 편의 우위",
                   "bull": "효능 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "mg-rev",
@@ -656,7 +840,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -734,7 +928,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT07032662"
+                "url": "https://clinicaltrials.gov/study/NCT07032662",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "cidp-top",
@@ -753,7 +957,25 @@
                   "bear": "1차 평가변수 유의성 미달",
                   "base": "1차 평가변수 충족",
                   "bull": "충족 + 2차 평가변수·지속성까지 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "cidp-bla",
@@ -772,7 +994,17 @@
                   "bear": "추가 시험 요구",
                   "base": "BLA 제출·표준 심사",
                   "bull": "우선 심사"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 1.5,
+                      "base": 0,
+                      "bull": -0.3
+                    }
+                  }
+                ]
               },
               {
                 "id": "cidp-rev",
@@ -787,7 +1019,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -876,7 +1118,25 @@
                   "date": "2026-11-09",
                   "url": "https://www.immunovant.com/investors/news-events/press-releases/detail/88/immunovant-provides-corporate-updates-and-reports-financial",
                   "note": "ACR20 92.5% 대 위약 75.6%, p=0.0139로 충족 (회사 보도자료 원문)"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "ra-fda",
@@ -895,7 +1155,17 @@
                   "bear": "추가 3상 2건 요구",
                   "base": "추가 3상 1건",
                   "bull": "현 시험으로 신청 가능"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 1.5,
+                      "base": 0,
+                      "bull": -1.0
+                    }
+                  }
+                ]
               },
               {
                 "id": "ra-enr",
@@ -912,7 +1182,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT06754462"
+                "url": "https://clinicaltrials.gov/study/NCT06754462",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "ra-rev",
@@ -927,7 +1207,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -1271,7 +1561,17 @@
                 "bear": "전분기 대비 감소",
                 "base": "기본 경로 ±절반",
                 "bull": "기본 경로의 1.5배 넘게"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "ax-trx",
@@ -1296,7 +1596,17 @@
                 "date": "2026-11-02",
                 "url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526442628/axsm-ex99_1.htm",
                 "note": "3분기 TRx 약 30.2만 건, 전년 대비 +40%·전분기 대비 +14% (8-K 원문)"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "ax-ad",
@@ -1317,7 +1627,17 @@
                 "date": "2026-11-02",
                 "url": "https://www.sec.gov/Archives/edgar/data/1579428/000119312526442628/axsm-ex99_1.htm",
                 "note": "65세 이상 신규처방 전분기 대비 +99%, 전년 대비 +211% (8-K 원문)"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "ax-p4",
@@ -1335,7 +1655,17 @@
                 "bear": "조기 제네릭 진입",
                 "base": "특허로 방어",
                 "bull": "도전 없음"
-              }
+              },
+              "effect": [
+                {
+                  "param": "loe",
+                  "values": {
+                    "bear": 6,
+                    "base": "keep",
+                    "bull": 13
+                  }
+                }
+              ]
             }
           ]
         }
@@ -1754,7 +2084,17 @@
                 "bear": "전분기 대비 감소",
                 "base": "기본 경로 ±절반",
                 "bull": "기본 경로의 1.5배 넘게"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "lq-pts",
@@ -1772,7 +2112,17 @@
                 "bear": "증가 정체",
                 "base": "분기마다 증가",
                 "bull": "증가 가속"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "lq-ild",
@@ -1793,7 +2143,17 @@
                 "date": "2026-10-14",
                 "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
                 "note": "보충신청 제출·판촉 중단 (8-K). 매출 영향은 4분기 실적으로 판정"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "lq-uthr",
@@ -1814,7 +2174,17 @@
                 "date": "2026-10-14",
                 "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926115672/tm2627557d1_ex99-1.htm",
                 "note": "6건 모두 합의, 순 3.807억 달러 분납, PAH 판매 유지 (8-K 원문)"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": 0,
+                    "base": "keep",
+                    "bull": "keep"
+                  }
+                }
+              ]
             },
             {
               "id": "lq-pat",
@@ -1835,7 +2205,17 @@
                 "date": "2026-03-05",
                 "url": "https://www.sec.gov/Archives/edgar/data/1819576/000110465926023804/lqda-20251231x10k.htm",
                 "note": "미국 특허 16건, 가장 늦은 만료 2037년 (10-K 원문). 모델은 11년차(2037년)부터 침식"
-              }
+              },
+              "effect": [
+                {
+                  "param": "loe",
+                  "values": {
+                    "bear": 6,
+                    "base": "keep",
+                    "bull": 13
+                  }
+                }
+              ]
             },
             {
               "id": "lq-l606",
@@ -1852,7 +2232,17 @@
                 "base": "예정대로 (±3개월)",
                 "bull": "2개월 넘게 앞당김"
               },
-              "url": "https://clinicaltrials.gov/study/NCT07285655"
+              "url": "https://clinicaltrials.gov/study/NCT07285655",
+              "effect": [
+                {
+                  "param": "delay",
+                  "values": {
+                    "bear": 0.5,
+                    "base": 0,
+                    "bull": -0.25
+                  }
+                }
+              ]
             }
           ]
         }
@@ -2206,7 +2596,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "smmt-label",
@@ -2220,7 +2628,17 @@
                   "bear": "제한적 라벨",
                   "base": "TKI 이후 비편평 전체",
                   "bull": "OS 이점 문구 포함"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "smmt-rev",
@@ -2235,7 +2653,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -2313,7 +2741,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT05899608"
+                "url": "https://clinicaltrials.gov/study/NCT05899608",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "smmt-h7",
@@ -2330,7 +2768,17 @@
                   "base": "예정대로 (±3개월)",
                   "bull": "2개월 넘게 앞당김"
                 },
-                "url": "https://clinicaltrials.gov/study/NCT06767514"
+                "url": "https://clinicaltrials.gov/study/NCT06767514",
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 0.5,
+                      "base": 0,
+                      "bull": -0.25
+                    }
+                  }
+                ]
               },
               {
                 "id": "smmt-1ltop",
@@ -2349,7 +2797,25 @@
                   "bear": "1차 평가변수 유의성 미달",
                   "base": "1차 평가변수 충족",
                   "bull": "충족 + 2차 평가변수·지속성까지 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -2450,7 +2916,17 @@
                 "bear": "전분기 대비 감소",
                 "base": "기본 경로 ±절반",
                 "bull": "기본 경로의 1.5배 넘게"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             },
             {
               "id": "bb-attr",
@@ -2468,7 +2944,17 @@
                 "bear": "전분기 대비 감소",
                 "base": "증가",
                 "bull": "증가 가속"
-              }
+              },
+              "effect": [
+                {
+                  "param": "pen",
+                  "values": {
+                    "bear": "case",
+                    "base": "case",
+                    "bull": "case"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -2646,7 +3132,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "bb418-pts",
@@ -2665,7 +3169,17 @@
                   "bear": "증가 정체",
                   "base": "출시 후 증가",
                   "bull": "빠른 증가"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "bb418-rev",
@@ -2680,7 +3194,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -2754,7 +3278,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "bbinf-rev",
@@ -2769,7 +3311,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -2957,7 +3509,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "cg-gist-rev",
@@ -2972,7 +3542,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -3045,7 +3625,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "cg-nasm-rev",
@@ -3060,7 +3658,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -3133,7 +3741,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "cg-asm-rev",
@@ -3148,7 +3774,17 @@
                   "bear": "시나리오 경로 하회",
                   "base": "경로",
                   "bull": "경로 상회"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -3293,7 +3929,25 @@
                   "bear": "보완요구서(CRL)",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "cort-qg",
@@ -3456,7 +4110,17 @@
                   "bear": "2027년 말 15% 미만",
                   "base": "2027년 말 15~25%",
                   "bull": "2027년 말 25% 넘게"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "share",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "alt-ms",
@@ -3488,7 +4152,17 @@
                   "bear": "선정 + 큰 폭 인하",
                   "base": "선정, Qlex 매출 영향 10% 미만 (신한·대신)",
                   "bull": "미선정"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "sales_mult",
+                    "values": {
+                      "bear": 0.9,
+                      "base": 0.97,
+                      "bull": 1.0
+                    }
+                  }
+                ]
               },
               {
                 "id": "alt-new",
@@ -4058,7 +4732,17 @@
                   "date": "2026-09-17",
                   "url": "https://stock.pstatic.net/stock-research/company/18/20260917_company_187971000.pdf",
                   "note": "1a상: 160mg 이상 C797S 6명 전원 PR, mPFS 11개월 (리포트 인용, 소수 환자라 잠정)"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0.15,
+                      "base": "keep",
+                      "bull": 0.7
+                    }
+                  }
+                ]
               },
               {
                 "id": "vrn-ct",
@@ -4177,7 +4861,25 @@
                   "bear": "타그리소 수준 미만",
                   "base": "타그리소와 비슷",
                   "bull": "두개내 반응 우위"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos0",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "vrn1l-cns",
@@ -4198,7 +4900,17 @@
                   "date": "2026-09-17",
                   "url": "https://stock.pstatic.net/stock-research/company/18/20260917_company_187971000.pdf",
                   "note": "160mg 이상 뇌전이 19명 iDCR 100%, mPFS 6.7개월, 두개내 mPFS 미도달 (유안타 리포트 인용, 잠정)"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pen",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               }
             ]
           },
@@ -4451,7 +5163,17 @@
                   "date": "2026-11-04",
                   "url": "https://www.cancernetwork.com/view/fda-sets-pdufa-date-for-rivoceranib-camrelizumab-resubmission-after-third-crl-in-unresectable-hcc",
                   "note": "PDUFA 2027-04-09 (Class 2), 보도 인용이라 원문 미확인"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "delay",
+                    "values": {
+                      "bear": 1.0,
+                      "base": 0,
+                      "bull": -0.3
+                    }
+                  }
+                ]
               },
               {
                 "id": "hlb-insp",
@@ -4469,7 +5191,17 @@
                   "bear": "결함 재지적",
                   "base": "VAI 종결",
                   "bull": "NAI"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0.3,
+                      "base": 0.75,
+                      "bull": 0.85
+                    }
+                  }
+                ]
               },
               {
                 "id": "hlb-fda",
@@ -4487,7 +5219,25 @@
                   "bear": "4번째 CRL",
                   "base": "승인",
                   "bull": "승인 + 넓은 라벨"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": 1,
+                      "bull": 1
+                    }
+                  },
+                  {
+                    "param": "sam",
+                    "values": {
+                      "bear": "keep",
+                      "base": "keep",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "hlb-cam",
@@ -4501,7 +5251,17 @@
                   "bear": "캄렐리주맙 CRL",
                   "base": "함께 승인",
                   "bull": "함께 승인"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "pos_last",
+                    "values": {
+                      "bear": 0,
+                      "base": "keep",
+                      "bull": "keep"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -4799,7 +5559,17 @@
                   "bear": "2027년 말 점유 15% 미만",
                   "base": "15~25%",
                   "bull": "25% 넘게"
-                }
+                },
+                "effect": [
+                  {
+                    "param": "share",
+                    "values": {
+                      "bear": "case",
+                      "base": "case",
+                      "bull": "case"
+                    }
+                  }
+                ]
               },
               {
                 "id": "yh-ms",

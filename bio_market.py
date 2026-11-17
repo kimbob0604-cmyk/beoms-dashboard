@@ -245,6 +245,32 @@ def tracking(trigs):
 REG = {}   # 자산 id → 계산된 시장 (로열티 자산이 파트너 시장을 끌어다 씀). 설정 순서대로 미장 → 국장이라 파트너가 먼저 계산된다.
 
 
+def calc_bundle(co, mk, g, rf, value_company, scen_base, a=None):
+    """화면에서 트리거 결과를 눌러 다시 계산할 때 쓰는 입력값 (public/js/bio.js 의 같은 계산식).
+    주당 가치 = max(0, 기본 지분가치 − 이 자산(또는 상업 DCF)의 기본 가치 + 바꾼 가치) ÷ 주식 수."""
+    base = value_company(co, mk, g, rf, scen_base)
+    out = {'equity_base': base['equity'], 'shares': mk.get('shares'), 'price': mk['price'],
+           'g': {'conv': g.get('conv', 1.0), 'tax': g['tax'], 'wacc': g['wacc'], 'sigma': g['sigma'], 'rf': rf}}
+    if a is None:
+        c = co['commercial']
+        out['dcf'] = {'run_rate': c['run_rate_musd'], 'growth': c['growth'], 'margin_now': c['margin_now'], 'margin_target': c['margin_target'],
+                      'margin_years': c['margin_years'], 'loe': c['loe_year_index'], 'erosion': c['erosion'], 'years': c.get('years', 15)}
+        out['base_value'] = base['bridge']['commercial']
+        return out
+    va = next((x for x in base['assets'] if x['id'] == a['id']), None)
+    out['base_value'] = va['value'] if va else 0.0
+    out['asset'] = {'method': a.get('method', 'rnpv'), 'peak': a['peak_musd'], 'lump': a.get('lump_musd'), 'margin': a['margin'],
+                    'ramp': a['ramp_years'], 'excl': a['exclusivity_years'], 'launch_in': a['launch_in'],
+                    'stages': [{'t': x['t'], 'pos': x['pos'], 'x': x['x'], 'name': x.get('name', '')} for x in a['stages']]}
+    return out
+
+
+def _params(m):
+    """시나리오별 시장 입력값 표 (sam·pen·price_k 또는 share)."""
+    keys = ('sam', 'pen', 'price_k', 'share')
+    return {k: {p: v for p, v in m['cases'][k].items() if p in keys} for k in CASES}
+
+
 def _market_cases(m, value_case, price):
     cases = {}
     for k in CASES:
@@ -281,8 +307,11 @@ def asset_markets(co, row, mk, g, rf, value_company, scen_base):
         if m.get('kind') == 'triggers':
             trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
             track, n = tracking(trigs)
-            out.append({'id': a['id'], 'kind': 'triggers', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'note': m.get('note', ''),
-                        'triggers': trigs, 'tracking': track, 'judged': n})
+            r = {'id': a['id'], 'kind': 'triggers', 'name': a['name'], 'indication': a['indication'], 'region': m['region'], 'note': m.get('note', ''),
+                 'triggers': trigs, 'tracking': track, 'judged': n}
+            if not a.get('display_only') and mk.get('shares'):
+                r['calc'] = calc_bundle(co, mk, g, rf, value_company, scen_base, a)
+            out.append(r)
             continue
         if m.get('kind') == 'dollar':   # 회사가 시장을 금액으로만 밝힌 경우: 시장 금액 × 표적 비율 × 점유
             f = asset_value(a['id'])
@@ -296,7 +325,8 @@ def asset_markets(co, row, mk, g, rf, value_company, scen_base):
             trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
             track, n = tracking(trigs)
             out.append({'id': a['id'], 'kind': 'dollar', 'name': a['name'], 'indication': a['indication'], **_head(m),
-                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
+                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n,
+                        'calc': {**calc_bundle(co, mk, g, rf, value_company, scen_base, a), 'params': _params(m), 'tam_usd': m['tam_usd']}})
             continue
         if m.get('kind') == 'product_royalty':
             out.append(product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today))
@@ -313,19 +343,24 @@ def asset_markets(co, row, mk, g, rf, value_company, scen_base):
                 ps = f(k, roy)
                 cases[k] = {**agg, 'royalty': roy, 'rate': m['rate'], 'per_share': ps, 'upside': ps / price - 1 if ps is not None and price else None,
                             'why': ' / '.join(f"{l['indication']}: {l['cases'][k]['why']}" for l in links)}
-            trigs = [{**t, 'name': f"[{l['indication']}] {t['name']}"} for l in links for t in l['triggers']]
+            trigs = [{**t, 'name': f"[{l['indication']}] {t['name']}", 'link': l['id']} for l in links for t in l['triggers']]
             track, n = tracking(trigs)
             out.append({'id': a['id'], 'kind': 'royalty', 'name': a['name'], 'indication': ' + '.join(l['indication'] for l in links), 'region': m['region'],
                         'tam_patients': sum(l['tam_patients'] for l in links), 'tam_src': f"파트너 {m['partner']} 시장 합산",
                         'tam_verified': all(l['tam_verified'] for l in links), 'sam_label': '파트너 표적 환자 합산', 'sam_src': '적응증별 표적 비율',
                         'som_label': f"파트너 피크매출 × 로열티 {m['rate'] * 100:.0f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
-                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n})
+                        'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n,
+                        'calc': {**calc_bundle(co, mk, g, rf, value_company, scen_base, a), 'rate': m['rate'],
+                                 'links': [{'id': l['id'], 'indication': l['indication'], **l['calc_market']} for l in links]}})
             continue
         cases = _market_cases(m, asset_value(a['id']), price)
         trigs = [collect(t, row, a, m, today) for t in m.get('triggers', [])]
         track, n = tracking(trigs)
         r = {'id': a['id'], 'kind': 'pipeline', 'name': a['name'], 'indication': a['indication'], **_head(m),
-             'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n}
+             'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n,
+             'calc': {**calc_bundle(co, mk, g, rf, value_company, scen_base, a), 'params': _params(m),
+                      'tam_patients': m['tam_patients'], 'global_mult': m.get('global_mult', 1.0)}}
+        r['calc_market'] = {'params': _params(m), 'tam_patients': m['tam_patients'], 'global_mult': m.get('global_mult', 1.0)}
         REG[a['id']] = r
         out.append(r)
 
@@ -375,7 +410,8 @@ def commercial_market(co, row, mk, g, rf, value_company, scen_base, cm, today):
     track, n = tracking(trigs)
     return {'id': 'commercial', 'kind': 'commercial', 'name': m['product'], 'indication': f"{m['product']} (상업)", **_head(m),
             'cases': cases, 'current': current, 'share': share, 'share_note': m.get('share_note', ''),
-            'triggers': trigs, 'tracking': track, 'judged': n}
+            'triggers': trigs, 'tracking': track, 'judged': n,
+            'calc': {**calc_bundle(co, mk, g, rf, value_company, scen_base), 'params': _params(m), 'tam_patients': m['tam_patients'], 'share': share}}
 
 
 def product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today):
@@ -400,7 +436,8 @@ def product_royalty(co, row, mk, g, rf, value_company, scen_base, a, m, today):
             'sam_src': m.get('sam_src', '키트루다 패밀리 전체'), 'som_name': m.get('som_name', 'Qlex'), 'share_word': m.get('share_word', '전환'),
             'som_label': f"{m.get('som_name', 'Qlex')} 매출 × 로열티 {m['rate'] * 100:.1f}%", 'price_src': m['rate_src'], 'rate': m['rate'],
             'current_share': m.get('current_share'), 'current_src': m.get('current_src'), 'display_only': bool(a.get('display_only')),
-            'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n}
+            'cases': cases, 'triggers': trigs, 'tracking': track, 'judged': n,
+            'calc': {**calc_bundle(co, mk, g, rf, value_company, scen_base, a), 'params': _params(m), 'base_sales': m['base_sales_musd'], 'rate': m['rate']}}
 
 
 def digest(companies: list, hist_path, today: str = None, keep_days: int = 21):

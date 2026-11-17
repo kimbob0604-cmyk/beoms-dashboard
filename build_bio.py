@@ -957,6 +957,9 @@ def build():
     except Exception as e:
         print(f'  국장 스크리닝 실패: {e}', file=sys.stderr)
         screen_kr = None
+    for c in companies:
+        for mm in c.get('markets') or []:
+            mm.pop('calc_market', None)
     try:
         dig = bmk.digest(companies, ROOT / '.cache' / 'bio_triggers_hist.json')
     except Exception as e:
