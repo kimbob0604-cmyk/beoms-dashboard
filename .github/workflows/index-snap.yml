@@ -1,0 +1,38 @@
+# 장중 지수 수급 스냅샷: 맥이 자는 동안에도 투자자별 누적 순매수를 snap 브랜치에 남긴다 (index_snap.py take).
+# 맥은 깨어난 뒤 index_snap.py merge 로 자기에게 없는 시각만 채운다.
+name: index-snap
+
+on:
+  schedule:
+    - cron: '*/5 0-6 * * 1-5'      # 평일 09:00~15:55 (한국 시각). GitHub 예약은 몇 분씩 늦게 돌 수 있다
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: index-snap
+  cancel-in-progress: false
+
+jobs:
+  snap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: snap 브랜치를 data 폴더로
+        run: |
+          if git fetch -q origin snap; then
+            git worktree add -q -B snap data FETCH_HEAD
+          else
+            git worktree add -q --orphan -b snap data
+          fi
+      - name: 스냅샷
+        run: python3 index_snap.py take data
+      - name: 바뀌었으면 올리기
+        run: |
+          cd data
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name=index-snap -c user.email=41898282+github-actions[bot]@users.noreply.github.com commit -qm "snap $(date -u +%FT%H:%MZ)"
+          git push -q origin snap

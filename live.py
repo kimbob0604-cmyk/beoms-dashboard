@@ -4,6 +4,7 @@
 launchd(com.kimbob.beomdashboard.live)가 10분마다 부른다. 평일에만 돈다.
 - 07:00~19:30: DART 새 공시 (장전 공시 07:30~08:50, 장후 공시 15:30~19:00 무렵이 많다), 새 증권사 리포트
 - 09:00~15:50: 지수·전 종목 시세 (신고가 탭은 이 시세로 다시 계산)
+- 09:00~ (평일): 맥이 자는 동안 GitHub Actions 가 받아 둔 지수 수급 스냅샷(snap 브랜치)으로 빈 시각을 채운다
 - 06:00~23:59 (매일): 종목별 수급이 새 거래일로 올라왔는지 1번 확인하고, 올라왔으면 전 종목 수급을 받아 다시 빌드한다.
   네이버가 KRX 종목별 투자자 매매동향을 올리는 시각이 날마다 달라서(20:20 무렵 ~ 다음 날) 정해진 실행 시각만으로는 놓친다.
 daily.py 와는 따로 돈다(잠금 파일이 다르다 — 아침 정기 실행이 길어져도 장중 갱신이 멈추지 않게). 두 쪽의 배포는 publish.py 가 차례로 한다.
@@ -86,6 +87,10 @@ def main() -> int:
             new_quotes = got(run(['collect_naver.py', 'quotes'], log))
             ok |= new_quotes
             need_naver |= new_quotes      # 신고가 탭은 이 시세로 다시 계산한다 (build_newhigh — 장중에는 잠정 판정)
+        if force or (t.weekday() < 5 and t.time() >= START):
+            # 맥이 자는 동안 GitHub Actions 가 5분마다 받아 둔 지수 수급 스냅샷으로 빈 시각을 채운다 (index_snap.py).
+            # 장 마감 뒤에 깨어나도 그날 치를 채우도록 저녁까지 확인한다. 채운 것이 있을 때만(0) 홈을 다시 만든다.
+            ok |= run(['index_snap.py', 'merge'], log) == 0
         if filings:
             ok |= got(run(['collect_dart.py'], log))
             run(['collect_dart.py', 'times', '--latest'], log)   # KIND 최신 100건 공시 시각
