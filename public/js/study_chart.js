@@ -10,7 +10,7 @@
 const SChart = (() => {
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmt = (v, dec) => v == null ? '–' : v.toLocaleString('ko-KR', { minimumFractionDigits: dec ?? 0, maximumFractionDigits: dec ?? 1 });
-  const SRC = { label: '원본 숫자 라벨을 옮김', pixel: '그림에서 픽셀로 읽음', table: '표에서 옮김', calc: '읽은 값으로 계산' };
+  const SRC = { label: '원본 숫자 라벨을 옮김', pixel: '그림에서 픽셀로 읽음', table: '표에서 옮김', calc: '읽은 값으로 계산', ext: '공개 자료 숫자 (원문 외)' };
 
   // 0 부터 max 를 덮는 눈금 (마지막 눈금이 max 보다 작으면 한 칸 더)
   function niceTicks(max, n = 4) {

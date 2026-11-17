@@ -806,5 +806,494 @@
    "wafer"
   ],
   "desc": "국내 유일 실리콘 웨이퍼 회사, 세계 3위(책: 300mm 18.1%). SK㈜ 자회사로 비상장."
+ },
+ "c:etch": {
+  "name": "에칭 (식각)",
+  "en": "Etching",
+  "desc": "포토로 그린 밑그림을 따라 필요 없는 부분을 깎아 내는 공정. 액체로 녹이는 습식(빠르고 싸지만 사방으로 퍼짐)과 기체·플라즈마로 깎는 건식(느리지만 수직으로 정확)이 있다. 지금 미세 회로는 대부분 건식."
+ },
+ "c:plasma": {
+  "name": "플라즈마",
+  "en": "Plasma",
+  "desc": "기체에 큰 에너지를 줘 전자와 이온(양전하)으로 쪼갠 상태. 고체·액체·기체에 이은 '제4의 상태'. 반도체에서는 깎기(건식 식각)와 쌓기(PECVD·스퍼터링)에 두루 쓴다."
+ },
+ "c:selectivity": {
+  "name": "선택비 · 등방성/비등방성",
+  "en": "Selectivity / isotropic vs anisotropic",
+  "desc": "선택비 = 깎아야 할 막과 남겨야 할 막을 깎는 속도의 비율(높을수록 원하는 것만 깎는다). 등방성 = 사방으로 같이 깎임(옆으로 파고듦), 비등방성 = 한 방향(아래)으로만 깎임."
+ },
+ "c:hard": {
+  "name": "고종횡비 (HAR)",
+  "en": "High Aspect Ratio",
+  "desc": "구멍·홈의 폭에 비해 깊이가 매우 큰 구조. 3D 낸드의 수백 단을 한 번에 뚫는 구멍, DRAM 커패시터, TSV가 대표적이다. 바닥까지 똑바로 깎고 빈틈없이 채우기가 어려워 식각·증착 장비의 최대 난제."
+ },
+ "c:deposition": {
+  "name": "증착 (PVD · CVD · ALD)",
+  "en": "Deposition",
+  "desc": "웨이퍼 위에 얇은 막(박막)을 쌓는 공정. PVD는 재료를 물리적으로 떼어 날려 붙이고(금속막), CVD는 기체 재료(전구체)를 표면에서 반응시켜 막을 만들고, ALD는 전구체를 한 종류씩 번갈아 넣어 원자 한 층씩 쌓는다."
+ },
+ "c:step-coverage": {
+  "name": "단차 피복성",
+  "en": "Step coverage",
+  "desc": "울퉁불퉁한 표면(단차)의 윗면과 옆면에 막이 얼마나 고르게 덮이는지. 3D 구조가 깊어질수록 중요하다. ALD > CVD > PVD."
+ },
+ "c:precursor": {
+  "name": "전구체",
+  "en": "Precursor",
+  "desc": "CVD·ALD에서 원하는 막의 재료를 실어 나르는 기체 화합물. 웨이퍼 표면에서 반응해 막이 되고 나머지는 부산물로 빠진다. 국내는 디엔에프·한솔케미칼·SK트리켐 등."
+ },
+ "c:ion-implant": {
+  "name": "이온 주입 · 어닐링",
+  "en": "Ion implantation / annealing",
+  "desc": "도펀트(붕소·인·비소)를 이온으로 만들어 전압으로 가속해 웨이퍼에 박아 넣는 도핑 방법(다트 게임 비유). 박힌 뒤 400~1,000℃로 열처리(어닐링)해 깨진 결정을 회복시키고 도펀트가 제자리를 잡게 한다."
+ },
+ "c:interconnect": {
+  "name": "금속 배선 · 다마신",
+  "en": "Metallization / damascene",
+  "desc": "트랜지스터들을 금속선으로 잇는 공정. 소자와 처음 닿는 금속이 콘택트, 그 위 여러 층 배선이 인터커넥션. 구리는 깎기 어려워 절연막에 홈을 먼저 파고 → 확산 방지막 → 구리 도금 → CMP로 홈 밖 구리를 갈아 내는 '상감(다마신)' 방식으로 만든다."
+ },
+ "c:cmp": {
+  "name": "CMP (화학적 기계 연마)",
+  "en": "Chemical Mechanical Planarization",
+  "desc": "슬러리(연마 입자 + 화학 약품)를 뿌린 패드 위에 웨이퍼를 눌러 돌려 표면을 평평하게 가는 공정. 층을 쌓을 때마다 울퉁불퉁해진 표면을 평탄하게 만들어야 다음 노광 초점과 식각 깊이가 맞는다."
+ },
+ "c:cleanroom": {
+  "name": "세정 · 클린룸 · 초순수",
+  "en": "Cleaning / cleanroom / DI water",
+  "desc": "먼지·이온 하나가 불량이 되므로 공정마다 웨이퍼를 씻고(습식·건식 세정, 지금은 한 장씩 씻는 매엽식), 공기 중 입자를 극도로 줄인 클린룸에서 만들고, 이온을 뺀 초순수(DIW)만 쓴다."
+ },
+ "c:eds": {
+  "name": "웨이퍼 테스트 · 번인 · 빈닝",
+  "en": "Wafer test (EDS) / burn-in / binning",
+  "desc": "웨이퍼 상태에서 칩마다 바늘(프로브 카드)을 대 전기 특성을 시험해 불량을 골라내고, 고온·고전압으로 초기 불량을 미리 드러내며(번인), 같은 칩도 성능별로 나눠 판다(빈닝). 시험 장비가 ATE."
+ },
+ "c:ate": {
+  "name": "ATE · 프로브 카드 · 핸들러",
+  "en": "Automatic Test Equipment",
+  "desc": "반도체를 자동으로 시험하는 장비. 웨이퍼는 프로버 + 프로브 카드(접점에 맞춘 바늘을 단 기판)로, 패키지된 칩은 핸들러가 칩을 소켓에 꽂고 성능별로 분류한다. 어드밴테스트·테라다인, 국내 테크윙·리노공업·ISC 등."
+ },
+ "c:package": {
+  "name": "패키지 (후공정)",
+  "en": "Packaging",
+  "desc": "칩을 잘라 기판에 전기로 잇고 보호재로 감싸는 공정. 역할 셋: ① µm 크기 칩 단자를 mm 크기 메인보드에 잇는 전기 통로 ② 충격·습기·온도로부터 보호 ③ 열 방출. 순서: 백그라인딩 → 다이싱 → 본딩 → 봉지 → 실장."
+ },
+ "c:wire-flip": {
+  "name": "와이어 본딩 · 플립칩",
+  "en": "Wire bonding / flip chip",
+  "desc": "칩과 기판을 잇는 두 방식. 와이어 본딩은 칩 가장자리 단자를 금선으로 리드 프레임에 잇고, 플립칩은 칩 단자에 작은 돌기(범프)를 만들어 칩을 뒤집어 기판에 바로 붙인다. 플립칩이 길이가 짧고 단자를 많이 둘 수 있어 빠르다."
+ },
+ "c:tsv": {
+  "name": "TSV (실리콘 관통 전극)",
+  "en": "Through Silicon Via",
+  "desc": "칩을 위아래로 뚫어 금속으로 채운 수직 통로. 칩을 여러 장 쌓아도 와이어 없이 짧은 길로 바로 잇는다. HBM(DRAM 8~16장 적층)의 핵심 기술."
+ },
+ "c:mount": {
+  "name": "실장 · 패키지 형태",
+  "en": "Mounting / package types",
+  "desc": "패키지를 메인보드에 붙이는 방식. 구멍에 다리를 꽂는 삽입 실장(DIP·PGA)에서 표면에 얹는 표면 실장(SOP·QFP·LGA·BGA)으로 바뀌었다. 단자를 많이 두려고 다리가 두 변 → 네 변 → 바닥 전체(볼·랜드)로 옮겨 갔다."
+ },
+ "c:wlp": {
+  "name": "웨이퍼 레벨 패키지 (FI · FO · PLP)",
+  "en": "Wafer/Panel-Level Packaging",
+  "desc": "웨이퍼째로 패키지를 만든 뒤 자르는 방식. 칩 면적 안에만 단자를 두면 팬인(FIWLP), 칩을 띄엄띄엄 다시 배치해 칩보다 넓게 단자를 펼치면 팬아웃(FOWLP), 원형 대신 사각 패널을 쓰면 FOPLP."
+ },
+ "c:mcp-pop": {
+  "name": "MCP · PoP",
+  "en": "Multi-Chip Package / Package-on-Package",
+  "desc": "MCP는 칩 여러 개를 쌓아 한 패키지로, PoP는 각각 패키지한 것을 위아래로 쌓아 다시 묶는다. 스마트폰 AP 위에 DRAM을 얹는 것이 PoP의 대표 예."
+ },
+ "co:lam": {
+  "name": "램리서치",
+  "en": "Lam Research",
+  "ticker": "LRCX",
+  "semi": [
+   "etch"
+  ],
+  "desc": "식각 장비 1위(책: 에칭 약 50%, 증착 약 20%). 3D 낸드 고종횡비 식각에 특히 강하다."
+ },
+ "co:tel": {
+  "name": "도쿄일렉트론",
+  "en": "Tokyo Electron",
+  "ticker": "8035.T",
+  "semi": [
+   "etch"
+  ],
+  "desc": "일본 최대 장비 회사(책: 에칭 약 30%, 증착 약 15%). 감광액 코팅·현상 장비(트랙)는 사실상 독점."
+ },
+ "co:amat": {
+  "name": "어플라이드 머티어리얼즈",
+  "en": "Applied Materials",
+  "ticker": "AMAT",
+  "semi": [
+   "dep"
+  ],
+  "desc": "세계 최대 반도체 장비 회사(책: 증착 약 40%, 에칭 약 20%). 증착·식각·CMP·이온 주입 등 노광을 뺀 거의 모든 공정 장비를 만든다."
+ },
+ "co:wonik-ips": {
+  "name": "원익IPS",
+  "en": "Wonik IPS",
+  "code": "240810",
+  "semi": [
+   "dep"
+  ],
+  "desc": "국내 대표 증착(CVD·ALD) 장비 회사(책: 세메스 다음 국내 장비사, 점유율 1% 안팎)."
+ },
+ "co:jusung": {
+  "name": "주성엔지니어링",
+  "en": "Jusung Engineering",
+  "code": "036930",
+  "semi": [
+   "dep"
+  ],
+  "add": true,
+  "desc": "ALD·CVD 증착 장비 회사. 책에는 나오지 않는다(ALD 설명에 덧붙인 연결)."
+ },
+ "co:psk": {
+  "name": "피에스케이",
+  "en": "PSK",
+  "code": "319660",
+  "semi": [
+   "etch"
+  ],
+  "add": true,
+  "desc": "감광층 제거(드라이 스트립) 장비 세계 1위권 국내 회사. 책에는 나오지 않는다."
+ },
+ "co:kctech": {
+  "name": "케이씨텍",
+  "en": "KCTech",
+  "code": "281820",
+  "semi": [
+   "cmp"
+  ],
+  "desc": "국내 CMP 장비·슬러리 회사(책 4부: CMP 슬러리 제작사로 언급)."
+ },
+ "co:soulbrain": {
+  "name": "솔브레인",
+  "en": "Soulbrain",
+  "code": "357780",
+  "semi": [
+   "chem"
+  ],
+  "desc": "식각액(불산 등)·CMP 슬러리를 만드는 국내 소재 회사(책 4부: 슬러리 제작사)."
+ },
+ "co:dnf": {
+  "name": "디엔에프",
+  "en": "DNF",
+  "code": "092070",
+  "semi": [
+   "prec"
+  ],
+  "add": true,
+  "desc": "박막 증착용 전구체를 만드는 국내 회사. 책에는 나오지 않는다(전구체 설명에 덧붙인 연결)."
+ },
+ "co:advantest": {
+  "name": "어드밴테스트",
+  "en": "Advantest",
+  "ticker": "6857.T",
+  "semi": [
+   "test"
+  ],
+  "desc": "반도체 테스터(ATE) 세계 1위 일본 회사. AI 칩·HBM 시험 장비 수요로 크게 성장했다."
+ },
+ "co:leeno": {
+  "name": "리노공업",
+  "en": "LEENO Industrial",
+  "code": "058470",
+  "semi": [
+   "socket"
+  ],
+  "add": true,
+  "desc": "테스트 소켓·검사용 핀(리노핀) 회사. 책에는 나오지 않는다(테스트 설명에 덧붙인 연결)."
+ },
+ "co:techwing": {
+  "name": "테크윙",
+  "en": "Techwing",
+  "code": "089030",
+  "semi": [
+   "test"
+  ],
+  "add": true,
+  "desc": "메모리 테스트 핸들러 회사. 책에는 나오지 않는다."
+ },
+ "co:hanmi": {
+  "name": "한미반도체",
+  "en": "Hanmi Semiconductor",
+  "code": "042700",
+  "semi": [
+   "bond"
+  ],
+  "add": true,
+  "desc": "HBM을 쌓는 TC 본더 장비로 유명한 후공정 장비 회사. 책에는 나오지 않는다(TSV·적층 설명에 덧붙인 연결)."
+ },
+ "co:nepes": {
+  "name": "네패스",
+  "en": "Nepes",
+  "code": "033640",
+  "semi": [
+   "pkg"
+  ],
+  "add": true,
+  "desc": "범핑·웨이퍼 레벨 패키지(팬아웃) 국내 회사. 책에는 나오지 않는다."
+ },
+ "co:haesung": {
+  "name": "해성디에스",
+  "en": "Haesung DS",
+  "code": "195870",
+  "semi": [
+   "sub"
+  ],
+  "add": true,
+  "desc": "리드 프레임과 패키지 기판을 만드는 국내 회사. 책에는 나오지 않는다(리드 프레임 설명에 덧붙인 연결)."
+ },
+ "co:semco": {
+  "name": "삼성전기",
+  "en": "Samsung Electro-Mechanics",
+  "code": "009150",
+  "semi": [
+   "sub"
+  ],
+  "add": true,
+  "desc": "플립칩용 고급 패키지 기판(FC-BGA)과 MLCC를 만든다. 책에는 나오지 않는다(플립칩·PCB 설명에 덧붙인 연결)."
+ },
+ "c:compound": {
+  "name": "화합물 반도체 (SiC · GaN)",
+  "en": "Compound semiconductor",
+  "desc": "실리콘 한 원소가 아니라 두 원소 이상을 합친 반도체(탄화규소 SiC, 질화갈륨 GaN, 갈륨비소 GaAs 등). 높은 전압·온도·주파수를 견뎌 전기차 인버터·충전기(SiC·GaN), 통신 증폭기(GaN·GaAs)에 쓴다."
+ },
+ "c:auto-chip": {
+  "name": "차량용 반도체",
+  "en": "Automotive semiconductor",
+  "desc": "자동차에 들어가는 MCU·전력 반도체·센서 등. 대부분 성숙 공정이고 신뢰성 기준이 까다롭다. 인피니언·NXP·르네사스·ST·TI가 강자. 2021년 공급 부족으로 완성차 생산이 멈췄다."
+ },
+ "c:chip-policy": {
+  "name": "반도체 산업 정책",
+  "en": "Semiconductor industrial policy",
+  "desc": "보조금·세액 공제·수출 통제로 자국 생산을 늘리고 경쟁국을 견제하는 정책. 미국 CHIPS법(2022)·대중국 수출 통제, 한국 K-칩스법, 일본 라피더스·TSMC 유치, EU 칩스법, 중국 대기금 등."
+ },
+ "c:graphene": {
+  "name": "그래핀",
+  "en": "Graphene",
+  "desc": "탄소 원자 한 층(두께 약 0.3nm)으로 된 꿈의 소재. 강철보다 강하고 전기·열이 아주 잘 통하지만, 크게 만들기 어렵고 전류를 끄는 스위치 성질(밴드갭)이 없어 아직 트랜지스터를 대신하지 못한다."
+ },
+ "co:ti": {
+  "name": "TI (텍사스 인스트루먼트)",
+  "en": "Texas Instruments",
+  "ticker": "TXN",
+  "semi": [
+   "analog"
+  ],
+  "desc": "아날로그·임베디드(MCU·PMIC) 1위 IDM(책: IDM 5위, 2021년 19.9조 원). 킬비가 첫 IC를 만든 회사. 공학용 계산기로도 유명."
+ },
+ "co:infineon": {
+  "name": "인피니언",
+  "en": "Infineon",
+  "ticker": "IFX.DE",
+  "semi": [
+   "analog"
+  ],
+  "desc": "독일의 차량용·전력 반도체 1위(책: 차량용 14.1%, 2020)."
+ },
+ "co:nxp": {
+  "name": "NXP",
+  "en": "NXP Semiconductors",
+  "ticker": "NXPI",
+  "desc": "네덜란드의 차량용 반도체 2위(책: 11.2%). 차량용 MCU·통신 칩."
+ },
+ "co:renesas": {
+  "name": "르네사스",
+  "en": "Renesas Electronics",
+  "ticker": "6723.T",
+  "desc": "일본 최대 시스템 반도체 회사, 차량용 MCU 강자(책: 차량용 9.3%). 2021년 공장 화재가 차량용 반도체 품귀를 키웠다."
+ },
+ "co:stm": {
+  "name": "ST마이크로",
+  "en": "STMicroelectronics",
+  "ticker": "STM",
+  "desc": "프랑스·이탈리아 합작 반도체 회사. 차량용·산업용 MCU와 SiC 전력 반도체(책: 차량용 7.8%)."
+ },
+ "co:onsemi": {
+  "name": "온세미",
+  "en": "onsemi",
+  "ticker": "ON",
+  "desc": "미국의 전력·이미지 센서 반도체 회사(책: 차량용 5.0%). SiC 전력 반도체 강자. 페어차일드를 인수했다."
+ },
+ "co:broadcom": {
+  "name": "브로드컴",
+  "en": "Broadcom",
+  "ticker": "AVGO",
+  "semi": [
+   "asic"
+  ],
+  "desc": "통신 칩(Wi-Fi·블루투스·이더넷 스위치) 팹리스(책: 팹리스 3위). 책 이후 구글 TPU 등 빅테크 맞춤형 AI 칩(ASIC) 설계로 크게 성장했다."
+ },
+ "co:marvell": {
+  "name": "마벨",
+  "en": "Marvell Technology",
+  "ticker": "MRVL",
+  "semi": [
+   "asic"
+  ],
+  "desc": "데이터센터용 통신·저장 칩과 맞춤형 AI 칩을 설계하는 팹리스(책: 팹리스 7위)."
+ },
+ "co:novatek": {
+  "name": "노바텍",
+  "en": "Novatek",
+  "ticker": "3034.TW",
+  "desc": "대만의 디스플레이 구동칩(DDI) 1위권 팹리스(책: 팹리스 6위)."
+ },
+ "co:realtek": {
+  "name": "리얼텍",
+  "en": "Realtek",
+  "ticker": "2379.TW",
+  "desc": "대만 팹리스. 오디오·네트워크(랜) 칩, IPTV 셋톱 SoC, SSD 컨트롤러(책: 팹리스 8위)."
+ },
+ "co:himax": {
+  "name": "하이맥스",
+  "en": "Himax",
+  "ticker": "HIMX",
+  "desc": "대만의 디스플레이 구동·영상 처리 칩 팹리스(책: 팹리스 10위)."
+ },
+ "co:rambus": {
+  "name": "램버스",
+  "en": "Rambus",
+  "ticker": "RMBS",
+  "semi": [
+   "ip"
+  ],
+  "desc": "메모리 인터페이스 IP·칩 회사. 1990~2000년대 DRAM 특허 소송으로 '특허 괴물'이라는 반감을 사 업계가 자기 방식(RDRAM) 대신 DDR을 표준으로 택했다(책). 지금은 DDR5 모듈용 인터페이스 칩이 주력."
+ },
+ "co:kla": {
+  "name": "KLA",
+  "en": "KLA",
+  "ticker": "KLAC",
+  "semi": [
+   "metro"
+  ],
+  "desc": "공정 계측·검사 장비 1위(책: 장비 5위). 웨이퍼·마스크의 결함과 치수를 재 수율을 관리한다."
+ },
+ "co:teradyne": {
+  "name": "테라다인",
+  "en": "Teradyne",
+  "ticker": "TER",
+  "semi": [
+   "test"
+  ],
+  "desc": "미국 반도체 테스터(ATE) 회사(책: 장비 8위). 어드밴테스트와 양강."
+ },
+ "co:screen": {
+  "name": "스크린",
+  "en": "SCREEN Holdings",
+  "ticker": "7735.T",
+  "semi": [
+   "clean"
+  ],
+  "desc": "일본의 웨이퍼 세정 장비 1위 회사(책: 장비 7위)."
+ },
+ "co:asm": {
+  "name": "ASM 인터내셔널",
+  "en": "ASM International",
+  "ticker": "ASM.AS",
+  "semi": [
+   "dep"
+  ],
+  "desc": "네덜란드의 ALD·에피 증착 장비 강자(책: 장비 10위). GAA 시대에 ALD 수요로 커졌다."
+ },
+ "co:powertech": {
+  "name": "파워텍",
+  "en": "Powertech Technology",
+  "ticker": "6239.TW",
+  "semi": [
+   "pkg"
+  ],
+  "desc": "대만의 메모리 전문 OSAT(책: 2021년 3분기 5위)."
+ },
+ "co:hoya": {
+  "name": "호야",
+  "en": "HOYA",
+  "ticker": "7741.T",
+  "semi": [
+   "photo"
+  ],
+  "desc": "블랭크 마스크 1위 일본 회사(책: 2020년 27.9%). EUV용 블랭크 마스크를 AGC와 사실상 둘이 나눠 갖는다."
+ },
+ "co:agc": {
+  "name": "AGC",
+  "en": "AGC (구 아사히글라스)",
+  "ticker": "5201.T",
+  "desc": "일본 유리 회사. 블랭크 마스크 2위(책: 24.6%)·쿼츠 유리."
+ },
+ "co:tok": {
+  "name": "TOK (도쿄오카공업)",
+  "en": "Tokyo Ohka Kogyo",
+  "ticker": "4186.T",
+  "semi": [
+   "photo"
+  ],
+  "desc": "감광액(포토레지스트) 강자. 책: EUV용 감광액은 TOK·JSR·신에츠 3사 과점."
+ },
+ "co:jsr": {
+  "name": "JSR",
+  "en": "JSR",
+  "listed": false,
+  "desc": "일본 감광액 회사. 2024년 일본 정부계 펀드(JIC)에 인수돼 상장 폐지됐다."
+ },
+ "co:siltronic": {
+  "name": "실트로닉",
+  "en": "Siltronic",
+  "ticker": "WAF.DE",
+  "semi": [
+   "wafer"
+  ],
+  "desc": "독일 웨이퍼 회사(책: 300mm 14.1%, 4위)."
+ },
+ "co:globalwafers": {
+  "name": "글로벌웨이퍼스",
+  "en": "GlobalWafers",
+  "ticker": "6488.TWO",
+  "semi": [
+   "wafer"
+  ],
+  "desc": "대만 웨이퍼 회사(책: 300mm 11.6%, 5위). 미국 텍사스에 300mm 공장을 지었다."
+ },
+ "co:semes": {
+  "name": "세메스",
+  "en": "SEMES",
+  "listed": false,
+  "semi": [
+   "clean"
+  ],
+  "desc": "삼성전자 자회사인 국내 최대 장비 회사(책: 2020년 장비 13위). 세정·트랙·테스트 장비. 비상장."
+ },
+ "c:hbm": {
+  "name": "HBM (고대역폭 메모리)",
+  "en": "High Bandwidth Memory",
+  "add": true,
+  "desc": "DRAM 칩 8~16장을 TSV로 수직으로 쌓고 맨 아래 로직 칩(베이스 다이)을 단 메모리. GPU 바로 옆에 붙여 통로를 1,024개(HBM4는 2,048개)로 넓혀 AI 연산에 필요한 데이터를 한꺼번에 나른다. 세대: HBM3 → HBM3E → HBM4(2026~). 책에는 없다."
+ },
+ "c:adv-pkg": {
+  "name": "첨단 패키징 (2.5D · CoWoS · 칩렛)",
+  "en": "Advanced packaging",
+  "add": true,
+  "desc": "칩 여러 개를 한 패키지에 묶는 기술. 2.5D는 실리콘 인터포저(가는 배선을 깐 실리콘 판) 위에 GPU와 HBM을 나란히 올려 잇는다 — TSMC의 CoWoS가 대표. 큰 칩을 기능별 작은 칩(칩렛)으로 나눠 만들고 다시 묶는 것도 같은 흐름. 책에는 없다."
+ },
+ "c:hybrid-bonding": {
+  "name": "하이브리드 본딩",
+  "en": "Hybrid bonding",
+  "add": true,
+  "desc": "범프 없이 칩 표면의 구리 패드끼리, 절연막끼리 직접 붙이는 접합. 범프보다 훨씬 촘촘히 이을 수 있어 HBM 고단 적층·로직 칩 적층에 도입이 추진되고 있다. 책에는 없다."
+ },
+ "co:cxmt": {
+  "name": "CXMT (창신메모리)",
+  "en": "ChangXin Memory Technologies",
+  "listed": false,
+  "add": true,
+  "desc": "중국 DRAM 회사. 정부 지원으로 범용 DRAM을 빠르게 늘려 2026년 2분기 세계 DRAM 매출 4위(TrendForce 기준 9.5%)에 올랐다. 책에는 없다."
+ },
+ "co:ymtc": {
+  "name": "YMTC (창장메모리)",
+  "en": "Yangtze Memory Technologies",
+  "listed": false,
+  "add": true,
+  "desc": "중국 낸드 회사. 미국 제재(2022) 속에서도 자체 3D 낸드를 키웠다. 책(4부)은 '6년 넘게 살아남은 곳'으로만 언급한다."
  }
 }

@@ -60,8 +60,8 @@ def check_chart(ch):
             out.append('점이 없음')
     else:
         out.append(f'모르는 종류 {t}')
-    if ch.get('src') not in ('label', 'pixel', 'table', 'calc'):
-        out.append('src 는 label·pixel·table·calc 중 하나')
+    if ch.get('src') not in ('label', 'pixel', 'table', 'calc', 'ext'):
+        out.append('src 는 label·pixel·table·calc·ext 중 하나')
     return out
 
 
