@@ -1,0 +1,989 @@
+{
+ "_": "삼성·SK하이닉스·마이크론 팹·패키징 증설 트래커 (docs/semi-plan.md §5.2). 손으로 관리 — 단계·날짜마다 출처. dart = 그 팹과 연결한 DART 신규시설투자 공시 접수번호(semi.db orders). stage 순서: 계획 → 착공 → 셸 공사 → 클린룸 → 장비 반입 → 램프 → 풀가동.",
+ "as_of": "2026-11-17",
+ "note": "stage_basis 가 '추정'인 행은 단계 판정이 보도 종합에 의한 필자 추정. 'src' 가 검색 요약 그룹만 있는 항목은 원문 직접 열람 미확인.",
+ "fabs": [
+  {
+   "id": "SEC-P4",
+   "co": "삼성전자",
+   "site": "평택 P4",
+   "product": "DRAM 1c·HBM4 (일부 파운드리 구성 검토 이력)",
+   "invest": "미확보 (금액 미공개)",
+   "stage": "장비 반입",
+   "stage_basis": "추정: Ph3 상반기·Ph4 하반기 전공정 셋업 보도 + 올해 완공 예상 보도",
+   "stages": [
+    {
+     "s": "착공(재개 후 Ph2~Ph4 투자)",
+     "d": "2025 하반기",
+     "src": "https://www.ddaily.co.kr/page/view/2025110714584155028"
+    },
+    {
+     "s": "장비 반입(Ph3→Ph4)",
+     "d": "2026 진행 중(Ph4 하반기 완료 예상)",
+     "src": "https://m.ddaily.co.kr/page/view/2026022415344369085"
+    },
+    {
+     "s": "라인 완공",
+     "d": "2026 내 예상(머니투데이) / 2027-02 목표(다른 보도)",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    }
+   ],
+   "capa": "P4 총 월 10~12만장(2026-02 보도) / Ph4 구축 시 1c 월 8만장(2025-11 보도) / 해외매체 월 약 20만장(신뢰도 낮음, 제외 권고)",
+   "tool_in": "2026-H2 Ph4 전공정 셋업 완료 예상(근거: ddaily 2026-02 보도). 추가 후공정·1c 증설분은 미확보",
+   "latest": {
+    "t": "P4 완공·월 약 10만장 추가 확보 예상, 삼성 메모리 캐파 월 65만→135만장 3년 내 확대 전망(산업부 인용)",
+    "d": "2026-06-29",
+    "src": "https://www.mt.co.kr/article/2026062914090099240"
+   },
+   "conflicts": [
+    "P4 캐파: 10~12만(2026-02) vs 8만(2025-11) vs 20만(해외매체)",
+    "완공: 2026 내(머니투데이 2026-06-29) vs 2027-02(ddaily 계열 보도)"
+   ]
+  },
+  {
+   "id": "SEC-P5-F1",
+   "co": "삼성전자",
+   "site": "평택 P5 Fab1",
+   "product": "DRAM 1c·HBM4 이후 세대(용도 미확정)",
+   "invest": "P5 전체 60~80조 추정(보도 추정치, 원문 URL 미특정)",
+   "stage": "셸 공사",
+   "stage_basis": "머니투데이: 2025년 착공, 장비 반입 2027-07 예정",
+   "stages": [
+    {
+     "s": "착공(공사 재개)",
+     "d": "2025",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    },
+    {
+     "s": "장비 반입",
+     "d": "2027-07 예정",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    },
+    {
+     "s": "가동",
+     "d": "2028 예정(3월설 / 하반기설)",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    }
+   ],
+   "capa": "Fab당 약 월 30만장(300mm 기준, 머니투데이 인용 수치. 계획치)",
+   "tool_in": "2027-07 (머니투데이 2026-06-29, 산업부 자료 인용)",
+   "latest": {
+    "t": "Fab1 2028·Fab2 2029 가동 예상, 두 Fab 동시 건설로 일정 3~4년 단축",
+    "d": "2026-06-29",
+    "src": "https://www.mt.co.kr/article/2026062914090099240"
+   },
+   "conflicts": [
+    "가동 시점: 2028-03(일부 보도) vs 2028 하반기(다른 보도)",
+    "투자액 60~80조는 업계 추정이며 삼성 공식 발표 아님"
+   ]
+  },
+  {
+   "id": "SEC-P5-F2",
+   "co": "삼성전자",
+   "site": "평택 P5 Fab2",
+   "product": "DRAM(용도 미확정)",
+   "invest": "P5 전체 60~80조 추정에 포함",
+   "stage": "착공",
+   "stage_basis": "기초공사 2026-07 시작 예정(머니투데이)",
+   "stages": [
+    {
+     "s": "기초공사 시작",
+     "d": "2026-07 (당초 계획보다 6개월 이상 앞당김)",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    },
+    {
+     "s": "가동",
+     "d": "2029 예상",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    }
+   ],
+   "capa": "약 월 30만장(계획치)",
+   "tool_in": "미확보 (Fab1 장비 반입 2027-07 이후 순차 추정)",
+   "latest": {
+    "t": "Fab2 기초공사 7월 착수 예정으로 앞당김",
+    "d": "2026-06-29",
+    "src": "https://www.mt.co.kr/article/2026062914090099240"
+   },
+   "conflicts": []
+  },
+  {
+   "id": "SEC-ONYANG",
+   "co": "삼성전자",
+   "site": "온양캠퍼스(아산) 라인5",
+   "product": "HBM 첨단 패키징",
+   "invest": "46조원(건설 6조 + 장비 40조)",
+   "stage": "착공",
+   "stage_basis": "착공식 2026-11-12",
+   "stages": [
+    {
+     "s": "착공식",
+     "d": "2026-11-12",
+     "src": "https://news.bizwatch.co.kr/article/industry/2026/11/13/0010"
+    },
+    {
+     "s": "가동",
+     "d": "2028-06 목표(공사 1년 앞당김)",
+     "src": "https://news.bizwatch.co.kr/article/industry/2026/11/13/0010"
+    }
+   ],
+   "capa": "미확보 (클린룸 3층 약 3.1만㎡)",
+   "tool_in": "미확보 (가동 2028-06 목표에서 역산 시 2027 하반기~2028 상반기 추정)",
+   "latest": {
+    "t": "온양 신공장 착공식, 충청권 144조 투자 중 삼성전자 60조",
+    "d": "2026-11-13",
+    "src": "https://news.bizwatch.co.kr/article/industry/2026/11/13/0010"
+   },
+   "conflicts": [
+    "양산 시점: 가동 2028-06(비즈워치) vs HBM 양산 2029-05 언급(일부 보도, 원문 미확인)"
+   ]
+  },
+  {
+   "id": "SEC-CHEONAN",
+   "co": "삼성전자",
+   "site": "천안 (HBM 후공정)",
+   "product": "HBM 패키징",
+   "invest": null,
+   "stage": null,
+   "stage_basis": "미확보",
+   "stages": [
+    {
+     "s": "패키징 공정 증설 협약",
+     "d": "2024-11 (충남도 협약, 2027년까지 증설 언급)",
+     "src": "https://www.newsis.com/view/NISX20260703_0003695519"
+    }
+   ],
+   "capa": null,
+   "tool_in": null,
+   "latest": {
+    "t": "천안은 HBM 대응 설비 증설·라인 현대화 보도(상세 금액·일정 미확보)",
+    "d": "2026-07-03",
+    "src": "https://www.newsis.com/view/NISX20260703_0003695519"
+   },
+   "conflicts": []
+  },
+  {
+   "id": "SEC-PTK-PKG",
+   "co": "삼성전자",
+   "site": "평택 첨단 패키징",
+   "product": "HBM·2.5D/3D 패키징",
+   "invest": null,
+   "stage": null,
+   "stage_basis": "미확보 (검색에서 구체 보도 없음)",
+   "stages": [],
+   "capa": null,
+   "tool_in": null,
+   "latest": null,
+   "conflicts": []
+  },
+  {
+   "id": "SEC-TAYLOR",
+   "co": "삼성전자",
+   "site": "미국 텍사스 테일러 Fab1(Fab2 계획)",
+   "product": "파운드리 2nm(GAA), 테슬라 AI5/AI6",
+   "invest": "370억 달러 이상(ddaily 보도, 총 계획)",
+   "stage": "장비 반입",
+   "stage_basis": "장비 반입·시운전 단계, 2026년 말 양산 준비 완료 목표",
+   "stages": [
+    {
+     "s": "EUV 시험 가동",
+     "d": "2026-03 예정",
+     "src": "https://biz.sbs.co.kr/amp/article/20000286262"
+    },
+    {
+     "s": "양산 준비 완료",
+     "d": "2026 말 예정",
+     "src": "https://www.koreatimes.co.kr/amp/business/tech-science/20260420/samsungs-taylor-plant-to-begin-operations-with-tesla-chips-ready-for-fabrication"
+    },
+    {
+     "s": "2nm 본격 양산",
+     "d": "2027 예정(테슬라향)",
+     "src": "https://www.ddaily.co.kr/page/view/2026081915021003509"
+    },
+    {
+     "s": "Fab2 착공",
+     "d": "2026 말까지 준비 / 양산 2030 목표",
+     "src": "https://www.koreatimes.co.kr/amp/business/tech-science/20260420/samsungs-taylor-plant-to-begin-operations-with-tesla-chips-ready-for-fabrication"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "진행 중(Fab1). Fab2 장비 반입은 미확보",
+   "latest": {
+    "t": "3분기 콜: 테일러 건설 마무리·장비 투자 추진, 2nm 수주 확대 및 미국 추가 증설 검토",
+    "d": "2026-10-29",
+    "src": "https://news.mtn.co.kr/article/2026102911463093858"
+   },
+   "conflicts": [
+    "양산 시점: 2026 말 준비 완료(회사 설명) vs 2027 본격 양산(보도) vs 2027로 지연(TrendForce 2026-03 보도)"
+   ]
+  },
+  {
+   "id": "SEC-HWA-GIH",
+   "co": "삼성전자",
+   "site": "화성·기흥 일부 라인(화성 17라인 등) 1c 전환",
+   "product": "DRAM 1c(HBM 대응)",
+   "invest": "미확보",
+   "stage": "계획",
+   "stage_basis": "2026-10 보도: 전환 투자 검토 중",
+   "stages": [
+    {
+     "s": "전환 투자 검토",
+     "d": "2026-10",
+     "src": "https://m.ddaily.co.kr/page/view/2026041200100447653"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "미확보",
+   "latest": {
+    "t": "평택 P4 외 화성·기흥 일부 라인도 HBM 대응 1c 전환 검토(업계 보도, 원문 미확인)",
+    "d": "2026-10",
+    "src": "https://m.ddaily.co.kr/page/view/2026041200100447653"
+   },
+   "conflicts": [
+    "출처 URL이 검색 요약 그룹 기반이라 기사 날짜 재확인 필요"
+   ]
+  },
+  {
+   "id": "SKH-M15X",
+   "co": "SK하이닉스",
+   "site": "청주 M15X",
+   "product": "HBM·차세대 DRAM(HBM4)",
+   "invest": "미확보 (금액 미제시)",
+   "stage": "램프",
+   "stage_basis": "클린룸 2025-10 오픈, 웨이퍼 투입 2026 1Q, 2026년 말까지 캐파 최대화",
+   "stages": [
+    {
+     "s": "클린룸 오픈(조기)",
+     "d": "2025-10",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    },
+    {
+     "s": "웨이퍼 투입",
+     "d": "2026 1Q",
+     "src": "https://www.mt.co.kr/article/2026062914090099240"
+    },
+    {
+     "s": "캐파 최대화",
+     "d": "2026 말 예정",
+     "src": "https://stockhub.kr/en/insights/view_1793152574975_d6cb11f87d-20261028-000660-cy26q3-earnings-call"
+    }
+   ],
+   "capa": "완전 가동 시 월 약 8만장 추가(기존 약 55만장)",
+   "tool_in": "진행 중(2025-10 이후, 2026 말까지 캐파 최대화)",
+   "latest": {
+    "t": "3분기 콜: M15X HBM4 램프가 4Q DRAM 출하 증가 요인, 2026 말 캐파 최대화",
+    "d": "2026-10-28",
+    "src": "https://stockhub.kr/en/insights/view_1793152574975_d6cb11f87d-20261028-000660-cy26q3-earnings-call"
+   },
+   "conflicts": [],
+   "dart": [
+    {
+     "r": "20240424800596",
+     "note": null
+    }
+   ]
+  },
+  {
+   "id": "SKH-M16",
+   "co": "SK하이닉스",
+   "site": "이천 M16 전환",
+   "product": "DRAM",
+   "invest": null,
+   "stage": null,
+   "stage_basis": "미확보 (2026 콜·보도에서 M16 언급 확인 못함)",
+   "stages": [],
+   "capa": null,
+   "tool_in": null,
+   "latest": null,
+   "conflicts": []
+  },
+  {
+   "id": "SKH-Y1",
+   "co": "SK하이닉스",
+   "site": "용인 클러스터 Y1(1기 팹)",
+   "product": "HBM·차세대 DRAM",
+   "invest": "약 31조원(기존 9.4조 + 추가 21.6조, 클린룸 Ph2~6 포함, 투자기간 2026-03~2030-12)",
+   "stage": "셸 공사",
+   "stage_basis": "추정: 착공 2025-02, 첫 클린룸 오픈 2027-02 예정",
+   "stages": [
+    {
+     "s": "착공",
+     "d": "2025-02",
+     "src": "https://www.kyeonggi.com/article/20250225580289"
+    },
+    {
+     "s": "유틸리티 인프라(전력·용수 공정률 99%)",
+     "d": "2026-08",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    },
+    {
+     "s": "첫 클린룸 오픈",
+     "d": "2027-02 예정(당초 2027-05에서 3개월 앞당김)",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    },
+    {
+     "s": "나머지 클린룸 5개",
+     "d": "~2030 말 예정(단계적)",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    }
+   ],
+   "capa": "클린룸 6개 × 월 약 6만장 = 최대 약 36만장(머니투데이 계획치)",
+   "tool_in": "추정: 2027-02 클린룸 오픈 직후 2027 상반기 (근거: 첫 클린룸 오픈 2027-02, 7월 콜 '오픈 후 캐파 확대')",
+   "latest": {
+    "t": "3분기 콜: 2027년 설비투자 크게 증가, 용인 1기 가동 시작 연동, 용인·M17 셸 공사 선행",
+    "d": "2026-10-28",
+    "src": "https://stockhub.kr/en/insights/view_1793152574975_d6cb11f87d-20261028-000660-cy26q3-earnings-call"
+   },
+   "conflicts": [
+    "첫 클린룸: 2027-02(메트로신문 2026-10-22) vs 2027 Q1(머니투데이 2026-06-29)(실질 동일) vs 당초 준공 목표 2027-05"
+   ],
+   "dart": [
+    {
+     "r": "20240726800615",
+     "note": null
+    },
+    {
+     "r": "20260225801974",
+     "note": null
+    }
+   ]
+  },
+  {
+   "id": "SKH-Y2",
+   "co": "SK하이닉스",
+   "site": "용인 클러스터 Y2(2기 팹)",
+   "product": "D램",
+   "invest": "35조2246억원(이사회 2026-08, 투자기간 ~2031-10)",
+   "stage": "계획",
+   "stage_basis": "착공 2027-07 예정",
+   "stages": [
+    {
+     "s": "이사회 승인",
+     "d": "2026-08",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    },
+    {
+     "s": "착공",
+     "d": "2027-07 예정",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    },
+    {
+     "s": "첫 클린룸",
+     "d": "2029-06 예정",
+     "src": "https://www.metroseoul.co.kr/article/20261022500509"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2029 상반기 이후 (첫 클린룸 2029-06 기준)",
+   "latest": {
+    "t": "Y2 건설비 35.2조 이사회 승인, 용인 클러스터 총 600조원 단계 투자 발표(2026-06)",
+    "d": "2026-08",
+    "src": "https://www.metroseoul.co.kr/article/20261022500509"
+   },
+   "conflicts": [],
+   "dart": [
+    {
+     "r": "20260807800613",
+     "note": null
+    }
+   ]
+  },
+  {
+   "id": "SKH-M17",
+   "co": "SK하이닉스",
+   "site": "청주 M17",
+   "product": "NAND",
+   "invest": "19.1조원(이사회 2026-08-07, ~2031-04) / 청주 100조 계획 중 M17 80조(2026-07 발표)",
+   "stage": "계획",
+   "stage_basis": "착공 2027-02 예정",
+   "stages": [
+    {
+     "s": "투자 발표(청주 100조)",
+     "d": "2026-07-02",
+     "src": "https://news.mtn.co.kr/news-detail/2026070212185528232"
+    },
+    {
+     "s": "이사회 결의",
+     "d": "2026-08-07",
+     "src": "https://biz.newdaily.co.kr/site/data/html/2026/08/07/2026080700207.html"
+    },
+    {
+     "s": "착공",
+     "d": "2027-02 예정",
+     "src": "https://biz.newdaily.co.kr/site/data/html/2026/08/07/2026080700207.html"
+    },
+    {
+     "s": "첫 클린룸",
+     "d": "2028-12 예정",
+     "src": "https://biz.newdaily.co.kr/site/data/html/2026/08/07/2026080700207.html"
+    },
+    {
+     "s": "가동",
+     "d": "2029 상반기 목표(7월 발표)",
+     "src": "https://news.mtn.co.kr/news-detail/2026070212185528232"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2028-12 첫 클린룸 이후 2029 상반기 (근거: 이사회 일정)",
+   "latest": {
+    "t": "10년 만의 낸드 증설, M17 19.1조 결의",
+    "d": "2026-08-07",
+    "src": "https://biz.newdaily.co.kr/site/data/html/2026/08/07/2026080700207.html"
+   },
+   "conflicts": [
+    "M17 금액: 80조(2026-07, 장기 총계획) vs 19.1조(2026-08, 이사회 1단계 결의). 범위 차이로 추정되나 원문 미확인"
+   ],
+   "dart": [
+    {
+     "r": "20260807800602",
+     "note": null
+    }
+   ]
+  },
+  {
+   "id": "SKH-PT7",
+   "co": "SK하이닉스",
+   "site": "청주 P&T7",
+   "product": "HBM 첨단 패키징(WT·WLP)",
+   "invest": "19조원",
+   "stage": "착공",
+   "stage_basis": "착공식 2026-04-22",
+   "stages": [
+    {
+     "s": "투자 발표",
+     "d": "2026-01-13",
+     "src": "https://www.hankyung.com/article/202601137705i"
+    },
+    {
+     "s": "착공식",
+     "d": "2026-04-22",
+     "src": "https://www.ddaily.co.kr/page/view/2026042214032443741"
+    },
+    {
+     "s": "WT 라인 준공",
+     "d": "2027-10 예정",
+     "src": "https://www.ddaily.co.kr/page/view/2026042214032443741"
+    },
+    {
+     "s": "WLP 라인 준공",
+     "d": "2028-02 예정",
+     "src": "https://www.ddaily.co.kr/page/view/2026042214032443741"
+    }
+   ],
+   "capa": "미확보 (클린룸 약 15만㎡)",
+   "tool_in": "추정: 2027-10 WT 준공 전후 (근거: 준공 일정)",
+   "latest": {
+    "t": "7월 콜: P&T7·M17 단계적 진행",
+    "d": "2026-07-29",
+    "src": "https://view.asiae.co.kr/en/article/2026072910433140202"
+   },
+   "conflicts": [
+    "준공: 2027 말(착공 당시 발표) vs WT 2027-10 / WLP 2028-02(순차 준공 보도)"
+   ],
+   "dart": [
+    {
+     "r": "20260722800829",
+     "note": "추정 연결 — 공시 목적은 \"청주 생산거점 확보\""
+    }
+   ]
+  },
+  {
+   "id": "SKH-INDIANA",
+   "co": "SK하이닉스",
+   "site": "미국 인디애나 웨스트라피엣",
+   "product": "HBM 첨단 패키징·R&D",
+   "invest": "약 38.7억~40억 달러",
+   "stage": "착공",
+   "stage_basis": "착공식 2026-08-27",
+   "stages": [
+    {
+     "s": "투자 발표",
+     "d": "2024-04",
+     "src": "https://amp.kedglobal.com/newsAmp/ked202404040007"
+    },
+    {
+     "s": "착공식(퍼듀대)",
+     "d": "2026-08-27",
+     "src": "https://view.asiae.co.kr/en/article/2026082801294206507"
+    },
+    {
+     "s": "클린룸 완공",
+     "d": "2028-10 예정",
+     "src": "https://view.asiae.co.kr/en/article/2026082801294206507"
+    },
+    {
+     "s": "양산(HBM4E 등)",
+     "d": "2029 하반기(3Q) 예정",
+     "src": "https://koreatimes.co.kr/business/20260828/sk-hynix-to-start-us-ai-chip-output-in-2029-sees-memory-shortage-through-2030"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2028-10 클린룸 완공 이후",
+   "latest": {
+    "t": "인디애나 HBM 패키징 공장 착공, 양산 2029",
+    "d": "2026-08-28",
+    "src": "https://koreatimes.co.kr/business/20260828/sk-hynix-to-start-us-ai-chip-output-in-2029-sees-memory-shortage-through-2030"
+   },
+   "conflicts": [
+    "완공: 2027 말(The Register 2026-04-22) vs 클린룸 2028-10·양산 2029(착공식 보도)",
+    "착공 개시일: 2026-04-15(Asiae 일부 보도) vs 2026-08-27 착공식"
+   ]
+  },
+  {
+   "id": "MU-ID1",
+   "co": "마이크론",
+   "site": "미국 아이다호 보이시 ID1",
+   "product": "DRAM",
+   "invest": "미확보 (미국 총 계획 $200B~250B 보도는 있으나 ID1 단독 금액 미확인)",
+   "stage": "장비 반입",
+   "stage_basis": "추정: 첫 웨이퍼 2027 중반 → 2H27에서 앞당김",
+   "stages": [
+    {
+     "s": "첫 웨이퍼 출력",
+     "d": "2027 중반(CY) 예정",
+     "src": "https://www.webull.com/news/15672802111996928"
+    },
+    {
+     "s": "의미 있는 공급 증가",
+     "d": "그 후 몇 분기",
+     "src": "https://www.webull.com/news/15672802111996928"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2026 하반기~2027 상반기 (근거: 첫 웨이퍼 2027 중반)",
+   "latest": {
+    "t": "FY4Q 콜: 아이다호 첫 웨이퍼 2027 중반, FY27 1H capex 약 $25B",
+    "d": "2026-09-30",
+    "src": "https://www.webull.com/news/15672802111996928"
+   },
+   "conflicts": [
+    "첫 웨이퍼: 2H27(이전 가이던스, TrendForce 2026-05-27) vs 2027 중반(최근 콜). 최근 콜 우선"
+   ]
+  },
+  {
+   "id": "MU-ID2",
+   "co": "마이크론",
+   "site": "미국 아이다호 보이시 ID2",
+   "product": "DRAM(이후 미국 HBM 패키징 계획)",
+   "invest": "미확보",
+   "stage": "셸 공사",
+   "stage_basis": "추정: 첫 웨이퍼 2028 말 예상 보도",
+   "stages": [
+    {
+     "s": "첫 웨이퍼 출력",
+     "d": "2028 말 예정",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2028 상반기 (근거: 2028 말 첫 웨이퍼)",
+   "latest": {
+    "t": "FY26 capex 증가분 대부분이 아이다호·싱가포르 클린룸 건설",
+    "d": "2026-09-30",
+    "src": "https://www.webull.com/news/15672802111996928"
+   },
+   "conflicts": [
+    "콜은 ID1/ID2를 구분하지 않아 ID2 단계는 TrendForce 보도에 의존"
+   ]
+  },
+  {
+   "id": "MU-NY",
+   "co": "마이크론",
+   "site": "미국 뉴욕 클레이",
+   "product": "DRAM(멀티 팹 캠퍼스)",
+   "invest": "1000억 달러(총 계획)",
+   "stage": "착공",
+   "stage_basis": "2026-01-15 건설 개시 보도",
+   "stages": [
+    {
+     "s": "건설 개시",
+     "d": "2026-01-15",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    },
+    {
+     "s": "생산 개시",
+     "d": "2030 예정",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2029 전후 (근거: 2030 생산 개시)",
+   "latest": {
+    "t": "착공 일정 앞당겨 진행",
+    "d": "2026-05-27",
+    "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+   },
+   "conflicts": [
+    "$100B 금액은 보조 보도(rallies.ai) 기반, 회사 원문 미확인"
+   ]
+  },
+  {
+   "id": "MU-HIRO",
+   "co": "마이크론",
+   "site": "일본 히로시마",
+   "product": "1γ DRAM·HBM",
+   "invest": "약 1.5조 엔(약 93억 달러, 일본 정부 보조금 최대 5000억 엔)",
+   "stage": "착공",
+   "stage_basis": "착공식 2026-07-04",
+   "stages": [
+    {
+     "s": "착공식",
+     "d": "2026-07-04",
+     "src": "https://www.trendforce.com/news/2026/07/06/news-micron-breaks-ground-on-hiroshima-fab-expansion-scaling-1%CE%B3-dram-and-hbm-output-as-equipment-set-for-2h28/"
+    },
+    {
+     "s": "장비 반입",
+     "d": "2028 하반기 예정",
+     "src": "https://www.trendforce.com/news/2026/07/06/news-micron-breaks-ground-on-hiroshima-fab-expansion-scaling-1%CE%B3-dram-and-hbm-output-as-equipment-set-for-2h28/"
+    },
+    {
+     "s": "출하/초기 생산",
+     "d": "2028 여름(HBM 출하 목표 보도) / 2028 말(마이크론 콜)",
+     "src": "https://www.webull.com/news/15672802111996928"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "2028-H2 (TrendForce 2026-07-06)",
+   "latest": {
+    "t": "히로시마 증설 착공, 보조금 최대 5000억 엔",
+    "d": "2026-07-06",
+    "src": "https://www.trendforce.com/news/2026/07/06/news-micron-breaks-ground-on-hiroshima-fab-expansion-scaling-1%CE%B3-dram-and-hbm-output-as-equipment-set-for-2h28/"
+   },
+   "conflicts": [
+    "출하 시점: 2028 여름(일본 보도) vs 장비 반입 2H28(TrendForce) vs 초기 생산 CY2028 말(마이크론 콜). 장비 반입이 2H28이면 2028 여름 출하와 모순"
+   ]
+  },
+  {
+   "id": "MU-SG-HBM",
+   "co": "마이크론",
+   "site": "싱가포르 HBM 패키징",
+   "product": "HBM 패키징",
+   "invest": "미확보 ($7B 설 보도는 이번 조사에서 미확인)",
+   "stage": "클린룸",
+   "stage_basis": "추정: 기존 클린룸 일부 파일럿 운영, 신규 시설 2027 램프 준비",
+   "stages": [
+    {
+     "s": "착공",
+     "d": "2025 초",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    },
+    {
+     "s": "램프 준비",
+     "d": "2027 예정(콜: 내년)",
+     "src": "https://www.webull.com/news/15672802111996928"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2026 하반기~2027 초 (근거: 2027 램프)",
+   "latest": {
+    "t": "콜: 싱가포르 HBM 시설 내년 램프 준비, 기존 클린룸에서 파일럿 운영",
+    "d": "2026-09-30",
+    "src": "https://www.webull.com/news/15672802111996928"
+   },
+   "conflicts": [
+    "가동: 2027(콜) vs 2027 초(일부 보도, 정밀 분기 미확인)"
+   ]
+  },
+  {
+   "id": "MU-SG-NAND",
+   "co": "마이크론",
+   "site": "싱가포르 NAND",
+   "product": "NAND",
+   "invest": "미확보",
+   "stage": "착공",
+   "stage_basis": "2026 초 착공 보도",
+   "stages": [
+    {
+     "s": "착공",
+     "d": "2026 초",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    },
+    {
+     "s": "웨이퍼 출력",
+     "d": "2028 하반기 예정",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    }
+   ],
+   "capa": "미확보",
+   "tool_in": "추정: 2028 상반기",
+   "latest": {
+    "t": "콜: 일부 클린룸을 차세대 NAND용 R&D 라인으로 사용 중",
+    "d": "2026-09-30",
+    "src": "https://www.webull.com/news/15672802111996928"
+   },
+   "conflicts": []
+  },
+  {
+   "id": "MU-TONGLUO",
+   "co": "마이크론",
+   "site": "대만 퉁뤄(ex-PSMC P5)",
+   "product": "DRAM",
+   "invest": "인수가 약 18억 달러",
+   "stage": "장비 반입",
+   "stage_basis": "추정: 인수 후 기존 클린룸에 장비 설치, 쌍둥이 팹 신축 2026 여름 착수 예정",
+   "stages": [
+    {
+     "s": "인수 LOI",
+     "d": "2026 (정확한 날짜 미확인, 2Q 클로징 예정)",
+     "src": "https://iconnect007.com/article/148465/microns-acquisition-of-psmcs-tongluo-fab-could-lift-global-dram-supply-outlook-in-2027/148462/aep"
+    },
+    {
+     "s": "의미 있는 DRAM 웨이퍼 출력",
+     "d": "2027 하반기 예정",
+     "src": "https://iconnect007.com/article/148465/microns-acquisition-of-psmcs-tongluo-fab-could-lift-global-dram-supply-outlook-in-2027/148462/aep"
+    }
+   ],
+   "capa": "클린룸 30만 sq ft(월 웨이퍼 미확보)",
+   "tool_in": "추정: 2026 하반기 (근거: 2H27 출력 목표)",
+   "latest": {
+    "t": "쌍둥이 팹 건설 2026 여름 착수 예정(TrendForce 5월 보도)",
+    "d": "2026-05-27",
+    "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+   },
+   "conflicts": [
+    "클로징: 애그리게이터(pulse.bot)는 완료 보도, 마이크론 1차 출처 미확인",
+    "대만 타이중 별도 증설 항목은 확인 못함"
+   ]
+  },
+  {
+   "id": "MU-SANAND",
+   "co": "마이크론",
+   "site": "인도 사난드",
+   "product": "DRAM·NAND ATMP(후공정)",
+   "invest": "미확보",
+   "stage": "램프",
+   "stage_basis": "2026-03 가동 개시 보도",
+   "stages": [
+    {
+     "s": "가동 개시",
+     "d": "2026-03",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    }
+   ],
+   "capa": "완전 가동 시 마이크론 글로벌 출력의 최대 10% 공급 가능(보도)",
+   "tool_in": "완료",
+   "latest": {
+    "t": "인도 최초 첨단 메모리 ATMP 가동",
+    "d": "2026-05-27",
+    "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+   },
+   "conflicts": []
+  },
+  {
+   "id": "MU-MANASSAS",
+   "co": "마이크론",
+   "site": "미국 버지니아 매너서스 Fab6",
+   "product": "DRAM 1α",
+   "invest": "미확보",
+   "stage": "램프",
+   "stage_basis": "1α 생산 개시(2026-05-22 발표)",
+   "stages": [
+    {
+     "s": "1α 생산 개시 발표",
+     "d": "2026-05-22",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    },
+    {
+     "s": "양산",
+     "d": "2026 말 근처 예정",
+     "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+    }
+   ],
+   "capa": "웨이퍼 투입량 4Q27에 2Q26의 1.5배(TrendForce 전망)",
+   "tool_in": "진행 중",
+   "latest": {
+    "t": "1α DRAM 생산 개시",
+    "d": "2026-05-22",
+    "src": "https://www.trendforce.com/news/2026/05/27/news-inside-microns-1-trillion-market-cap-leap-a-global-fab-expansion-overview-across-the-u-s-and-asia/"
+   },
+   "conflicts": []
+  },
+  {
+   "id": "TSMC-COWOS",
+   "co": "TSMC (참고)",
+   "site": "CoWoS 캐파(AP7 대만·미 애리조나 중심)",
+   "product": "첨단 패키징 CoWoS",
+   "invest": "미확보",
+   "stage": "램프",
+   "stage_basis": "캐파 확대 진행",
+   "stages": [
+    {
+     "s": "2026 말 목표",
+     "d": "월 약 13만장",
+     "src": "https://trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028"
+    },
+    {
+     "s": "2028 말 목표",
+     "d": "월 26만장",
+     "src": "https://trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028"
+    }
+   ],
+   "capa": "2026 말 월 약 13만장, 2027 말 17만(KGI 2026-03) ~ 20만(Commercial Times 인용) , 2028 말 26만",
+   "tool_in": "진행 중 (공식 아닌 대만 언론·증권사 추정)",
+   "latest": {
+    "t": "CoWoS 2026 말 약 13만장 → 2028 말 26만장 두 배(Economic Daily News 인용)",
+    "d": "2026-09-14",
+    "src": "https://trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028"
+   },
+   "conflicts": [
+    "2026 말: 12~14만(TrendForce 2026-06) vs 약 10.6만 연평균(Goldman) vs 9.5만(구 JPM)",
+    "2027 말: 17만(KGI) vs 20만(상업시보 인용). TSMC 공식 수치 아님"
+   ]
+  },
+  {
+   "id": "KIOXIA-KITAKAMI",
+   "co": "키옥시아/샌디스크 (참고)",
+   "site": "일본 기타카미 K2·요카이치",
+   "product": "NAND(BiCS10 332단)",
+   "invest": "연평균 capex 약 4700억 엔(FY26~28, 2026-06-02 투자자의 날)",
+   "stage": "램프",
+   "stage_basis": "K2 2025-09 생산 개시, BiCS10 전환",
+   "stages": [
+    {
+     "s": "K2 생산 개시",
+     "d": "2025-09",
+     "src": "https://www.trendforce.com/news/2026/06/03/news-kioxia-targets-¥470b-yearly-capex-in-fy26-28-up-66-from-fy25-reportedly-weighing-third-kitakami-fab-and-ma/"
+    },
+    {
+     "s": "제3 기타카미동 검토",
+     "d": "2026-06 보도(미확정)",
+     "src": "https://www.trendforce.com/news/2026/06/03/news-kioxia-targets-¥470b-yearly-capex-in-fy26-28-up-66-from-fy25-reportedly-weighing-third-kitakami-fab-and-ma/"
+    }
+   ],
+   "capa": "미확보 (요카이치 F7·K2 가동률 약 50%, 2026-06 보도)",
+   "tool_in": "미확보",
+   "latest": {
+    "t": "FY26~28 연평균 capex 4700억 엔, FY25 대비 66% 증가",
+    "d": "2026-06-03",
+    "src": "https://www.trendforce.com/news/2026/06/03/news-kioxia-targets-¥470b-yearly-capex-in-fy26-28-up-66-from-fy25-reportedly-weighing-third-kitakami-fab-and-ma/"
+   },
+   "conflicts": [
+    "샌디스크 공동 310억 달러 계획은 독일 매체 단독, 날짜 불명, 미검증",
+    "2026-11 키옥시아 실적 미확보"
+   ]
+  },
+  {
+   "id": "CXMT-SHANGHAI",
+   "co": "CXMT (참고)",
+   "site": "허페이 본사 팹·상하이 HBM 후공정",
+   "product": "DRAM, HBM3 후공정",
+   "invest": "IPO 조달 약 579억 위안(약 86억 달러, 2026-07-27 상하이 STAR 상장)",
+   "stage": "램프",
+   "stage_basis": "상장 후 증설, 상하이 후공정 2026 말 가동 목표",
+   "stages": [
+    {
+     "s": "IPO 상장",
+     "d": "2026-07-27",
+     "src": "https://www.tomshardware.com/tech-industry/cxmt-closes-up-466-percent-in-shanghai-debut-with-no-hbm-project-in-its-ipo-prospectus"
+    },
+    {
+     "s": "상하이 HBM 후공정 생산 개시",
+     "d": "2026 말 목표",
+     "src": "https://www.storagenewsletter.com/2026/08/03/back-to-the-cxmt-ipo/?type=News"
+    }
+   ],
+   "capa": "DRAM 2026 말 월 약 35만장 목표(보도) / HBM 월 3만~5.5만장(보도마다 상이)",
+   "tool_in": "미확보",
+   "latest": {
+    "t": "STAR 상장, 목론서에 HBM 전용 프로젝트 없음",
+    "d": "2026-07-27",
+    "src": "https://www.tomshardware.com/tech-industry/cxmt-closes-up-466-percent-in-shanghai-debut-with-no-hbm-project-in-its-ipo-prospectus"
+   },
+   "conflicts": [
+    "HBM 캐파: 3만(초기) vs 3~5.5만(2026~27) vs 30만(저신뢰, 제외)",
+    "수치는 비공식 보도이며 CXMT 공시 직접 확인 안 함"
+   ]
+  },
+  {
+   "id": "YMTC-WUHAN3",
+   "co": "YMTC (참고)",
+   "site": "우한 제3 팹",
+   "product": "NAND, 일부 DRAM",
+   "invest": "미확보",
+   "stage": "장비 반입",
+   "stage_basis": "추정: 2026 말 초기 가동, 2027 램프 보도",
+   "stages": [
+    {
+     "s": "초기 가동",
+     "d": "2026 말 예정",
+     "src": "https://evertiq.com/design/2026-04-14-ymtc-plans-new-fabs-to-boost-capacity-amid-rising-us-china-tensions"
+    },
+    {
+     "s": "월 5만장 도달",
+     "d": "2027 예정(로이터 인용)",
+     "src": "https://evertiq.com/design/2026-04-14-ymtc-plans-new-fabs-to-boost-capacity-amid-rising-us-china-tensions"
+    }
+   ],
+   "capa": "월 5만장(2027, 로이터 인용); 기존 2개 팹 합산 월 약 20만장",
+   "tool_in": "추정: 2026 하반기 (근거: 2026 말 초기 가동)",
+   "latest": {
+    "t": "YMTC 제3 팹 증설, 신규 팹 추가 건설 보도",
+    "d": "2026-04-14",
+    "src": "https://evertiq.com/design/2026-04-14-ymtc-plans-new-fabs-to-boost-capacity-amid-rising-us-china-tensions"
+   },
+   "conflicts": [
+    "신규 캐파: 2027 램프(TrendForce 인용) vs 2028 이전 어려움(Digitimes 헤드라인)",
+    "캐파 총계: 월 30만 vs 50만(Herald 분석) vs 연 57.5만장(Herald 별도)"
+   ]
+  }
+ ],
+ "capex": [
+  {
+   "co": "삼성전자",
+   "year": 2026,
+   "guide": "시설투자 84.4조원 중 반도체 76.8조원",
+   "said": "2026-10-29",
+   "src": "https://news.mtn.co.kr/article/2026102911463093858"
+  },
+  {
+   "co": "삼성전자",
+   "year": 2027,
+   "guide": "미확보 (금액 미제시. CFO는 2026 초과 실적 개선 기대, 2027 투자계획은 1월 말 이사회 전후 발표 예상 보도)",
+   "said": "2026-10-29",
+   "src": "https://news.mtn.co.kr/article/2026102911463093858"
+  },
+  {
+   "co": "SK하이닉스",
+   "year": 2026,
+   "guide": "40조원 후반대(2Q 콜). 3Q 콜 금액 갱신은 미확보",
+   "said": "2026-07-29",
+   "src": "https://view.asiae.co.kr/en/article/2026072910433140202"
+  },
+  {
+   "co": "SK하이닉스",
+   "year": 2027,
+   "guide": "2026 대비 크게 증가(금액 미제시), 용인 1기 가동·M17·P&T7 연동",
+   "said": "2026-10-28",
+   "src": "https://stockhub.kr/en/insights/view_1793152574975_d6cb11f87d-20261028-000660-cy26q3-earnings-call"
+  },
+  {
+   "co": "마이크론",
+   "year": "FY2026(~2026-08)",
+   "guide": "약 $27.37B(순), 증가분 대부분은 아이다호·싱가포르 클린룸 건설",
+   "said": "2026-09-30",
+   "src": "https://www.webull.com/news/15672802111996928"
+  },
+  {
+   "co": "마이크론",
+   "year": "FY2027",
+   "guide": "1H 약 $25B(1Q 약 $11.5B), 2H는 더 큼. 연간 총액 미제시(일부 매체 $50B 초과 추정, 회사 가이던스 아님)",
+   "said": "2026-09-30",
+   "src": "https://biz.heraldcorp.com/article/10890090"
+  }
+ ],
+ "cycle": [
+  "삼성·SK·마이크론 모두 2027 capex 증액 방향이며, 마이크론은 FY27 1H만 FY26 연간 수준($25B vs $27.4B)을 집행함",
+  "증설 중심이 건설(셸·클린룸)에 있음. 마이크론은 건설비 증가분 대부분이 2028 말 이후 가동 클린룸용이며 장비는 수요에 맞춰 순차 투입한다고 밝힘",
+  "신규 클린룸 오픈 시점이 2027-02(SK Y1), 2027 중반(마이크론 ID1), 2027-07 장비 반입(삼성 P5 F1)으로 몰려, 전공정 장비 발주 시점은 2026 하반기~2027 상반기에 집중됨(필자 추정)",
+  "HBM 후공정 투자가 별도 축으로 부상: 삼성 온양 46조(2028-06), SK P&T7 19조(2027-10~2028-02), SK 인디애나(2028-10 클린룸), 마이크론 싱가포르(2027 램프)",
+  "NAND 증설이 10년 만에 재개됨(SK M17, 키옥시아 capex +66%, YMTC 제3 팹). 공급은 2027 하반기 이후 중국 증설분 영향 가능성 있음(TrendForce 전망 인용)"
+ ],
+ "stage_order": [
+  "계획",
+  "착공",
+  "셸 공사",
+  "클린룸",
+  "장비 반입",
+  "램프",
+  "풀가동"
+ ]
+}

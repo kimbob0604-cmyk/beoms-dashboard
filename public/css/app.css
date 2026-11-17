@@ -1371,6 +1371,43 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .mk-th button.hit { background: #EEEDFE; color: #26215C; font-weight: 700; }
 .mk-th button.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
 .mk-th button.sel small { color: rgba(255,255,255,.85); }
+
+/* ---------- 반도체 탭 (semi.js) ---------- */
+.sm-chain { margin-bottom: 16px; }
+.sm-wrap { padding: 8px 16px 4px; overflow-x: auto; }
+.sm-svg { width: 100%; min-width: 760px; height: auto; display: block; font-family: inherit; }
+.sm-stage { font-size: 14px; font-weight: 700; fill: var(--text); }
+.sm-sdesc { font-size: 10px; fill: var(--muted); }
+.sm-flow { font-size: 11px; fill: var(--sub); }
+.sm-arrow { stroke: var(--muted); stroke-width: 1.5; }
+.sm-ahead { fill: var(--muted); }
+.sm-cell { cursor: pointer; }
+.sm-cell rect { stroke: var(--line); stroke-width: 1; transition: opacity .15s; }
+.sm-cell:hover rect { stroke: var(--accent); }
+.sm-cell.on rect { stroke: var(--accent); stroke-width: 2.5; }
+.sm-cell.dim { opacity: .45; }
+.sm-name { font-size: 13px; font-weight: 700; fill: var(--text); }
+.sm-num { font-size: 11px; fill: var(--text); }
+.sm-sub { font-size: 10.5px; fill: var(--sub); }
+.sm-driver { margin: 0; padding: 4px 20px 14px; font-size: 13px; color: var(--sub); }
+.sm-dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.sm-dcard { padding: 16px 20px; }
+.sm-dcard h4 { margin: 0 0 6px; font-size: 15px; }
+.sm-big { font-size: 24px; font-weight: 800; margin: 4px 0 8px; }
+.sm-bars { width: 100%; height: 90px; display: block; }
+.sm-bars rect { fill: color-mix(in srgb, var(--accent) 70%, var(--card)); }
+.sm-bars rect:last-child { fill: var(--accent); }
+.sm-blab { display: flex; font-size: 10px; color: var(--muted); margin: 2px 0 8px; }
+.sm-blab span { text-align: center; white-space: nowrap; }
+.sm-mini { font-size: 12px; margin: 6px 0; }
+.sm-mini td, .sm-mini th { padding: 3px 6px; }
+.sm-list .sm-group td { background: var(--hover); padding-top: 10px; }
+.sm-gstat { float: right; color: var(--sub); }
+.sm-prod { display: block; font-size: 11px; }
+.sm-spark { width: 84px; height: 24px; display: block; }
+.sm-spark rect { fill: color-mix(in srgb, var(--sub) 45%, var(--card)); }
+.sm-spark rect.last { fill: var(--accent); }
+.sm-spark rect.neg { fill: var(--down); }
 .mom-k { display: inline-block; padding: 1px 7px; border-radius: 9px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
 .mom-k.up { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
 .mom-k.lead { background: color-mix(in srgb, #1fa774 16%, transparent); color: #1fa774; }
@@ -1380,3 +1417,53 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .news-list { list-style: none; margin: 6px 0; padding: 0; font-size: 13px; line-height: 1.6; max-height: 520px; overflow-y: auto; }
 .news-list li { padding: 4px 2px; border-bottom: 1px solid var(--line); } .news-list li a { color: var(--text); }
 .news-k { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.sm-aicard { margin-bottom: 16px; padding-bottom: 8px; }
+.sm-ai { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; padding: 12px 20px; }
+.sm-ai2, .sm-ai3 { padding: 4px 20px 8px; }
+.sm-ai3 { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 900px) { .sm-ai, .sm-ai3 { grid-template-columns: 1fr; } }
+.sm-aicard h4 { margin: 10px 0 8px; font-size: 14px; }
+.sm-racks { margin-bottom: 8px; flex-wrap: wrap; }
+.sm-spec, .sm-bom { font-size: 12.5px; }
+.sm-spec th, .sm-bom th { text-align: left; white-space: nowrap; vertical-align: top; color: var(--sub); font-weight: 600; width: 1%; padding-right: 10px; }
+.sm-bom th { white-space: normal; width: 34%; }
+.sm-note { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; }
+.sm-sup { display: inline-block; padding: 1px 7px; margin: 1px 2px; border-radius: 4px; background: var(--chip); font-size: 12px; cursor: default; }
+.sm-sup.kr { background: color-mix(in srgb, var(--accent) 18%, var(--card)); font-weight: 600; }
+.sm-sup a { color: inherit; }
+.sm-chips { font-size: 12px; }
+.sm-chips td, .sm-chips th { padding: 4px 6px; }
+.sm-points, .sm-news { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.55; }
+.sm-points li, .sm-news li { margin-bottom: 4px; }
+.sm-points .tag { margin-left: 3px; }
+.sm-cav { padding: 0 20px; }
+.sm-ai-l { display: block; font-size: 11px; color: var(--accent); }
+.sm-ai > div, .sm-ai3 > div { min-width: 0; }
+.sm-spec, .sm-bom { width: 100%; table-layout: fixed; }
+.sm-spec td, .sm-bom td, .sm-spec th, .sm-bom th { white-space: normal; word-break: keep-all; overflow-wrap: anywhere; }
+.sm-spec th { width: 108px; }
+.sm-chips td { white-space: normal; }
+.sm-ai3 td { white-space: normal; }
+.sm-added { background: color-mix(in srgb, var(--up) 18%, var(--card)); color: var(--up); }
+.sm-wide { grid-column: 1 / -1; }
+.sm-obars { width: 100%; height: 140px; display: block; }
+.sm-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; margin-top: 6px; }
+.sm-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.sm-legend b { margin-left: 4px; }
+.sm-fac td { white-space: normal; }
+.sm-lag td, .sm-lag th { padding: 3px 6px; }
+.sm-lag .sm-best { font-weight: 800; outline: 1px solid var(--text); outline-offset: -2px; }
+.sm-row { cursor: pointer; }
+.sm-row.on td { background: var(--hover); }
+.sm-detail > td { background: var(--hover); padding: 10px 16px 14px; white-space: normal; }
+.sm-dgrid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 20px; }
+@media (max-width: 900px) { .sm-dgrid2 { grid-template-columns: 1fr; } }
+.sm-dgrid2 h5 { margin: 4px 0 6px; font-size: 13px; }
+.sm-moat { margin: 0 0 8px; padding-left: 16px; font-size: 12.5px; line-height: 1.6; }
+.sm-moat .tag { margin-right: 4px; }
+.sm-wide { margin-bottom: 16px; }
+.sm-fabs td { white-space: normal; vertical-align: top; }
+.sm-stg { display: flex; gap: 2px; margin: 2px 0 2px; }
+.sm-stg i { width: 13px; height: 7px; border-radius: 2px; background: var(--chip); }
+.sm-stg i.done { background: color-mix(in srgb, var(--accent) 45%, var(--card)); }
+.sm-stg i.cur { background: var(--accent); }

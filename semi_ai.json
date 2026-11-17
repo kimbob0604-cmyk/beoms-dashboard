@@ -1,0 +1,1658 @@
+{
+ "_": "AI 인프라 개괄 (docs/semi-plan.md §11). 손으로 관리하는 규격표 — 숫자마다 출처·날짜. 출처끼리 다르면 둘 다 적는다. 새 소식은 collect_ai_news.py 가 피드에서 감지해 화면에 \"검토 필요\"로 띄운다.",
+ "as_of": "2026-11-17",
+ "caveat": [
+  "웹 검색 요약·일부 원문 fetch 기반. 'src' 날짜는 발표/기사일. 수치 출처 간 충돌은 conflicts 필드에 병기. 11월 NVDA 실적발표 이후 자료는 확보 못 함(미확보).",
+  "대부분 수치가 2차 보도 경유. d가 null인 출처는 게재일 미확인",
+  "RSS 주소는 이번 조사에서 직접 호출 검증하지 않음(미검증 표기)",
+  "TPU v6e·Maia 100·Trainium2는 미확보 또는 부분 확보"
+ ],
+ "racks": [
+  {
+   "id": "GB200-NVL72",
+   "vendor": "NVIDIA",
+   "status": "양산(이전 세대)",
+   "ship": "2025",
+   "gpu": {
+    "name": "B200",
+    "n": 72,
+    "node": "TSMC 4NP",
+    "pkg": "CoWoS-L",
+    "hbm": {
+     "gen": "HBM3E",
+     "gb": null,
+     "stacks": null,
+     "tbps": null,
+     "note": "미확보(이번 조사에서 1차 출처 미확인)"
+    }
+   },
+   "cpu": {
+    "name": "Grace",
+    "n": 36,
+    "mem": "LPDDR5X",
+    "gb": null
+   },
+   "scaleup": {
+    "nvlink": "NVLink 5",
+    "switch_chips": null,
+    "domain": 72,
+    "note": "NVLink 케이블 카트리지에 구리 케이블 5,000개 이상(NVIDIA OCP 기고)"
+   },
+   "nic": "ConnectX-7/8 계열 — 미확보",
+   "power_kw": null,
+   "cooling": "수랭(액냉) — 초기 과열·누수 이슈 후 안정화(FT 인용 보도)",
+   "src": [
+    {
+     "t": "Tom's Hardware: GB200 production ramps up after suppliers tackle overheating and liquid cooling leaks",
+     "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-gb200-production-ramps-up-after-suppliers-tackle-ai-server-overheating-and-liquid-cooling-leaks",
+     "d": null
+    },
+    {
+     "t": "SemiAnalysis: GB200 Hardware Architecture and Component Supply Chain",
+     "url": "https://newsletter.semianalysis.com/p/gb200-hardware-architecture-and-component",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "GB300-NVL72",
+   "vendor": "NVIDIA",
+   "status": "양산 — 2026년 NVL72 출하 주력(TrendForce)",
+   "ship": "2025-H2 ~ 2027-H1 수요 지속",
+   "gpu": {
+    "name": "B300 (Blackwell Ultra)",
+    "n": 72,
+    "node": "TSMC 4NP(추정: 이번 조사에서 1차 출처 미확인)",
+    "pkg": "CoWoS-L(추정)",
+    "hbm": {
+     "gen": "HBM3E 12H",
+     "gb": 288,
+     "stacks": 8,
+     "tbps": 8,
+     "note": "랙 합계 20TB, 대역폭 최대 576TB/s(NVIDIA). 일부 OEM 페이지는 GPU당 279GB(가용 용량 추정). stacks=8·tbps=8은 20TB/72≈288GB, 576/72=8TB/s에서 필자 역산 — 1차 출처 미확인"
+    }
+   },
+   "cpu": {
+    "name": "Grace",
+    "n": 36,
+    "mem": "LPDDR5X(온보드)",
+    "gb": 17000,
+    "note": "랙 합계 17TB, 14TB/s. Arm Neoverse V2 2,592코어"
+   },
+   "scaleup": {
+    "nvlink": "NVLink 5",
+    "bw_tbps_rack": 130,
+    "domain": 72,
+    "switch_chips": null
+   },
+   "nic": "ConnectX-8 SuperNIC 800Gb/s per GPU(컴퓨트 트레이당 OSFP 800G 4포트), Quantum-X800 IB 또는 Spectrum-X Ethernet",
+   "power_kw": null,
+   "cooling": "전면 수랭, 랙 스케일",
+   "fast_memory_tb": 37,
+   "src": [
+    {
+     "t": "NVIDIA GB300 NVL72 제품 페이지",
+     "url": "https://www.nvidia.com/en-us/data-center/gb300-nvl72/",
+     "d": null
+    },
+    {
+     "t": "TrendForce 보도자료: AI 랙 전환, NVL72 2027년 7,100억달러 초과",
+     "url": "https://www.trendforce.com/presscenter/news/20260828-13204.html",
+     "d": "2026-08-28"
+    }
+   ],
+   "conflicts": [
+    "GPU당 HBM: NVIDIA 공식 합계 20TB(=약 288GB×72) vs Gigabyte·Verda 279GB. 명목/가용 차이로 추정(추정)"
+   ]
+  },
+  {
+   "id": "VR200-NVL72 (구 NVL144 표기)",
+   "vendor": "NVIDIA",
+   "status": "완전 양산 선언(2026-05-31 GTC Taipei), 출하는 2026 가을 시작",
+   "ship": "2026-H2 (NVIDIA: 'this fall'); TrendForce: 2027년 NVL72 출하 최대 비중",
+   "gpu": {
+    "name": "Rubin (R200, 2 compute die)",
+    "n": 72,
+    "node": "TSMC 3nm(TrendForce 2026-06-01 보도)",
+    "pkg": "CoWoS-L(추정: 1차 출처 미확인)",
+    "hbm": {
+     "gen": "HBM4",
+     "gb": 288,
+     "stacks": 8,
+     "tbps": 22,
+     "note": "8스택×36GB(12H) (뉴데일리 2026-01-07 인용). 대역폭 NVIDIA 22TB/s vs SemiAnalysis 2025-09 추정 20.5TB/s(충돌). 트랜지스터 336B(2 die)"
+    }
+   },
+   "cpu": {
+    "name": "Vera (88 Olympus 코어)",
+    "n": 36,
+    "mem": "LPDDR5X SOCAMM2",
+    "gb": 1536,
+    "note": "CPU당 최대 1.5TB·1.2TB/s. 랙 합계 약 54TB는 36×1.5TB 필자 추정(CRN Asia도 54TB 보도). SK하이닉스 192GB SOCAMM2 양산(2026-04) → CPU당 8모듈=192GB×8 필자 추정"
+   },
+   "scaleup": {
+    "nvlink": "NVLink 6",
+    "per_gpu_tbps": 3.6,
+    "rack_tbps": 260,
+    "switch_chips": 36,
+    "switch_trays": 9,
+    "domain": 72,
+    "note": "스위치 트레이당 칩 4개, 28.8TB/s. 컴퓨트 트레이 18개(GPU 4+CPU 2), 파워쉘프 4(Valley 2026-05-26)"
+   },
+   "nic": "ConnectX-9 SuperNIC 800Gb/s/포트, GPU당 1.6Tb/s; BlueField-4 DPU(64코어 Grace, 800Gb/s)",
+   "scaleout": "Spectrum-6 (102.4Tb/s, 200G SerDes) Spectrum-X Ethernet Photonics CPO 스위치 양산 중(NVIDIA 2026-05-31), 또는 Quantum-X800 IB. 트랜시버: 800G/1.6T OSFP",
+   "power_kw": 190,
+   "power_note": "SemiAnalysis 2025-09-10 추정치(NVIDIA 공식 아님). 컴퓨트 트레이 전면 수랭",
+   "cooling": "컴퓨트·스위치 트레이 전면 수랭(NVIDIA 기술 블로그 2026-01-05)",
+   "power_arch": "공식 근거: 800VDC는 Kyber 세대(2027~)부터. VR200은 기존 54V급 파워쉘프 추정",
+   "src": [
+    {
+     "t": "NVIDIA 기술 블로그: Inside the Rubin Platform",
+     "url": "https://developer.nvidia.com/blog/inside-the-NVIDIA-rubin-platform-six-new-chips-one-ai-supercomputer",
+     "d": "2026-01-05"
+    },
+    {
+     "t": "NVIDIA IR: Vera Rubin Opens Agentic AI Frontier",
+     "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Vera-Rubin-Opens-Agentic-AI-Frontier/",
+     "d": "2026-03-16"
+    },
+    {
+     "t": "NVIDIA 뉴스룸: Vera Rubin Ramps Into Full Production",
+     "url": "https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory",
+     "d": "2026-05-31"
+    },
+    {
+     "t": "SemiAnalysis: Rubin CPX specialized accelerator rack (VR200 NVL144 190kW)",
+     "url": "https://newsletter.semianalysis.com/p/another-giant-leap-the-rubin-cpx-specialized-accelerator-rack",
+     "d": "2025-09-10"
+    },
+    {
+     "t": "뉴데일리: HBM4 8스택·288GB, 12단 36GB",
+     "url": "https://biz.newdaily.co.kr/site/data/html/2026/01/07/2026010700083.html",
+     "d": "2026-01-07"
+    },
+    {
+     "t": "TrendForce: Vera Rubin buildout, TSMC 3nm 양산·Delta/Lite-On 등",
+     "url": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/",
+     "d": "2026-06-01"
+    },
+    {
+     "t": "Valley.town Vera Rubin Decoded Pt.4 (트레이·파워쉘프 구성)",
+     "url": "https://www.valley.town/space/@s4ndwalker/articles/6a1559a7dcc5b4285a53dffb",
+     "d": "2026-05-26"
+    }
+   ],
+   "conflicts": [
+    "랙 명칭: 2025 GTC·SemiAnalysis는 NVL144(die 기준), 2026 NVIDIA 공식·DGX 문서는 NVL72(패키지 기준). 동일 랙",
+    "HBM4 대역폭 22TB/s(NVIDIA) vs 20.5TB/s(SemiAnalysis 2025-09)",
+    "HBM4 공급사: 마이크론 HBM4 탑재 보도(2차 요약) vs TrendForce 2026-03-09(한경 인용) '마이크론은 플래그십 루빈 비공급 전망' — 2026-02 마이크론 CFO는 HBM4 고객 출하 중이라 밝힘"
+   ]
+  },
+  {
+   "id": "VR-NVL144-CPX (Rubin CPX)",
+   "vendor": "NVIDIA",
+   "status": "상태 혼재: 2025-09 발표 후 2026-03 GTC에서 로드맵 제외(Groq 3 LPX로 대체) 보도 → 2026-08-31 궈밍치 '재가동·HBM4 변경' 주장(미확정)",
+   "ship": "원안 2026말 → 재가동설 2027-Q1 양산(궈밍치, 비공식)",
+   "gpu": {
+    "name": "Rubin CPX (prefill용, 단일 die)",
+    "n": 144,
+    "node": null,
+    "pkg": null,
+    "hbm": {
+     "gen": "원안 GDDR7 128GB(2TB/s, 20~30PFLOPS FP4) / 재가동설 HBM4 168GB",
+     "gb": 128,
+     "stacks": null,
+     "tbps": 2,
+     "note": "원안은 SemiAnalysis 2025-09-10. 재가동설은 궈밍치 2026-08-31(technews 2026-09-02), 1차 확인 불가"
+    }
+   },
+   "cpu": {
+    "name": "Vera",
+    "n": 36,
+    "mem": "SOCAMM2",
+    "gb": 1536
+   },
+   "scaleup": {
+    "nvlink": "CPX는 NVLink 없음, PCIe Gen6(원안); 재가동설은 트레이 내 NVLink 1~1.5TB/s",
+    "switch_chips": null,
+    "domain": null
+   },
+   "nic": "CX-9 800G, 1.6T OSFP",
+   "power_kw": 370,
+   "power_note": "SemiAnalysis 2025-09 추정(원안 NVL144 CPX 랙). 재가동설은 별도 MGX ETL 랙, GPU당 최대 2,300W",
+   "cooling": "수랭(CPX 공유 냉판)",
+   "src": [
+    {
+     "t": "SemiAnalysis: Rubin CPX rack",
+     "url": "https://newsletter.semianalysis.com/p/another-giant-leap-the-rubin-cpx-specialized-accelerator-rack",
+     "d": "2025-09-10"
+    },
+    {
+     "t": "Wccftech: Rubin CPX off roadmap, replaced by Groq LPUs",
+     "url": "https://wccftech.com/nvidia-rubin-cpx-is-off-the-roadmap-but-may-return-with-feynman-in-2028/amp/",
+     "d": null
+    },
+    {
+     "t": "TechNews: Rubin CPX 재가동·HBM4 (궈밍치)",
+     "url": "https://technews.tw/2026/09/02/nvidia-rubin-cpx-reenters-roadmap-hbm4-ai-prefill/",
+     "d": "2026-09-02"
+    }
+   ],
+   "conflicts": [
+    "CPX 메모리 GDDR7 128GB(원안) vs HBM4 168GB(궈밍치 재가동설)",
+    "존재 여부: NVIDIA 2026-03 로드맵 제외 보도 vs 2026-08 재가동설"
+   ]
+  },
+  {
+   "id": "VR300-NVL576 (Rubin Ultra, Kyber)",
+   "vendor": "NVIDIA",
+   "status": "개발·지연 보도. 원안 2027-H2 → SemiAnalysis(2026-07-06) 'Kyber 2028로 이연', NVIDIA 공식 코멘트 없음",
+   "ship": "원안 2027-H2; 지연설 2028",
+   "gpu": {
+    "name": "Rubin Ultra (R300)",
+    "n": 576,
+    "node": null,
+    "pkg": null,
+    "hbm": {
+     "gen": "HBM4E",
+     "gb": 1024,
+     "stacks": 16,
+     "tbps": null,
+     "note": "1TB는 Tom's Hardware 2026-03 시연 보도(16-Hi, 추정). 768GB로 하향설(Cryptobriefing, 1차 미확인), 2-die·12-Hi 축소설(Wccftech). 뉴데일리 2026-01-07은 Rubin Ultra 12스택으로 기재 — 출처 간 충돌"
+    }
+   },
+   "cpu": {
+    "name": "Vera",
+    "n": null,
+    "mem": "SOCAMM2",
+    "gb": null
+   },
+   "scaleup": {
+    "nvlink": "NVLink(Kyber 랙 144 패키지/576 die), 8랙 광 연결설",
+    "switch_chips": null,
+    "domain": 576
+   },
+   "nic": null,
+   "power_kw": 600,
+   "power_note": "Kyber 랙 약 600kW(DCD, 젠슨 황 GTC 발언). NVIDIA는 800VDC 전환·1MW IT 랙을 2027년부터 지원한다고 밝힘(2025-05-20, 갱신 2025-07-31)",
+   "cooling": "수랭, 신규 Kyber 랙",
+   "power_arch": "800VDC (사이드카 방식 시연 GTC 2025)",
+   "src": [
+    {
+     "t": "NVIDIA 개발자 블로그: 800 VDC architecture",
+     "url": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-Generation-of-ai-factories",
+     "d": "2025-05-20"
+    },
+    {
+     "t": "DCD: Rubin Ultra NVL576 rack expected to be 600kW, 2H 2027",
+     "url": "https://datacenterdynamics.com/en/news/nvidias-rubin-ultra-nvl576-rack-expected-to-be-600kw-coming-second-half-of-2027",
+     "d": null
+    },
+    {
+     "t": "TheNextWeb: Kyber slips to 2028 (SemiAnalysis, PCB 미드플레인)",
+     "url": "https://thenextweb.com/news/nvidia-kyber-rack-delay-2028",
+     "d": "2026-07-06"
+    },
+    {
+     "t": "TrendForce 보도자료: VR300 비중 소규모",
+     "url": "https://www.trendforce.com/presscenter/news/20260828-13204.html",
+     "d": "2026-08-28"
+    }
+   ],
+   "conflicts": [
+    "출시: 2027-H2(원안·NVIDIA 로드맵) vs 2028(SemiAnalysis 2026-07-06). NVIDIA 'roadmap intact' 발언은 Vera Rubin 대상으로 보이며 Kyber 직접 부인 미확인",
+    "HBM 용량 1TB vs 768GB"
+   ]
+  },
+  {
+   "id": "Groq-3-LPX / Vera-CPU / BlueField-4-STX / Spectrum-6-SPX (Vera Rubin POD 부속 랙)",
+   "vendor": "NVIDIA",
+   "status": "2026-H2 출시 예정(NVIDIA 2026-03-16)",
+   "notes": "LPX: LPU 256개, 온칩 SRAM 128GB(랙), 640TB/s 스케일업, 전면 수랭. Vera CPU 랙: Vera 256개. STX 스토리지 랙: BlueField-4 기반, KV 캐시 워크로드 추론 처리량 최대 5배(NVIDIA 주장, DOCA Memos). KV 캐시 SSD 공급사: 미확보(스토리지 파트너 Cloudian·DDN·NetApp·VAST·WEKA 등만 확인, 낸드/SSD 부품 공급사 미확인)",
+   "src": [
+    {
+     "t": "NVIDIA IR 2026-03-16",
+     "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Vera-Rubin-Opens-Agentic-AI-Frontier/",
+     "d": "2026-03-16"
+    },
+    {
+     "t": "NVIDIA 뉴스룸 2026-05-31",
+     "url": "https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory",
+     "d": "2026-05-31"
+    }
+   ]
+  }
+ ],
+ "bom": [
+  {
+   "part": "HBM (GPU 패키지)",
+   "where": "GB300: HBM3E 12H / Rubin: HBM4 12H 36GB×8 / Rubin Ultra: HBM4E",
+   "suppliers": [
+    {
+     "n": "SK하이닉스",
+     "country": "KR",
+     "ticker": "000660",
+     "note": "GB300 12H HBM3E 단독 공급설(Business Post 인용, 2025-03-18, 미확정). Rubin HBM4 최대 공급(엔비디아 HBM4 물량 약 2/3 배정 보도 2026-01; 카운터포인트 연초 전망 SK 54%·삼성 28%·마이크론 18%). 2Q26 전체 HBM 매출점유 50%(카운터포인트)",
+     "src": "https://www.trendforce.com/news/2025/03/18/news-sk-hynix-reportedly-locks-in-exclusive-12h-hbm3e-deal-for-nvidias-gb300/"
+    },
+    {
+     "n": "삼성전자",
+     "country": "KR",
+     "ticker": "005930",
+     "note": "HBM4 세계 최초 양산 출하 발표 2026-02-12(1c DRAM). 한경 인용 TrendForce 2026-03-09: 루빈 HBM4 삼성이 선도·퀄 통과. 2Q26 전체 HBM 점유 33%(카운터포인트). 출처 간 점유 수치 차이 있음",
+     "src": "https://www.newsis.com/view/NISX20260212_0003513832"
+    },
+    {
+     "n": "마이크론",
+     "country": "US",
+     "ticker": "MU",
+     "note": "HBM4 11Gbps 초과 고객 출하 중(CFO 2026-02-11, 뉴시스 2026-02-18). 루빈 플래그십 비공급·중급 추론 가속기용 전망(TrendForce 2026-03-09) — 충돌. 2Q26 점유 18%",
+     "src": "https://www.trendforce.com/news/2026/03/09/news-samsung-sk%E2%80%AFhynix-reportedly-tapped-as-nvidia-rubin-hbm4-suppliers-shipme"
+    }
+   ]
+  },
+  {
+   "part": "CPU 메모리 SOCAMM2 (LPDDR5X)",
+   "where": "Vera CPU 옆 모듈, CPU당 최대 1.5TB",
+   "suppliers": [
+    {
+     "n": "SK하이닉스",
+     "country": "KR",
+     "ticker": "000660",
+     "note": "192GB SOCAMM2 양산 개시 2026-04-24, 'Vera Rubin용 설계' 명시, 1cnm LPDDR5X",
+     "src": "https://evertiq.com/news/2026-04-24-sk-hynix-begins-mass-production-of-192gb-socamm2"
+    },
+    {
+     "n": "삼성전자",
+     "country": "KR",
+     "ticker": "005930",
+     "note": "SOCAMM2 샘플 엔비디아 공급·양산 보도(2025-12~2026-04, 한경 등). 엔비디아향 2세대 SOCAMM 물량 절반 이상 공급 계획 보도(헤럴드경제, 날짜 미확인)",
+     "src": "https://inews24.com/v/1945835"
+    },
+    {
+     "n": "마이크론",
+     "country": "US",
+     "ticker": "MU",
+     "note": "1세대 SOCAMM 사실상 독점이었으나 탑재 연기, 256GB 샘플 출하 발표(보도)",
+     "src": "https://www.hankyung.com/article/202512039707i"
+    },
+    {
+     "n": "SOCAMM 모듈 PCB 업체(대덕전자·심텍 등)",
+     "country": "KR",
+     "ticker": null,
+     "note": "미확보 — 루빈 SOCAMM2 PCB 수주 1차 출처 못 찾음",
+     "src": null
+    }
+   ]
+  },
+  {
+   "part": "GB300 Grace용 LPDDR5X (온보드)",
+   "where": "Grace CPU 인접",
+   "suppliers": [
+    {
+     "n": "미확보",
+     "country": null,
+     "ticker": null,
+     "note": "GB300 LPDDR5X 공급사 1차 출처 미확인",
+     "src": null
+    }
+   ]
+  },
+  {
+   "part": "ABF / FC-BGA 패키지 기판",
+   "where": "GPU·스위치·NIC 패키지",
+   "suppliers": [
+    {
+     "n": "삼성전기",
+     "country": "KR",
+     "ticker": "009150",
+     "note": "엔비디아와 공동투자·다년 공급 계약(GPU·네트워킹 스위치 기판), 세종·부산 전용 라인, 납품 2026년 시작, 금액 미공개(Evertiq 2026-10-22). 별도 보도 2026-08 AI 기판 가동률 약 90%(TrendForce 2026-08-27)",
+     "src": "https://evertiq.com/design/2026-10-22-nvidia-and-samsung-electro-mechanics-co-invest-in-abf-substrate-capacity"
+    },
+    {
+     "n": "이비덴",
+     "country": "JP",
+     "ticker": "4062.T",
+     "note": "ABF 기판 투자 확대(한국 증권 리포트·기사 언급). 루빈 직접 배정 1차 미확인",
+     "src": "https://www.itiger.com/news/1110758161"
+    },
+    {
+     "n": "유니마이크론",
+     "country": "TW",
+     "ticker": "3037.TW",
+     "note": "ABF 투자 확대, CoWoS 고객 집중 보도. 루빈 배정 1차 미확인",
+     "src": "https://www.itiger.com/news/1110758161"
+    },
+    {
+     "n": "LG이노텍·대덕전자·심텍",
+     "country": "KR",
+     "ticker": "011070 / 353200 / 222800",
+     "note": "삼성증권이 수혜 분석(기사 2026-06). 엔비디아 루빈 직접 공급 확인 못 함 — 추정 수혜 수준",
+     "src": "https://newstomato.com/ReadNews.aspx?no=1317641"
+    }
+   ]
+  },
+  {
+   "part": "GPU 파운드리 / CoWoS 패키징",
+   "where": "Rubin 3nm 2-die + CoWoS-L(추정)",
+   "suppliers": [
+    {
+     "n": "TSMC",
+     "country": "TW",
+     "ticker": "2330.TW / TSM",
+     "note": "루빈 3nm 양산 시작, NVIDIA가 2026년 TSMC 매출 20% 초과 전망(TrendForce 2026-06-01). CoWoS 2026 엔비디아 점유 50~60% 추정(애널리스트 추정, 2차 집계, TSMC 공시 아님)",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "ASE",
+     "country": "TW",
+     "ticker": "3711.TW",
+     "note": "TSMC와 함께 핵심 제조 파트너로 언급, 역할(CoWoS 외주 등) 불명",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    }
+   ]
+  },
+  {
+   "part": "HBM 본딩 장비 (TC 본더 / 하이브리드)",
+   "where": "HBM 제조 공정(메모리사 투자)",
+   "suppliers": [
+    {
+     "n": "한미반도체",
+     "country": "KR",
+     "ticker": "042700",
+     "note": "SK하이닉스 HBM4용 'TC본더 4.5 그리핀' 442억원 계약 공시 2026-06-08(대당 약 30억원 기준 15대 안팎은 업계 추정)",
+     "src": "https://www.heraldk.com/article/2026060814505772425"
+    },
+    {
+     "n": "한화세미텍",
+     "country": "KR(한화에어로스페이스 자회사, 비상장)",
+     "ticker": null,
+     "note": "SK하이닉스 TC본더 2차 벤더 첫 계약 210억원(2025-03-14). 이후 발주는 2대 수준 보도",
+     "src": "https://www.ddaily.co.kr/page/view/2025031415333917660"
+    },
+    {
+     "n": "ASMPT",
+     "country": "HK/SG",
+     "ticker": "0522.HK",
+     "note": "TC본더 매출 146% 급증 기사 제목만 확인. HBM4 고객·수량 미확보",
+     "src": null
+    },
+    {
+     "n": "BESI",
+     "country": "NL",
+     "ticker": "BESI.AS",
+     "note": "하이브리드 본더 수주 미확보",
+     "src": null
+    }
+   ]
+  },
+  {
+   "part": "반도체 테스트(ATE)",
+   "where": "GPU·HBM 테스트",
+   "suppliers": [
+    {
+     "n": "어드밴테스트",
+     "country": "JP",
+     "ticker": "6857.T",
+     "note": "2025년 SoC 테스터 점유 56→66%(시장 요약, 2차). NVIDIA 루빈 개별 수주 미확인. SoC 테스터 생산 3,000→5,000대 이상(2027-03까지) 계획",
+     "src": "https://www.rcrwireless.com/20260130/test-measurement/advantest-rises-with-the-ai-tide"
+    },
+    {
+     "n": "테라다인",
+     "country": "US",
+     "ticker": "TER",
+     "note": "Magnum 7H HBM4 지원. 엔비디아 개별 수주 미확인",
+     "src": "https://www.nasdaq.com/articles/ters-memory-test-sales-hit-128m-growth-thesis-strengthening"
+    }
+   ]
+  },
+  {
+   "part": "MLB / PCB (스위치·컴퓨트 트레이·미드플레인)",
+   "where": "NVLink 스위치 트레이, 컴퓨트 트레이, Kyber PCB 미드플레인",
+   "suppliers": [
+    {
+     "n": "이수페타시스",
+     "country": "KR",
+     "ticker": "007660",
+     "note": "엔비디아·구글·MS 등에 AI 서버용 초고다층 PCB 공급 소개(리포트). 루빈 스위치 트레이 배정 1차 미확인. 대구 달성 신공장 2027-01 양산 목표(리포트)",
+     "src": "https://file.alphasquare.co.kr/media/pdfs/company-report/20260302134512657K_02.pdf"
+    },
+    {
+     "n": "Kyber PCB 미드플레인 제조사",
+     "country": null,
+     "ticker": null,
+     "note": "SemiAnalysis는 미드플레인 제조 난이도로 Kyber 2028 이연 주장. 공급사명 미확보",
+     "src": "https://thenextweb.com/news/nvidia-kyber-rack-delay-2028"
+    }
+   ]
+  },
+  {
+   "part": "커넥터·케이블",
+   "where": "NVLink 구리 케이블 카트리지, 보드 간 커넥터(Paladin)",
+   "suppliers": [
+    {
+     "n": "암페놀",
+     "country": "US",
+     "ticker": "APH",
+     "note": "GB200 NVLink 커넥터 주요 공급사(SemiAnalysis 인용 2차). Rubin 컴퓨트 트레이 Paladin B2B 커넥터 언급(SemiAnalysis 2025-09-10)",
+     "src": "https://newsletter.semianalysis.com/p/another-giant-leap-the-rubin-cpx-specialized-accelerator-rack"
+    }
+   ]
+  },
+  {
+   "part": "전원 (파워쉘프·800VDC)",
+   "where": "랙 파워쉘프(NVL72당 4개), Kyber 800VDC 사이드카",
+   "suppliers": [
+    {
+     "n": "델타일렉트로닉스",
+     "country": "TW",
+     "ticker": "2308.TW",
+     "note": "NVIDIA 800VDC 파트너(전원 시스템 부품), 루빈 전원 모듈 수혜 거론(TrendForce 2026-06-01)",
+     "src": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-Generation-of-ai-factories"
+    },
+    {
+     "n": "라이트온(LiteOn)",
+     "country": "TW",
+     "ticker": "2301.TW",
+     "note": "NVIDIA 800VDC 파트너. 랙당 전원 모듈 가치 약 32% 증가 추정(TrendForce 2026-06-01). 국내 상장사 아님",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "800VDC 실리콘 파트너",
+     "country": "다국적",
+     "ticker": null,
+     "note": "ADI, Infineon, Innoscience, MPS, Navitas, onsemi, Renesas, ROHM, ST, TI (NVIDIA 블로그)",
+     "src": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-Generation-of-ai-factories"
+    },
+    {
+     "n": "버티브·이튼·슈나이더",
+     "country": "US/IE/FR",
+     "ticker": "VRT / ETN / SU.PA",
+     "note": "데이터센터 800VDC 전원 시스템(NVIDIA 블로그), 버티브 800VDC 포트폴리오 2026-H2",
+     "src": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-Generation-of-ai-factories"
+    }
+   ]
+  },
+  {
+   "part": "냉각 (냉판·매니폴드·CDU)",
+   "where": "컴퓨트·스위치 트레이 전면 수랭",
+   "suppliers": [
+    {
+     "n": "AVC(Asia Vital Components)",
+     "country": "TW",
+     "ticker": "3017.TW",
+     "note": "냉각 함량 약 12% 증가 수혜로 거론(TrendForce 2026-06-01)",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "Auras",
+     "country": "TW",
+     "ticker": "3324.TW",
+     "note": "동일 기사에서 수혜 거론. 세부 부품 미확인",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "버티브",
+     "country": "US",
+     "ticker": "VRT",
+     "note": "NVIDIA 참조 설계 파트너(2차 요약)",
+     "src": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-Generation-of-ai-factories"
+    },
+    {
+     "n": "쿨러마스터",
+     "country": "TW",
+     "ticker": "미상장/미확인",
+     "note": "미확보",
+     "src": null
+    }
+   ]
+  },
+  {
+   "part": "광트랜시버 (800G/1.6T) 및 CPO",
+   "where": "ConnectX-9 1.6Tb/s 스케일아웃, Spectrum-6 CPO",
+   "suppliers": [
+    {
+     "n": "이노라이트(Innolight)",
+     "country": "CN",
+     "ticker": "300308.SZ",
+     "note": "1.6T 선두 추정. 2025년 1.6T 약 300만 개·점유 50%+ (한 보고서) vs 노무라 1.6T 35~40% 전망 — 충돌. NVIDIA 루빈 직접 배정 1차 미확인",
+     "src": "https://photoncap.net/p/chinese-optical-modules-own-7-of"
+    },
+    {
+     "n": "이오프토링크(Eoptolink)",
+     "country": "CN",
+     "ticker": "300502.SZ",
+     "note": "1.6T 2025-Q3부터 양산(보고서)",
+     "src": "https://photoncap.net/p/chinese-optical-modules-own-7-of"
+    },
+    {
+     "n": "코히런트",
+     "country": "US",
+     "ticker": "COHR",
+     "note": "1.6T-DR8 OSFP, NVIDIA DSP 통합(Introl 요약, 2차)",
+     "src": "https://introl.com/blog/fiber-optics-data-center-state-of-art-optical-interconnect-2025"
+    },
+    {
+     "n": "CPO(Spectrum-X Photonics)",
+     "country": null,
+     "ticker": null,
+     "note": "NVIDIA CPO 스위치 양산 중(2026-05-31). 레이저·광엔진 공급사 미확보. CPO는 2026년 AI 광모듈의 약 0.5%(추정, 2차)",
+     "src": "https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory"
+    },
+    {
+     "n": "국내 상장 광모듈(오이솔루션 등)",
+     "country": "KR",
+     "ticker": null,
+     "note": "미확보 — 엔비디아 랙 연결 근거 없음"
+    }
+   ]
+  },
+  {
+   "part": "랙 조립 ODM / 시스템",
+   "where": "컴퓨트 트레이·랙 통합",
+   "suppliers": [
+    {
+     "n": "폭스콘(홍하이)",
+     "country": "TW",
+     "ticker": "2317.TW",
+     "note": "루빈 NVL 랙 제조 파트너(TrendForce 2026-06-01). 엔비디아 파트너 목록 포함",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "콴타",
+     "country": "TW",
+     "ticker": "2382.TW",
+     "note": "동일",
+     "src": "https://www.trendforce.com/news/2026/06/01/news-vera-rubin-buildout-nvidia-reportedly-pushes-tsmc-above-20-revenue-share-power-and-cooling-suppliers-benefit/"
+    },
+    {
+     "n": "위스트론/위윈",
+     "country": "TW",
+     "ticker": "3231.TW / 6669.TW",
+     "note": "NVIDIA 시스템 빌더 목록에 포함(2026-05-31 뉴스룸). ODM 점유율 미확보",
+     "src": "https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory"
+    }
+   ]
+  },
+  {
+   "part": "KV 캐시 스토리지 (STX, SSD)",
+   "where": "BlueField-4 STX 랙",
+   "suppliers": [
+    {
+     "n": "미확보",
+     "country": null,
+     "ticker": null,
+     "note": "스토리지 소프트웨어·시스템 파트너만 확인(Cloudian, DDN, NetApp, VAST, WEKA 등). SSD·낸드 부품 공급사 미확인",
+     "src": "https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory"
+    }
+   ]
+  }
+ ],
+ "nv_notes": [
+  "NVL72 대 NVL144: 2026년 NVIDIA 공식은 패키지 기준 NVL72, 2025 발표와 SemiAnalysis는 die 기준 NVL144 — 같은 랙",
+  "학습: Rubin NVL72는 Blackwell 대비 MoE 학습 GPU 수 1/4, 추론 와트당 처리량 최대 10배, 토큰당 비용 1/10 주장(NVIDIA 2026-03-16, 회사 주장)",
+  "추론: Groq 3 LPX(LPU 256개) 도입으로 디코드 가속, Rubin CPX는 2026-03 로드맵 제외 보도 후 궈밍치 재가동설(HBM4 168GB) — 확정 아님",
+  "메모리: HBM3E 12H(GB300, 288GB) → HBM4 12H 36GB×8(Rubin, 288GB) → HBM4E(Rubin Ultra, 1TB 대 768GB 충돌)",
+  "스케일업: NVLink 5 130TB/s → NVLink 6 260TB/s(GPU당 3.6TB/s), 스위치 칩 36개",
+  "스케일아웃: ConnectX-8 800G → ConnectX-9 1.6T/GPU, Spectrum-6 CPO 스위치(200G SerDes) 양산",
+  "전력·냉각: VR200 약 190kW(SemiAnalysis 추정), Kyber 약 600kW, 800VDC 2027 지원 계획(NVIDIA). Kyber 2028 이연설(2026-07-06) 있음",
+  "시장: TrendForce 2026-08-28 — 2026년 GB300 주력, 2027년 VR200 최대 비중, VR300 소규모, VR ASP는 GB300의 약 2배, 2027 NVL72 산출액 7,100억달러 초과 전망",
+  "미확보: GB200 HBM 세부 수치, GB300 LPDDR5X 공급사, 루빈 CoWoS-L 확정(1차), 랙 전원 구조 VR200 세부, 쿨링 부품 점유, 광모듈·CPO 광엔진 NVIDIA 배정, ODM 점유율, 스토리지 SSD, 11월 NVDA 실적 후 갱신"
+ ],
+ "chips": [
+  {
+   "id": "TPU-v7",
+   "vendor": "Google",
+   "name": "Ironwood (TPU v7)",
+   "partner": "Broadcom",
+   "node": null,
+   "pkg": "듀얼 컴퓨트 다이 + HBM3E 8스택",
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 192,
+    "tbps": 7.37
+   },
+   "fp8_pf": 4.614,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": 9216,
+    "link": "ICI(1.2TB/s 양방향=9.6Tb/s)+OCS"
+   },
+   "pod": "9,216칩 슈퍼팟, 공유 HBM 1.77PB, FP8 42.5EF",
+   "ship": "2025-11 GA(Google 발표 2025-11-06/07)",
+   "use": "추론 중심(학습 겸용)",
+   "note": "노드·파트너 미확보(Broadcom은 업계 보도). 칩당 HBM·FP8은 Google 2025-04 블로그 수치(2차 보도 경유)",
+   "src": [
+    {
+     "t": "Google Cloud blog: Ironwood GA",
+     "url": "https://cloud.google.com/blog/products/compute/ironwood-tpus-and-new-axion-based-vms-for-your-ai-workloads",
+     "d": "2025-11-07"
+    },
+    {
+     "t": "Google blog: Ironwood",
+     "url": "https://blog.google/products/google-cloud/ironwood-tpu-age-of-inference/",
+     "d": "2025-04-09"
+    },
+    {
+     "t": "StorageReview(칩당 스펙)",
+     "url": "https://www.storagereview.com/news/google-ironwood-tpu-a-massive-leap-in-ai-inference-performance",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "TPU-8t",
+   "vendor": "Google",
+   "name": "TPU 8t (Sunfish)",
+   "partner": "Broadcom(보도)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 216,
+    "tbps": 6.528
+   },
+   "fp8_pf": null,
+   "fp4_pf": 12.6,
+   "scaleup": {
+    "n": 9600,
+    "link": "ICI/OCS + Virgo(보도, 세부 미확보)"
+   },
+   "pod": "9,600칩 팟, 공유 HBM 약 2PB, 121 FP4 EF(Google 주장: Ironwood 대비 약 2.8~3배)",
+   "ship": "2026 하반기 GA 예정(2026-04-22 발표)",
+   "use": "학습",
+   "note": "2차 보도 간 수치 상이(2.7~3배). Google 원문 미확인",
+   "src": [
+    {
+     "t": "HPCwire: Google TPU 8 발표",
+     "url": "https://www.hpcwire.com/2026/04/22/google-bolsters-ai-hypercomputer-with-new-tpu-chips-virgo-interconnect-speedier-lustre/",
+     "d": "2026-04-22"
+    },
+    {
+     "t": "Tom's Hardware: TPU 학습·추론 분리",
+     "url": "https://www.tomshardware.com/tech-industry/semiconductors/google-splits-its-tpu-into-two-chips-for-the-first-time-with-training-and-inference-variants",
+     "d": null
+    },
+    {
+     "t": "Next Platform",
+     "url": "https://www.nextplatform.com/compute/2026/11/09/google-rejiggers-tpu-accelerators-for-broader-ai-inference-work/5308534",
+     "d": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "id": "TPU-8i",
+   "vendor": "Google",
+   "name": "TPU 8i (Zebrafish)",
+   "partner": "MediaTek(보도)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 288,
+    "tbps": 8.601
+   },
+   "fp8_pf": null,
+   "fp4_pf": 10.1,
+   "scaleup": {
+    "n": null,
+    "link": "Boardfly 토폴로지(지연 최대 50% 개선, Google 주장)"
+   },
+   "pod": "미확보",
+   "ship": "2026 하반기 GA 예정",
+   "use": "추론",
+   "note": "온칩 SRAM 384MB. 8i Max 변형 HBM 192GB(보도 1건). Ironwood 대비 추론 가격성능 +80%(Google 주장)",
+   "src": [
+    {
+     "t": "Tom's Hardware",
+     "url": "https://www.tomshardware.com/tech-industry/semiconductors/google-splits-its-tpu-into-two-chips-for-the-first-time-with-training-and-inference-variants",
+     "d": null
+    },
+    {
+     "t": "StorageReview: Sunfish/Zebrafish",
+     "url": "https://storagereview.com/news/google-announces-tpu-8t-sunfish-and-tpu-8i-zebrafish",
+     "d": null
+    },
+    {
+     "t": "HPCwire",
+     "url": "https://www.hpcwire.com/2026/04/22/google-bolsters-ai-hypercomputer-with-new-tpu-chips-virgo-interconnect-speedier-lustre/",
+     "d": "2026-04-22"
+    }
+   ]
+  },
+  {
+   "id": "TPU-8tx",
+   "vendor": "Google",
+   "name": "TPU 8tx",
+   "partner": "Broadcom(8t 와 같은 칩 — 보도)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 216,
+    "tbps": 6.528
+   },
+   "fp8_pf": null,
+   "fp4_pf": 12.6,
+   "scaleup": {
+    "n": null,
+    "link": "Boardfly(8i 의 저지연 네트워크)"
+   },
+   "pod": "호스트 CPU 5세대 AMD EPYC, 하드웨어 기밀 컴퓨팅",
+   "ship": "2026-11-10 발표, 출시 시점 미공개",
+   "use": "추론(보안·기밀) + 소규모 학습",
+   "note": "구글: TPU 8t 와 같은 실리콘 — HBM·FP4 는 8t 값을 그대로 옮김. 8t 대비 지연 최대 2배 낮음(구글). 규제 기업·정부용",
+   "src": [
+    {
+     "t": "Google Cloud 블로그: TPU 8tx and 8i Max",
+     "url": "https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max/",
+     "d": "2026-11-10"
+    }
+   ],
+   "added": "2026-11-17"
+  },
+  {
+   "id": "TPU-8i-Max",
+   "vendor": "Google",
+   "name": "TPU 8i Max",
+   "partner": "MediaTek(8i — 보도)",
+   "node": null,
+   "pkg": "8i 칩 2개를 한 패키지",
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": null,
+    "tbps": 17.2
+   },
+   "fp8_pf": null,
+   "fp4_pf": 20.2,
+   "scaleup": {
+    "n": null,
+    "link": "Boardfly"
+   },
+   "pod": "같은 랙 면적에 실리콘 2배",
+   "ship": "2026-11-10 발표, 출시 시점 미공개",
+   "use": "추론(초장문 컨텍스트·에이전트)",
+   "note": "구글: 8i 대비 연산·SRAM·HBM 대역폭 2배. FP4 20.2PF·HBM 17.2TB/s 는 8i 값(10.1PF·8.6TB/s)×2 로 계산한 값(구글 절대치 미공개). HBM 용량 미공개",
+   "src": [
+    {
+     "t": "Google Cloud 블로그: TPU 8tx and 8i Max",
+     "url": "https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max/",
+     "d": "2026-11-10"
+    }
+   ],
+   "added": "2026-11-17"
+  },
+  {
+   "id": "TPU-v6e",
+   "vendor": "Google",
+   "name": "Trillium (TPU v6e)",
+   "partner": "Broadcom",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM",
+    "gb": null,
+    "tbps": null
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": null,
+    "link": "ICI"
+   },
+   "pod": "미확보",
+   "ship": "2024-12 GA(미검증)",
+   "use": "학습·추론",
+   "note": "이번 검색에서 1차 수치 미확보. Ironwood는 칩당 4배 이상(Google 주장)",
+   "src": [
+    {
+     "t": "Google Cloud blog(Ironwood 대비 문구)",
+     "url": "https://cloud.google.com/blog/products/compute/ironwood-tpus-and-new-axion-based-vms-for-your-ai-workloads",
+     "d": "2025-11-07"
+    }
+   ]
+  },
+  {
+   "id": "TRN3",
+   "vendor": "AWS",
+   "name": "Trainium3",
+   "partner": null,
+   "node": "TSMC 3nm",
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 144,
+    "tbps": 4.9
+   },
+   "fp8_pf": 2.52,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": 144,
+    "link": "NeuronLink-v4(칩당 2.5TB/s, Next Platform) + NeuronSwitch-v1"
+   },
+   "pod": "Trn3 UltraServer 최대 144칩, FP8 362PF, HBM 약 20.7TB(2차 보도). Gen1은 64칩(Next Platform)",
+   "ship": "2025-12-01 UltraServer 출시",
+   "use": "학습·추론",
+   "note": "칩당 FP8 2.52PF는 2차(Introl) 계산 일치치. 파트너(Alchip·Marvell) 1차 확인 미확보",
+   "src": [
+    {
+     "t": "AWS 출시 보도자료(BusinessWire)",
+     "url": "https://www.businesswire.com/news/home/20251201046353/en/Trainium3-UltraServers-Now-Available-Enabling-Customers-to-Train-and-Deploy-AI-Models-Faster-at-Lower-Cost",
+     "d": "2025-12-01"
+    },
+    {
+     "t": "Next Platform",
+     "url": "https://www.nextplatform.com/compute/2025/12/03/with-trainium4-aws-will-crank-up-everything-but-the-clocks/1700879",
+     "d": "2025-12-03"
+    },
+    {
+     "t": "Introl",
+     "url": "https://introl.com/blog/amazon-trainium3-aws-nvidia-ai-chip-competition-2025",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "TRN4",
+   "vendor": "AWS",
+   "name": "Trainium4",
+   "partner": null,
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": null,
+    "gb": "약 288(추정: Trn3 x2)",
+    "tbps": "약 19.6(추정: Trn3 x4)"
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": null,
+    "link": "NVLink Fusion + UALink 병행(발표 슬라이드)"
+   },
+   "pod": "미확보",
+   "ship": "2026 말~2027 초 예상(Next Platform 추정)",
+   "use": "학습·추론",
+   "note": "AWS 발표는 상대값: FP4 기준 Trn3 대비 약 6배. 절대 수치 미확보",
+   "src": [
+    {
+     "t": "Next Platform",
+     "url": "https://www.nextplatform.com/compute/2025/12/03/with-trainium4-aws-will-crank-up-everything-but-the-clocks/1700879",
+     "d": "2025-12-03"
+    },
+    {
+     "t": "TechCrunch",
+     "url": "https://techcrunch.com/2025/12/02/amazon-releases-an-impressive-new-ai-chip-and-teases-a-nvidia-friendly-roadmap",
+     "d": "2025-12-02"
+    }
+   ]
+  },
+  {
+   "id": "MI325X",
+   "vendor": "AMD",
+   "name": "Instinct MI325X",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 256,
+    "tbps": 6.0
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": 8,
+    "link": "Infinity Fabric"
+   },
+   "pod": "8-GPU 서버(미검증)",
+   "ship": "2024-10 발표",
+   "use": "학습·추론",
+   "note": "FP4 미지원. 사전 발표 288GB에서 출하 256GB로 확정(SemiAnalysis·Tom's)",
+   "src": [
+    {
+     "t": "HotHardware: MI325X 출시",
+     "url": "https://hothardware.com/news/amd-launches-instinct-mi325x-reveals-next-gen-dpu-and-cdna-4-mi355x",
+     "d": "2024-10"
+    },
+    {
+     "t": "SemiAnalysis InferenceX",
+     "url": "https://inferencex.semianalysis.com/chips/mi355x-vs-mi325x",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "MI355X",
+   "vendor": "AMD",
+   "name": "Instinct MI355X (CDNA4)",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 288,
+    "tbps": 8.0
+   },
+   "fp8_pf": 5.03,
+   "fp4_pf": 10.07,
+   "scaleup": {
+    "n": 8,
+    "link": "Infinity Fabric; 128-GPU DLC 랙(FP4 2.4EF, 보도)"
+   },
+   "pod": "8-GPU 서버 / 128-GPU DLC 랙",
+   "ship": "2025 하반기",
+   "use": "추론·학습",
+   "note": "AMD 표기 FP4 20.1PF는 희소(sparsity) 기준으로 추정(밀집 10.07PF는 SemiAnalysis). 추정 표시",
+   "src": [
+    {
+     "t": "AMD MI350 블로그",
+     "url": "https://www.amd.com/en/blogs/2025/amd-instinct-mi350-series-game-changer.html",
+     "d": "2025-06"
+    },
+    {
+     "t": "SemiAnalysis InferenceX MI355X",
+     "url": "https://inferencex.semianalysis.com/chips/mi355x",
+     "d": null
+    },
+    {
+     "t": "Tom's Hardware: MI355X 사양",
+     "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/amd-reveals-core-specs-for-instinct-mi355x-cdna4-ai-accelerator-slated-for-shipping-in-the-second-half-of-2025",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "MI455X",
+   "vendor": "AMD",
+   "name": "Instinct MI455X (MI450 시리즈) / Helios 랙",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM4",
+    "gb": 432,
+    "tbps": 23.3
+   },
+   "fp8_pf": null,
+   "fp4_pf": 40.26,
+   "scaleup": {
+    "n": 72,
+    "link": "UALink over Ethernet(UALoE), 랙 스케일업 260TB/s"
+   },
+   "pod": "Helios 랙: MI455X 72개(트레이 18x4), HBM4 31TB, FP4 2.9EF, FP8 1.4EF(AMD 페이지)",
+   "ship": "엔지니어링 샘플 2026 하반기, 양산 2027 Q2(TNW 보도)",
+   "use": "학습·추론",
+   "note": "출처 상충: GPU당 HBM 대역폭 AMD 23.3TB/s vs Supermicro 데이터시트·TNW 19.6TB/s. 대규모 FP4 40.26PF는 보도치(밀집·희소 구분 미확인)",
+   "src": [
+    {
+     "t": "AMD Helios 공식 페이지",
+     "url": "https://www.amd.com/ko/products/rackscale-solutions/helios.html",
+     "d": null
+    },
+    {
+     "t": "StorageReview: MI455X/Helios",
+     "url": "https://www.storagereview.com/news/amd-mi455x-and-helios-432gb-hbm4-72-gpu-racks-and-a-real-answer-to-vera-rubin",
+     "d": null
+    },
+    {
+     "t": "Supermicro Helios 데이터시트",
+     "url": "https://www.supermicro.com/datasheet/datasheet_AMD_Helios.pdf",
+     "d": null
+    },
+    {
+     "t": "TNW",
+     "url": "https://thenextweb.com/news/amd-helios-mi455x-72-gpu-rack-nvidia-rival",
+     "d": "2026-07-20"
+    }
+   ]
+  },
+  {
+   "id": "MAIA-200",
+   "vendor": "Microsoft",
+   "name": "Maia 200",
+   "partner": "미공개(1차 출처에 외부 설계 파트너 언급 없음)",
+   "node": "TSMC 3nm(1,400억+ 트랜지스터)",
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 216,
+    "tbps": 7.0
+   },
+   "fp8_pf": 5.0,
+   "fp4_pf": 10.0,
+   "scaleup": {
+    "n": 6144,
+    "link": "표준 이더넷 기반 2단 스케일업 + 자체 전송 계층(칩당 양방향 2.8TB/s), 트레이당 4칩 직결"
+   },
+   "pod": "클러스터 최대 6,144칩, 온칩 SRAM 272MB, TDP 750W",
+   "ship": "2026-01 발표, Iowa 리전 우선 배치, Arizona 다음",
+   "use": "추론(합성데이터·RL 포함)",
+   "note": "FP8·FP4는 'over 5 / over 10 PF'(MS 표기). 3x Trn3 FP4, FP8은 TPU v7 상회(MS 주장)",
+   "src": [
+    {
+     "t": "Microsoft blog: Maia 200",
+     "url": "https://blogs.microsoft.com/blog/2026/01/26/maia-200/",
+     "d": "2026-01-26"
+    }
+   ]
+  },
+  {
+   "id": "MAIA-300",
+   "vendor": "Microsoft",
+   "name": "Maia 300 (Clea)",
+   "partner": "미공개(GUC 추정, 마벨·브로드컴 소문 — Next Platform)",
+   "node": "TSMC N2P(연산 칩렛, MS)",
+   "pkg": "칩렛 7개 + HBM 8스택 인터포저(Next Platform)",
+   "hbm": {
+    "gen": "HBM4",
+    "gb": 288,
+    "tbps": 18.0
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": 12288,
+    "link": "이더넷 기반 자체 전송(ATL 2.0), 128랙 한 시스템"
+   },
+   "pod": "랙당 96개·167kW·HBM 27.6TB·1.7PB/s, 수랭",
+   "ship": "2027 양산 배치(MS), 2027부터 수 GW 규모",
+   "use": "추론(장문·디코드 중심, MXFP4)",
+   "note": "MS: 칩당 TDP 950W, HBM4 8스택 18.0TB/s, 96개 랙이 Maia 200 랙(48개) 대비 토큰 처리 최대 7배, MW 당 토큰 GPU 대비 40% 많음. 칩당 HBM 288GB 는 랙 27.6TB÷96 과 Next Platform 일치. 연산 성능 미공개",
+   "src": [
+    {
+     "t": "Microsoft: Azure Maia multi-gigawatt",
+     "url": "https://blogs.microsoft.com/blog/2026/10/12/microsoft-to-expand-azure-maia-system-to-multi-gigawatt-deployments/",
+     "d": "2026-10-12"
+    },
+    {
+     "t": "Next Platform: Maia 300 Clea",
+     "url": "https://www.nextplatform.com/compute/2026/10/13/microsofts-clea-maia-300-inference-xpu-is-a-bandwidth-beast/5302874",
+     "d": "2026-10-13"
+    }
+   ],
+   "added": "2026-11-17"
+  },
+  {
+   "id": "MAIA-100",
+   "vendor": "Microsoft",
+   "name": "Maia 100",
+   "partner": null,
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": null,
+    "gb": null,
+    "tbps": null
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": null,
+    "link": null
+   },
+   "pod": "미확보",
+   "ship": "미확보",
+   "use": "미확보",
+   "note": "이번 조사에서 미확보",
+   "src": []
+  },
+  {
+   "id": "MTIA-450",
+   "vendor": "Meta",
+   "name": "MTIA 450",
+   "partner": "Broadcom(보도; 1GW 이상 확대 협력)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM",
+    "gb": null,
+    "tbps": 18.4
+   },
+   "fp8_pf": 7.0,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": 72,
+    "link": "MTIA 400 랙 72칩(Meta 공개 이미지, 보도); 400·450·500 동일 섀시·랙·네트워크"
+   },
+   "pod": "MTIA 400 랙 72칩",
+   "ship": "대량 배치 2027 초(보도)",
+   "use": "GenAI 추론",
+   "note": "HBM 대역폭 400 대비 2배(9.2→18.4TB/s, 보도 1건). Meta 원문 미확인. 2차 출처 상충 가능",
+   "src": [
+    {
+     "t": "Tom's Hardware: MTIA 4종",
+     "url": "https://www.tomshardware.com/tech-industry/semiconductors/meta-reveals-four-new-mtia-chips-built-for-ai-inference",
+     "d": "2026-03"
+    },
+    {
+     "t": "The Register",
+     "url": "https://www.theregister.com/2026/03/12/meta_custom_chips/",
+     "d": "2026-03-12"
+    },
+    {
+     "t": "StorageReview",
+     "url": "https://www.storagereview.com/news/metas-mtia-roadmap-four-chip-generations-in-two-years-put-genai-inference-first",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "MTIA-500",
+   "vendor": "Meta",
+   "name": "MTIA 500",
+   "partner": "Broadcom(보도)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM",
+    "gb": "384~512(보도)",
+    "tbps": 27.6
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": null,
+    "link": "MTIA 400/450과 동일 플랫폼"
+   },
+   "pod": "미확보",
+   "ship": "2027 후반(보도 1건; 다른 보도는 '2027 중') 상충",
+   "use": "GenAI 추론",
+   "note": "450 대비 HBM 대역폭 +50%, 용량 최대 +80%. MTIA 300→500 HBM 대역폭 4.5배, 연산 25배(Meta 주장, 보도)",
+   "src": [
+    {
+     "t": "Tom's Hardware",
+     "url": "https://www.tomshardware.com/tech-industry/semiconductors/meta-reveals-four-new-mtia-chips-built-for-ai-inference",
+     "d": "2026-03"
+    },
+    {
+     "t": "The Decoder",
+     "url": "https://the-decoder.com/meta-unveils-four-generations-of-custom-ai-chips-to-cut-inference-costs-for-billions-of-users/",
+     "d": "2026-03"
+    }
+   ]
+  },
+  {
+   "id": "B300",
+   "vendor": "NVIDIA(비교 기준)",
+   "name": "Blackwell Ultra B300",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": null,
+   "hbm": {
+    "gen": "HBM3E",
+    "gb": 288,
+    "tbps": 8.0
+   },
+   "fp8_pf": null,
+   "fp4_pf": 15.0,
+   "scaleup": {
+    "n": 72,
+    "link": "NVLink 5 (GB300 NVL72)"
+   },
+   "pod": "GB300 NVL72",
+   "ship": "출하 중",
+   "use": "학습·추론",
+   "note": "FP4 15PF는 밀집 기준(희소 30PF).",
+   "src": [
+    {
+     "t": "Tom's Hardware: B300",
+     "url": "https://www.tomshardware.com/pc-components/gpus/nvidia-announces-blackwell-ultra-b300-1-5x-faster-than-b200-with-288gb-hbm3e-and-15-pflops-dense-fp4",
+     "d": "2025-03"
+    }
+   ]
+  },
+  {
+   "id": "RUBIN",
+   "vendor": "NVIDIA(비교 기준)",
+   "name": "Rubin (Vera Rubin NVL72)",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": "듀얼 레티클 다이, 3,360억 트랜지스터",
+   "hbm": {
+    "gen": "HBM4",
+    "gb": 288,
+    "tbps": 22.0
+   },
+   "fp8_pf": null,
+   "fp4_pf": 50.0,
+   "scaleup": {
+    "n": 72,
+    "link": "NVLink 6"
+   },
+   "pod": "NVL72: NVFP4 추론 3.6EF / 학습 2.5EF, HBM4 20.7TB",
+   "ship": "2026 하반기(CES 2026 발표)",
+   "use": "학습·추론",
+   "note": "FP4 50PF는 희소/추론 기준, 학습 35PF(Tom's 표). B300과 기준 다름. 후속 Rubin Ultra는 2027 하반기(보도). Rubin CPX(GDDR7 128GB)는 GTC 2026에서 로드맵 제외(Ian Buck 발언 보도)",
+   "src": [
+    {
+     "t": "NVIDIA Vera Rubin NVL72",
+     "url": "https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72.md",
+     "d": null
+    },
+    {
+     "t": "Tom's Hardware: CES 2026",
+     "url": "https://tomshardware.com/pc-components/gpus/nvidia-launches-vera-rubin-nvl72-ai-supercomputer-at-ces-promises-up-to-5x-greater-inference-performance-and-10x-lower-cost-per-token-than-blackwell-coming-2h-2026",
+     "d": "2026-01"
+    },
+    {
+     "t": "Guru3D: Rubin 아키텍처",
+     "url": "https://www.guru3d.com/story/nvidia-details-rubin-gpu-architecture-with-hbm4-nvlink-6-and-336-billion-transistors/",
+     "d": null
+    }
+   ]
+  },
+  {
+   "id": "RUBIN-HPC",
+   "vendor": "NVIDIA",
+   "name": "Rubin HPC",
+   "partner": "자체(TSMC)",
+   "node": null,
+   "pkg": "미공개(다이 4개 추정 — Tom's Hardware)",
+   "hbm": {
+    "gen": null,
+    "gb": null,
+    "tbps": null
+   },
+   "fp8_pf": null,
+   "fp4_pf": null,
+   "scaleup": {
+    "n": null,
+    "link": "NVLink 7"
+   },
+   "pod": "Vera Rubin 플랫폼, 쿠다 코어 5만 개 이상(역대 최다)",
+   "ship": "2028(SC26 발표)",
+   "use": "과학·공학 시뮬레이션(HPC), 에이전트가 부르는 시뮬레이션",
+   "note": "엔비디아: 쿠다 코어 50,000개 이상, 희소 데이터 가속, NVLink 7세대. 메모리·연산 수치·공정 미공개. 지금 Rubin 은 쿠다 코어 28,672개(Tom's Hardware)",
+   "src": [
+    {
+     "t": "NVIDIA 블로그: Rubin HPC",
+     "url": "https://blogs.nvidia.com/blog/rubin-hpc/",
+     "d": "2026-11-16"
+    },
+    {
+     "t": "Tom's Hardware: Rubin HPC",
+     "url": "https://www.tomshardware.com/pc-components/gpus/nvidia-announces-rubin-hpc-gpu-with-record-number-of-cuda-cores-at-supercomputing-2026-new-chip-accelerates-agentic-hpc-workloads-arrives-in-2028",
+     "d": "2026-11-16"
+    }
+   ],
+   "added": "2026-11-17"
+  }
+ ],
+ "train_vs_infer": [
+  {
+   "point": "추론 비중: 2026년 AI 컴퓨트의 약 2/3가 추론(2023 약 1/3, 2025 약 1/2) — 블로그·Deloitte 인용 2차 수치. 정의별 상충: Gartner는 AI 최적화 IaaS 지출 중 추론 55%, McKinsey는 2026 수요 120GW 중 학습 29%·추론 29%·비AI 42%",
+   "impact": [
+    "GPU",
+    "ASIC",
+    "HBM"
+   ],
+   "src": "https://www.mckinsey.com/industries/semiconductors/our-insights/scaling-ai-inference",
+   "d": "2026"
+  },
+  {
+   "point": "디코드는 메모리 대역폭 바운드, 프리필은 연산 바운드. KV 캐시가 32K~128K 토큰에서 GPU 메모리 최대 소비처. vLLM·SGLang·NVIDIA Dynamo가 프리필/디코드 풀을 분리 운용",
+   "impact": [
+    "HBM",
+    "HBM4",
+    "SRAM"
+   ],
+   "src": "https://clear.ml/blog/inference-is-the-new-bottleneck-how-to-plan-gpu-capacity-for-production-ai",
+   "d": "2026"
+  },
+  {
+   "point": "칩 설계도 학습/추론 분리: Google TPU 8t(학습, 216GB·6.5TB/s) vs 8i(추론, 288GB·8.6TB/s·SRAM 384MB). MS Maia 200·Meta MTIA 450/500은 추론 전용. 추론 칩은 HBM 용량·대역폭 우선",
+   "impact": [
+    "HBM3E",
+    "HBM4",
+    "TSMC 3nm"
+   ],
+   "src": "https://www.tomshardware.com/tech-industry/semiconductors/google-splits-its-tpu-into-two-chips-for-the-first-time-with-training-and-inference-variants",
+   "d": "2026-04-22"
+  },
+  {
+   "point": "NVIDIA의 분리: Rubin CPX(GDDR7 프리필)는 GTC 2026에서 제외, Groq 3 LPX(LPU 256칩, SRAM 기반)를 Vera Rubin NVL72와 묶어 디코드 담당(Groq 인수 약 200억 달러, 보도)",
+   "impact": [
+    "SRAM",
+    "GDDR7",
+    "HBM"
+   ],
+   "src": "https://www.theregister.com/2026/03/16/nvidia_lpx_groq_3/",
+   "d": "2026-03-16"
+  },
+  {
+   "point": "저정밀 FP4: Maia 200 FP4>10PF, TPU 8t/8i FP4 기준 표기, MI355X FP4 지원, Trainium4는 FP4 기준 Trn3 대비 약 6배. 칩 사양 비교 단위가 FP8에서 FP4로 이동",
+   "impact": [
+    "HBM",
+    "연산"
+   ],
+   "src": "https://blogs.microsoft.com/blog/2026/01/26/maia-200/",
+   "d": "2026-01-26"
+  },
+  {
+   "point": "KV 캐시 SSD 확장: NVIDIA Inference Context Memory Storage(CES 2026 발표, BlueField-4 기반 G3.5 계층, 이후 CMX 명칭). 파트너 Dell·IBM·VAST·WEKA·NetApp. 5배 전력효율·5배 TPS는 벤더 주장",
+   "impact": [
+    "eSSD",
+    "QLC",
+    "DPU"
+   ],
+   "src": "https://www.blocksandfiles.com/ai-ml/2026/01/06/nvidia-pushes-ai-inference-context-out-to-nvme-ssds/4090444",
+   "d": "2026-01-06"
+  },
+  {
+   "point": "메모리 수급: 서버 DRAM 가격 급등(Counterpoint 2026 연초 급등 전망, 보도 기준 연초 약 50% 상승), SK하이닉스 HBM·DRAM·NAND 2026 물량 완판(보도), TrendForce는 2027 HBM 계약가 50% 이상 상승 전망(IntuitionLabs 인용). Nvidia LPDDR5X 수요가 LPDDR 가격 압력",
+   "impact": [
+    "HBM",
+    "DRAM",
+    "LPDDR5X",
+    "NAND"
+   ],
+   "src": "https://www.theregister.com/2026/02/02/dram_prices_expected_to_double/",
+   "d": "2026-02-02"
+  },
+  {
+   "point": "Amazon은 메모리 비용 상승을 이유로 2026 capex를 2000억→2200억 달러로 상향(2026-07, 2차 보도)",
+   "impact": [
+    "DRAM",
+    "HBM"
+   ],
+   "src": "https://aiweekly.co/alerts/amazon-microsoft-alphabet-meta-plan-725b-ai-capex-in-2026",
+   "d": "2026"
+  },
+  {
+   "point": "GPU vs ASIC 비중: TrendForce 2026 AI 서버 출하 ASIC 27.8% vs GPU 69.7%, ASIC 출하 +44.6% vs GPU +16.1%, 2030년 ASIC 약 40%. 교차 시점은 Counterpoint 2028(ASIC 1,500만개 초과), Omdia 2028(ASIC 1,050만 vs GPU 1,010만)",
+   "impact": [
+    "Broadcom",
+    "Marvell",
+    "MediaTek",
+    "HBM"
+   ],
+   "src": "https://www.tomshardware.com/tech-industry/semiconductors/custom-ai-asics-examined-from-broadcom-to-mtia",
+   "d": "2026-05"
+  },
+  {
+   "point": "Counterpoint: AI 서버 컴퓨트 ASIC용 HBM 수요가 2028년까지 35배 성장 전망(제목 기준, 기준연도 본문 미확인)",
+   "impact": [
+    "HBM"
+   ],
+   "src": "https://counterpointresearch.com/jp/insights/HBM-Demand-for-AI-Server-Compute-ASICs-to-Grow-35x-by-2028",
+   "d": null
+  },
+  {
+   "point": "Broadcom: FY2026 AI 매출 약 580억 달러(가이던스 상향), FY2027 약 1,150억 달러분 공급 확보, FY2028 약 2,300억 달러 전망(전망치). Anthropic이 2027 최대 XPU 고객, OpenAI 1.3GW 2027 배치 예정. XPU 고객 6곳",
+   "impact": [
+    "ASIC",
+    "HBM",
+    "네트워크"
+   ],
+   "src": "https://cryptobriefing.com/broadcom-ai-revenue-doubling-2027/",
+   "d": "2026-09"
+  },
+  {
+   "point": "Marvell: FY2027 매출 약 120억 달러(2분기 콜), 커스텀 FY2028 2배 이상, FY2029 100억 달러 이상 목표. XPU 어태치(NIC·CXL 메모리) 10개 이상 프로그램 양산 접근",
+   "impact": [
+    "CXL",
+    "NIC",
+    "ASIC"
+   ],
+   "src": "https://convergedigest.com/marvell-posts-record-2-418b-quarter-as-ai-infrastructure-demand-drives-higher-fy27-outlook/",
+   "d": "2026-08"
+  },
+  {
+   "point": "스케일업 인터커넥트 다변화: Google ICI+OCS, AWS NeuronLink→NVLink Fusion/UALink 병행(Trn4), AMD UALink over Ethernet(Helios), MS 표준 이더넷+자체 전송. 광(OCS)·이더넷 스위치·NIC 수요 연동. 공동패키지광학·800V·액침 등 전력·냉각은 이번 조사에서 미확보",
+   "impact": [
+    "광트랜시버",
+    "OCS",
+    "스위치",
+    "전력·냉각(미확보)"
+   ],
+   "src": "https://www.amd.com/ko/products/rackscale-solutions/helios.html",
+   "d": null
+  },
+  {
+   "point": "추론 전용 변형이 늘어남: 구글은 TPU 8i 두 개를 한 패키지로 묶은 8i Max(장문 컨텍스트)와 보안 추론용 8tx 를 추가(2026-11-10), MS 는 추론 우선 Maia 300 을 2027년부터 수 GW 규모로 배치(2026-10-12). 추론은 HBM 대역폭·SRAM·저정밀(MXFP4)·KV 캐시 압축이 핵심",
+   "impact": [
+    "HBM",
+    "SRAM",
+    "ASIC"
+   ],
+   "src": "https://blogs.microsoft.com/blog/2026/10/12/microsoft-to-expand-azure-maia-system-to-multi-gigawatt-deployments/",
+   "d": "2026-10-12"
+  }
+ ],
+ "capex_guide": [
+  {
+   "co": "AMZN",
+   "year": 2026,
+   "guide": "현금 capex 약 2,200억 달러(7월 2,000억→2,200억 상향, 10-29 재확인). Q3 capex 759억 달러(단, 다른 집계 773억)",
+   "said": "2026-10-29",
+   "src": "https://thenextweb.com/news/amazon-q3-earnings-aws-39-free-cash-flow-2027-capex"
+  },
+  {
+   "co": "AMZN",
+   "year": 2027,
+   "guide": "2026(약 2,200억) 대비 'meaningfully more'. 수치 미공개. AWS 2027·2028 성장 40% 초과 전망, 수주잔고 5,780억 달러",
+   "said": "2026-10-29",
+   "src": "https://thenextweb.com/news/amazon-q3-earnings-aws-39-free-cash-flow-2027-capex"
+  },
+  {
+   "co": "GOOGL",
+   "year": 2026,
+   "guide": "1,950~2,050억 달러(범위 유지)",
+   "said": "2026-10-28",
+   "src": "https://saanyaojha.substack.com/p/beat-build-bleed"
+  },
+  {
+   "co": "GOOGL",
+   "year": 2027,
+   "guide": "'increase significantly', 세부는 Q4 콜. 3,000억 달러 초과 보도(aiweekly)는 Luminix 분석상 투자자 추정이지 가이던스 아님 - 출처 상충",
+   "said": "2026-10-28",
+   "src": "https://www.useluminix.com/reports/industry-analysis/hyperscaler-capex-q3-2026/source/1"
+  },
+  {
+   "co": "MSFT",
+   "year": 2026,
+   "guide": "리스 포함 약 1,700억 달러(CY2026 기준 보도), 10~12월 분기 500억 달러 초과. 출처 상충: 4월 약 1,900억 보도, 7월 FY27 2,550~2,600억 보도 1건(기준 불일치 추정). 리스 상각 15→25년 변경으로 보고 capex 감소 효과. 회계연도(FY27, 6월 결산) 기준 약 1,700억 표기 보도도 있어 기준 미확정",
+   "said": "2026-10(정확한 일자 미확보)",
+   "src": "https://investinglive.com/stocks/microsoft-sees-170bn-capex-in-fiscal-2027-but-says-it-will-stay-cash-flow-positive/"
+  },
+  {
+   "co": "MSFT",
+   "year": 2027,
+   "guide": null,
+   "said": null,
+   "src": "미확보(FY27은 2026-07~2027-06이므로 위 행 참조)"
+  },
+  {
+   "co": "META",
+   "year": 2026,
+   "guide": "1,350~1,450억 달러(하한 1,300억에서 상향). Q3 capex 349억 달러(금융리스 원금 포함)",
+   "said": "2026-10-21",
+   "src": "https://letsdatascience.com/news/meta-narrows-2026-capital-spending-range-to-135-billion-145-46f12e07"
+  },
+  {
+   "co": "META",
+   "year": 2027,
+   "guide": "예산 수립 중, 정량 가이던스는 Q4 실적 콜 예정. AI가 가장 크게 성장하는 항목",
+   "said": "2026-10-21",
+   "src": "https://letsdatascience.com/news/meta-narrows-2026-capital-spending-range-to-135-billion-145-46f12e07"
+  },
+  {
+   "co": "AVGO(참고: 공급사 AI 매출 가이던스)",
+   "year": 2027,
+   "guide": "FY2026 AI 매출 약 580억 달러, Q4 AI 반도체 217억 달러 가이던스, FY2027 약 1,150억 달러분 공급 확보. Q4 결과는 12-09 예정으로 미발표",
+   "said": "2026-09(Q3 FY26 콜)",
+   "src": "https://www.fierce-network.com/broadband/broadcom-predicts-ai-chip-revenue-double-2027"
+  },
+  {
+   "co": "합계(참고)",
+   "year": 2026,
+   "guide": "MSFT·GOOGL·AMZN·META 4사 Q3 2026 PP&E 지출 2,019억 달러, 전년 동기 973억 대비 +108%(트래커 집계)",
+   "said": "2026-10",
+   "src": "https://walnutinvest.com/stats/ai-capex-statistics"
+  }
+ ],
+ "feeds": [
+  {
+   "n": "NVIDIA Newsroom",
+   "url": "https://nvidianews.nvidia.com/",
+   "rss": "https://nvidianews.nvidia.com/releases.xml"
+  },
+  {
+   "n": "NVIDIA Technical Blog",
+   "url": "https://developer.nvidia.com/blog",
+   "rss": "https://developer.nvidia.com/blog/feed"
+  },
+  {
+   "n": "Google Cloud 블로그 Compute(TPU)",
+   "url": "https://cloud.google.com/blog/products/compute",
+   "rss": "https://cloudblog.withgoogle.com/products/compute/rss/"
+  },
+  {
+   "n": "AWS What's New",
+   "url": "https://aws.amazon.com/about-aws/whats-new/recent/",
+   "rss": "https://aws.amazon.com/about-aws/whats-new/recent/feed/"
+  },
+  {
+   "n": "AWS 뉴스 블로그",
+   "url": "https://aws.amazon.com/blogs/aws/",
+   "rss": "https://aws.amazon.com/blogs/aws/feed/"
+  },
+  {
+   "n": "Microsoft 공식 블로그(Maia)",
+   "url": "https://blogs.microsoft.com/blog/",
+   "rss": "https://blogs.microsoft.com/feed/"
+  },
+  {
+   "n": "Azure 블로그",
+   "url": "https://azure.microsoft.com/en-us/blog/",
+   "rss": "https://azure.microsoft.com/en-us/blog/feed/"
+  },
+  {
+   "n": "Meta Engineering",
+   "url": "https://engineering.fb.com/",
+   "rss": "https://engineering.fb.com/feed/"
+  },
+  {
+   "n": "Next Platform",
+   "url": "https://www.nextplatform.com/",
+   "rss": "https://www.nextplatform.com/feed/"
+  },
+  {
+   "n": "SemiAnalysis",
+   "url": "https://newsletter.semianalysis.com/",
+   "rss": "https://newsletter.semianalysis.com/feed"
+  },
+  {
+   "n": "Tom's Hardware 반도체",
+   "url": "https://www.tomshardware.com/tech-industry/semiconductors",
+   "rss": "https://www.tomshardware.com/feeds/all"
+  }
+ ],
+ "changelog": [
+  {
+   "d": "2026-11-17",
+   "t": "새 소식 반영: TPU 8tx·8i Max(구글 11-10), Maia 300(MS 10-12), Rubin HPC(엔비디아 11-16)"
+  }
+ ]
+}

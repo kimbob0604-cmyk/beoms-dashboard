@@ -327,8 +327,22 @@ PARSERS = {'contract': parse_contract, 'contract_x': parse_contract_x, 'earn': p
            'holder': parse_holder, 'invest': parse_invest, 'dividend': parse_dividend, 'biz': parse_biz}
 
 
+def body_of(cells: List[str]) -> List[str]:
+    """정정 공시는 맨 앞에 '정정 전 / 정정 후' 표가 있다 — 그 표의 칸을 본문 값으로 잘못 읽지 않게, 정정 후 본문(두 번째 '1.' 항목)부터 돌려준다"""
+    if not any(_norm(c).startswith('정정신고') for c in cells[:6]):
+        return cells
+    j = find(cells, '4.정정사항')
+    if j < 0:
+        return cells
+    for i in range(j + 1, len(cells)):
+        n = _norm(cells[i])
+        if re.match(r'1\.(판매ㆍ공급계약|투자구분|판매·공급계약)', n):
+            return cells[i - 1:]          # 바로 앞 칸(공시 제목)부터
+    return cells
+
+
 def parse(kind: str, cells: List[str]) -> Dict:
-    return PARSERS[kind](cells)
+    return PARSERS[kind](body_of(cells))
 
 
 # ---------- 분기 컨센서스 (네이버 종목 분기 재무의 추정 열) ----------

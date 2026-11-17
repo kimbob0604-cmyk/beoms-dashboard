@@ -116,6 +116,14 @@ def main() -> int:
             problems.append('펀더(DART 주석) 수집 일부 실패 — 다음 실행에서 이어 받음')
         if run('펀더 빌드', ['build_fund.py'], log) != 0:
             problems.append('펀더 JSON 빌드 실패')
+        # 반도체 밸류체인: 해외 기업 분기 실적·capex(SEC EDGAR·야후) → 펀더 손익과 묶어 semi.json
+        if run('반도체 수주·투자 공시', ['collect_semi_orders.py'], log) not in (0, 4):     # 밸류체인 국내 종목의 단일판매·공급계약·신규시설투자 (최근분만)
+            problems.append('반도체 수주·투자 공시 일부 실패 — 다음 실행에서 이어 받음')
+        run('AI 인프라 소식', ['collect_ai_news.py'], log)      # 공식 피드에서 가속기·메모리 새 소식 (규격표에 없는 제품명은 '검토 필요')
+        if run('반도체 해외 실적', ['collect_semi.py'], log) != 0:
+            problems.append('반도체 해외 실적 일부 실패 — 직전 값으로 빌드')
+        if run('반도체 빌드', ['build_semi.py'], log) != 0:
+            problems.append('반도체 JSON 빌드 실패')
         # 조건 백테스트(20년): 과거 DB(history.db)에 어제까지의 확정 가격을 복사. 다시 계산은 아침 실행에서만 (약 8분)
         run('백테스트 과거 가격', ['collect_history.py', 'sync'], log)
         if datetime.now().hour < 12:
