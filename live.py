@@ -102,6 +102,7 @@ def main() -> int:
             run(['build_events.py'], log)   # 이벤트 스터디 기업 리스트에 새 공시 (1초)
             # 실적 발표 덱: 새 실적 글 → 오늘 발표 종목의 분봉(가진 마지막 분 뒤만) → 빌드. 배포는 위 공시와 함께
             if run(['collect_earn.py', 'posts'], log) == 0:
+                run(['earn_alert.py', '--notify'], log)   # 관심 종목(소비재·의료기기) 실적 공시 속보 → 텔레그램
                 run(['collect_earn.py', 'minutes', '--today'], log)
             run(['build_earn.py'], log)
         if need_naver and run(['build_naver.py'], log) != 0:

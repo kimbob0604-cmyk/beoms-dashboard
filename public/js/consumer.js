@@ -14,11 +14,11 @@
     scan: ['자동 탐색 후보', '이 종목의 분기 매출과 같이 움직인 수출 지역을 자동으로 찾은 것 — 같은 업황이라 우연히 맞았을 수 있다'] };
   const HEAT = [['US', '미국'], ['CN', '중국'], ['JP', '일본'], ['HK', '홍콩'], ['VN', '베트남'], ['TW', '대만'], ['RU', '러시아'], ['AE', 'UAE'], ['EU', 'EU 6국']];
   const SHOWS = [['all', '전체'], ['ok', '수출 연동 ✓', '회사 수출로 확인된 지역 흐름이 있는 종목'], ['flow', '지역 흐름 있는 종목', '대표 흐름이 회사 지역 흐름인 종목'], ['prev', '프리뷰 있는 종목'], ['gap', '수출↑ 시총↓', '회사 지역 흐름(매출의 10% 이상)의 3개월 전년비가 +15% 이상인데 시총은 3개월 -10% 이하'], ['notes', '컨콜·탐방 있는 종목']];
-  const DEFAULTS = { sector: 'all', g: '', s: '', f: '', q: '', show: 'all', wv: 'm', tg: '', tr: '104', im: 'eu' };
+  const DEFAULTS = { sector: 'all', g: '', s: '', f: '', q: '', show: 'all', wv: 'm', tg: '', tr: '104', im: 'eu', mk: 'all', nw: 'all', nd: '' };
   const $ = id => document.getElementById(id);
-  const pg = U.page(DEFAULTS, (patch, typing) => (typing ? renderTable() : render()));
+  const pg = U.page(DEFAULTS, (patch, typing) => (typing ? (renderTable(), renderNews()) : render()));
   const st = pg.state;
-  let data = null, calls = null, trends = null, alt = null;
+  let data = null, calls = null, trends = null, alt = null, news = null;
 
   // ---------- 포맷 ----------
   const usd = v => (v == null ? '–' : Math.abs(v) >= 1e8 ? `${(v / 1e8).toLocaleString('ko-KR', { maximumFractionDigits: 1 })}억$` : `${Math.round(v / 1e4).toLocaleString('ko-KR')}만$`);
@@ -126,6 +126,45 @@
       <div class="tbl-wrap"><table class="tbl cs-watch" data-nosort><thead><tr>${head}</tr></thead>
       <tbody>${w.cats.map(c => c.items.map((it, i) => row(c, it, i === 0)).join('')).join('')}</tbody></table></div>
       <p class="muted small">시군구는 수출 신고인 소재지라 같은 지역의 다른 회사 물량이 섞일 수 있습니다(예: 강남구 미용기기·체성분 분석기). 품목·지역 짝은 <code>export_watch.json</code>.</p></details>`;
+  }
+
+  // ---------- 섹터 데일리 뉴스 (collect_news.py → data/news.json, 네이버 뉴스 검색 제목·링크) ----------
+  function renderNews() {
+    if (!news?.items?.length) { $('news').innerHTML = ''; return; }
+    const q = st.q.trim().toLowerCase();
+    const days = [...new Set(news.items.map(x => x.d.slice(0, 10)))].slice(0, 7);
+    const day = days.includes(st.nd) ? st.nd : days[0];
+    const ok = x => (st.sector === 'all' || x.sec.includes(st.sector)) && (st.nw === 'all' || (st.nw === 'stock' ? x.cs.length : x.ks.length))
+      && (!q || x.t.toLowerCase().includes(q) || x.cs.some(c => c.includes(q) || (news.names[c] || '').toLowerCase().includes(q)));
+    const list = news.items.filter(x => x.d.startsWith(day) && ok(x));
+    const chip = c => (data.stocks.find(y => y.c === c) ? pick(c, news.names[c] || c) : Stock.link({ c, n: news.names[c] || c }));
+    const dl = d => `${+d.slice(5, 7)}/${+d.slice(8, 10)}`;
+    $('news').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>섹터 데일리 뉴스 <small class="muted">관심 종목·섹터 키워드가 제목에 든 기사 · 네이버 뉴스 검색 · 최근 ${news.days}일 · ${U.timeLabel(news.built_at)} 수집</small></h3></summary>
+      <div class="col-head">${pg.seg('nd', days.map(d => [d, `${dl(d)} ${news.items.filter(x => x.d.startsWith(d) && ok(x)).length}`]))} ${pg.seg('nw', [['all', '전체'], ['stock', '종목'], ['kw', '키워드']])}</div>
+      <ul class="news-list">${list.slice(0, 120).map(x => `<li><span class="muted small">${x.d.slice(11, 16)}</span> <a href="${U.esc(x.link)}" target="_blank" rel="noopener">${U.esc(x.t)}</a> <span class="muted small">${U.esc(x.src)}</span>
+        ${x.cs.map(chip).join(' ')} ${x.ks.map(k => `<span class="news-k">${U.esc(k)}</span>`).join(' ')}</li>`).join('') || '<li class="muted">해당 없음</li>'}</ul>
+      <p class="muted small">제목과 링크만 싣습니다. 위 검색창(종목명·코드)과 분야 필터가 여기에도 걸립니다.</p></details>`;
+  }
+
+  // ---------- 주간 모멘텀 체크 (momentum.py) ----------
+  function renderMom() {
+    const m = data.mom;
+    if (!m?.rows?.length) { $('mom').innerHTML = ''; return; }
+    const rows = m.rows.filter(r => inSector({ sector: r.sec || '미용 의료·의료기기' }) && (st.mk === 'all' || r.k === st.mk))
+      .sort((a, b) => (b.em1 ?? -9) - (a.em1 ?? -9) || (a.r1m ?? 0) - (b.r1m ?? 0));
+    const cnt = Object.fromEntries(m.classes.map(([k]) => [k, m.rows.filter(r => r.k === k && inSector({ sector: r.sec || '미용 의료·의료기기' })).length]));
+    const tag = k => (k ? `<span class="mom-k ${k}">${m.classes.find(c => c[0] === k)[1]}</span>` : '<span class="muted">추정 없음</span>');
+    const fo = (f, o) => (f == null || o == null ? '–' : `${U.eok(f, true)} / ${U.eok(o, true)}`);
+    const rsi = v => (v == null ? '–' : `<b class="${v <= 30 ? 'down' : v >= 70 ? 'up' : ''}">${v.toFixed(0)}</b>`);
+    const stale = m.cns_date && m.date && (new Date(m.date) - new Date(m.cns_date)) / 864e5 > 7;
+    $('mom').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>주간 모멘텀 체크 <small class="muted">관심 종목 · 내년 영업이익 컨센서스 1개월 변화(±${m.est_t * 100}% 넘으면 움직임) × 주가 1개월 → 동행·선행 · 수급 ${m.date} 기준</small></h3></summary>
+      ${stale ? `<p class="small" style="margin:4px 0"><b class="down">컨센서스가 ${m.cns_date} 에 멈춰 있습니다</b> <span class="muted">— 수집이 그 뒤로 실패하고 있어 추정 변화가 0 으로 보일 수 있습니다.</span></p>` : ''}
+      <div class="col-head">${pg.seg('mk', [['all', `전체 ${m.rows.filter(r => inSector({ sector: r.sec || '미용 의료·의료기기' })).length}`], ...m.classes.map(([k, l]) => [k, `${l} ${cnt[k]}`])])}</div>
+      <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>종목</th><th>분류</th><th class="num">시총</th><th class="num">추정 1주</th><th class="num">추정 1개월</th><th class="num">주가 1주</th><th class="num">주가 1개월</th><th class="num">RSI</th><th class="num" title="외국인 / 기관 순매수 (억원)">수급 5일 (외/기)</th><th class="num">수급 20일 (외/기)</th></tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${data.stocks.find(x => x.c === r.c) ? pick(r.c, r.n) : Stock.link({ c: r.c, n: r.n })}</td><td>${tag(r.k)}</td><td class="num">${r.mc ? U.eok(r.mc) : '–'}</td>
+        <td class="num">${pctB(r.ew1, 1)}</td><td class="num">${pctB(r.em1, 1)}${r.fy ? ` <small class="muted">${String(r.fy).slice(2)}F</small>` : ''}</td><td class="num">${pctB(r.r1w, 1)}</td><td class="num">${pctB(r.r1m, 1)}</td><td class="num">${rsi(r.rsi)}</td>
+        <td class="num small">${fo(r.f5, r.o5)}</td><td class="num small">${fo(r.f20, r.o20)}</td></tr>`).join('') || '<tr><td colspan="10" class="muted empty">해당 없음</td></tr>'}</tbody></table></div>
+      <p class="muted small">동행 상향 = 추정↑·주가↑, 추정 선행 = 추정↑인데 주가↓(아직 안 따라옴), 추정 하향 = 추정↓인데 주가↑(버팀), 동행 하향 = 추정↓·주가↓. RSI 30 이하 파랑, 70 이상 빨강. 수급은 수량 × 종가 어림.</p></details>`;
   }
 
   // ---------- EU 수입: 한국 vs 중국 (eu_trade.py, Eurostat 원산지 기준) ----------
@@ -253,7 +292,7 @@
       return `<tr><td><i class="eu-dot" style="background:${PAL[k % PAL.length]}"></i>${U.esc(x.kw)}</td><td>${x.c ? (s ? pick(x.c, x.n || s.n) : Stock.link({ c: x.c, n: x.n || x.c })) : '<span class="muted">–</span>'}</td>
         <td class="num">${now == null ? '–' : now.toFixed(1)}</td><td class="num">${pctB(r(now, prev), 0)}</td><td class="num">${pctB(r(now, ly), 0)}</td><td class="num">${peak ? `${Math.round(now / peak * 100)}%` : '–'}</td></tr>`;
     }).join('');
-    $('trends').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>구글 검색 관심도 <small class="muted">구글 트렌드 주간 · 묶음 안에서만 비교(최고 = 100) · 판매량 아님 · ${U.esc(g.labels[L - 1])} 주까지${g.stale ? ' · <b class="down">이번 수집 실패 — 직전 값</b>' : ''}</small></h3></summary>
+    $('trends').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>검색 관심도 <small class="muted">${g.src === 'naver' ? '네이버 데이터랩' : '구글 트렌드'} 주간 · 묶음 안에서만 비교(최고 = 100) · 판매량 아님 · ${U.esc(g.labels[L - 1])} 주까지${g.stale ? ' · <b class="down">이번 수집 실패 — 직전 값</b>' : ''}</small></h3></summary>
       <div class="col-head">${pg.seg('tg', trends.groups.map(x => [x.id, x.label]))} ${pg.seg('tr', [['104', '2년'], ['262', '5년']])}</div>
       ${g.note ? `<p class="muted small" style="margin:4px 0">${U.esc(g.note)}</p>` : ''}
       ${lineChart(labels, ser)}
@@ -274,7 +313,8 @@
       if (x.amazon) {
         const a = x.amazon, n = a.labels.length;
         amz = (a.order || Object.keys(a.by_country)).map(k => { const v = a.by_country[k]; const now = avg(v, n - 7, n), was = avg(v, n - 35, n - 28);
-          return `<span class="alt-ms"><b>${k}</b> ${now == null ? '–' : now.toFixed(1) + '%'}${now != null && was != null ? pp(now - was) : ''}</span>`; }).join(' ')
+          const d0 = v[n - 1], d1 = v[n - 2];
+          return `<span class="alt-ms" title="최근 7일 평균, 4주 전 대비"><b>${k}</b> ${d0 == null ? '–' : d0.toFixed(1) + '%'}${d0 != null && d1 != null ? ` <small class="muted">전일</small>${pp(d0 - d1)}` : ''} <small class="muted">· 7일 ${now == null ? '–' : now.toFixed(1) + '%'}</small>${now != null && was != null ? pp(now - was) : ''}</span>`; }).join(' ')
           + `<div>${spark((a.by_country[a.order?.[0]] || []).slice(-60), 110, 22)}</div>`;
       }
       let tt = '<span class="muted">–</span>';
@@ -292,7 +332,7 @@
       return `<tr><td>${name}${cap}<div class="muted small">${U.esc(brands)}</div></td><td>${amz}</td><td>${tt}</td><td>${rd}</td></tr>`;
     }).join('');
     $('alt').innerHTML = `<details class="card cs-chain" open><summary class="cs-d-head"><h3>Amazon · TikTok · Reddit <small class="muted">newsbot 커버리지 대시보드 집계를 그대로 표시 · 원자료 ${U.esc(alt.data_through || '')}까지 · 이 컴퓨터에서만(공개 배포 제외)</small></h3></summary>
-      <div class="tbl-wrap"><table class="tbl alt-tbl" data-nosort><thead><tr><th>회사 · 브랜드</th><th>Amazon 점유율 <small class="muted">순위 가중 SKU · 최근 7일 평균, 4주 전 대비</small></th><th>TikTok Shop GMV 지수</th><th>Reddit 언급</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="tbl-wrap"><table class="tbl alt-tbl" data-nosort><thead><tr><th>회사 · 브랜드</th><th>Amazon 점유율 <small class="muted">순위 가중 SKU · 최신일(전일 대비) · 7일 평균(4주 전 대비)</small></th><th>TikTok Shop GMV 지수</th><th>Reddit 언급</th></tr></thead><tbody>${rows}</tbody></table></div>
       <p class="muted small">출처: <a href="${U.esc(alt.page)}" target="_blank" rel="noopener">newsbot 커버리지</a> (${U.esc(alt.source?.amazon || '')} · ${U.esc((alt.source?.tiktok || '').split('·')[0])}). 받은 때 ${U.timeLabel(alt.fetched_at)}. 절대 GMV 는 공개되지 않아 지수만 있습니다.</p></details>`;
   }
 
@@ -653,6 +693,8 @@
     renderFilters();
     renderBrief();
     renderWatch();
+    renderMom();
+    renderNews();
     renderHeat();
     renderEU();
     renderTour();
@@ -739,6 +781,8 @@
     }
     try { calls = await U.json('data/consumer_calls.json'); } catch (e) { calls = null; }
     try { trends = await U.json('data/trends.json'); } catch (e) { trends = null; }
+    try { const nv = await U.json('data/naver_trends.json'); if (nv?.groups?.length) trends = { ...(trends || {}), groups: [...nv.groups, ...((trends || {}).groups || [])] }; } catch (e) { /* 데이터랩 권한 전 */ }
+    try { news = await U.json('data/news.json'); } catch (e) { news = null; }
     try { alt = await U.json('data/altdata.json'); } catch (e) { alt = null; }     // 공개 사이트에는 없다 → 카드 숨김
     $('msg').hidden = true;
     render();

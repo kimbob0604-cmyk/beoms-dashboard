@@ -8,6 +8,7 @@
 - EU 수입(eu): Eurostat 화장품 바스켓의 한국·중국 수입액·점유율, 보고국별, HS 기여도 (collect_eu.py → eu_trade.py)
 - 외국인 의료 소비(med): 한국관광 데이터랩 국적 × 진료과목 카드 결제 (collect_medical.py → medical.py)
 - 미국 수입(us): UN Comtrade 미국 보고 화장품·톡신 수입 (collect_us.py → us_trade.py, EU 카드에서 전환)
+- 주간 모멘텀 체크(mom): 관심 종목의 컨센서스 변화 × 주가 × 수급 × RSI (momentum.py)
 - 방한 외래관광객(tour): 출입국관광통계 국적별 월 입국자 (collect_tourism.py → tourism.py)
 - 월간 확정치(watch): 관심 품목 × 회사 지역의 월·분기 금액 (export_watch.py — 같은 표를 텔레그램으로도 보낸다)
 - 컨콜: DART 기업설명회(IR) 공시(consumer.json) + 텔레그램 컨콜 노트(consumer_calls.json — 방의 글 원문이라 공개 배포에서 뺀다)
@@ -28,6 +29,7 @@ import consumer as K
 import db
 import eu_trade as EUT
 import medical as MED
+import momentum as MOM
 import tourism as TOUR
 import us_trade as UST
 import export_watch as W
@@ -577,6 +579,8 @@ def build(conn, tconn, hconn=None) -> tuple:
         'sgg_from': sm[0] if sm else None, 'sgg_to': sm[-1] if sm else None,
         'fx_last': round(fx[t.months[-1]], 1), 'fx': [round(fx[m], 1) for m in t.months], 'chains': assets['chains'], 'groups': group_cards(t), 'stocks': stocks,
         'surge': surges(t, assets), 'ir': ir_filings(conn, codes, d), 'watch': watch, 'eu': EUT.build(tconn), 'tour': TOUR.build(tconn), 'med': MED.build(tconn), 'us': UST.build(tconn),
+        'mom': MOM.build(conn, {**{s['c']: s['n'] for s in stocks}, **{it['c']: it['n'] for c in watch['cats'] for it in c['items'] if it['c']}},
+                         {s['c']: s['sector'] for s in stocks}),
         'r_ok': K.R_OK, 'band': K.BAND, 'cover_min': K.COVER_MIN, 'cover_max': K.COVER_MAX, 'mae_ok': K.MAE_OK,
         'min_q': K.MIN_Q, 'min_nq': K.MIN_NQ,
     }

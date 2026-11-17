@@ -1366,3 +1366,12 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .mk-th button.hit { background: #EEEDFE; color: #26215C; font-weight: 700; }
 .mk-th button.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
 .mk-th button.sel small { color: rgba(255,255,255,.85); }
+.mom-k { display: inline-block; padding: 1px 7px; border-radius: 9px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.mom-k.up { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.mom-k.lead { background: color-mix(in srgb, #1fa774 16%, transparent); color: #1fa774; }
+.mom-k.hold { background: color-mix(in srgb, #e8a33d 18%, transparent); color: #c27c12; }
+.mom-k.down { background: color-mix(in srgb, var(--down) 16%, transparent); color: var(--down); }
+.mom-k.flat { background: color-mix(in srgb, var(--muted) 15%, transparent); color: var(--muted); }
+.news-list { list-style: none; margin: 6px 0; padding: 0; font-size: 13px; line-height: 1.6; max-height: 520px; overflow-y: auto; }
+.news-list li { padding: 4px 2px; border-bottom: 1px solid var(--line); } .news-list li a { color: var(--text); }
+.news-k { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }

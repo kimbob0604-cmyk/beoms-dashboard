@@ -104,6 +104,7 @@ def main() -> int:
         # 실적 발표 덱: @darthacking 실적 글(텔레그램 로그인 필요, 없으면 4) → 최근 1년 발표의 KIS 분봉 → 판정·반응 빌드
         if run('실적 글', ['collect_earn.py', 'posts'], log) not in (0, 4):
             problems.append('실적 글(텔레그램) 수집 실패 — 다음 실행에서 이어 받음')
+        run('실적 속보', ['earn_alert.py', '--notify'], log)   # 장중(live.py)에 못 보낸 관심 종목 실적 글 (밤 사이 공시 등)
         if run('실적 분봉', ['collect_earn.py', 'minutes'], log) not in (0, 4):
             problems.append('실적 발표 분봉(KIS) 일부 실패 — 다음 실행에서 이어 받음')
         if run('실적 덱 빌드', ['build_earn.py'], log) != 0:
@@ -151,12 +152,17 @@ def main() -> int:
         # 외국인 의료 소비(한국관광 데이터랩 화면의 조회 주소, 하루 한 번 최근 13개월)
         if run('외국인 의료 소비', ['collect_medical.py'], log) != 0:
             problems.append('외국인 의료 소비(데이터랩) 일부 실패 — 직전 값 유지')
+        if run('의료관광 알림', ['medical_alert.py', '--notify'], log) not in (0, 4):   # 새 달이 들어온 날 한 번 텔레그램
+            problems.append('월간 의료관광 텔레그램 알림 실패 — 다음 실행에서 다시 보냄')
         # 방한 외래관광객(출입국관광통계, 공공데이터포털 키): 하루 한 번 최근 13개월. 키가 이 서비스에 등록 전이면 4
         if run('방한 관광객', ['collect_tourism.py'], log) not in (0, 4):
             problems.append('방한 관광객 통계 일부 실패 — 다음 실행에서 다시 받음')
         # 구글 트렌드(주 1회, 막히면 묶음별로 직전 값 유지)와 newsbot 의 Amazon·TikTok·Reddit 집계(하루 한 번, 공개 배포 제외)
         if run('구글 트렌드', ['collect_trends.py'], log) != 0:
             problems.append('구글 트렌드 일부 실패 — 직전 값 유지')
+        run('네이버 트렌드', ['collect_naver_trends.py'], log)   # 시술·톡신 검색(주 1회). 데이터랩 권한 전이면 4
+        if run('섹터 뉴스', ['collect_news.py'], log) not in (0, 4):   # 관심 종목·키워드 기사 제목(네이버 뉴스 검색)
+            problems.append('섹터 뉴스(네이버 검색) 일부 실패')
         if run('대체데이터', ['collect_altdata.py'], log) != 0:
             problems.append('newsbot 대체데이터 받기 실패 — 직전 값 유지')
         if run('컨콜 수집', ['collect_visits.py', '--topic', 'concall'], log) not in (0, 4):

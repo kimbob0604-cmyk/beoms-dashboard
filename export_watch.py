@@ -21,15 +21,14 @@ complete_ym 이 그 달이 되고, 여기서는 그 달까지만 쓴다(중간�
 import argparse
 import html
 import json
-import os
 import sqlite3
 import sys
 from pathlib import Path
 
 import requests
 
-import config  # noqa: F401  (.env 를 환경변수로 올린다)
 import consumer as K
+from tg_notify import send, tg_target  # noqa: F401  (테스트가 W.send 를 바꿔 끼운다)
 
 ROOT = Path(__file__).resolve().parent
 CFG = ROOT / 'export_watch.json'
@@ -156,21 +155,6 @@ def message(w: dict) -> str:
 # ------------------------------------------------------------
 # 보내기
 # ------------------------------------------------------------
-
-def tg_target():
-    token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
-    chat = os.environ.get('EXPORT_TG_CHAT_ID') or os.environ.get('TELEGRAM_CHAT_ID', '')
-    enabled = os.environ.get('EXPORT_TG_ENABLED', '0') == '1'
-    return token, chat, enabled
-
-
-def send(text: str, token: str, chat: str) -> None:
-    r = requests.post(f'https://api.telegram.org/bot{token}/sendMessage',
-                      data={'chat_id': chat, 'text': text, 'parse_mode': 'HTML', 'disable_web_page_preview': 'true'},
-                      timeout=20)
-    if r.status_code != 200 or not r.json().get('ok'):
-        raise RuntimeError(f'텔레그램 전송 실패 HTTP {r.status_code}: {r.text[:200]}')
-
 
 def get_meta(tconn, k: str):
     row = tconn.execute('SELECT v FROM meta WHERE k = ?', (k,)).fetchone()

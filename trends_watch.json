@@ -2,16 +2,226 @@
   "note": "구글 트렌드 검색 관심도 묶음. 묶음 안에서만 비교한다(구글이 요청마다 0~100 으로 정규화). 5개 넘는 묶음은 anchor 를 매번 같이 넣어 이어 붙인다. geos 가 여럿이면 나라마다 받은 지수의 평균. c = 연결 종목코드(없으면 null). 구성은 newsbot 커버리지 대시보드의 구글 트렌드 탭을 참고했다.",
   "time": "today 5-y",
   "groups": [
-    {"id": "toxin_us", "label": "톡신 — 미국", "note": "레티보(휴젤)·주보(대웅제약, 에볼루스) vs 신흥·기존 경쟁", "geos": ["US"],
-     "kws": [{"kw": "Letybo", "c": "145020", "n": "휴젤"}, {"kw": "Jeuveau", "c": "069620", "n": "대웅제약"},
-             {"kw": "Daxxify", "c": null}, {"kw": "Xeomin", "c": null}, {"kw": "Dysport", "c": null}]},
-    {"id": "booster_eu", "label": "스킨부스터 — 유럽 5개국", "note": "리쥬란(파마리서치) vs 프로필로·스컬트라·플리네스트·수네코스. 독일·프랑스·이탈리아·스페인·영국 지수의 평균", "geos": ["DE", "FR", "IT", "ES", "GB"],
-     "kws": [{"kw": "Rejuran", "c": "214450", "n": "파마리서치"}, {"kw": "Profhilo", "c": null}, {"kw": "Sculptra", "c": null},
-             {"kw": "Plinest", "c": null}, {"kw": "Sunekos", "c": null}]},
-    {"id": "kbeauty_us", "label": "K뷰티 브랜드 — 미국", "note": "메디큐브를 기준(anchor)으로 묶음을 이어 붙였다", "geos": ["US"], "anchor": "Medicube",
-     "kws": [{"kw": "Medicube", "c": "278470", "n": "에이피알"}, {"kw": "COSRX", "c": "090430", "n": "아모레퍼시픽"},
-             {"kw": "Laneige", "c": "090430", "n": "아모레퍼시픽"}, {"kw": "Beauty of Joseon", "c": null}, {"kw": "Anua", "c": null},
-             {"kw": "Aestura", "c": "090430", "n": "아모레퍼시픽"}, {"kw": "d'Alba", "c": "483650", "n": "달바글로벌"},
-             {"kw": "Torriden", "c": null}, {"kw": "SKIN1004", "c": null}]}
-  ]
+    {
+      "id": "toxin_us",
+      "label": "톡신 — 미국",
+      "note": "레티보(휴젤)·주보(대웅제약, 에볼루스) vs 신흥·기존 경쟁",
+      "geos": [
+        "US"
+      ],
+      "kws": [
+        {
+          "kw": "Letybo",
+          "c": "145020",
+          "n": "휴젤"
+        },
+        {
+          "kw": "Jeuveau",
+          "c": "069620",
+          "n": "대웅제약"
+        },
+        {
+          "kw": "Daxxify",
+          "c": null
+        },
+        {
+          "kw": "Xeomin",
+          "c": null
+        },
+        {
+          "kw": "Dysport",
+          "c": null
+        }
+      ]
+    },
+    {
+      "id": "booster_eu",
+      "label": "스킨부스터 — 유럽 5개국",
+      "note": "리쥬란(파마리서치) vs 프로필로·스컬트라·플리네스트·수네코스. 독일·프랑스·이탈리아·스페인·영국 지수의 평균",
+      "geos": [
+        "DE",
+        "FR",
+        "IT",
+        "ES",
+        "GB"
+      ],
+      "kws": [
+        {
+          "kw": "Rejuran",
+          "c": "214450",
+          "n": "파마리서치"
+        },
+        {
+          "kw": "Profhilo",
+          "c": null
+        },
+        {
+          "kw": "Sculptra",
+          "c": null
+        },
+        {
+          "kw": "Plinest",
+          "c": null
+        },
+        {
+          "kw": "Sunekos",
+          "c": null
+        }
+      ]
+    },
+    {
+      "id": "kbeauty_us",
+      "label": "K뷰티 브랜드 — 미국",
+      "note": "메디큐브를 기준(anchor)으로 묶음을 이어 붙였다",
+      "geos": [
+        "US"
+      ],
+      "anchor": "Medicube",
+      "kws": [
+        {
+          "kw": "Medicube",
+          "c": "278470",
+          "n": "에이피알"
+        },
+        {
+          "kw": "COSRX",
+          "c": "090430",
+          "n": "아모레퍼시픽"
+        },
+        {
+          "kw": "Laneige",
+          "c": "090430",
+          "n": "아모레퍼시픽"
+        },
+        {
+          "kw": "Beauty of Joseon",
+          "c": null
+        },
+        {
+          "kw": "Anua",
+          "c": null
+        },
+        {
+          "kw": "Aestura",
+          "c": "090430",
+          "n": "아모레퍼시픽"
+        },
+        {
+          "kw": "d'Alba",
+          "c": "483650",
+          "n": "달바글로벌"
+        },
+        {
+          "kw": "Torriden",
+          "c": null
+        },
+        {
+          "kw": "SKIN1004",
+          "c": null
+        }
+      ]
+    }
+  ],
+  "naver": {
+    "note": "네이버 데이터랩 검색어 트렌드(공식 API, NAVER_CLIENT_ID/SECRET). 앱에 '데이터랩(검색어트렌드)' 권한이 있어야 한다. 묶음 5개씩, anchor 로 이어 붙임",
+    "groups": [
+      {
+        "id": "nv_proc_device",
+        "label": "리프팅·장비 시술 — 네이버",
+        "anchor": "울쎄라",
+        "kws": [
+          {
+            "kw": "울쎄라",
+            "c": null
+          },
+          {
+            "kw": "써마지",
+            "c": null
+          },
+          {
+            "kw": "슈링크",
+            "c": "214150",
+            "n": "클래시스"
+          },
+          {
+            "kw": "볼뉴머",
+            "c": "214150",
+            "n": "클래시스"
+          },
+          {
+            "kw": "올리지오",
+            "c": "336570",
+            "n": "원텍"
+          },
+          {
+            "kw": "덴서티",
+            "c": null,
+            "n": "제이시스메디칼(비상장)"
+          },
+          {
+            "kw": "텐써마",
+            "c": null
+          }
+        ]
+      },
+      {
+        "id": "nv_proc_booster",
+        "label": "스킨부스터·필러 — 네이버",
+        "anchor": "리쥬란",
+        "kws": [
+          {
+            "kw": "리쥬란",
+            "c": "214450",
+            "n": "파마리서치"
+          },
+          {
+            "kw": "쥬베룩",
+            "c": null
+          },
+          {
+            "kw": "리투오",
+            "c": "290650",
+            "n": "엘앤씨바이오"
+          },
+          {
+            "kw": "고우리",
+            "c": null
+          },
+          {
+            "kw": "스컬트라",
+            "c": null
+          }
+        ]
+      },
+      {
+        "id": "nv_toxin",
+        "label": "톡신 브랜드 — 네이버",
+        "kws": [
+          {
+            "kw": "보톡스",
+            "c": null
+          },
+          {
+            "kw": "나보타",
+            "c": "069620",
+            "n": "대웅제약"
+          },
+          {
+            "kw": "보툴렉스",
+            "c": "145020",
+            "n": "휴젤"
+          },
+          {
+            "kw": "메디톡신",
+            "c": "086900",
+            "n": "메디톡스"
+          },
+          {
+            "kw": "제오민",
+            "c": null
+          }
+        ]
+      }
+    ]
+  }
 }
