@@ -264,7 +264,9 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
         xr = xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
     except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
         notes.append('XBRL 없음')
-    if any(r[1] == 'nature_x' and r[5] == end and r[2] != 'total' for r in xr):
+    nx = {b: len({r[2] for r in xr if r[0] == b and r[1] == 'nature_x' and r[5] == end and r[2] != 'total'}) for b in ('C', 'S')}
+    has_c = any(r[0] == 'C' and r[1] == 'is' for r in xr)
+    if (nx['C'] >= 3 if has_c else nx['S'] >= 3):        # 그 기간 주석 XBRL 에 (연결이 있으면 연결) 비용 줄이 3개 이상일 때만 원문 생략
         rows = xr                   # 주석 XBRL 에 이번 기간의 성격별 비용이 있다 — 큰 원문(수 MB)은 받지 않는다
         with conn:
             put(conn, code, rows)
@@ -279,7 +281,7 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
     except zipfile.BadZipFile:
         notes.insert(0, '원문 없음')
     time.sleep(DELAY)
-    if '원문 없음' in notes and (datetime.now() - datetime.strptime(rno[:8], '%Y%m%d')).days < 10:
+    if ('원문 없음' in notes or 'XBRL 없음' in notes) and (datetime.now() - datetime.strptime(rno[:8], '%Y%m%d')).days < 10:
         return 'retry'          # 막 접수된 보고서는 DART 가 원문 파일을 며칠 늦게 연다(상태 014) — 기록하지 않고 다음 실행에서 다시
     rows += xr
     with conn:
@@ -410,7 +412,7 @@ def main() -> int:
                 log.info('한 번에 받을 수(%d)에 닿음 — 나머지는 다음 실행에서', args.max)
                 break
     except requests.RequestException as e:
-        log.error('DART 응답 없음, 중단: %s', e)
+        log.error('DART 응답 없음, 중단: %s', type(e).__name__)      # 예외 글에는 키가 든 URL 이 있다 — 이름만
         return 3
     log.info('펀더 수집: 보고서 %d건, 오류 %d (대상 %d종목)', done, errors, len(codes))
     return 1 if errors > 5 else 0

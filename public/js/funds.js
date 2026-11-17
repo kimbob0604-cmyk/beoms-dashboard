@@ -1,7 +1,9 @@
 // 펀더 탭: data/fund/index.json — 분기 비용 구조를 쌓아 둔 종목. 줄을 누르면 위에 표·브리지·리포트 문장이 열린다 (fund.js)
 (() => {
   const $ = id => document.getElementById(id);
-  const DEFAULTS = { q: '', sort: 'dq', c: '', ix: 'all' };
+  const DEFAULTS = { q: '', sort: 'dq', c: '', ix: 'all', ec: 'all' };
+  // @darthacking 실적 글 기준 판정 (실적 발표 덱과 같은 기준: 매출 ±5%, 영업이익 ±10%·흑적자 전환)
+  const CASE = { both: ['동반 서프', 'up'], op: ['영업이익 서프', 'up'], sales: ['매출 서프', 'up'], miss: ['영업이익 미스', 'down'], inline: ['부합', 'muted'] };
   const pg = U.page(DEFAULTS, (patch, typing) => { if ('c' in patch) openDetail(); renderTable(); if (!typing) renderFilters(); });
   const st = pg.state;
   let data = null;
@@ -10,6 +12,7 @@
   function renderFilters() {
     $('filters').innerHTML = `<div class="frow">
       ${pg.seg('ix', [['all', '전체'], ['코스피200', '코스피200'], ['코스닥150', '코스닥150'], ['etc', '그 밖']])}
+      ${pg.seg('ec', [['all', '실적 전체'], ['beat', '서프'], ['miss', '미스'], ['inline', '부합'], ['none', '예상치 없음']])}
       ${pg.seg('sort', [['dq', 'OPM 변화(직전 분기)'], ['dy', 'OPM 변화(전년 동기)'], ['mc', '시총 순'], ['opm', 'OPM 순']])}
       <input type="search" data-q="q" placeholder="종목명·코드 검색" value="${U.esc(st.q)}" autocomplete="off">
       <span class="muted small">${data.stocks.length}종목${data.pending ? ` · 아직 받는 중 ${data.pending}종목` : ''} · ${U.timeLabel(data.built)} 갱신</span></div>`;
@@ -19,13 +22,16 @@
     const q = st.q.trim().toLowerCase();
     const key = st.sort;
     const inIx = s => st.ix === 'all' || (st.ix === 'etc' ? !(s.ix || []).length : (s.ix || []).includes(st.ix));
-    const rows = data.stocks.filter(s => inIx(s) && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q)))
+    const latest = data.stocks.reduce((m, s) => (s.eq && s.eq.q.slice(2) + s.eq.q[0] > m ? s.eq.q.slice(2) + s.eq.q[0] : m), '');
+    const cur = s => s.eq && s.eq.q.slice(2) + s.eq.q[0] === latest;       // 가장 최근 분기의 판정만 필터에 쓴다
+    const inEc = s => st.ec === 'all' || (st.ec === 'none' ? !cur(s) : cur(s) && (st.ec === 'beat' ? ['both', 'op', 'sales'].includes(s.eq.case) : s.eq.case === st.ec));
+    const rows = data.stocks.filter(s => inIx(s) && inEc(s) && (!q || s.n.toLowerCase().includes(q) || s.c.includes(q)))
       .sort((a, b) => (key === 'mc' || key === 'opm' ? (b[key] ?? -1e9) - (a[key] ?? -1e9) : Math.abs(b[key] ?? 0) - Math.abs(a[key] ?? 0)));
     $('table').innerHTML = `<div class="col-head"><h3>쌓아 둔 종목 <span class="muted">${rows.length}</span></h3>
         <span class="muted small">줄을 누르면 분기 표가 열립니다 · 요인 = 직전 분기 대비 매출 대비 비중이 가장 크게 움직인 비용 (＋면 그만큼 OPM 을 깎음)</span></div>
       <div class="tbl-wrap"><table class="tbl fd-list">
         <thead><tr><th>종목</th><th class="num">시총</th><th class="num">최근 분기</th><th class="num">매출</th><th class="num">OP</th><th class="num">OPM</th>
-          <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th>큰 요인</th><th class="num" title="리포트 문장 수 · 다음 분기 컨센서스 · 부문(제품·지역)별 매출이 있는지">리포트 · 컨센 · 부문</th></tr></thead>
+          <th class="num">직전 분기 대비</th><th class="num">전년 동기 대비</th><th title="@darthacking 실적 글의 예상치 대비 (영업이익 · 매출)">실적 vs 예상</th><th>큰 요인</th><th class="num" title="리포트 문장 수 · 다음 분기 컨센서스 · 부문(제품·지역)별 매출이 있는지">리포트 · 컨센 · 부문</th></tr></thead>
         <tbody>${rows.map(s => `<tr data-c="${s.c}" class="${st.c === s.c ? 'on' : ''}" ${Stock.hintAttr(s)}>
           <td class="name-cell"><b>${U.esc(s.n)}</b>${(s.ix || []).map(x => `<span class="tag">${x}</span>`).join('')}${s.w ? `<small class="muted">${U.esc(s.w)}</small>` : ''}${s.chk ? `<i class="fd-warn" title="검증이 어긋난 분기 ${s.chk}개 — 종목을 열면 사유가 보입니다">!</i>` : ''}</td>
           <td class="num">${s.mc != null ? U.eok(s.mc) : '–'}</td><td class="num">${s.ql} <small class="muted">${s.nq}분기</small></td>
@@ -33,8 +39,9 @@
           <td class="num ${s.op < 0 ? 'down' : ''}">${s.op == null ? '–' : Math.round(s.op).toLocaleString('ko-KR')}</td>
           <td class="num">${s.opm == null ? '–' : s.opm.toFixed(1) + '%'}</td>
           <td class="num"><b class="${U.cls(s.dq)}">${pp(s.dq)}</b></td><td class="num"><b class="${U.cls(s.dy)}">${pp(s.dy)}</b></td>
+          <td>${s.eq ? `<span class="fd-chip ${CASE[s.eq.case]?.[1] || ''}">${s.eq.q} ${CASE[s.eq.case]?.[0] || '–'}</span><small class="muted"> 영익 ${s.eq.or == null ? '–' : (s.eq.or > 0 ? '+' : '') + (s.eq.or * 100).toFixed(0) + '%'} · 매출 ${s.eq.sr == null ? '–' : (s.eq.sr > 0 ? '+' : '') + (s.eq.sr * 100).toFixed(0) + '%'}</small>` : '<small class="muted">예상치 없음</small>'}</td>
           <td>${(s.top || []).map(([g, v]) => `<span class="fd-chip">${g} <b class="${v > 0 ? 'down' : 'up'}">${pp(v)}</b></span>`).join('')}</td>
-          <td class="num muted">${s.ev || ''}${s.cns ? ' · 컨센' : ''}${s.seg?.length ? ` · ${s.seg[0]}` : ''}</td></tr>`).join('') || '<tr><td colspan="10" class="muted">해당 종목 없음</td></tr>'}
+          <td class="num muted">${s.ev || ''}${s.cns ? ' · 컨센' : ''}${s.seg?.length ? ` · ${s.seg[0]}` : ''}</td></tr>`).join('') || '<tr><td colspan="11" class="muted">해당 종목 없음</td></tr>'}
         </tbody></table></div>
       ${data.skipped?.length ? `<p class="muted small" style="padding:8px 12px">비용 주석을 찾지 못한 종목 ${data.skipped.length}개 —
         금융사(이 주석이 없음): ${data.skipped.filter(x => x.fin).map(x => U.esc(x.n)).join(' · ') || '없음'}<br>

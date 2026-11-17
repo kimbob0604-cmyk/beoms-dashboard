@@ -403,24 +403,37 @@ def attach_cns(main, code, d):
     return {'as_of': as_of, 'next': out[:2], 'base': base}
 
 
-def attach_earn(code, d):
-    """실적 발표 덱의 서프/미스 {분기 끝: {ts, sr, or, case}}"""
+def attach_earn(code, d=None):
+    """@darthacking 실적 글 기준 실제 vs 예상치(컨센서스)와 서프/미스 {분기 끝: {ts, s, se, sr, st, o, oe, or, ot, case}}.
+    그 분기의 첫 발표(잠정실적, 또는 잠정 없이 낸 정기보고서)만. 펀더 표에 아직 없는 분기(보고서 수집 전)도 둔다"""
     if not EARN_DB.exists():
         return {}
     import earn
     conn = sqlite3.connect(f'file:{EARN_DB}?mode=ro', uri=True)
     conn.row_factory = sqlite3.Row
     out = {}
+    r4 = lambda v: None if v is None else round(v, 4)
     for p in conn.execute("SELECT * FROM earn_post WHERE code = ? AND period IS NOT NULL AND (se IS NOT NULL OR oe IS NOT NULL) ORDER BY ts", (code,)):
         p = dict(p)
         if earn.first_release(p) is False:
             continue
         y, qn = int(p['period'][:4]), int(p['period'][5])
         end = fund.months_back(f'{y + (qn == 4)}-{(qn * 3) % 12 + 1:02d}-28', 1)
-        if end in d['q'] and end not in out:
-            st, ot = earn.tag(p['s'], p['se'], earn.SALES_T), earn.tag(p['o'], p['oe'], earn.OP_T)
-            out[end] = {'ts': p['ts'], 'sr': earn.ratio(p['s'], p['se']), 'or': earn.ratio(p['o'], p['oe']), 'case': earn.case_of(st, ot)}
+        if end in out or end < FROM:
+            continue
+        st, ot = earn.tag(p['s'], p['se'], earn.SALES_T), earn.tag(p['o'], p['oe'], earn.OP_T)
+        out[end] = {'ts': p['ts'], 's': p['s'], 'se': p['se'], 'sr': r4(earn.ratio(p['s'], p['se'])), 'st': st,
+                    'o': p['o'], 'oe': p['oe'], 'or': r4(earn.ratio(p['o'], p['oe'])), 'ot': ot, 'case': earn.case_of(st, ot)}
     return out
+
+
+def latest_earn(ea):
+    """가장 최근 분기의 @darthacking 판정 {q: '3Q26', case, sr, or} (없으면 None)"""
+    if not ea:
+        return None
+    e = max(ea)
+    x = ea[e]
+    return {'q': fund.qlabel(e), 'case': x['case'], 'sr': x['sr'], 'or': x['or']}
 
 
 def build():
@@ -465,7 +478,8 @@ def build():
                       'top': [[g, round(v, 1)] for g, v in br[:2] if abs(v) >= 0.3],
                       'chk': len(d['chk']) + sum(len(v['chk']) for v in d['seg']),
                       'ev': sum(len(v) for v in d['ev'].values()), 'cns': bool(d['cns']['next']),
-                      'seg': [v['name'] for v in d['seg']], 'ix': idx_of.get(code, [])})
+                      'seg': [v['name'] for v in d['seg']], 'ix': idx_of.get(code, []),
+                      'eq': latest_earn(d['earn'])})
     for p in OUT.glob('*.json'):
         if p.stem != 'index' and p.stem not in {x['c'] for x in index}:
             p.unlink()

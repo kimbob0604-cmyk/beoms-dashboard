@@ -150,6 +150,19 @@ const Fund = (() => {
           ${r.s.map(([nm, t]) => `<p><span class="fd-chip on">${esc(nm)}</span>${esc(t)}</p>`).join('')}</article>`).join('')}</div>` : ''}</div>`;
   }
 
+  // @darthacking 실적 글 기준: 분기별 실제 vs 예상치 (최근 6분기)
+  const CASE = { both: ['동반 서프', 'up'], op: ['영업이익 서프', 'up'], sales: ['매출 서프', 'up'], miss: ['영업이익 미스', 'down'], inline: ['부합', 'muted'] };
+  function earnHtml(d) {
+    const es = Object.keys(d.earn || {}).sort().slice(-6);
+    if (!es.length) return '';
+    const ql = e => `${Math.ceil(+e.slice(5, 7) / 3)}Q${e.slice(2, 4)}`;
+    const v = (a, e, r, t) => (a == null ? '–' : `${n1(a)} <small class="muted">/ ${e == null ? '예상 없음' : n1(e)}</small>${r == null ? '' : ` <b class="${t === 'beat' ? 'up' : t === 'miss' ? 'down' : 'muted'}">${r > 0 ? '+' : ''}${(r * 100).toFixed(0)}%</b>`}`);
+    return `<div class="fd-earnq"><h4>실적 vs 예상치 <span class="muted small">@darthacking 실적 글의 예상치(컨센서스) · 매출 ±5%, 영업이익 ±10%(흑적자 전환 포함)로 판정 · 억원</span></h4>
+      <div class="tbl-wrap"><table class="tbl fd-tbl"><thead><tr><th>분기</th><th class="num">매출 실제 / 예상</th><th class="num">영업이익 실제 / 예상</th><th>판정</th><th class="muted">발표</th></tr></thead>
+      <tbody>${es.reverse().map(e => { const x = d.earn[e]; return `<tr><td>${ql(e)}</td><td class="num">${v(x.s, x.se, x.sr, x.st)}</td><td class="num">${v(x.o, x.oe, x.or, x.ot)}</td>
+        <td><span class="fd-chip ${CASE[x.case]?.[1] || ''}">${CASE[x.case]?.[0] || '–'}</span></td><td class="muted small">${x.ts.slice(5, 16)}</td></tr>`; }).join('')}</tbody></table></div></div>`;
+  }
+
   function draw(el) {
     const s = st.get(el), d = s.d, i = s.sel, e = d.q[i];
     const j1 = i - 1, j4 = d.q.indexOf(prevYear(e));
@@ -161,6 +174,7 @@ const Fund = (() => {
           <div class="seg">${[['amt', '금액'], ['pct', '매출 대비 %']].map(([k, l]) => `<button data-fu="${k}" class="${s.unit === k ? 'on' : ''}">${l}</button>`).join('')}</div>
           <button class="btn-copy" data-fcopy title="표를 엑셀에 붙일 수 있게 복사">복사</button>
         </div></div>
+      ${earnHtml(d)}
       ${tableHtml(s)}
       <p class="muted small">분기 값 = 3개월 값, 없으면 누적끼리 뺀 값(4Q = 연간 − 3Q 누적). ${d.xb.length ? `${d.ql[d.q.indexOf(d.xb[0])]} 부터는 주석 XBRL 값. ` : ''}분기 머리글을 누르면 아래가 그 분기로 바뀝니다.
         ${d.rep?.[e] ? `<a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rep[e]}" target="_blank" rel="noopener">${d.ql[i]} 보고서 원문 ↗</a>` : ''}

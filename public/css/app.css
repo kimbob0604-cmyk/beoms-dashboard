@@ -1352,3 +1352,7 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .tour-kpi { margin: 6px 0; } .tour-chart rect { fill: color-mix(in srgb, var(--muted) 45%, transparent); } .tour-chart rect.last { fill: var(--accent); } .tour19 { stroke: var(--up); stroke-width: 1.5; }
 .eu-tables.one { grid-template-columns: 1fr; }
 .fd-info { display: inline-block; margin-left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--muted); color: var(--card); font: 700 9px/13px sans-serif; text-align: center; font-style: normal; opacity: .75; }
+.fd-earnq { margin: 6px 0 12px; } .fd-earnq h4 { font-size: 13.5px; margin: 0 0 6px; }
+.fd-chip.up { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.fd-chip.down { background: color-mix(in srgb, var(--down) 16%, transparent); color: var(--down); }
+.fd-earnq td { white-space: nowrap; }
