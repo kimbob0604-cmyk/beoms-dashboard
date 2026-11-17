@@ -13,16 +13,6 @@
   "h": 1024,
   "mods": ""
  },
- "semi-ingot": {
-  "title": "단결정 실리콘 잉곳 (뮌헨 광물박물관 전시)",
-  "source": "Wikimedia Commons",
-  "page": "https://commons.wikimedia.org/wiki/File:Monocrystalline_silicon_ingot.jpg",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Monocrystalline_silicon_ingot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-  "author": "ArticCynda",
-  "license": "CC0",
-  "kind": "photo",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
- },
  "semi-wafer": {
   "title": "회로 무늬가 새겨진 실리콘 웨이퍼를 든 연구원 (로렌스 리버모어 국립연구소)",
   "source": "Wikimedia Commons",
