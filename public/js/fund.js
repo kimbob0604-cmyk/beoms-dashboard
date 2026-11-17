@@ -14,19 +14,22 @@ const Fund = (() => {
   const opm = (d, i) => (d.op[i] != null && d.rev[i] ? d.op[i] / d.rev[i] * 100 : null);
 
   // i 분기와 j 분기의 묶음별 매출 대비 비중 변화 (%p, 양수 = 비용 비중이 늘어 OPM 을 깎음)
+  const isTail = (d, i) => !!d.tail && d.q[i] >= d.tail;     // 주석이 끊겨 손익계산서 두 줄로 이은 분기
   function bridge(d, i, j) {
     if (j < 0 || !d.rev[i] || !d.rev[j]) return [];
+    if (isTail(d, i) !== isTail(d, j)) return null;            // 줄 구성이 다른 두 분기는 비교하지 않는다
     return d.groups.map(g => [g.g, ((g.v[i] || 0) / d.rev[i] - (g.v[j] || 0) / d.rev[j]) * 100])
       .filter(([, v]) => Math.abs(v) >= 0.05).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
   }
 
   function tableHtml(s) {
     const { d, mode, unit, sel } = s;
+    const cc = i => `${i === sel ? ' sel' : ''}${d.q[i] === d.tail ? ' fd-tail' : ''}`;
     const rows = mode === 'grp' ? d.groups.map(g => [g.g, g.v, g.fix]) : d.lines.map(l => [l.l, l.v, false, l.g]);
     const cell = (v, i, cls = '') => {
-      if (v == null) return `<td class="num muted${i === sel ? ' sel' : ''}">–</td>`;
+      if (v == null) return `<td class="num muted${cc(i)}">–</td>`;
       const t = unit === 'pct' ? (d.rev[i] ? `${(v / d.rev[i] * 100).toFixed(Math.abs(v / d.rev[i]) < 0.1 ? 1 : 0)}%` : '–') : n1(v);
-      return `<td class="num${v < 0 ? ' down' : ''}${i === sel ? ' sel' : ''} ${cls}">${t}</td>`;
+      return `<td class="num${v < 0 ? ' down' : ''}${cc(i)} ${cls}">${t}</td>`;
     };
     const tag = e => {
       const x = d.earn?.[e];
@@ -35,18 +38,19 @@ const Fund = (() => {
       return `<i class="fd-earn ${up ? 'up' : 'down'}" title="실적 발표 덱: 영업이익 예상 대비 ${x.or == null ? '–' : (x.or * 100).toFixed(0) + '%'}, 매출 ${x.sr == null ? '–' : (x.sr * 100).toFixed(0) + '%'}">${up ? '서프' : '미스'}</i>`;
     };
     return `<div class="tbl-wrap fd-wrap"><table class="tbl fd-tbl">
-      <thead><tr><th>${unit === 'pct' ? '매출액 대비 비중' : '억원'}</th>${d.q.map((e, i) => `<th class="num${i === sel ? ' sel' : ''}" data-fq="${i}" title="${e} · 누르면 아래 분석이 이 분기로 바뀝니다${d.xb.includes(e) ? ' · 주석 XBRL 값' : ''}${d.chk[e] ? ` · 검증 어긋남: ${esc(d.chk[e])}` : d.inf?.[e] ? ` · 참고: ${esc(d.inf[e])}` : ''}">
+      <thead><tr><th>${unit === 'pct' ? '매출액 대비 비중' : '억원'}</th>${d.q.map((e, i) => `<th class="num${cc(i)}" data-fq="${i}" title="${e} · 누르면 아래 분석이 이 분기로 바뀝니다${d.xb.includes(e) ? ' · 주석 XBRL 값' : ''}${isTail(d, i) ? ' · 성격별 주석 없음 — 손익계산서 매출원가·판관비' : ''}${d.chk[e] ? ` · 검증 어긋남: ${esc(d.chk[e])}` : d.inf?.[e] ? ` · 참고: ${esc(d.inf[e])}` : ''}">
         ${d.ql[i]}${d.chk[e] ? '<i class="fd-warn">!</i>' : d.inf?.[e] ? '<i class="fd-info">i</i>' : ''}${tag(e)}</th>`).join('')}</tr></thead>
       <tbody>
-        <tr class="fd-rev"><td>매출액</td>${d.rev.map((v, i) => `<td class="num${i === sel ? ' sel' : ''}">${v == null ? '–' : n1(v)}</td>`).join('')}</tr>
+        <tr class="fd-rev"><td>매출액</td>${d.rev.map((v, i) => `<td class="num${cc(i)}">${v == null ? '–' : n1(v)}</td>`).join('')}</tr>
         ${rows.map(([l, v, fix, g]) => `<tr><td title="${g ? `묶음: ${g}` : fix ? '고정비성(계산에서 금액 유지)' : ''}">${esc(l)}</td>${v.map((x, i) => cell(x, i)).join('')}</tr>`).join('')}
         <tr class="fd-tot"><td>비용합계</td>${d.tot.map((v, i) => cell(v, i)).join('')}</tr>
-        <tr class="fd-op"><td>OP</td>${d.op.map((v, i) => `<td class="num${v < 0 ? ' down' : ''}${i === sel ? ' sel' : ''}">${v == null ? '–' : n1(v)}</td>`).join('')}</tr>
-        <tr class="fd-opm"><td>OPM</td>${d.q.map((e, i) => { const m = opm(d, i); return `<td class="num${m < 0 ? ' down' : ''}${i === sel ? ' sel' : ''}">${m == null ? '–' : m.toFixed(1) + '%'}</td>`; }).join('')}</tr>
+        <tr class="fd-op"><td>OP</td>${d.op.map((v, i) => `<td class="num${v < 0 ? ' down' : ''}${cc(i)}">${v == null ? '–' : n1(v)}</td>`).join('')}</tr>
+        <tr class="fd-opm"><td>OPM</td>${d.q.map((e, i) => { const m = opm(d, i); return `<td class="num${m < 0 ? ' down' : ''}${cc(i)}">${m == null ? '–' : m.toFixed(1) + '%'}</td>`; }).join('')}</tr>
       </tbody></table></div>`;
   }
 
   function bars(list, title, from, to) {
+    if (list === null) return `<div class="fd-br"><h4>${title}</h4><p class="muted small">이 사이에 비용 출처가 바뀌어(성격별 주석 → 손익계산서 매출원가·판관비) 묶음끼리 비교하지 않습니다.</p></div>`;
     if (!list.length) return `<div class="fd-br"><h4>${title}</h4><p class="muted small">비교할 분기가 없습니다.</p></div>`;
     const max = Math.max(...list.map(([, v]) => Math.abs(v)), 0.5);
     const net = to == null || from == null ? null : to - from;
@@ -176,13 +180,13 @@ const Fund = (() => {
         </div></div>
       ${earnHtml(d)}
       ${tableHtml(s)}
-      <p class="muted small">분기 값 = 3개월 값, 없으면 누적끼리 뺀 값(4Q = 연간 − 3Q 누적). ${d.xb.length ? `${d.ql[d.q.indexOf(d.xb[0])]} 부터는 주석 XBRL 값. ` : ''}분기 머리글을 누르면 아래가 그 분기로 바뀝니다.
+      <p class="muted small">분기 값 = 3개월 값, 없으면 누적끼리 뺀 값(4Q = 연간 − 3Q 누적). ${d.xb.length ? `${d.ql[d.q.indexOf(d.xb[0])]} 부터는 주석 XBRL 값. ` : ''}${d.tail ? `<b>${d.ql[d.q.indexOf(d.tail)]} 부터는 회사가 분기보고서에 이 주석을 싣지 않아 손익계산서의 매출원가·판관비(세로선 오른쪽)로 이었습니다.</b> ` : ''}분기 머리글을 누르면 아래가 그 분기로 바뀝니다.
         ${d.rep?.[e] ? `<a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rep[e]}" target="_blank" rel="noopener">${d.ql[i]} 보고서 원문 ↗</a>` : ''}
         ${Object.keys(d.chk).length ? `<span class="down"> · 검증이 어긋난 분기 ${Object.keys(d.chk).length}개 (머리글의 ! 표시)</span>` : ' · 줄의 합 = 합계, 매출 − 비용 = 영업이익 검증 통과'}${Object.keys(d.inf || {}).length ? ` · <span title="회사 손익계산서 구성이나 주석 범위가 달라 생기는 차이 — 표는 맞게 읽혔습니다">참고 ${Object.keys(d.inf).length}개 분기 (ⓘ)</span>` : ''}</p>
       ${(d.chk[e] || d.inf?.[e]) ? `<p class="small ${d.chk[e] ? 'down' : 'muted'}">${d.ql[i]}: ${esc(d.chk[e] || d.inf[e])}</p>` : ''}
       <div class="fd-brs"><div class="fd-br-head"><h4>${d.ql[i]} 영업이익률은 왜 변했나</h4><span class="muted small">비용 묶음의 매출 대비 비중 변화를 더하면 OPM 변화가 됩니다 (부호 반대)</span></div>
         <div class="fd-br-grid">${bars(b1, '직전 분기 대비', j1 >= 0 ? opm(d, j1) : null, opm(d, i))}${bars(b4, '전년 동기 대비', j4 >= 0 ? opm(d, j4) : null, opm(d, i))}</div></div>
-      ${evHtml(d, e, b1.filter(([, v]) => v > 0).concat(b1.filter(([, v]) => v <= 0)))}
+      ${evHtml(d, e, (b1 || []).filter(([, v]) => v > 0).concat((b1 || []).filter(([, v]) => v <= 0)))}
       ${i === d.q.length - 1 ? calcHtml(s) : ''}
       ${segHtml(s)}
     </section>`;

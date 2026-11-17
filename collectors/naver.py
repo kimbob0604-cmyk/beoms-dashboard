@@ -9,6 +9,7 @@
 - m.stock.naver.com/api/index/{KOSPI|KOSDAQ|FUT}/integration|price : 지수·코스피200 선물 일별 종가, 투자자별 순매수, 상승/하락 종목 수
 - m.stock.naver.com/api/stocks/marketValue/{KOSPI|KOSDAQ}    : 전 종목 시세 (KRX 가격이 열리기 전 임시 종가)
 - api.stock.naver.com/chart/domestic/index/{code}/minute     : 지수 당일 1분봉
+- m.stock.naver.com/api/stocks/industry[/{no}]                : 네이버 업종 79개와 업종별 종목
 - fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day : 지수 일봉 (XML)
 
 주의: 이 API들은 다른 사이트의 브라우저 호출을 막는다(CORS 403). 그래서 맥에서 받아 JSON으로 만든다.
@@ -183,6 +184,27 @@ def fetch_high52(session, market: str, page: int = 1, page_size: int = 100, time
                     params={'page': page, 'pageSize': page_size}, timeout=timeout)
     r.raise_for_status()
     return parse_high52(r.json(), market)
+
+
+def fetch_industries(session, timeout: float = 10) -> List[Dict]:
+    """네이버 업종 [{no, name, n}] (79개)"""
+    r = session.get(f'{M_API}/stocks/industry', params={'page': 1, 'pageSize': 100}, timeout=timeout)
+    r.raise_for_status()
+    return [{'no': g['no'], 'name': g['name'], 'n': g.get('totalCount')} for g in r.json()['groups']]
+
+
+def fetch_industry_codes(session, no: int, timeout: float = 10) -> List[str]:
+    """업종 no 의 종목코드 (100개씩 끝까지)"""
+    codes, page = [], 1
+    while True:
+        r = session.get(f'{M_API}/stocks/industry/{no}', params={'page': page, 'pageSize': 100}, timeout=timeout)
+        r.raise_for_status()
+        j = r.json()
+        got = [s['itemCode'] for s in j.get('stocks') or []]
+        codes += got
+        if len(got) < 100 or len(codes) >= (j.get('totalCount') or 0):
+            return codes
+        page += 1
 
 
 def fetch_market_list(session, market: str, page: int = 1, page_size: int = 100, timeout: float = 10) -> Dict:

@@ -11,6 +11,14 @@ CREATE TABLE IF NOT EXISTS stock_meta (
     updated_at    TEXT
 );
 
+-- 네이버 증권 업종 (79개, m.stock.naver.com/api/stocks/industry). 종목 하나에 업종 하나
+CREATE TABLE IF NOT EXISTS naver_sector (
+    code       TEXT PRIMARY KEY,
+    no         INTEGER,       -- 네이버 업종 번호
+    name       TEXT,          -- 업종명 (예: 포장재)
+    updated_at TEXT
+);
+
 -- 연간 실적(A) + 컨센서스(E). FY-4A ~ FY+2E 7개 연도
 CREATE TABLE IF NOT EXISTS consensus_annual (
     as_of        TEXT    NOT NULL,

@@ -183,7 +183,11 @@ def xbrl_rows(zbytes: bytes, rno: str) -> list:
             a = sagg.setdefault((basis, k, st, en), [lab, 0.0, x['sga'].index(item) if item in x['sga'] else 99])
             a[1] += v
         if item in fund_xbrl.IS_ITEMS:
-            rows.append((basis, 'is', fund_xbrl.IS_ITEMS[item][0], fund_xbrl.IS_ITEMS[item][1], st, en, v, rno, 0))
+            k, lab = fund_xbrl.IS_ITEMS[item]
+            gl = (x['labels'].get(item) or '').replace(' ', '')
+            if k == 'gp' and '수익' in gl and '총' not in gl:
+                k, lab = 'rev', '매출액'     # 매출(영업수익)을 매출총이익 항목으로 태그한 회사 (칩스앤미디어: 원가가 없어 둘이 같다)
+            rows.append((basis, 'is', k, lab, st, en, v, rno, 0))
         elif item not in x['sga']:      # 주석 XBRL (검증·보충용) — 같은 키는 더한다
             lab = x['labels'].get(item, item)
             k = 'total' if item == fund_xbrl.TOTAL else fund.key_of(lab)[0]
@@ -204,6 +208,47 @@ def xbrl_rows(zbytes: bytes, rno: str) -> list:
     rows += [(b, 'isnat_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in iagg.items()]
     # 부문: item = '분류¦이름' (같은 이름이 다른 분류 벌에 또 나와도 덮어쓰지 않게), label = 이름
     rows += [(b, f'{view}:{item}', f'{grp}¦{name}', name, st, en, v, rno, 0) for view, item, name, grp, b, st, en, v in x['segs']]
+    return rows
+
+
+FIN_NM = {'매출액': 'rev', '수익(매출액)': 'rev', '영업수익': 'rev', '매출': 'rev', '매출원가': 'cogs', '영업원가': 'cogs',
+          '매출총이익': 'gp', '판매비와관리비': 'sga', '영업이익': 'op', '영업이익(손실)': 'op', '당기순이익': 'np', '당기순이익(손실)': 'np'}
+
+
+FIN_NOTE = 'XBRL 대신 재무제표 API'      # XBRL 이 열리면 다시 받는다 (main 의 todo)
+
+
+def fin_rows(session, key, corp: str, end: str, kind: str, fy_end: int, rno: str) -> list:
+    """XBRL 압축이 아직 안 열렸을 때(DART 014) 전체 재무제표 API(fnlttSinglAcntAll)로 손익 줄만 — 열 맞춤 기준값·OPM 용.
+    분기는 thstrm = 3개월, thstrm_add = 누적. 사업보고서는 thstrm = 1년"""
+    from datetime import date
+    y, m = int(end[:4]), int(end[5:7])
+    q_st = date(y if m > 2 else y - 1, (m - 3) % 12 + 1, 1).isoformat()
+    fy_m = fy_end % 12 + 1                             # 회계연도 첫 달
+    c_st = date(y if fy_m <= m else y - 1, fy_m, 1).isoformat()
+    bsns = str(y if m > fy_end or fy_end == 12 else y - 1) if kind != 'A' else str(y)
+    rows = []
+    for fs, basis in (('CFS', 'C'), ('OFS', 'S')):
+        j = session.get(f'{API}/fnlttSinglAcntAll.json', params={'crtfc_key': key, 'corp_code': corp, 'bsns_year': bsns,
+                        'reprt_code': reprt_code(kind, end, fy_end), 'fs_div': fs}, timeout=60).json()
+        time.sleep(DELAY)
+        seen = set()
+        for a in j.get('list') or []:
+            if a.get('sj_div') not in ('IS', 'CIS') or a.get('rcept_no') not in (None, rno):
+                continue
+            k = fund_xbrl.IS_ITEMS.get(a.get('account_id'), (None,))[0] or FIN_NM.get((a.get('account_nm') or '').replace(' ', ''))
+            if not k or k in seen:
+                continue
+            seen.add(k)
+            lab = {v[0]: v[1] for v in fund_xbrl.IS_ITEMS.values()}.get(k, a.get('account_nm'))
+            for col, st in (('thstrm_amount', c_st if kind == 'A' else q_st), ('thstrm_add_amount', c_st)):
+                v = str(a.get(col) or '').replace(',', '').strip()
+                if kind == 'A' and col == 'thstrm_add_amount':
+                    continue
+                try:
+                    rows.append((basis, 'is', k, lab, st, end, float(v) / 1e8, rno, 0))
+                except ValueError:
+                    pass
     return rows
 
 
@@ -257,13 +302,14 @@ def put(conn, code, rows):
                      'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [(code, *r) for r in rows])
 
 
-def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> str:
+def collect_report(conn, session, key, code, rno, name, kind, end, fy_end, corp: str = None) -> str:
     """보고서 하나. 돌려주는 글 = 메모 ('' 이면 다 읽음). XBRL 손익을 먼저 읽어 주석 표의 기준값으로 쓴다"""
     notes, rows, xr = [], [], []
     try:
         xr = xbrl_rows(xbrl_zip(session, key, rno, reprt_code(kind, end, fy_end)), rno)
     except (zipfile.BadZipFile, StopIteration, TypeError, KeyError):
-        notes.append('XBRL 없음')
+        xr = fin_rows(session, key, corp, end, kind, fy_end, rno) if corp else []
+        notes.append(FIN_NOTE if xr else 'XBRL 없음')
     nx = {b: len({r[2] for r in xr if r[0] == b and r[1] == 'nature_x' and r[5] == end and r[2] != 'total'}) for b in ('C', 'S')}
     has_c = any(r[0] == 'C' and r[1] == 'is' for r in xr)
     if (nx['C'] >= 3 if has_c else nx['S'] >= 3):        # 그 기간 주석 XBRL 에 (연결이 있으면 연결) 비용 줄이 3개 이상일 때만 원문 생략
@@ -382,6 +428,8 @@ def main() -> int:
     s = requests.Session()
     cc = corp_codes(s, key)
     have = {r[0] for r in conn.execute('SELECT rcept_no FROM fund_report')}
+    redo = {r[0] for r in conn.execute('SELECT rcept_no FROM fund_report WHERE note LIKE ?', (f'%{FIN_NOTE}%',))
+            if (datetime.now() - datetime.strptime(r[0][:8], '%Y%m%d')).days < 45}   # 재무제표 API로 메운 보고서 — XBRL 이 열릴 때까지 다시
     done = errors = fails = 0
     try:
         for code in codes:
@@ -390,12 +438,12 @@ def main() -> int:
             reps = reports(s, key, cc[code])
             time.sleep(DELAY)
             fy_end = next((int(e[5:7]) for _, _, k, e in reps if k == 'A'), 12)
-            todo = [r for r in reps if r[0] not in have]
+            todo = [r for r in reps if r[0] not in have or (r[0] in redo and not (XBRLS / f'{r[0]}.zip').exists())]
             for rno, name, kind, end in todo:
                 if done >= args.max:
                     break
                 try:
-                    note = collect_report(conn, s, key, code, rno, name, kind, end, fy_end)
+                    note = collect_report(conn, s, key, code, rno, name, kind, end, fy_end, cc[code])
                     done += 1
                     fails = 0
                     if note == 'retry':

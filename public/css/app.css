@@ -1272,6 +1272,11 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .fd-tbl { font-size: 12.5px; white-space: nowrap; }
 .fd-tbl th:first-child, .fd-tbl td:first-child { position: sticky; left: 0; background: var(--card); z-index: 1; text-align: left; min-width: 92px; }
 .fd-tbl th[data-fq] { cursor: pointer; }
+.fd-list .fd-w { cursor: pointer; }
+.fd-list .fd-w:hover { color: var(--accent, var(--text)); text-decoration: underline; }
+.fd-sec-list tbody tr { cursor: pointer; }
+.fd-wclear { font-size: 12px; padding: 0 6px; }
+.fd-tbl .fd-tail { border-left: 2px dashed var(--muted); }
 .fd-tbl th.sel, .fd-tbl td.sel { background: var(--hover); }
 .fd-tbl .fd-rev td { font-weight: 700; }
 .fd-tbl .fd-tot td { font-weight: 700; border-top: 2px solid var(--line); }

@@ -126,8 +126,9 @@ def company(conn, code):
             return g('rev') - g('op')
         return None
 
+    latest = max((pe[1] for b in ('C', 'S', 'X') for pe in ((facts.get((b, 'is')) or {}).get('rev') or {})), default='')
     CAND = [('nature', (('nature_x', 'xbrl'), ('nature', 'html'))), ('isnat', (('isnat_x', 'xbrl'),)), ('sga', (('sga_x', 'xbrl'), ('sga', 'html')))]
-    best = None
+    cands = []
     for rank, (mode_, topics) in enumerate(CAND):
         for brank, b in enumerate(('C', 'S')):
             if not any(tables.get((b, t)) for t, _ in topics):
@@ -145,11 +146,18 @@ def company(conn, code):
                     ok += 1
                 elif r and d.get('total') is not None and 0.1 * r < d['total'] < 0.97 * r:
                     gapable += 1            # 일부만 공시 — 차액 한 줄로 채울 수 있는 기간 (맞는 기간의 절반 값어치)
-            score = (ok + 0.5 * gapable, ok, len(ps), -rank, -brank)
-            if ps and (best is None or score > best[0]):
-                best = (score, mode_, b, ps, mt, sr, bd)
-    if best is None:
+            # 최신 손익 분기보다 2분기 넘게 뒤처진 출처(회사가 분기 주석을 끊음)는, 최신까지 이어지는 출처가 있으면 그쪽에 밀린다
+            qe = fund.quarterize({pe: d['total'] for pe, d in ps.items() if d.get('total') is not None})   # 분기로 만들 수 있는 끝
+            fresh = bool(qe) and bool(latest) and max(qe) >= fund.months_back(latest, 3)
+            if ps:
+                nq = len([e for e in qe if e >= FROM])
+                cands.append(((ok + 0.5 * gapable, ok, len(ps), -rank, -brank), (fresh, ok, nq), mode_, b, ps, mt, sr, bd))
+    if not cands:
         return None
+    # 맞는 기간 수가 최고의 절반 이상이고 분기 수가 최고의 60% 이상인 출처 중에서는 최신까지 이어지는 쪽을 먼저 (그다음 맞는 기간 수)
+    tok, tnq = max(c[1][1] for c in cands), max(c[1][2] for c in cands)
+    best = max(cands, key=lambda c: (c[0][0] > 0 and c[1][1] >= tok * 0.5 and c[1][2] >= tnq * 0.6 and c[1][0], c[0]))
+    best = (best[0],) + best[2:]
     (_, ok, *_), mode, basis, periods, meta, src, bad = best
     gapfill = False
     if True:        # 손익계산서와 안 맞는 기간 중 합계가 모자란 기간 = 회사가 비용의 일부만 공시: 차액을 '공시 안 된 비용' 한 줄로 드러내 채운다
@@ -175,7 +183,7 @@ def company(conn, code):
     lines = {k: {'l': fund.clean_label(meta[k][0]), 'g': group_of[k], 'v': {e: v for e, v in lineq[k].items() if e >= FROM}} for k in keys}
     lines = {k: ln for k, ln in lines.items() if ln['v']}
     isf = facts.get((basis, 'is')) or facts.get(('X', 'is')) or {}
-    inc = {k: {e: v for e, v in fund.quarterize(isf.get(k, {})).items() if e >= FROM} for k in ('rev', 'op', 'np', 'cogs', 'sga')}
+    inc = {k: {e: v for e, v in fund.quarterize(isf.get(k, {})).items() if e >= FROM} for k in ('rev', 'op', 'np', 'cogs', 'sga', 'gp')}
     have = {e for g in gq.values() for e in g} | set(totq)
     ends = sorted(e for e in inc['rev'] if e in have and e >= FROM)
     if not ends:
@@ -211,8 +219,25 @@ def company(conn, code):
             msg.append('이 분기의 합계를 만들 수 없음 (앞 분기 누적이 없음)')
         if msg:
             chk[e] = ' · '.join(msg)
+    # 주석이 끊긴 뒤의 분기(회사가 분기보고서에 성격별 분류를 더 싣지 않음): 손익계산서의 매출원가·판관비 두 줄로 잇는다.
+    # 줄 구성이 달라지므로 화면은 이 분기부터 구분선을 긋고, 그 경계를 넘는 OPM 요인 비교는 하지 않는다
+    tail = [e for e in sorted(inc['rev']) if e > ends[-1] and e in inc['op']]
+    for e in tail:
+        rev, op = inc['rev'][e], inc['op'][e]
+        cg, sg = inc['cogs'].get(e), inc['sga'].get(e)
+        if cg is None and inc['gp'].get(e) is not None:
+            cg = rev - inc['gp'][e]
+        if sg is None and cg is not None:
+            sg = rev - cg - op              # 판관비 항목이 따로 없는 손익계산서: 매출총이익 − 영업이익
+        g = {'매출원가': cg, '판매비와관리비': sg} if cg is not None and sg is not None else {'영업비용': rev - op}
+        groups[e], totq[e] = g, sum(g.values())
+        for k, v in g.items():
+            lines.setdefault(f'is:{k}', {'l': f'{k} (손익계산서)', 'g': k, 'v': {}})['v'][e] = v
+        if abs(rev - totq[e] - op) > max(1.0, abs(rev) * 0.01):
+            inf[e] = f'영업이익 {op:.1f} = 매출 − 매출원가·판관비 {rev - totq[e]:.1f} + 그 밖의 영업손익 {op - (rev - totq[e]):.1f} (회사 손익계산서 구성)'
+    ends = ends + tail
     gnames = [g for g in fund.GROUP_ORDER if any(abs(groups[e].get(g, 0.0)) > 0.05 for e in ends)]
-    order = [k for k in keys if k in lines]
+    order = [k for k in keys if k in lines] + [k for k in lines if k.startswith('is:')]
     reps = {r['period_end']: r['rcept_no'] for r in conn.execute(
         'SELECT period_end, rcept_no FROM fund_report WHERE code = ? ORDER BY rcept_no', (code,))}
     r1 = lambda v: None if v is None else round(v, 1)
@@ -224,6 +249,7 @@ def company(conn, code):
         'groups': [{'g': g, 'fix': g in fund.FIXED, 'v': [r1(groups[e].get(g)) for e in ends]} for g in gnames],
         'xb': sorted(e for e in ends if any(pe[1] == e and src[pe] == 'xbrl' for pe in periods)),      # 주석 XBRL 로 채운 분기
         'chk': chk, 'inf': inf, 'rep': {e: reps[e] for e in ends if e in reps},
+        'tail': tail[0] if tail else None,        # 이 분기부터 손익계산서 두 줄 (주석이 끊김)
         'seg': segments(by, own, basis, inc),
         '_groups': groups, '_inc': inc,
     }
@@ -470,8 +496,9 @@ def build():
         e = d['q'][-1]
         opm = lambda x: (inc['op'][x] / inc['rev'][x] * 100) if inc['op'].get(x) is not None and inc['rev'].get(x) else None
         p1, p4 = fund.months_back(e, 3), fund.months_back(e, 12)
-        br = fund.bridge(groups.get(p1, {}), inc['rev'].get(p1), groups[e], inc['rev'].get(e)) if p1 in groups else []
-        index.append({'c': code, 'n': d['n'], 'mk': d['mk'], 'mc': d['mc'], 'w': i.get('w'), 'ql': d['ql'][-1], 'nq': len(d['q']),
+        cross = d['tail'] and p1 < d['tail'] <= e        # 출처가 바뀌는 경계를 넘는 비교는 하지 않는다
+        br = fund.bridge(groups.get(p1, {}), inc['rev'].get(p1), groups[e], inc['rev'].get(e)) if p1 in groups and not cross else []
+        index.append({'c': code, 'n': d['n'], 'mk': d['mk'], 'mc': d['mc'], 'w': i.get('w'), 'p': i.get('p'), 'ch': i.get('ch'), 'ql': d['ql'][-1], 'nq': len(d['q']),
                       'rev': d['rev'][-1], 'op': d['op'][-1], 'opm': opm(e) and round(opm(e), 1),
                       'dq': None if opm(e) is None or opm(p1) is None else round(opm(e) - opm(p1), 1),
                       'dy': None if opm(e) is None or opm(p4) is None else round(opm(e) - opm(p4), 1),

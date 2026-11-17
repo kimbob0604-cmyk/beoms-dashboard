@@ -324,9 +324,36 @@ def collect_quotes(conn, session) -> int:
     return guard.errors
 
 
+def collect_sector(conn, session) -> int:
+    """네이버 업종 79개 × 종목 → naver_sector 를 통째로 바꾼다 (덜 받으면 그대로 둔다)"""
+    guard, rows = Guard(), []
+    try:
+        groups = naver.fetch_industries(session)
+    except Exception as e:
+        guard.fail('업종 목록', e)
+        return guard.errors
+    for g in groups:
+        try:
+            rows += [(c, g['no'], g['name']) for c in naver.fetch_industry_codes(session, g['no'])]
+            guard.ok()
+        except Exception as e:
+            guard.fail(f"업종 {g['name']}", e)
+        time.sleep(DELAY)
+    if len(groups) < 50 or guard.errors:
+        log.warning('업종 %d개 중 실패 %d — 저장 안 함', len(groups), guard.errors)
+        return guard.errors + 1
+    at = now()
+    with conn:
+        conn.execute('DELETE FROM naver_sector')
+        conn.executemany('INSERT OR REPLACE INTO naver_sector (code, no, name, updated_at) VALUES (?, ?, ?, ?)',
+                         [(*r, at) for r in rows])
+    log.info('네이버 업종 %d개 · %d종목', len(groups), len(rows))
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description='네이버 증권 수집 (리포트·수급·신고가·지수·장중 시세)')
-    ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'quotes', 'all'])
+    ap.add_argument('what', choices=['research', 'flow', 'high', 'index', 'quotes', 'sector', 'all'])
     ap.add_argument('--days', type=int, default=14, help='리포트 목록을 거슬러 볼 일수')
     ap.add_argument('--refill', action='store_true', help='flow: 전 종목 60거래일을 다시 받는다')
     ap.add_argument('--history', action='store_true', help='flow: 전 종목 약 400거래일 (백테스트용, 한 번)')
@@ -343,6 +370,8 @@ def main():
             errors += collect_research(conn, session, args.days)
         if args.what in ('high', 'all'):
             errors += collect_high(conn, session)
+        if args.what in ('sector', 'all'):
+            errors += collect_sector(conn, session)
         if args.what in ('index', 'all'):
             errors += collect_index(conn, session)
         if args.what == 'flow' and args.if_new and not flow_is_new(conn, session):

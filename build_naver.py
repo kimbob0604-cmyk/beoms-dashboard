@@ -196,6 +196,7 @@ def market_info(conn, d):
     prices = {r['code']: dict(r) for r in conn.execute('SELECT * FROM price_daily WHERE date = ?', (pd,))}
     mcaps = company_mcaps(prices)
     wics = {r['code']: r['wics'] for r in conn.execute('SELECT code, wics FROM stock_meta')}
+    wics.update({r['code']: r['name'] for r in conn.execute('SELECT code, name FROM naver_sector')})   # 네이버 업종 (전 종목) 이 먼저
     info = {c: {'n': p['name'], 'mk': p['market'], 'mc': round(mcaps.get(c, p['mcap'])),
                 'p': p['close'], 'ch': p['change_pct'], 'w': wics.get(c), 'pd': pd}
             for c, p in prices.items() if is_common(c)}

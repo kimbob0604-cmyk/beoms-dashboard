@@ -330,5 +330,37 @@ class SegmentTest(unittest.TestCase):
         self.assertEqual([n for n, _ in got], ['DS 부문', '스마트폰 등'])                              # 'ADS' 는 DS 로 잡지 않는다
 
 
+class FinRowsTest(unittest.TestCase):
+    """XBRL 이 아직 없을 때 전체 재무제표 API 로 손익 줄 — 기간(3개월·누적) 계산"""
+    class _S:
+        def __init__(self, rows):
+            self.rows, self.calls = rows, []
+
+        def get(self, url, params=None, timeout=None):
+            self.calls.append(params)
+            rows = self.rows if params['fs_div'] == 'CFS' else []
+            return type('R', (), {'json': lambda _self: {'status': '000', 'list': rows}})()
+
+    def test_q3_periods_and_items(self):
+        import collect_fund as cf
+        cf.DELAY = 0
+        rows = [{'sj_div': 'IS', 'account_id': 'ifrs-full_Revenue', 'account_nm': '매출액', 'thstrm_amount': '730,000,000,000', 'thstrm_add_amount': '2,100,000,000,000'},
+                {'sj_div': 'IS', 'account_id': '-표준계정코드 미사용-', 'account_nm': '영업이익(손실)', 'thstrm_amount': '35,000,000,000', 'thstrm_add_amount': '66,000,000,000'},
+                {'sj_div': 'BS', 'account_id': 'ifrs-full_Assets', 'account_nm': '자산총계', 'thstrm_amount': '1'}]
+        s = self._S(rows)
+        got = {(r[0], r[2], r[4]): r[6] for r in cf.fin_rows(s, 'k', 'corp', '2026-09-30', 'Q', 12, 'R1')}
+        self.assertEqual(got, {('C', 'rev', '2026-07-01'): 7300.0, ('C', 'rev', '2026-01-01'): 21000.0,
+                               ('C', 'op', '2026-07-01'): 350.0, ('C', 'op', '2026-01-01'): 660.0})
+        self.assertEqual(s.calls[0]['reprt_code'], '11014')
+        self.assertEqual(s.calls[0]['bsns_year'], '2026')
+
+    def test_annual_one_year(self):
+        import collect_fund as cf
+        cf.DELAY = 0
+        rows = [{'sj_div': 'CIS', 'account_id': 'ifrs-full_Revenue', 'account_nm': '매출액', 'thstrm_amount': '100,000,000'}]
+        got = cf.fin_rows(self._S(rows), 'k', 'corp', '2025-12-31', 'A', 12, 'R1')
+        self.assertEqual([(r[4], r[5], r[6]) for r in got], [('2025-01-01', '2025-12-31', 1.0)])
+
+
 if __name__ == '__main__':
     unittest.main()
