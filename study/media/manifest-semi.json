@@ -1,0 +1,65 @@
+{
+ "_note": "반도체(Study) 공개 이미지. 퍼블릭 도메인·CC0·CC BY 만. 파일·w·h·mods 는 study_media.py 가 채운다.",
+ "semi-eniac": {
+  "title": "ENIAC을 프로그래밍하는 글렌 벡과 베티 스나이더 (미 육군 탄도연구소, 1947년 무렵)",
+  "source": "Wikimedia Commons",
+  "page": "https://commons.wikimedia.org/wiki/File:Glen_Beck_and_Betty_Snyder_program_the_ENIAC_in_building_328_at_the_Ballistic_Research_Laboratory.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Glen_Beck_and_Betty_Snyder_program_the_ENIAC_in_building_328_at_the_Ballistic_Research_Laboratory.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "author": "미 육군 사진 (작자 미상)",
+  "license": "Public domain",
+  "kind": "photo",
+  "file": "semi-eniac.jpg",
+  "w": 1340,
+  "h": 1024,
+  "mods": ""
+ },
+ "semi-ingot": {
+  "title": "단결정 실리콘 잉곳 (뮌헨 광물박물관 전시)",
+  "source": "Wikimedia Commons",
+  "page": "https://commons.wikimedia.org/wiki/File:Monocrystalline_silicon_ingot.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Monocrystalline_silicon_ingot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "author": "ArticCynda",
+  "license": "CC0",
+  "kind": "photo",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+ },
+ "semi-wafer": {
+  "title": "회로 무늬가 새겨진 실리콘 웨이퍼를 든 연구원 (로렌스 리버모어 국립연구소)",
+  "source": "Wikimedia Commons",
+  "page": "https://commons.wikimedia.org/wiki/File:Silicon_wafer_researcher.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Silicon_wafer_researcher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "author": "U.S. Department of Energy",
+  "license": "Public domain",
+  "kind": "photo",
+  "file": "semi-wafer.jpg",
+  "w": 1800,
+  "h": 1200,
+  "mods": "축소"
+ },
+ "semi-cleanroom": {
+  "title": "클린룸에서 방진복을 입고 작업하는 모습 (제퍼슨 연구소 가속기 부품 클린룸)",
+  "source": "Wikimedia Commons",
+  "page": "https://commons.wikimedia.org/wiki/File:Semiconductor_clean_room.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Semiconductor_clean_room.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "author": "Aileen Devlin / Jefferson Lab",
+  "license": "Public domain",
+  "kind": "photo",
+  "file": "semi-cleanroom.jpg",
+  "w": 1800,
+  "h": 1207,
+  "mods": "축소"
+ },
+ "semi-gpu-die": {
+  "title": "엔비디아 G70 GPU의 다이 사진 (2005년 지포스 7800 GTX의 칩)",
+  "source": "Wikimedia Commons",
+  "page": "https://commons.wikimedia.org/wiki/File:Nvidia_G70_die_shot_-_40003417731.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Nvidia_G70_die_shot_-_40003417731.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "author": "Martijn Boer",
+  "license": "Public domain",
+  "kind": "photo",
+  "file": "semi-gpu-die.jpg",
+  "w": 1800,
+  "h": 1352,
+  "mods": "축소"
+ }
+}
