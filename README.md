@@ -319,6 +319,9 @@ python3 visit_notes.py pending            # 요약이 없는 노트 / add <id> "
 - 화면(`public/visit.html`, `js/visit.js`): 종목 카드마다 시총, POR 표, 탐방 당시 시총 → 지금 시총, 글(요약·핵심 줄·원문 접기). 종목을 못 정한 글은 맨 아래 따로.
 - 공개 (2026-11-10 사용자 결정): 탐방 탭을 공개 사이트에 올린다. 다만 이 컴퓨터용 `visits.json`(받은 글 전부)은 올리지 않고,
   `build_visits.public_view` 가 줄인 `visits_pub.json` 을 `publish.py` 가 배포본의 `data/visits.json` 으로 올린다.
+- 원본 보관 (2026-11-17): 원본 DB·전체 JSON 은 비공개 저장소 `kimbob0604-cmyk/beoms-dashboard-private` 에 쌓는다.
+  작업 폴더는 `.private/`(gitignore), `daily.py` 가 탐방 빌드 뒤에 `backup_private.py` 를 불러 새 글이 있을 때만 커밋·푸시한다.
+  DB 는 매일 바이너리로 올리면 저장소가 불어나서 SQL 텍스트(`db/visits.sql`)로 둔다.
   - 주소가 없는 비공개 방의 글: 원문까지 (사용자가 그 방 사람들의 허락을 받았다고 한 범위)
   - 주소가 있는 공개 채널의 글: 제목·날짜·방 이름·링크만 (남의 글 원문은 옮기지 않고 링크로)
   - 1:1 대화의 글: 싣지 않는다. 같은 글이 1:1 대화에도 있었으면 방 목록에서 그 이름도 뺀다. 전달 출처(fwd)도 뺀다

@@ -149,6 +149,9 @@ def main() -> int:
             problems.append('텔레그램 탐방 글 수집 실패 — 다음 실행에서 이어 받음')
         if run('탐방 빌드', ['build_visits.py'], log) != 0:
             problems.append('탐방 노트 JSON 빌드 실패')
+        # 탐방 원본(1:1·공개 채널 원문 포함)은 공개 저장소 대신 비공개 저장소(beoms-dashboard-private)에 쌓는다. 새 글이 있을 때만 커밋
+        if run('탐방 비공개 백업', ['backup_private.py'], log) != 0:
+            problems.append('탐방 원본 비공개 저장소 푸시 실패 — 다음 실행에서 다시 올림')
         run('탐방 차트', ['collect_visits_chart.py'], log)   # 탐방 종목의 네이버 일봉 (하루 한 번, 실패해도 직전 파일이 남는다)
         # 소비재 탭: 관세청 수출 통계(올해 창은 14~21일에 하루 한 번, 그 밖엔 7일에 한 번만 다시 받는다 — 아니면 바로 끝난다),
         # 텔레그램 컨콜 노트, 그리고 빌드. 키·로그인이 없으면 4로 건너뛴다
