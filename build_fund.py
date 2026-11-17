@@ -47,7 +47,7 @@ def load(conn, code):
         by[(r['basis'], r['topic'], r['item'], r['start'], r['end'])][r['rcept_no']] = r['value']
         if r['topic'] != 'is':
             labels.setdefault((r['basis'], r['topic'], r['item']), (r['label'], r['ord']))      # 이름표는 가장 최근 것
-        if r['topic'] in ('nature', 'nature_x'):
+        if r['topic'] in ('nature', 'nature_x', 'sga', 'sga_x'):
             tables[(r['basis'], r['topic'])][(r['start'], r['end'])][r['rcept_no']][r['item']] = (r['value'], r['label'], r['ord'])
     facts = defaultdict(lambda: defaultdict(dict))
     for (basis, topic, item, st, en), vals in by.items():
@@ -55,7 +55,7 @@ def load(conn, code):
     return facts, labels, tables, own, by
 
 
-def nature_periods(tables, basis, own=None):
+def nature_periods(tables, basis, own=None, topics=(('nature_x', 'xbrl'), ('nature', 'html'))):
     """기간마다 표 하나: 그 기간을 처음 보고한 보고서의 원문 표, 원문이 없으면 주석 XBRL.
     보고서마다 줄 이름이 달라서, 한 기간에 여러 보고서의 줄을 섞으면 같은 비용이 두 줄이 된다 (감가상각비 등 / 감가상각비 및 무형자산 상각).
     → (periods {(시작, 끝): {키: 값}}, meta {키: (이름, 순서)}, src {(시작, 끝): 'html'|'xbrl'}, bad {(시작, 끝): 사유})"""
@@ -64,7 +64,7 @@ def nature_periods(tables, basis, own=None):
     def recon(d):
         tot = d.get('total')
         return tot is None or abs(sum(v for k, v in d.items() if k != 'total') - tot) <= max(0.5, abs(tot) * 0.005)
-    for topic, tag in (('nature_x', 'xbrl'), ('nature', 'html')):        # 원문이 뒤에 와서 XBRL 을 덮는다
+    for topic, tag in topics:        # 원문이 뒤에 와서 XBRL 을 덮는다
         for pe, by_rcept in tables.get((basis, topic), {}).items():
             # 그 기간의 보고서(정정이 있으면 정정본). 그 표가 줄의 합 ≠ 합계이면 맞는 것 중에서 같은 규칙으로
             good = [r for r in by_rcept if recon({k: v for k, (v, _, _) in by_rcept[r].items()})]
@@ -92,13 +92,25 @@ def nature_periods(tables, basis, own=None):
 def company(conn, code):
     facts, labels, tables, own, by = load(conn, code)
     # 연결 우선. 다만 연결 표를 분기 보고서에서 못 읽어 연간 값만 있으면(별도 쪽 기간이 훨씬 많으면) 별도 기준으로 — 빈 표보다 낫다
-    nper = lambda b: len(set(tables.get((b, 'nature'), {})) | set(tables.get((b, 'nature_x'), {})))
+    mode = 'nature'
+    nper = lambda b, t=('nature', 'nature_x'): len(set().union(*(set(tables.get((b, x), {})) for x in t)))
+    sper = lambda b: len(set().union(*(set(tables.get((b, x), {})) for x in ('sga', 'sga_x'))))
+    # 성격별 분류가 없거나 사업보고서에만 있는 회사(분기 보고서엔 판관비 내역뿐): 판관비 내역 + 손익계산서 매출원가 한 줄
+    if max(nper('C'), nper('S')) * 2 < max(sper('C'), sper('S')):
+        mode = 'sga'
+        nper = sper
     basis = 'C' if nper('C') and nper('C') >= 0.6 * nper('S') else 'S'
-    periods, meta, src, bad = nature_periods(tables, basis, own)
+    topics = (('nature_x', 'xbrl'), ('nature', 'html')) if mode == 'nature' else (('sga_x', 'xbrl'), ('sga', 'html'))
+    periods, meta, src, bad = nature_periods(tables, basis, own, topics)
+    if mode == 'sga':
+        cg = facts.get((basis, 'is'), {}).get('cogs') or facts.get(('X', 'is'), {}).get('cogs') or {}
+        periods = {pe: {**d, 'cogs_fn': cg[pe], 'total': d['total'] + cg[pe]} for pe, d in periods.items() if pe in cg and 'total' in d}
+        bad = {pe: m for pe, m in bad.items() if pe in periods}
+        meta['cogs_fn'] = ('매출원가', -1)
     if not periods:
         return None
     keys = sorted({k for d in periods.values() for k in d if k != 'total'}, key=lambda k: (meta[k][1], k))
-    group_of = {k: fund.key_of(meta[k][0])[1] for k in keys}
+    group_of = {k: ('매출원가' if k == 'cogs_fn' else fund.key_of(meta[k][0])[1]) for k in keys}
     # 묶음: 기간마다 묶음 합을 내고(그 표에 없는 묶음은 0) 분기로 — 표마다 줄 나눔이 달라도 합이 맞는다
     gper = {pe: {g: sum(v for k, v in d.items() if k != 'total' and group_of[k] == g) for g in set(group_of.values())} for pe, d in periods.items()}
     gq = fund.quarter_series(gper, sorted(set(group_of.values())), fill=True)
@@ -149,7 +161,7 @@ def company(conn, code):
         'SELECT period_end, rcept_no FROM fund_report WHERE code = ? ORDER BY rcept_no', (code,))}
     r1 = lambda v: None if v is None else round(v, 1)
     return {
-        'c': code, 'basis': '연결' if basis == 'C' else '별도', 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
+        'c': code, 'basis': '연결' if basis == 'C' else '별도', 'mode': mode, 'q': ends, 'ql': [fund.qlabel(e) for e in ends],
         'rev': [r1(inc['rev'].get(e)) for e in ends], 'op': [r1(inc['op'].get(e)) for e in ends], 'np': [r1(inc['np'].get(e)) for e in ends],
         'tot': [r1(totq.get(e)) for e in ends],
         'lines': [{'k': k, 'l': lines[k]['l'], 'g': lines[k]['g'], 'v': [r1(lines[k]['v'].get(e)) for e in ends]} for k in order],
@@ -371,7 +383,9 @@ def build():
         d = company(conn, code)
         if not d:      # 보고서는 받았는데 표가 없다 — 대개 성격별 분류를 공시하지 않는 회사(기능별 공시만)
             n = conn.execute('SELECT COUNT(*) FROM fund_report WHERE code = ?', (code,)).fetchone()[0]
-            skipped.append({'c': code, 'n': info.get(code, {}).get('n') or code, 'r': n})
+            nm = info.get(code, {}).get('n') or code
+            fin = any(w in nm for w in ('금융', '은행', '증권', '생명', '해상', '화재', '카드', '보험', '캐피탈', '투자'))
+            skipped.append({'c': code, 'n': nm, 'r': n, 'fin': fin})
             continue
         i = info.get(code, {})
         d.update({'n': i.get('n') or code, 'mk': i.get('mk'), 'mc': i.get('mc'), 'built': built,

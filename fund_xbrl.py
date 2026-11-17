@@ -139,11 +139,15 @@ def _roles(xsd: str) -> Dict[str, str]:
     return {m.group(1): m.group(2) for m in re.finditer(r'roleURI="([^"]+)"[^>]*>\s*<link:definition>([^<]*)</link:definition>', xsd)}
 
 
-def nature_items(pre_root, roles: Dict[str, str]) -> List[str]:
-    """비용의 성격별 분류 줄 (표시 순서, 합계 포함). 연결·별도 역할이 따로 있으면 처음 나온 순서로 합친다"""
+SGA_TOTAL = 'dart_TotalSellingGeneralAdministrativeExpenses'
+
+
+def nature_items(pre_root, roles: Dict[str, str], words=('비용의성격별', '영업비용'), total: str = TOTAL) -> List[str]:
+    """주석 역할(정의에 words 가 든 것)의 줄 (표시 순서, 합계 포함). 연결·별도 역할이 따로 있으면 처음 나온 순서로 합친다.
+    기본은 비용의 성격별 분류(·'영업비용' 주석), words=판관비 면 판매비와관리비 내역"""
     out = []
     for pl in pre_root.iter(LINK + 'presentationLink'):
-        if '비용의 성격별' not in roles.get(pl.get(XL + 'role'), ''):
+        if not any(w in re.sub(r'\s+', '', roles.get(pl.get(XL + 'role'), '')) for w in words):
             continue
         locs = {x.get(XL + 'label'): x.get(XL + 'href').split('#')[1] for x in pl.findall(LINK + 'loc')}
         # 화살표를 따라 순서대로 (order 속성), LineItems 밑의 자식들
@@ -163,12 +167,12 @@ def nature_items(pre_root, roles: Dict[str, str]) -> List[str]:
         walk(line_parent)
         # 합계가 있으면 합계까지만, 그리고 합계 밑에 매달린 것은 그대로 줄로
         items = [x for x in seq if not x.endswith(('Abstract', 'Table', 'LineItems', 'Axis', 'Member', 'Domain', 'TextBlock'))]
-        if TOTAL in items:
-            items = items[:items.index(TOTAL) + 1]
+        if total in items:
+            items = items[:items.index(total) + 1]
         top = {c for _, c in kids.get(line_parent, [])}
-        if TOTAL in kids:   # 합계 밑에 줄을 단 회사: 합계의 자식이 줄
-            top |= {c for _, c in kids[TOTAL]}
-        items = [x for x in items if x in top or x == TOTAL]
+        if total in kids:   # 합계 밑에 줄을 단 회사: 합계의 자식이 줄
+            top |= {c for _, c in kids[total]}
+        items = [x for x in items if x in top or x == total]
         for x in items:
             if x not in out:
                 out.append(x)
@@ -185,8 +189,11 @@ def parse(zbytes: bytes) -> Dict:
     lab = ET.fromstring(z.read(get('_lab-ko.xml'))) if get('_lab-ko.xml') else None
     xsd = z.read(get('.xsd')).decode('utf-8', 'replace') if get('.xsd') else ''
     labels = _labels(lab) if lab is not None else {}
-    nature = nature_items(pre, _roles(xsd)) if pre is not None else []
-    want = set(nature) | set(IS_ITEMS)
+    roles = _roles(xsd)
+    nature = nature_items(pre, roles) if pre is not None else []
+    sga = [x for x in nature_items(pre, roles, ('판매비와관리비', '판매비와일반관리비', '판매관리비'), SGA_TOTAL) if x not in nature] \
+        if pre is not None and not nature else []        # 성격별 분류가 없는 회사만: 판관비 내역
+    want = set(nature) | set(sga) | set(IS_ITEMS)
     kids, parent = member_children(ET.fromstring(z.read(get('_def.xml')))) if get('_def.xml') else ({}, {})
 
     ctx, sctx = {}, {}
@@ -238,4 +245,4 @@ def parse(zbytes: bytes) -> Dict:
     grp = lambda mem: '' if mem == '__adj__' else parent.get(mem, '')
     segs = {(view, item, name(mem), grp(mem), b, st, en): v for (view, item, mem, b, st, en), v in leaves_only(segs, kids).items()}
     return {'facts': [(*k, v) for k, v in facts.items()], 'labels': {k: labels.get(k, k) for k in want},
-            'nature': nature, 'segs': [(*k, v) for k, v in settle_views(segs).items()]}      # segs: (보기, rev|op, 이름, 분류, basis, 시작, 끝, 억원)
+            'nature': nature, 'sga': sga, 'segs': [(*k, v) for k, v in settle_views(segs).items()]}      # segs: (보기, rev|op, 이름, 분류, basis, 시작, 끝, 억원)

@@ -167,22 +167,28 @@ def xbrl_zip(session, key, rcept_no: str, code: str) -> bytes:
 def xbrl_rows(zbytes: bytes, rno: str) -> list:
     """XBRL → fund_fact 줄: 손익(is), 주석 XBRL 성격별 비용(nature_x), 부문·제품·지역별 매출/영업이익(seg:rev · prod:rev · geo:rev · seg:op …)"""
     x = fund_xbrl.parse(zbytes)
-    rows, agg = [], {}
+    rows, agg, sagg = [], {}, {}
     for item, basis, st, en, v in x['facts']:
+        if item in x['sga'] or (item == fund_xbrl.SGA_TOTAL and x['sga']):   # 판관비 내역 (성격별 분류가 없는 회사)
+            lab = x['labels'].get(item, item)
+            k = 'total' if item == fund_xbrl.SGA_TOTAL else fund.key_of(lab)[0]
+            a = sagg.setdefault((basis, k, st, en), [lab, 0.0, x['sga'].index(item) if item in x['sga'] else 99])
+            a[1] += v
         if item in fund_xbrl.IS_ITEMS:
             rows.append((basis, 'is', fund_xbrl.IS_ITEMS[item][0], fund_xbrl.IS_ITEMS[item][1], st, en, v, rno, 0))
-        else:               # 주석 XBRL (검증·보충용) — 같은 키는 더한다
+        elif item not in x['sga']:      # 주석 XBRL (검증·보충용) — 같은 키는 더한다
             lab = x['labels'].get(item, item)
             k = 'total' if item == fund_xbrl.TOTAL else fund.key_of(lab)[0]
             a = agg.setdefault((basis, k, st, en), [lab, 0.0, x['nature'].index(item) if item in x['nature'] else 99])
             a[1] += v
     rows += [(b, 'nature_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in agg.items()]
+    rows += [(b, 'sga_x', k, lab, st, en, v, rno, o) for (b, k, st, en), (lab, v, o) in sagg.items()]
     # 부문: item = '분류¦이름' (같은 이름이 다른 분류 벌에 또 나와도 덮어쓰지 않게), label = 이름
     rows += [(b, f'{view}:{item}', f'{grp}¦{name}', name, st, en, v, rno, 0) for view, item, name, grp, b, st, en, v in x['segs']]
     return rows
 
 
-def oracle_of(xrows: list) -> dict:
+def oracle_of(xrows: list, kind: str = 'nature') -> dict:
     """XBRL 손익 줄 → {basis: {(시작, 끝): [매출원가+판관비, 매출−영업이익]}} — 주석 표의 어느 열이 어느 기간인지 맞춰 보는 기준값"""
     by = {}
     for basis, topic, item, _, st, en, v, *_ in xrows:
@@ -192,6 +198,10 @@ def oracle_of(xrows: list) -> dict:
     for b, pe in by.items():
         for k, d in pe.items():
             refs = []
+            if kind == 'sga':       # 판관비 내역 표의 기준값 = 손익계산서 판관비
+                if d.get('sga') is not None:
+                    out.setdefault(b, {})[k] = [d['sga']]
+                continue
             if d.get('cogs') is not None and d.get('sga') is not None:
                 refs.append(d['cogs'] + d['sga'])
             if d.get('rev') is not None and d.get('op') is not None:
@@ -201,19 +211,25 @@ def oracle_of(xrows: list) -> dict:
     return out
 
 
-def note_rows(xml: str, end: str, kind: str, fy_end: int, oracle: dict, rno: str):
+def note_rows(xml: str, end: str, kind: str, fy_end: int, oracle: dict, rno: str, sga_oracle: dict = None):
     """원문 → (fund_fact 줄, 표를 찾았나). 연결·별도마다 그 basis 의 기준값으로 열을 맞춘다 (없으면 구분 없는 'X' 기준값)"""
-    tables = fund.note_tables(xml)
-    rows, claimed = [], set()
-    for t in tables:
-        orc = oracle.get(t['basis']) or oracle.get('X')
-        fs = fund.table_facts(t, end, kind, fy_end, orc, t.get('first', True))
-        mine = {(st, en) for _, _, st, en, _, _ in fs}
-        for item, label, st, en, v, ord_ in fs:
-            if (t['basis'], st, en) not in claimed:        # 한 기간은 그 보고서에서 먼저 나온 표 하나만 — 뒤의 다른 표가 같은 기간을 또 채우면 합이 두 배가 된다
-                rows.append((t['basis'], 'nature', item, label, st, en, v, rno, ord_))
-        claimed |= {(t['basis'], st, en) for st, en in mine}
-    return rows, bool(tables)
+    rows = []
+    found = False
+    for topic, words, orc_all in (('nature', fund.NATURE_WORDS, oracle), ('sga', fund.SGA_WORDS, sga_oracle or {})):
+        tables = fund.note_tables(xml, words)
+        claimed = set()
+        for t in tables:
+            orc = orc_all.get(t['basis']) or orc_all.get('X')
+            fs = fund.table_facts(t, end, kind, fy_end, orc, t.get('first', True))
+            mine = {(st, en) for _, _, st, en, _, _ in fs}
+            for item, label, st, en, v, ord_ in fs:
+                if (t['basis'], st, en) not in claimed:    # 한 기간은 그 보고서에서 먼저 나온 표 하나만 — 뒤의 다른 표가 같은 기간을 또 채우면 합이 두 배가 된다
+                    rows.append((t['basis'], topic, item, label, st, en, v, rno, ord_))
+            claimed |= {(t['basis'], st, en) for st, en in mine}
+        if topic == 'nature' and any(r[1] == 'nature' for r in rows):
+            return rows, True           # 성격별 분류가 있으면 판관비 내역은 읽지 않는다
+        found = found or bool(tables)
+    return rows, found
 
 
 def put(conn, code, rows):
@@ -237,7 +253,7 @@ def collect_report(conn, session, key, code, rno, name, kind, end, fy_end) -> st
                          (rno, code, name, end, kind, datetime.now().isoformat(timespec='seconds'), '원문 생략 (주석 XBRL)'))
         return ''
     try:
-        nr, found = note_rows(document(session, key, rno), end, kind, fy_end, oracle_of(xr), rno)
+        nr, found = note_rows(document(session, key, rno), end, kind, fy_end, oracle_of(xr), rno, oracle_of(xr, 'sga'))
         rows += nr
         if not found:
             notes.insert(0, '원문에서 성격별 비용 표를 못 찾음')
@@ -262,7 +278,7 @@ def reparse(conn) -> int:
         fy[code] = int(end[5:7])
     n = miss = 0
     with conn:
-        conn.execute("DELETE FROM fund_fact WHERE topic = 'nature'")      # 원문 유래 값은 전부 다시
+        conn.execute("DELETE FROM fund_fact WHERE topic IN ('nature', 'sga')")      # 원문 유래 값은 전부 다시
         zs = {r[0]: XBRLS / f'{r[0]}.zip' for r in conn.execute('SELECT rcept_no FROM fund_report')}
         have_x = [rno for rno, f in zs.items() if f.exists()]
         if have_x:      # XBRL 캐시가 있는 보고서의 XBRL 유래 값도 다시 (손익·주석 XBRL·부문)
@@ -280,7 +296,7 @@ def reparse(conn) -> int:
                     pass
             if f.exists():      # 원문을 받지 않은 보고서(주석 XBRL 로 대신)는 XBRL 만 다시
                 rows, tables = note_rows(gzip.decompress(f.read_bytes()).decode('utf-8'), r['period_end'], r['kind'], fy.get(r['code'], 12),
-                                         oracle_of(xr), r['rcept_no'])
+                                         oracle_of(xr), r['rcept_no'], oracle_of(xr, 'sga'))
             else:
                 rows, tables = [], True
             rows += xr

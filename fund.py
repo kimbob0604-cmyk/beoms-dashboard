@@ -38,7 +38,7 @@ RULES: List[Tuple[str, str, str]] = [
     (r'광고|마케팅|홍보', 'ad', '광고선전비'),
     (r'기타', 'other', '기타'),
 ]
-GROUP_ORDER = ['원가', '외주비', '인건비', '감가상각비', '지급수수료', '판매수수료', 'R&D', '지급임차료', '수도광열비', '소모품비', '운반비',
+GROUP_ORDER = ['매출원가', '원가', '외주비', '인건비', '감가상각비', '지급수수료', '판매수수료', 'R&D', '지급임차료', '수도광열비', '소모품비', '운반비',
                '수선비', '광고선전비', '기타']
 FIXED = {'인건비', '감가상각비', '지급임차료'}       # 매출이 변해도 금액이 잘 안 변하는 묶음 (모델에서 금액 유지)
 
@@ -184,7 +184,16 @@ _PERIOD = re.compile(r'(당|전)\s*(분|반)?\s*기')
 _UNIT = re.compile(r'단위\s*[:：]?\s*(백만원|천원|억원|원)')
 
 
-def group_tables(xml: str, word: str = '성격별') -> List[Dict]:
+NATURE_WORDS = ('성격별', '영업비용')                 # '영업비용' 주석: 손익계산서를 성격별로 쓰는 회사(게임·통신·플랫폼·바이오)
+SGA_WORDS = ('판매비와관리비', '판매비와일반관리비', '판매관리비')   # 성격별 분류가 없는 회사의 대체: 판관비 내역 (띄어쓰기는 지우고 비교)
+
+
+def _has(text: str, words) -> bool:
+    flat = re.sub(r'\s+', '', text)
+    return any(w in flat for w in words)
+
+
+def group_tables(xml: str, words=NATURE_WORDS) -> List[Dict]:
     """새 형식(XBRL 꼴 문서): <TABLE-GROUP ACLASS="{XBRL}NT_C_D834300"> 안에 [기간·단위 표] → [숫자 표] 가 번갈아 나온다.
     제목에 word 가 든 묶음만. 기간 표의 '당분기'/'전분기' 를 숫자 표 열 머리말 앞에 붙여 돌려준다"""
     out = []
@@ -192,7 +201,7 @@ def group_tables(xml: str, word: str = '성격별') -> List[Dict]:
         end = xml.find('</TABLE-GROUP>', m.end())
         blk = xml[m.end():end if end > 0 else m.end() + 200000]
         title = re.search(r'<TITLE[^>]*>(.*?)</TITLE>', blk, re.S)
-        if not title or word not in _text(title.group(1)):
+        if not title or not _has(_text(title.group(1)), words):
             continue
         who, mult, unit, used = None, None, None, set()
         for t in re.findall(r'<TABLE\b.*?</TABLE>', blk, re.S):
@@ -213,10 +222,10 @@ def group_tables(xml: str, word: str = '성격별') -> List[Dict]:
     return out
 
 
-def note_tables(xml: str) -> List[Dict]:
-    """원문에서 비용의 성격별 분류 표 → [{'basis': 'C'|'S', 'mult': 억원 환산 배수, 'cols', 'rows'}] (문서 순서).
-    새 형식(group_tables)이 있으면 그것을, 없으면 표 앞 문장에 '성격별'이 있는 표를 연결·별도 하나씩"""
-    out = group_tables(xml)
+def note_tables(xml: str, words=NATURE_WORDS) -> List[Dict]:
+    """원문에서 비용 주석 표 → [{'basis': 'C'|'S', 'mult': 억원 환산 배수, 'cols', 'rows'}] (문서 순서).
+    새 형식(group_tables)이 있으면 그것을, 없으면 표 앞 문장에 words('성격별'·'영업비용', 또는 판관비)가 있는 표를 연결·별도 하나씩"""
+    out = group_tables(xml, words)
     if out:
         return out
     titles = [(m.start(), _text(m.group(1))) for m in re.finditer(r'<TITLE[^>]*>(.*?)</TITLE>', xml, re.S | re.I)]
@@ -225,7 +234,7 @@ def note_tables(xml: str) -> List[Dict]:
     for m in re.finditer(r'<TABLE\b', xml, re.I):
         prev_end = xml.rfind('</TABLE>', 0, m.start())
         lead = _text(xml[max(prev_end + 8, m.start() - 900):m.start()])
-        hit = '성격별' in lead[-400:]
+        hit = _has(lead[-400:], words)
         follow = carry is not None and 0 <= m.start() - carry[0] < carry[2]
         end = xml.find('</TABLE>', m.start())
         if end < 0:
@@ -234,7 +243,7 @@ def note_tables(xml: str) -> List[Dict]:
         if not hit and not follow:
             small = _text(body) if end - m.start() < 3000 else ''
             # 제목('31. 비용의 성격별 분류 (단위: 천원)')이 작은 표 안에 든 꼴 → 다음 표가 숫자 표
-            carry = (end + 8, _UNIT.search(small), 300) if small and len(small) < 120 and '성격별' in small else None
+            carry = (end + 8, _UNIT.search(small), 300) if small and len(small) < 120 and _has(small, words) else None
             continue
         t = parse_table(body)
         u = _UNIT.search(lead[-300:]) or _UNIT.search(_text(body[:1500])) or (carry and carry[1])

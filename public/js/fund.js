@@ -155,7 +155,7 @@ const Fund = (() => {
     const j1 = i - 1, j4 = d.q.indexOf(prevYear(e));
     const b1 = bridge(d, i, j1), b4 = bridge(d, i, j4);
     el.innerHTML = `<section class="st-sec fd-sec">
-      <div class="st-sec-head"><h3>비용 구조 <small class="muted">성격별 비용 · ${d.basis} · 분기(3개월) · DART 정기보고서 주석</small></h3>
+      <div class="st-sec-head"><h3>비용 구조 <small class="muted">${d.mode === 'sga' ? '매출원가(한 줄) + 판관비 내역 — 이 회사는 비용의 성격별 분류를 공시하지 않습니다' : '성격별 비용'} · ${d.basis} · 분기(3개월) · DART 정기보고서 주석</small></h3>
         <div class="fd-ctl">
           <div class="seg">${[['grp', '묶음'], ['raw', '원본 줄']].map(([k, l]) => `<button data-fm="${k}" class="${s.mode === k ? 'on' : ''}">${l}</button>`).join('')}</div>
           <div class="seg">${[['amt', '금액'], ['pct', '매출 대비 %']].map(([k, l]) => `<button data-fu="${k}" class="${s.unit === k ? 'on' : ''}">${l}</button>`).join('')}</div>

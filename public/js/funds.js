@@ -36,7 +36,9 @@
           <td>${(s.top || []).map(([g, v]) => `<span class="fd-chip">${g} <b class="${v > 0 ? 'down' : 'up'}">${pp(v)}</b></span>`).join('')}</td>
           <td class="num muted">${s.ev || ''}${s.cns ? ' · 컨센' : ''}${s.seg?.length ? ` · ${s.seg[0]}` : ''}</td></tr>`).join('') || '<tr><td colspan="10" class="muted">해당 종목 없음</td></tr>'}
         </tbody></table></div>
-      ${data.skipped?.length ? `<p class="muted small" style="padding:8px 12px">성격별 비용 주석을 찾지 못한 종목 ${data.skipped.length}개 (대개 기능별로만 공시): ${data.skipped.map(x => U.esc(x.n)).join(' · ')}</p>` : ''}`;
+      ${data.skipped?.length ? `<p class="muted small" style="padding:8px 12px">비용 주석을 찾지 못한 종목 ${data.skipped.length}개 —
+        금융사(이 주석이 없음): ${data.skipped.filter(x => x.fin).map(x => U.esc(x.n)).join(' · ') || '없음'}<br>
+        그 밖: ${data.skipped.filter(x => !x.fin).map(x => U.esc(x.n)).join(' · ') || '없음'}</p>` : ''}`;
   }
 
   async function openDetail() {
