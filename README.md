@@ -609,6 +609,9 @@ python3 build_study.py --check    # 검증만
   python3 study_crop.py --doc energy-2027 --sheet    # 검수용 접촉 시트,  --only k1,k2 는 일부만 다시 자르기
   ```
   그림 제목 앞 `[하우스]`는 crops.json 의 `part`, 원문 번호(`도표 3`·`그림 19`)는 `no`. 카드의 `src`(예: "신한 p.18")는 쪽 표시 자리에 나온다.
+- **리포트 발간일**: `study/reports.json` 에 리포트(그림의 `pdf` 키 = `rg-<글번호>`·`dl-…`, 한 건짜리 문서는 문서 id)마다 하우스·애널리스트·제목·표지 발간일을 적는다.
+  화면은 그림 제목을 `[하우스 · YY.MM.DD]`, 문서 머리를 날짜 범위로 쓰고 문서 쪽에 리포트 목록을 보인다. 그림 없이 글만 쓴 리포트는 문서 `source.reports` 에 키를 적는다.
+  표지에 월만 있으면(예: NH Research Forum) `YYYY-MM`. 목록에 없는 리포트는 빌드가 경고한다.
 - **계산 카드**: `{"t": "calc", "inputs": [{k, label, v, unit, note}], "out": [{label, f, show, unit, d, k, hi}]}`. `f` 는 입력 키로 쓴 식,
   `show` 는 `{키}` 자리에 실제 숫자를 넣어 보여 줄 식이다. 앞 결과에 `k` 를 주면 뒤 식에서 쓸 수 있다. 입력을 바꾸면 화면에서 바로 다시 계산된다.
 

@@ -139,8 +139,22 @@
     const b = (c.addTags || []).map(k => chip(k, true)).join('');
     return (a || b ? `<div class="sd-chips">${a}${b}</div>` : '') + semiLinks(c.semi_cells);
   };
-  const srcLine = d => d.source.kind === 'multi' ? `리포트 ${d.source.n}건 종합 (${esc(d.source.houses || '')}) · ${esc(d.source.date || '')}` : d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(d.source.date || '')}`;
-  const figLabel = f => `${f.part ? '[' + esc(f.part) + '] ' : ''}${f.no === '' ? '' : /^[^\d]/.test(f.no) ? `&lt;${esc(f.no)}&gt; ` : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
+  // 리포트 표지 발간일 → YY.MM.DD (월만 있으면 YY.MM). study/reports.json → build_study.py
+  const ymd = s => s ? String(s).slice(2).replace(/-/g, '.') : '';
+  const reportsOf = d => (IX && IX.docs[d.id] && IX.docs[d.id].reports) || [];
+  const dateSpan = d => {
+    const ds = reportsOf(d).map(r => r.date).filter(Boolean).sort();
+    if (!ds.length) return ymd(d.source.date);
+    return ds[0] === ds[ds.length - 1] ? ymd(ds[0]) : `${ymd(ds[0])}~${ymd(ds[ds.length - 1])}`;
+  };
+  const srcLine = d => d.source.kind === 'multi' ? `리포트 ${d.source.n}건 종합 (${esc(d.source.houses || '')}) · ${esc(dateSpan(d))}` : d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(dateSpan(d))}`;
+  const reportList = d => {
+    const rs = reportsOf(d);
+    if (!rs.length) return '';
+    return `<section class="card col"><h3>리포트 ${rs.length}건 <small class="muted">표지 발간일 순</small></h3><ul class="sd-reps">${rs.map(r =>
+      `<li><b class="sd-date">${esc(ymd(r.date))}</b> <span>${esc(r.house)}${r.analyst ? ' ' + esc(r.analyst) : ''}</span> <span class="muted">${esc(r.title)}</span></li>`).join('')}</ul></section>`;
+  };
+  const figLabel = f => `${f.part || f.date ? '[' + esc([f.part, ymd(f.date)].filter(Boolean).join(' · ')) + '] ' : ''}${f.no === '' ? '' : /^[^\d]/.test(f.no) ? `&lt;${esc(f.no)}&gt; ` : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
 
   function tableHtml(rows) {
     if (!rows || !rows.length) return '';
@@ -395,6 +409,7 @@
         ${o.how_to_read ? `<p><b class="sd-lab">읽는 법</b>${num(o.how_to_read)}</p>` : ''}
         <p class="small muted">진행: 그림·표 ${m.nfig_done}/${m.nfig_total} 카드화 · ${m.source.kind === 'multi' ? `리포트 ${m.source.n}건` : m.done[1] >= m.done[0] ? `작성 범위 p.${m.done[0]}~${m.done[1]}` : '아직 작성 전'}</p>
       </section>
+      ${reportList(m)}
       <section class="card col"><h3>목차 (작성된 주제)</h3><ol class="sd-toc">${m.topics.map(t => `<li><a href="${nodeHref(t.node)}">${esc(t.title)}</a>
         <small class="muted">${t.pages ? `p.${t.pages[0]}~${t.pages[1]} · ` : ''}${esc(nodeMap[t.node].trail.map(x => x.name).join(' › '))}</small></li>`).join('')}</ol></section>`;
     window.scrollTo(0, 0);

@@ -154,10 +154,28 @@ def main():
 
     docs_meta, doc_out = {}, {}
     node_topics = {p: [] for p in nodes}
+    # 리포트 표지 발간일 (study/reports.json): 여러 리포트를 합친 문서의 그림마다 [하우스 · YY.MM.DD] 로 붙고, 문서 쪽에 목록으로 나온다
+    REPORTS = {k: v for k, v in load(SRC / 'reports.json').items() if not k.startswith('_')} if (SRC / 'reports.json').exists() else {}
     for f in sorted((SRC / 'docs').glob('*.json')):
         d = load(f)
         fig_path = EXTRACT / d['id'] / 'figures.json'
         figs = {x['key']: x for x in load(fig_path)} if fig_path.exists() else {}
+        doc_reports = {}
+        for x in figs.values():   # 그림의 pdf 가 리포트 키(문자열)면 그 리포트의 날짜를 붙인다 (책·단일 리포트는 쪽 번호라 건너뜀)
+            rk = x.get('pdf') if isinstance(x.get('pdf'), str) else None
+            if rk:
+                if rk in REPORTS:
+                    x['date'] = REPORTS[rk]['date']
+                    doc_reports[rk] = REPORTS[rk]
+                else:
+                    warns.append(f'{d["id"]}: 리포트 {rk} 의 발간일이 study/reports.json 에 없음')
+        for rk in d.get('source', {}).get('reports', []):   # 그림 없이 글만 쓴 리포트는 문서 source.reports 에 적는다
+            if rk in REPORTS:
+                doc_reports[rk] = REPORTS[rk]
+            else:
+                warns.append(f'{d["id"]}: source.reports 의 {rk} 발간일이 study/reports.json 에 없음')
+        if not doc_reports and d['id'] in REPORTS:   # 리포트 한 건짜리 문서
+            doc_reports[d['id']] = REPORTS[d['id']]
         if not figs:
             warns.append(f'{d["id"]}: {fig_path} 없음 — study_extract.py 를 먼저 실행')
         used = {}
@@ -179,6 +197,8 @@ def main():
                     used[ref] = where
                     x = figs[ref]
                     c['fig'] = {k: x[k] for k in ('key', 'kind', 'no', 'title', 'page', 'img', 'w', 'h', 'source', 'part')}
+                    if x.get('date'):
+                        c['fig']['date'] = x['date']
                     c['fig'].update({k: x[k] for k in ('hd', 'hd_w', 'hd_h', 'scan', 'raw', 'raw_w', 'raw_h') if k in x})
                     if c.get('tech') and not x.get('hd'):
                         errs.append(f'{where}: 해설(tech)에 쓸 정리본 이미지(-hd)가 없음 — 벡터 그림이면 원본 렌더로 대체 필요')
@@ -197,7 +217,7 @@ def main():
                             errs.append(f'{where}: 단계 {si + 1} 그림 {st.get("ref")} 없음')
                             continue
                         used.setdefault(st['ref'], where)
-                        st['fig'] = {k: x[k] for k in ('key', 'kind', 'no', 'title', 'page', 'img', 'w', 'h', 'part') if k in x}
+                        st['fig'] = {k: x[k] for k in ('key', 'kind', 'no', 'title', 'page', 'img', 'w', 'h', 'part', 'date') if k in x}
                         st['fig'].update({k: x[k] for k in ('hd', 'hd_w', 'hd_h', 'scan') if k in x})
                         for sp in st.get('spots', []):
                             if not (0 <= sp.get('x', -1) <= 100 and 0 <= sp.get('y', -1) <= 100):
@@ -247,6 +267,7 @@ def main():
             warns.append(f'{d["id"]}: p.{lo}~{hi} 안에 카드 없는 그림·표 {len(miss)}개 — {", ".join(miss)}')
         done_figs = sum(1 for x in figs.values() if lo <= x['page'] <= hi)
         docs_meta[d['id']] = {k: d.get(k) for k in ('id', 'sector', 'title', 'source', 'done', 'overview')}
+        docs_meta[d['id']]['reports'] = sorted(({'key': k, **v} for k, v in doc_reports.items()), key=lambda r: (r['date'] if len(r['date']) > 7 else r['date'] + '-99', r['house']))   # 월만 있는 날짜는 그달 끝으로
         docs_meta[d['id']].update({'nfig_total': len(figs), 'nfig_done': len(used), 'nfig_in_done': done_figs,
                                    'ncards': ncards,
                                    'topics': [{'ti': i, 'node': t['node'], 'title': t['title'], 'pages': t.get('pages')}
