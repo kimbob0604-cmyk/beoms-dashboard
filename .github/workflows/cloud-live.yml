@@ -15,6 +15,11 @@ on:
     - cron: '3,23,43 0-5 * * 1-5'    # 09:03~14:43, 20분마다 (앞의 것이 빠졌을 때)
     - cron: '7,27 6 * * 1-5'         # 15:07, 15:27
   workflow_dispatch:
+    inputs:
+      force:
+        description: '처음 한 번은 맥이 깨어 있어도 사이트를 갱신 (시험용)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -82,7 +87,8 @@ jobs:
             # 10분마다: 사이트 홈
             if [ $((n % 2)) -eq 0 ]; then
               ( cd site && git fetch -q --depth 1 --filter=blob:none origin gh-pages && git reset -q --hard FETCH_HEAD ) || echo "gh-pages 받기 실패"
-              if python3 cloud_live.py site site; then
+              force=""; [ "$n" -eq 0 ] && [ "${{ inputs.force }}" = "true" ] && force="--force"
+              if python3 cloud_live.py site site $force; then
                 ( cd site && git add data/home.json data/quotes.json && git commit -qm "장중 갱신(Actions) $(date +%H:%M)" \
                   && git push -q origin HEAD:gh-pages ) || echo "gh-pages 올리기 실패 (그새 맥이 배포했을 수 있음 — 다음 차례에)"
               fi
