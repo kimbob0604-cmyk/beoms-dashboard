@@ -553,8 +553,10 @@ python3 collect_eu.py [--force|--status] # Eurostat EU 화장품 수입 → db/t
 
 리포트·책 PDF를 그림·표 한 장씩 카드로 풀어 쌓는 화면(`public/study.html`). 계획: `docs/study-plan.md`.
 증권사 그림·문장을 잘라 쓰므로 기본은 **이 컴퓨터에서만** 본다(`publish_hold.txt`에 study.html·js/study.js·css/study.css·data/study).
-**암호 배포 (2026-11-18)**: `.env` 에 `STUDY_PASS=…` 를 적으면 `publish.py` 가 `study_crypt.py` 로 data/study 전부(JSON·그림)를
-AES-256-GCM 으로 잠가 `<경로>.enc` 로 올리고 위 보류를 푼다. 원래 이름의 파일은 올라가지 않는다. 화면은 `data/study/lock.json` 이 있으면
+**별도 사이트 (2026-11-18)**: Study 는 대시보드와 다른 주소 https://kimbob0604-cmyk.github.io/beoms-study/ (저장소 `beoms-study`)로 배포한다.
+대시보드 화면들에서 Study 탭을 뺐고, Study 화면은 자기 머리글(대시보드 ↗ 링크)만 둔다. 종목·반도체·바이오 링크는 그 사이트에서 대시보드 주소로 열린다.
+`.env` 에 `STUDY_PASS=…` 를 적으면 `publish.py` 가 대시보드 배포 뒤 `publish_study.py` 를 불러 `study_crypt.py` 로 data/study 전부(JSON·그림)를
+AES-256-GCM 으로 잠가 `<경로>.enc` 로 올린다(첫 배포 때 GitHub Pages 를 켠다). 원래 이름의 파일은 올라가지 않는다. 혼자 돌리려면 `python3 publish_study.py`. 화면은 `data/study/lock.json` 이 있으면
 암호를 물어 브라우저 안에서 풀고 열쇠를 그 기기에 기억한다(로컬 화면은 lock.json 이 없어 그대로). study.html 은 `noindex`.
 `python3 study_crypt.py --check` 로 암호 유무·잠글 크기 확인. 암호를 바꾸면 다음 배포 때 전부 다시 잠근다(약 240MB 다시 올라감).
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Study 데이터를 암호로 잠가 공개 사이트에 올린다 (publish.py 가 부른다)
+"""Study 데이터를 암호로 잠근다 (publish_study.py 가 Study 전용 사이트에 올릴 때 부른다)
 
-- 암호는 .env 의 STUDY_PASS (본인이 직접 적는다). 없으면 Study 는 지금처럼 배포에서 빠진다(publish_hold.txt).
+- 암호는 .env 의 STUDY_PASS (본인이 직접 적는다). 없으면 Study 사이트는 배포되지 않는다(대시보드 사이트에는 늘 올리지 않음).
 - public/data/study/** 파일마다 AES-256-GCM 으로 잠가 <같은 경로>.enc 로 둔다. 원래 이름의 파일은 올리지 않는다.
   열쇠 = PBKDF2-SHA256(암호, salt, 25만 번). salt·반복 횟수·확인용 조각은 data/study/lock.json (비밀 아님).
 - 같은 파일은 늘 같은 암호문이 나오게 IV 를 HMAC(열쇠, 경로+내용 해시)로 정한다 → 바뀌지 않은 그림은 다시 올라가지 않는다.
@@ -27,8 +27,6 @@ CACHE = ROOT / '.cache' / 'study_enc'
 SALT = ROOT / '.cache' / 'study_salt.bin'
 ITER = 250_000
 CHECK = b'beoms-study-ok'
-# 배포에서 함께 풀어 줄 화면 파일 (publish_hold.txt 에 적힌 Study 항목)
-STUDY_HOLD = {'study.html', 'js/study.js', 'js/study_chart.js', 'css/study.css', 'data/study'}
 
 
 def password() -> str:
@@ -99,7 +97,7 @@ def main():
     pw = password()
     if '--check' in sys.argv:
         files = [f for f in SRC.rglob('*') if f.is_file()]
-        print(f"STUDY_PASS {'있음' if pw else '없음 (.env 에 STUDY_PASS=... 를 적어야 공개 배포에 Study 가 올라간다)'}")
+        print(f"STUDY_PASS {'있음' if pw else '없음 (.env 에 STUDY_PASS=... 를 적어야 Study 사이트가 배포된다)'}")
         print(f'잠글 파일 {len(files)}개, {sum(f.stat().st_size for f in files) / 1e6:.0f}MB')
         return 0
     if not pw:

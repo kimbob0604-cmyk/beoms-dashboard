@@ -5,6 +5,11 @@
 (() => {
   const $ = id => document.getElementById(id);
   const esc = U.esc;
+  // Study 는 대시보드와 다른 사이트(beoms-study)로 배포된다. 그 사이트에서는 종목 패널·반도체·바이오 탭 링크를 대시보드 주소로 보낸다.
+  const DASH = /\.github\.io$/.test(location.hostname) && !location.pathname.startsWith('/beoms-dashboard') ? 'https://kimbob0604-cmyk.github.io/beoms-dashboard/' : '';
+  const ext = DASH ? ' target="_blank" rel="noopener"' : '';
+  const dl = document.getElementById('dash-link');
+  if (dl && DASH) { dl.href = DASH; dl.target = '_blank'; }
   // 숫자 강조: 단위가 붙은 숫자만 (PD-(L)1 의 1, CTLA-4 의 4 같은 이름 속 숫자는 그대로)
   const UNIT = '(?:%p|%|억 달러|십억 달러|백만 달러|억|조|달러|개월|년|배|명|쪽|개)';
   const NUM_RE = new RegExp(`(?<![\\w\\-–()./&#])([+\\-−]?\\d[\\d,]*(?:\\.\\d+)?)(\\s?${UNIT})`, 'g');
@@ -128,7 +133,7 @@
     return `<a class="sd-chip k-${e.kind}${add ? ' add' : ''}" href="?e=${encodeURIComponent(k)}" title="${esc(KIND_LABEL[e.kind])}${e.en ? ' · ' + esc(e.en) : ''}">${esc(e.name)}</a>`;
   };
   // 반도체 탭 칸으로 가는 링크 (semi.html?cell=칸)
-  const semiLinks = cells => cells?.length ? `<p class="sd-links sd-semi">반도체 탭: ${cells.map(x => `<a href="semi.html?cell=${encodeURIComponent(x.id)}">${esc(x.name)}</a>`).join(' · ')}</p>` : '';
+  const semiLinks = cells => cells?.length ? `<p class="sd-links sd-semi">반도체 탭: ${cells.map(x => `<a${ext} href="${DASH}semi.html?cell=${encodeURIComponent(x.id)}">${esc(x.name)}</a>`).join(' · ')}</p>` : '';
   const chips = (c) => {
     const a = (c.tags || []).map(k => chip(k)).join('');
     const b = (c.addTags || []).map(k => chip(k, true)).join('');
@@ -339,10 +344,10 @@
 
   function companyLinks(e) {
     const out = [];
-    if (e.code) out.push(Stock.link({ c: e.code, n: `${e.name} 종목 상세` }));
-    if (e.bio) out.push(`<a href="bio.html?m=${e.bio.m}&c=${encodeURIComponent(e.bio.c)}">바이오 탭 자산 카드</a>`);
+    if (e.code) out.push(DASH || typeof Stock === 'undefined' ? `<a${ext} href="${DASH}#${e.code}">${esc(e.name)} 종목 상세 (대시보드)</a>` : Stock.link({ c: e.code, n: `${e.name} 종목 상세` }));
+    if (e.bio) out.push(`<a${ext} href="${DASH}bio.html?m=${e.bio.m}&c=${encodeURIComponent(e.bio.c)}">바이오 탭 자산 카드</a>`);
     if (e.ticker) out.push(`<span class="muted">${esc(e.ticker)}</span>`);
-    (e.semi_cells || []).forEach(x => out.push(`<a href="semi.html?cell=${encodeURIComponent(x.id)}">반도체 탭 · ${esc(x.name)}</a>`));
+    (e.semi_cells || []).forEach(x => out.push(`<a${ext} href="${DASH}semi.html?cell=${encodeURIComponent(x.id)}">반도체 탭 · ${esc(x.name)}</a>`));
     if (e.listed === false) out.push('<span class="muted">비상장</span>');
     return out.length ? `<p class="sd-links">${out.join(' · ')}</p>` : '';
   }

@@ -105,14 +105,7 @@ def stage(out: Path) -> int:
     for src, dst in RENAMED.items():
         if (DATA / src).exists():
             shutil.copy2(DATA / src, out / 'data' / dst)
-    hold = held()
-    # Beom's Study: .env 에 STUDY_PASS 가 있으면 데이터·그림을 암호로 잠가 올리고 보류를 푼다 (study_crypt.py)
-    import study_crypt
-    pw = study_crypt.password()
-    if pw and (DATA / 'study' / 'index.json').exists():
-        n, size = study_crypt.encrypt_into(out / 'data' / 'study', pw)
-        hold -= study_crypt.STUDY_HOLD
-        print(f'Study 암호 배포: 파일 {n}개, {size / 1e6:.0f}MB')
+    hold = held()   # Beom's Study 는 늘 보류 — 다른 사이트(beoms-study)로 publish_study.py 가 올린다
     if hold:
         apply_hold(out, hold)
         print('공개 보류:', ', '.join(sorted(hold)))
@@ -157,7 +150,13 @@ def main() -> int:
     lock = open(ROOT / 'logs' / 'publish.lock', 'w')
     fcntl.flock(lock, fcntl.LOCK_EX)
     try:
-        return _publish()
+        rc = _publish()
+        try:   # Beom's Study 는 따로 beoms-study 사이트로 (STUDY_PASS 가 있을 때만). 실패해도 대시보드 배포 결과는 그대로
+            import publish_study
+            publish_study.main()
+        except Exception as e:
+            print(f'Study 사이트 배포 실패: {e}')
+        return rc
     finally:
         fcntl.flock(lock, fcntl.LOCK_UN)
 
