@@ -155,6 +155,12 @@ def main():
     docs_meta, doc_out = {}, {}
     node_topics = {p: [] for p in nodes}
     # 리포트 표지 발간일 (study/reports.json): 여러 리포트를 합친 문서의 그림마다 [하우스 · YY.MM.DD] 로 붙고, 문서 쪽에 목록으로 나온다
+    try:   # 새로 쓰인 리포트는 표지에서 발간일을 읽어 목록에 자동으로 넣는다 (study_reports.py)
+        import study_reports
+        for k, e in study_reports.sync():
+            warns.append(f'리포트 발간일 자동 추가: {k} {e["date"] or "?"} {e["house"]} — 표지와 맞는지 확인' + (f' ({e["check"]})' if e.get('check') else ''))
+    except Exception as e:
+        warns.append(f'리포트 발간일 자동 추가 실패: {e}')
     REPORTS = {k: v for k, v in load(SRC / 'reports.json').items() if not k.startswith('_')} if (SRC / 'reports.json').exists() else {}
     for f in sorted((SRC / 'docs').glob('*.json')):
         d = load(f)
