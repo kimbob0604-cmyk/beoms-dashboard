@@ -106,6 +106,13 @@ def stage(out: Path) -> int:
         if (DATA / src).exists():
             shutil.copy2(DATA / src, out / 'data' / dst)
     hold = held()
+    # Beom's Study: .env 에 STUDY_PASS 가 있으면 데이터·그림을 암호로 잠가 올리고 보류를 푼다 (study_crypt.py)
+    import study_crypt
+    pw = study_crypt.password()
+    if pw and (DATA / 'study' / 'index.json').exists():
+        n, size = study_crypt.encrypt_into(out / 'data' / 'study', pw)
+        hold -= study_crypt.STUDY_HOLD
+        print(f'Study 암호 배포: 파일 {n}개, {size / 1e6:.0f}MB')
     if hold:
         apply_hold(out, hold)
         print('공개 보류:', ', '.join(sorted(hold)))

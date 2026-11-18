@@ -6,7 +6,7 @@
 # @DOC_POOL 글 목록(리포트 탭): 2026-11-17 사용자 승인으로 공개. 올라가는 것은 제목·증권사·의견·목표가·글 링크뿐 (요약 본문·PDF 없음) — build_docpool.py
 # 대체데이터(Amazon·TikTok·Reddit): newsbot 의 집계를 받아 둔 것이라 공개하지 않는다 (2026-11-16, collect_altdata.py)
 data/altdata.json
-# Beom's Study: 증권사 리포트 그림·문장을 잘라 쓰므로 이 컴퓨터에서만 본다 (2026-11-17, 공개하려면 원문 그림을 뺀 사본을 따로 만든다)
+# Beom's Study: 책·증권사 리포트 그림을 잘라 쓴다. .env 에 STUDY_PASS 가 있으면 publish.py 가 암호로 잠가 올리고 아래 보류를 무시한다(2026-11-18 사용자 요청, study_crypt.py). 암호가 없으면 지금처럼 이 컴퓨터에서만
 study.html
 js/study.js
 js/study_chart.js

@@ -272,3 +272,9 @@ h1 .sd-chip { font-size: 12px; vertical-align: middle; }
 .sd-seq .sq-spots li { margin: 0 0 6px; line-height: 1.55; }
 .sd-seq .sq-dot { pointer-events: none; }
 @media (max-width: 900px) { .sd-seq .sq-pane { grid-template-columns: 1fr; } }
+
+/* 공개 사이트 암호 잠금 */
+.sd-lock { max-width: 460px; }
+.sd-lock form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.sd-lock input { flex: 1; min-width: 160px; font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--text); }
+.sd-lock button { font: inherit; font-weight: 700; padding: 7px 14px; border-radius: 8px; border: 0; background: var(--s1); color: #fff; cursor: pointer; }

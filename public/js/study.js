@@ -33,7 +33,75 @@
   const DOCS = {};
   const KIND_LABEL = { c: '개념', d: '약물', co: '기업', tr: '임상', ind: '적응증', n: '국가' };
 
-  const getDoc = async id => DOCS[id] || (DOCS[id] = await U.json(`data/study/docs/${id}.json`));
+  // 공개 사이트에서는 데이터·그림이 암호로 잠겨 있다(data/study/lock.json, study_crypt.py).
+  // 암호를 한 번 넣으면 열쇠를 이 기기(localStorage)에 기억하고, 파일은 <경로>.enc 를 받아 브라우저 안에서 푼다.
+  const ENC = { on: false, key: null, urls: {} };
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function unseal(path) {
+    const r = await fetch(`${path}.enc`);
+    if (!r.ok) throw new Error(`${path} ${r.status}`);
+    const b = new Uint8Array(await r.arrayBuffer());
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b.slice(0, 12) }, ENC.key, b.slice(12));
+  }
+  const sjson = async path => ENC.on ? JSON.parse(new TextDecoder().decode(await unseal(path))) : U.json(path);
+  async function keyOk(key, lock) {
+    try { const c = b64(lock.check); await crypto.subtle.decrypt({ name: 'AES-GCM', iv: c.slice(0, 12) }, key, c.slice(12)); return true; } catch (e) { return false; }
+  }
+  async function unlock() {
+    let lock;
+    try { const r = await fetch('data/study/lock.json', { cache: 'no-cache' }); if (!r.ok) return; lock = await r.json(); } catch (e) { return; }
+    ENC.on = true;
+    const saved = localStorage.getItem('study_key');
+    if (saved) {
+      const k = await crypto.subtle.importKey('raw', b64(saved), 'AES-GCM', false, ['decrypt']);
+      if (await keyOk(k, lock)) { ENC.key = k; return; }
+      localStorage.removeItem('study_key');
+    }
+    $('body').innerHTML = `<section class="card col sd-lock"><h3>암호를 넣어 주세요</h3>
+      <p class="muted small">Study는 책·리포트 원문 그림이 들어 있어 암호로 잠가 두었습니다. 한 번 풀면 이 기기에서는 다시 묻지 않습니다.</p>
+      <form id="sd-unlock"><input type="password" id="sd-pw" autocomplete="current-password" placeholder="암호"><button type="submit">열기</button><span id="sd-pwmsg" class="small"></span></form></section>`;
+    $('sd-pw').focus();
+    await new Promise(done => {
+      $('sd-unlock').addEventListener('submit', async e => {
+        e.preventDefault();
+        $('sd-pwmsg').textContent = '확인 중…';
+        const base = await crypto.subtle.importKey('raw', new TextEncoder().encode($('sd-pw').value), 'PBKDF2', false, ['deriveKey']);
+        const k = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: b64(lock.salt), iterations: lock.iter }, base,
+          { name: 'AES-GCM', length: 256 }, true, ['decrypt']);
+        if (!(await keyOk(k, lock))) { $('sd-pwmsg').textContent = '암호가 맞지 않습니다'; return; }
+        const raw = new Uint8Array(await crypto.subtle.exportKey('raw', k));
+        localStorage.setItem('study_key', btoa(String.fromCharCode(...raw)));
+        ENC.key = k;
+        done();
+      });
+    });
+  }
+  // 잠긴 그림: 화면에 들어오는 <img src="data/study/…"> 를 가까워질 때 풀어 blob 주소로 바꾼다
+  const IMG_IO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { IMG_IO.unobserve(e.target); showImg(e.target); }
+  }), { rootMargin: '800px 0px' }) : null;
+  async function showImg(img) {
+    const p = img.dataset.enc;
+    try {
+      ENC.urls[p] = ENC.urls[p] || unseal(p).then(buf => URL.createObjectURL(new Blob([buf], { type: p.endsWith('.png') ? 'image/png' : 'image/jpeg' })));
+      img.src = await ENC.urls[p];
+    } catch (e) { img.alt = `그림을 풀지 못했습니다 (${img.alt})`; }
+  }
+  function lockImg(img) {
+    const src = img.getAttribute('src');
+    if (!src || !src.startsWith('data/study/')) return;
+    img.dataset.enc = src;
+    img.removeAttribute('src');
+    if (IMG_IO) IMG_IO.observe(img); else showImg(img);
+  }
+  function watchImages() {
+    new MutationObserver(ms => ms.forEach(m => {
+      if (m.type === 'attributes') return lockImg(m.target);
+      m.addedNodes.forEach(n => { if (n.nodeType !== 1) return; if (n.tagName === 'IMG') lockImg(n); n.querySelectorAll?.('img').forEach(lockImg); });
+    })).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['src'] });
+  }
+
+  const getDoc = async id => DOCS[id] || (DOCS[id] = await sjson(`data/study/docs/${id}.json`));
   const route = () => Object.fromEntries(new URLSearchParams(location.search));
   const nodeHref = (path, card) => `?n=${encodeURIComponent(path)}${card ? `&c=${card}` : ''}`;
 
@@ -446,7 +514,9 @@
   U.initTheme($('theme'));
   (async () => {
     try {
-      IX = await U.json('data/study/index.json');
+      await unlock();
+      if (ENC.on) watchImages();
+      IX = await sjson('data/study/index.json');
     } catch (e) {
       $('msg').textContent = `공부 데이터를 불러오지 못했습니다. python3 build_study.py 를 먼저 실행하세요. (${e.message})`;
       return;

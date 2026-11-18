@@ -552,7 +552,11 @@ python3 collect_eu.py [--force|--status] # Eurostat EU 화장품 수입 → db/t
 ## Beom's Study (공부 탭, 2026-11-17)
 
 리포트·책 PDF를 그림·표 한 장씩 카드로 풀어 쌓는 화면(`public/study.html`). 계획: `docs/study-plan.md`.
-증권사 그림·문장을 잘라 쓰므로 **이 컴퓨터에서만** 본다(`publish_hold.txt`에 study.html·js/study.js·css/study.css·data/study).
+증권사 그림·문장을 잘라 쓰므로 기본은 **이 컴퓨터에서만** 본다(`publish_hold.txt`에 study.html·js/study.js·css/study.css·data/study).
+**암호 배포 (2026-11-18)**: `.env` 에 `STUDY_PASS=…` 를 적으면 `publish.py` 가 `study_crypt.py` 로 data/study 전부(JSON·그림)를
+AES-256-GCM 으로 잠가 `<경로>.enc` 로 올리고 위 보류를 푼다. 원래 이름의 파일은 올라가지 않는다. 화면은 `data/study/lock.json` 이 있으면
+암호를 물어 브라우저 안에서 풀고 열쇠를 그 기기에 기억한다(로컬 화면은 lock.json 이 없어 그대로). study.html 은 `noindex`.
+`python3 study_crypt.py --check` 로 암호 유무·잠글 크기 확인. 암호를 바꾸면 다음 배포 때 전부 다시 잠근다(약 240MB 다시 올라감).
 
 ```bash
 python3 study_extract.py study_src/pdf/<doc>.pdf --doc <doc> --offset 2 [--part 120:voronoi]   # 그림·표 잘라내기 + 쪽별 본문
