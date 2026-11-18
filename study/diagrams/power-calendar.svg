@@ -1,0 +1,24 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="전력·원전·신재생 일정표: 2026년 11월부터 2028년까지 미국·원전·한국·재생에너지">
+  <defs><marker id="power-calendarA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">일정표 2026.11 → 2028: 리포트들이 꼽은 확인 지점</text>
+  <rect x="10" y="36" width="700" height="100" rx="8" class="dg-lane1"/>
+  <text x="20" y="56" class="dg-t" font-size="12" font-weight="800" text-anchor="start">미국 계통·정책</text>
+  <text x="20" y="78" class="dg-s" font-size="10.5" text-anchor="start">11/9 BAAJA 상원 절차표결 · 11/16 FERC 206호 소명 · 12/16 의견</text>
+  <text x="20" y="98" class="dg-s" font-size="10.5" text-anchor="start">2027.1 새 의회 개원 (민주 양원) · 2027 중순 RTO 대형부하 규정 시행</text>
+  <text x="20" y="118" class="dg-s" font-size="10.5" text-anchor="start">2027~28 Order 2023 효과 · 765kV 기자재 발주 2026~30 집중 (KB)</text>
+  <rect x="10" y="144" width="700" height="100" rx="8" class="dg-lane2"/>
+  <text x="20" y="164" class="dg-t" font-size="12" font-weight="800" text-anchor="start">원전</text>
+  <text x="20" y="186" class="dg-s" font-size="10.5" text-anchor="start">2026말~27초 DOE 대출 부지 배정 → AP1000 장납기 발주 (약 4기분)</text>
+  <text x="20" y="206" class="dg-s" font-size="10.5" text-anchor="start">2027 하반기~2028 FID · 대미투자 EPC 본계약 2028 (메리츠)</text>
+  <text x="20" y="226" class="dg-s" font-size="10.5" text-anchor="start">연말 12차 전기본: 신규 대형 2~4기 + SMR 여부 (메리츠·하나)</text>
+  <rect x="10" y="252" width="700" height="100" rx="8" class="dg-lane3"/>
+  <text x="20" y="272" class="dg-t" font-size="12" font-weight="800" text-anchor="start">한국 전력시장</text>
+  <text x="20" y="294" class="dg-s" font-size="10.5" text-anchor="start">2026.12.31 REC 신규 발급 종료 → 2027.1 계약시장</text>
+  <text x="20" y="314" class="dg-s" font-size="10.5" text-anchor="start">2027 LMP 도입 · 산업용 지역요금 · 2027.10 발전5사 통합 목표</text>
+  <text x="20" y="334" class="dg-s" font-size="10.5" text-anchor="start">2027년 말 한전채 5배 특례 일몰 · 2027 변전설비 발주 원년 (미래 전력)</text>
+  <rect x="10" y="360" width="700" height="100" rx="8" class="dg-panel"/>
+  <text x="20" y="380" class="dg-t" font-size="12" font-weight="800" text-anchor="start">태양광·풍력</text>
+  <text x="20" y="402" class="dg-s" font-size="10.5" text-anchor="start">12/4 태양광 232 최저수입가격 시행 · 1H27 미국 모듈 재고 소진</text>
+  <text x="20" y="422" class="dg-s" font-size="10.5" text-anchor="start">2027.4 풍력 232 협상 보고 · 2027.12.31 풍력·태양광 45Y/48E 가동 시한</text>
+  <text x="20" y="442" class="dg-s" font-size="10.5" text-anchor="start">2027 상반기 국내 1등급 모듈 290원/W · 생산세액공제 시행령 (미래 태양광)</text>
+</svg>

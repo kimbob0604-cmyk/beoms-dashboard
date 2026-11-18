@@ -1,0 +1,57 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="한국 계통: 비수도권에서 만들어 수도권에서 쓴다, 송전 시간과 2027년 제도 변화">
+  <defs><marker id="power-kr-gridA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">한국: 남쪽·동쪽에서 만들고 수도권에서 쓴다 — 선로가 시간표를 정한다</text>
+  <rect x="10" y="34" width="220" height="180" rx="8" class="dg-lane2"/>
+  <text x="20" y="56" class="dg-t" font-size="12" font-weight="700" text-anchor="start">만드는 곳 (비수도권)</text>
+  <text x="20" y="75" class="dg-s" font-size="10.5" text-anchor="start">동해안 원전·석탄, 충남 화력</text>
+  <text x="20" y="94" class="dg-s" font-size="10.5" text-anchor="start">호남 태양광 (2024 신규접속 차단)</text>
+  <text x="20" y="113" class="dg-s" font-size="10.5" text-anchor="start">충남 자급률 209%, 경북 252% (신한)</text>
+  <text x="20" y="132" class="dg-s" font-size="10.5" text-anchor="start">경기 59%, 서울 10%대 초반 (DS)</text>
+  <text x="20" y="151" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">수도권이 소비의 45%</text>
+  <text x="20" y="170" class="dg-s" font-size="10.5" text-anchor="start">수도권 소비 − 발전 = 87.7TWh</text>
+  <rect x="490" y="34" width="220" height="180" rx="8" class="dg-lane3"/>
+  <text x="500" y="56" class="dg-t" font-size="12" font-weight="700" text-anchor="start">쓰는 곳 (새 수요)</text>
+  <text x="500" y="75" class="dg-s" font-size="10.5" text-anchor="start">삼성 용인 9GW: 1단계 LNG 3GW,</text>
+  <text x="500" y="94" class="dg-s" font-size="10.5" text-anchor="start">  2단계 기존망 증대(2035),</text>
+  <text x="500" y="113" class="dg-s" font-size="10.5" text-anchor="start">  3단계 동해안 장거리(미정)</text>
+  <text x="500" y="132" class="dg-s" font-size="10.5" text-anchor="start">SK하이닉스 용인 6GW (2032)</text>
+  <text x="500" y="151" class="dg-s" font-size="10.5" text-anchor="start">AI DC 18.4GW 계획 (2035)</text>
+  <text x="500" y="170" class="dg-s" font-size="10.5" text-anchor="start">데이터센터 수전신청 80% 수도권</text>
+  <rect x="240" y="34" width="240" height="180" rx="8" class="dg-hi"/>
+  <text x="250" y="56" class="dg-t" font-size="12" font-weight="700" text-anchor="start">선로 시간표</text>
+  <text x="250" y="74.5" class="dg-s" font-size="10.5" text-anchor="start">기존망 용량 증대: 3~5년</text>
+  <text x="250" y="93.0" class="dg-s" font-size="10.5" text-anchor="start">신규 송전선: 7~13년 (교보)</text>
+  <text x="250" y="111.5" class="dg-s" font-size="10.5" text-anchor="start">  경과지 1~2 · 주민협의 1~3 ·</text>
+  <text x="250" y="130.0" class="dg-s" font-size="10.5" text-anchor="start">  환경영향평가 1~2 · 공사 2~4년</text>
+  <text x="250" y="148.5" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">실제 지연 (DS 표16)</text>
+  <text x="250" y="167.0" class="dg-s" font-size="10.5" text-anchor="start">북당진~신탕정 150개월 지연</text>
+  <text x="250" y="185.5" class="dg-s" font-size="10.5" text-anchor="start">동해안~신가평 HVDC 90개월</text>
+  <path d="M230 124 L237 124" class="dg-arrow" marker-end="url(#power-kr-gridA)"/>
+  <path d="M480 124 L487 124" class="dg-arrow" marker-end="url(#power-kr-gridA)"/>
+  <rect x="10" y="224" width="700" height="206" rx="8" class="dg-panel"/>
+  <text x="20" y="244" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">2027년에 바뀌는 규칙 네 가지</text>
+  <rect x="20" y="256" width="162" height="162" rx="8" class="dg-gate"/>
+  <text x="28" y="276" class="dg-t" font-size="11" font-weight="800" text-anchor="start">12차 전기본 (연말)</text>
+  <text x="28" y="298" class="dg-s" font-size="10.3" text-anchor="start">2040 최대전력 158~165GW</text>
+  <text x="28" y="317" class="dg-s" font-size="10.3" text-anchor="start">11차 대비 신규 필요설비</text>
+  <text x="28" y="336" class="dg-s" font-size="10.3" text-anchor="start">10.3GW → 46~54GW (DS)</text>
+  <text x="28" y="355" class="dg-s" font-size="10.3" text-anchor="start">증분은 반도체·DC</text>
+  <rect x="192" y="256" width="162" height="162" rx="8" class="dg-gate"/>
+  <text x="200" y="276" class="dg-t" font-size="11" font-weight="800" text-anchor="start">전력망 특별법 (8/20)</text>
+  <text x="200" y="298" class="dg-s" font-size="10.3" text-anchor="start">민간 BT 허용 (2029년 말까지)</text>
+  <text x="200" y="317" class="dg-s" font-size="10.3" text-anchor="start">삼성·SK 직접 발주</text>
+  <text x="200" y="336" class="dg-s" font-size="10.3" text-anchor="start">→ 한전 단가보다 높은 판가</text>
+  <text x="200" y="355" class="dg-s" font-size="10.3" text-anchor="start">BT 이자 = 한전채 +56%</text>
+  <rect x="364" y="256" width="162" height="162" rx="8" class="dg-gate"/>
+  <text x="372" y="276" class="dg-t" font-size="11" font-weight="800" text-anchor="start">LMP (2027 도입)</text>
+  <text x="372" y="298" class="dg-s" font-size="10.3" text-anchor="start">지역별 도매가격</text>
+  <text x="372" y="317" class="dg-s" font-size="10.3" text-anchor="start">연중 31% 시간 가격 분리</text>
+  <text x="372" y="336" class="dg-s" font-size="10.3" text-anchor="start">수도권 +10.6원/kWh</text>
+  <text x="372" y="355" class="dg-s" font-size="10.3" text-anchor="start">비수도권 발전사 −6,605억</text>
+  <rect x="536" y="256" width="162" height="162" rx="8" class="dg-gate"/>
+  <text x="544" y="276" class="dg-t" font-size="11" font-weight="800" text-anchor="start">산업용 지역요금</text>
+  <text x="544" y="298" class="dg-s" font-size="10.3" text-anchor="start">인하만, 인상 없음</text>
+  <text x="544" y="317" class="dg-s" font-size="10.3" text-anchor="start">남부권 −13~18원/kWh</text>
+  <text x="544" y="336" class="dg-s" font-size="10.3" text-anchor="start">한전 판매수입 −2.4~3.6조</text>
+  <text x="544" y="355" class="dg-s" font-size="10.3" text-anchor="start">(정부 추산 2.8조)</text>
+</svg>

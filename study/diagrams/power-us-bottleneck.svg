@@ -1,0 +1,63 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="미국 계통 교착: 접속 단계, 서로 미루는 위험, 2026~27년에 풀리는 장치">
+  <defs><marker id="power-us-bottleneckA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">미국: 전기가 모자란 게 아니라 "누가 길 값을 내나"가 막혔다</text>
+  <rect x="10" y="34" width="128" height="50" rx="8" class="dg-lo"/>
+  <text x="74" y="55" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">접속 신청</text>
+  <text x="74" y="73" class="dg-s" font-size="10.5" text-anchor="middle">서류·보증금</text>
+  <path d="M139 59 L150 59" class="dg-arrow" marker-end="url(#power-us-bottleneckA)"/>
+  <rect x="152" y="34" width="128" height="50" rx="8" class="dg-lo"/>
+  <text x="216" y="55" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">영향 스터디</text>
+  <text x="216" y="73" class="dg-s" font-size="10.5" text-anchor="middle">보강비 산정</text>
+  <path d="M281 59 L292 59" class="dg-arrow" marker-end="url(#power-us-bottleneckA)"/>
+  <rect x="294" y="34" width="128" height="50" rx="8" class="dg-mid"/>
+  <text x="358" y="55" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">계통연계계약</text>
+  <text x="358" y="73" class="dg-s" font-size="10.5" text-anchor="middle">IA 체결</text>
+  <path d="M423 59 L434 59" class="dg-arrow" marker-end="url(#power-us-bottleneckA)"/>
+  <rect x="436" y="34" width="128" height="50" rx="8" class="dg-hi"/>
+  <text x="500" y="55" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">기자재 발주</text>
+  <text x="500" y="73" class="dg-s" font-size="10.5" text-anchor="middle">변압기·차단기</text>
+  <path d="M565 59 L576 59" class="dg-arrow" marker-end="url(#power-us-bottleneckA)"/>
+  <rect x="578" y="34" width="128" height="50" rx="8" class="dg-lo"/>
+  <text x="642" y="55" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">통전·가동</text>
+  <text x="642" y="73" class="dg-s" font-size="10.5" text-anchor="middle">상업운전</text>
+  <text x="10" y="102" class="dg-s" font-size="10.5" text-anchor="start">대기열 2,061GW (발전 1,312 + 저장 749) · 신청~가동 중앙값 61개월 · 한 해 처리율 2.8% (DS, LBNL)</text>
+  <text x="10" y="118" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">발주는 IA 뒤에 나온다 → "신청이 많다"가 아니라 "IA로 넘어오는 양"이 기기 수요다</text>
+  <rect x="10" y="132" width="452" height="170" rx="8" class="dg-panel"/>
+  <text x="20" y="152" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">세 주체가 서로 위험을 미룬다</text>
+  <rect x="20" y="162" width="137" height="130" rx="8" class="dg-gate"/>
+  <text x="28" y="182" class="dg-t" font-size="11" font-weight="800" text-anchor="start">수용가 (데이터센터)</text>
+  <text x="28" y="202" class="dg-s" font-size="10.2" text-anchor="start">여러 지역에 중복 신청</text>
+  <text x="28" y="219" class="dg-s" font-size="10.2" text-anchor="start">→ 수요가 부풀려 보인다</text>
+  <text x="28" y="236" class="dg-s" font-size="10.2" text-anchor="start">신청-건설중 격차 173GW</text>
+  <rect x="167" y="162" width="137" height="130" rx="8" class="dg-gate"/>
+  <text x="175" y="182" class="dg-t" font-size="11" font-weight="800" text-anchor="start">발전사업자</text>
+  <text x="175" y="202" class="dg-s" font-size="10.2" text-anchor="start">보강비를 늦게 통보받음</text>
+  <text x="175" y="219" class="dg-s" font-size="10.2" text-anchor="start">망 보강비: 철회 671</text>
+  <text x="175" y="236" class="dg-s" font-size="10.2" text-anchor="start">vs 완료 194달러/kW</text>
+  <text x="175" y="253" class="dg-s" font-size="10.2" text-anchor="start">IA 뒤에도 40%+ 철회</text>
+  <rect x="314" y="162" width="137" height="130" rx="8" class="dg-gate"/>
+  <text x="322" y="182" class="dg-t" font-size="11" font-weight="800" text-anchor="start">유틸리티</text>
+  <text x="322" y="202" class="dg-s" font-size="10.2" text-anchor="start">좌초자산·요금 저항 우려</text>
+  <text x="322" y="219" class="dg-s" font-size="10.2" text-anchor="start">계약부하가 늘어도</text>
+  <text x="322" y="236" class="dg-s" font-size="10.2" text-anchor="start">수요 전망은 안 올린다</text>
+  <rect x="472" y="132" width="238" height="170" rx="8" class="dg-lane2"/>
+  <text x="482" y="152" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">2026~27년에 풀리는 장치</text>
+  <text x="482" y="172" class="dg-s" font-size="10.3" text-anchor="start">FERC 206호: 11/16 소명 → 12/16 의견</text>
+  <text x="482" y="189" class="dg-s" font-size="10.3" text-anchor="start">→ RTO 대형부하 규정 2027 중순</text>
+  <text x="482" y="206" class="dg-s" font-size="10.3" text-anchor="start">BAAJA: 11/9 상원 절차표결</text>
+  <text x="482" y="223" class="dg-s" font-size="10.3" text-anchor="start">주별 대형부하 요금제: 최소청구</text>
+  <text x="482" y="240" class="dg-s" font-size="10.3" text-anchor="start">   계약용량 70~90% (메리츠)</text>
+  <text x="482" y="257" class="dg-s" font-size="10.3" text-anchor="start">Order 2023: 효과 2027~28년 (KB)</text>
+  <text x="482" y="274" class="dg-s" font-size="10.3" text-anchor="start">Order 1920 → 765kV 백본 승인</text>
+  <rect x="10" y="312" width="700" height="118" rx="8" class="dg-lane1"/>
+  <text x="20" y="332" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">그래서 2027년 기기 수요 (DS 계산)</text>
+  <text x="20" y="352" class="dg-s" font-size="10.5" text-anchor="start">가시성 높은 전방수요 = 계약단계 − 신규가동</text>
+  <text x="20" y="370" class="dg-s" font-size="10.5" text-anchor="start">482GW (2025) → 608 (2026F) → 913GW (2027F, +50%)</text>
+  <text x="20" y="388" class="dg-s" font-size="10.5" text-anchor="start">× 1GW당 초대형 변압기 수입 4.7대</text>
+  <text x="20" y="406" class="dg-s" font-size="10.5" text-anchor="start">= 2,861대 (2026F) → 4,291대 (2027F)</text>
+  <text x="370" y="352" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">반론 (미래 전력)</text>
+  <text x="370" y="370" class="dg-s" font-size="10.5" text-anchor="start">유틸리티가 2023~26년에 2~3년치를 선발주,</text>
+  <text x="370" y="388" class="dg-s" font-size="10.5" text-anchor="start">납기 2031년까지 → 2027 상반기 미국 둔화</text>
+  <text x="370" y="406" class="dg-s" font-size="10.5" text-anchor="start">KB: 조정은 밸류 완화, 슈퍼사이클은 유지</text>
+  <line x1="355" y1="340" x2="355" y2="420" class="dg-div"/>
+</svg>
