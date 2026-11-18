@@ -1,0 +1,82 @@
+<svg viewBox="0 0 720 476" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2026~2029 메모리 신규 팹과 후공정 시설 일정: 장비 반입에서 셋업까지 약 1년, 공급 기여는 2028년부터">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">새 팹은 지금 짓지만, 물량은 2028년부터 나온다</text>
+  <g font-size="10" class="dg-s"><rect x="420" y="31" width="22" height="7" rx="2" class="dg-tki"/><text x="446" y="38">건설·장비 반입</text><rect x="530" y="29" width="22" height="11" rx="2" class="dg-io"/><text x="556" y="38">가동·램프업</text><path d="M626 34 l5 -5 l5 5 l-5 5 z" class="dg-yes"/><text x="640" y="38">이정표</text></g>
+  <rect x="439.2" y="48" width="267.2" height="380" class="dg-in"/>
+  <text x="572.8" y="440" text-anchor="middle" class="dg-t" font-size="10.5" font-weight="700">← 신규 팹의 공급 기여가 본격화하는 구간 (7/8곳 합의) →</text>
+  <line x1="172.0" y1="48" x2="172.0" y2="428" class="dg-div"/>
+  <text x="238.8" y="62" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2026</text>
+  <line x1="305.6" y1="48" x2="305.6" y2="428" class="dg-div"/>
+  <text x="372.4" y="62" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2027</text>
+  <line x1="439.2" y1="48" x2="439.2" y2="428" class="dg-div"/>
+  <text x="506.0" y="62" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2028</text>
+  <line x1="572.8" y1="48" x2="572.8" y2="428" class="dg-div"/>
+  <text x="639.6" y="62" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2029</text>
+  <line x1="706.4" y1="48" x2="706.4" y2="428" class="dg-div"/>
+  <line x1="283.3" y1="66" x2="283.3" y2="428" class="dg-axis" stroke-dasharray="4 3"/>
+  <text x="286.3" y="76" class="dg-m" font-size="9.5">지금(2026.11)</text>
+  <text x="10" y="88" class="dg-m" font-size="10" font-weight="700">전공정 팹 (DRAM·NAND)</text>
+  <text x="10" y="106" class="dg-t" font-size="11" font-weight="700">SK 청주 M15X</text>
+  <text x="10" y="119" class="dg-s" font-size="9.5">반입 4Q25 → 셋업 4Q26 (1년)</text>
+  <rect x="172.0" y="104.5" width="133.6" height="7" rx="2" class="dg-tki"/>
+  <rect x="305.6" y="102" width="400.8" height="12" rx="2" class="dg-io"/>
+  <path d="M305.6 102 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="315.6" y="111.5" class="dg-t" font-size="9.5">HBM 중심, 2026말 최대 100K</text>
+  <text x="10" y="135" class="dg-t" font-size="11" font-weight="700">삼성 평택 P4 Ph4</text>
+  <text x="10" y="148" class="dg-s" font-size="9.5">2027 신규 약 100K (한투)</text>
+  <rect x="205.4" y="133.5" width="66.8" height="7" rx="2" class="dg-tki"/>
+  <rect x="272.2" y="131" width="434.2" height="12" rx="2" class="dg-io"/>
+  <path d="M272.2 131 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="10" y="164" class="dg-t" font-size="11" font-weight="700">SK 용인 Y1</text>
+  <text x="10" y="177" class="dg-s" font-size="9.5">클린룸 2027.2 · 반입 1Q27</text>
+  <rect x="305.6" y="162.5" width="66.8" height="7" rx="2" class="dg-tki"/>
+  <rect x="372.4" y="160" width="334.0" height="12" rx="2" class="dg-io"/>
+  <path d="M372.4 160 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="382.4" y="169.5" class="dg-t" font-size="9.5">2027말 40K → 2028말 80K</text>
+  <text x="10" y="193" class="dg-t" font-size="11" font-weight="700">마이크론 아이다호 ID1</text>
+  <text x="10" y="206" class="dg-s" font-size="9.5">반입 1Q27 → 가동 2Q~3Q27</text>
+  <rect x="305.6" y="191.5" width="50.1" height="7" rx="2" class="dg-tki"/>
+  <rect x="355.7" y="189" width="350.7" height="12" rx="2" class="dg-io"/>
+  <path d="M355.7 189 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="10" y="222" class="dg-t" font-size="11" font-weight="700">삼성 평택 P5</text>
+  <text x="10" y="235" class="dg-s" font-size="9.5">반입 2027 중반 → 가동 2028</text>
+  <rect x="372.4" y="220.5" width="66.8" height="7" rx="2" class="dg-tki"/>
+  <rect x="439.2" y="218" width="267.2" height="12" rx="2" class="dg-io"/>
+  <path d="M439.2 218 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="10" y="251" class="dg-t" font-size="11" font-weight="700">SK 청주 M17</text>
+  <text x="10" y="264" class="dg-s" font-size="9.5">첫 클린룸 2028.12</text>
+  <rect x="305.6" y="249.5" width="267.2" height="7" rx="2" class="dg-tki"/>
+  <rect x="572.8" y="247" width="133.6" height="12" rx="2" class="dg-io"/>
+  <path d="M572.8 247 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="10" y="280" class="dg-t" font-size="11" font-weight="700">SK 용인 Y2</text>
+  <text x="10" y="293" class="dg-s" font-size="9.5">2027.7 착공 → 2029.6 클린룸</text>
+  <rect x="372.4" y="278.5" width="250.5" height="7" rx="2" class="dg-tki"/>
+  <rect x="622.9" y="276" width="83.5" height="12" rx="2" class="dg-io"/>
+  <path d="M622.9 276 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="10" y="318" class="dg-m" font-size="10" font-weight="700">후공정 시설 (자체)</text>
+  <text x="10" y="336" class="dg-t" font-size="11" font-weight="700">SK 청주 P&T7</text>
+  <text x="10" y="349" class="dg-s" font-size="9.5">테스트 2027.10 · 패키징 2028.2</text>
+  <rect x="205.4" y="334.5" width="200.4" height="7" rx="2" class="dg-tki"/>
+  <rect x="405.8" y="332" width="300.6" height="12" rx="2" class="dg-io"/>
+  <path d="M405.8 332 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="415.8" y="341.5" class="dg-t" font-size="9.5">HBM 패키징·테스트</text>
+  <text x="10" y="363" class="dg-t" font-size="11" font-weight="700">삼성 베트남 후공정</text>
+  <text x="10" y="376" class="dg-s" font-size="9.5">1층 2027.11 · 2층 2028.10</text>
+  <rect x="205.4" y="361.5" width="222.8" height="7" rx="2" class="dg-tki"/>
+  <rect x="428.2" y="359" width="278.2" height="12" rx="2" class="dg-io"/>
+  <path d="M428.2 359 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="438.2" y="368.5" class="dg-t" font-size="9.5">범용 DRAM·NAND 테스트</text>
+  <text x="10" y="390" class="dg-t" font-size="11" font-weight="700">삼성 온양 HBM</text>
+  <text x="10" y="403" class="dg-s" font-size="9.5">2026.9 착공 → 2029.5 가동</text>
+  <rect x="261.2" y="388.5" width="356.0" height="7" rx="2" class="dg-tki"/>
+  <rect x="617.2" y="386" width="89.2" height="12" rx="2" class="dg-io"/>
+  <path d="M617.2 386 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="607.2" y="387.5" text-anchor="end" class="dg-t" font-size="9.5">46조원, HBM 5개 라인</text>
+  <text x="10" y="417" class="dg-t" font-size="11" font-weight="700">SK 미국 인디애나</text>
+  <text x="10" y="430" class="dg-s" font-size="9.5">2026.8 착공 → 2H29 가동</text>
+  <rect x="249.8" y="415.5" width="389.8" height="7" rx="2" class="dg-tki"/>
+  <rect x="639.6" y="413" width="66.8" height="12" rx="2" class="dg-io"/>
+  <path d="M639.6 413 l6 6 l-6 6 l-6 -6 z" class="dg-yes"/>
+  <text x="629.6" y="414.5" text-anchor="end" class="dg-t" font-size="9.5">HBM 패키징 40억$+</text>
+  <text x="10" y="458" class="dg-s" font-size="10.5">자료: 하나(장비 반입 → 셋업 1년+, M15X 선례), DS·한투(캐파), 메리츠·유안타(P5·M17·Y2), IBK·삼성(후공정 시설). 일정은 리포트 시점(10~11월) 기준.</text>
+  <text x="10" y="472" class="dg-s" font-size="10.5">자체 후공정 시설이 2027 말~2029에야 늘어서, 그사이 범용 메모리 후공정은 외주(OSAT)로 나간다(IBK·삼성).</text>
+</svg>

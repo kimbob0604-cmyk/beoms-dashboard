@@ -1,0 +1,67 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="메모리 전망 8곳의 2028년 DRAM 가격 시각과 2027 SK하이닉스 영업이익·목표주가">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">8곳의 위치 — 2028년 DRAM 가격을 어떻게 보나</text>
+  <!-- 머리 -->
+  <g font-size="10.5" font-weight="700" class="dg-s">
+    <text x="12" y="50">하우스 · 핵심 근거</text>
+    <text x="290" y="50" text-anchor="middle">2028 DRAM 가격 (전년 대비)</text>
+    <text x="548" y="50" text-anchor="end">SK 2027 영업이익</text>
+    <text x="580" y="50">SK 목표주가</text>
+  </g>
+  <line x1="8" y1="58" x2="712" y2="58" class="dg-div"/>
+  <!-- 숫자 없는 낙관 구역 -->
+  <rect x="410" y="62" width="44" height="290" rx="4" class="dg-in"/>
+  <!-- 눈금 -->
+  <g class="dg-div" stroke-dasharray="2 3">
+    <line x1="130" y1="62" x2="130" y2="352"/><line x1="221" y1="62" x2="221" y2="352"/><line x1="313" y1="62" x2="313" y2="352"/>
+  </g>
+  <line x1="404" y1="62" x2="404" y2="352" class="dg-axis"/>
+  <g font-size="10" class="dg-m" text-anchor="middle">
+    <text x="130" y="366">−60%</text><text x="221" y="366">−40%</text><text x="313" y="366">−20%</text><text x="400" y="366" text-anchor="end">0%</text><text x="432" y="366" font-size="9.5">숫자 없음</text>
+  </g>
+  <!-- 행: y 중심 = 80 + 36i -->
+  <g font-size="12" font-weight="800" class="dg-t">
+    <text x="12" y="80">키움</text><text x="12" y="116">DS</text><text x="12" y="152">한투</text><text x="12" y="188">메리츠</text>
+    <text x="12" y="224">iM</text><text x="12" y="260">KB</text><text x="12" y="296">하나</text><text x="12" y="332">유안타</text>
+  </g>
+  <g font-size="10" class="dg-s">
+    <text x="12" y="93">CXMT·신규 팹 → 과잉</text><text x="12" y="129">감가 부담, 이익 70%</text><text x="12" y="165">ASP 7개 분기 규칙</text><text x="12" y="201">가격 역탄력성·고원</text>
+    <text x="12" y="237">충족률 −5%, LTA</text><text x="12" y="273">공급이 모자란다</text><text x="12" y="309">신규 팹은 2028~</text><text x="12" y="345">과잉은 2029 이후</text>
+  </g>
+  <!-- 표시 -->
+  <circle cx="157" cy="80" r="6" class="dg-no"/>
+  <text x="168" y="84" font-size="10.5" class="dg-t" font-weight="700">−54% (NAND −47%)</text>
+  <line x1="221" y1="116" x2="336" y2="116" stroke-width="6" stroke-linecap="round" class="dg-sig"/>
+  <circle cx="290" cy="116" r="6" class="dg-no"/>
+  <text x="290" y="104" font-size="10" text-anchor="middle" class="dg-s">Bear −40 · Base −25 · Bull −15</text>
+  <circle cx="404" cy="152" r="6" class="dg-rec"/>
+  <text x="394" y="156" font-size="10.5" text-anchor="end" class="dg-t" font-weight="700">1Q28에 하락 '전환' 시작</text>
+  <circle cx="395" cy="188" r="6" class="dg-rec"/>
+  <text x="385" y="192" font-size="10.5" text-anchor="end" class="dg-t" font-weight="700">−1~3% (2027 고원)</text>
+  <circle cx="422" cy="224" r="6" class="dg-ok"/>
+  <text x="398" y="228" font-size="10.5" text-anchor="end" class="dg-t" font-weight="700">+3~6%</text>
+  <circle cx="432" cy="260" r="6" class="dg-gate"/>
+  <text x="398" y="264" font-size="10.5" text-anchor="end" class="dg-s">2027~28 부족 심화</text>
+  <circle cx="432" cy="296" r="6" class="dg-gate"/>
+  <text x="398" y="300" font-size="10.5" text-anchor="end" class="dg-s">2028까지 타이트</text>
+  <circle cx="432" cy="332" r="6" class="dg-gate"/>
+  <text x="398" y="336" font-size="10.5" text-anchor="end" class="dg-s">'−53%' 가정에도 2025의 2배</text>
+  <!-- SK 2027 영업이익 -->
+  <g font-size="11" text-anchor="end" class="dg-t" font-weight="700">
+    <text x="548" y="84">383조</text><text x="548" y="120">444조</text><text x="548" y="156">508조</text><text x="548" y="192">481조</text>
+    <text x="548" y="228">453조</text><text x="548" y="264">470조</text><text x="548" y="300">465조</text><text x="548" y="336" class="dg-m" font-weight="400">추정표 없음</text>
+  </g>
+  <!-- SK 목표주가 막대: 370만 = 100px -->
+  <g class="dg-io">
+    <rect x="580" y="72" width="48.6" height="14" rx="2"/><rect x="580" y="108" width="71.4" height="14" rx="2"/><rect x="580" y="144" width="86.5" height="14" rx="2"/><rect x="580" y="180" width="86.5" height="14" rx="2"/>
+    <rect x="580" y="216" width="62.2" height="14" rx="2"/><rect x="580" y="252" width="94.6" height="14" rx="2"/><rect x="580" y="288" width="75.7" height="14" rx="2"/><rect x="580" y="324" width="100" height="14" rx="2"/>
+  </g>
+  <g font-size="10.5" class="dg-t">
+    <text x="633" y="83">180만</text><text x="656" y="119">264만</text><text x="671" y="155">320만</text><text x="671" y="191">320만</text>
+    <text x="647" y="227">230만</text><text x="679" y="263">350만</text><text x="660" y="299">280만</text><text x="684" y="335">370만</text>
+  </g>
+  <!-- 주 -->
+  <line x1="8" y1="378" x2="712" y2="378" class="dg-div"/>
+  <text x="12" y="396" font-size="10.5" class="dg-s">가격 정의가 다르다: 키움은 본문 DRAM 가격, DS는 HBM 포함 평균판가(Base), 메리츠·iM은 삼성·SK 연평균 $/Gb에서 계산.</text>
+  <text x="12" y="412" font-size="10.5" class="dg-s">0% 오른쪽 색칸은 2028 숫자 없이 '부족 지속'만 말한 곳. 위치는 대략이다.</text>
+  <text x="12" y="428" font-size="10.5" class="dg-s">대체로 낙관일수록 목표주가가 높다. 예외 iM: 2028 가격은 가장 낙관적이지만 P/B 2.3배를 써서 목표가가 낮다.</text>
+</svg>

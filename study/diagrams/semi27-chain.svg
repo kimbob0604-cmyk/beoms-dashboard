@@ -1,0 +1,121 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 반도체 밸류체인: 수요에서 가속기, 메모리, 파운드리·패키징, 후공정·테스트, 장비·소재까지와 단계별 상장사">
+  <defs><marker id="s27cArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">AI 반도체 밸류체인 — 2027년 돈이 흐르는 순서</text>
+  <g font-size="11.5" font-weight="800">
+    <rect x="8" y="34" width="110" height="26" rx="6" class="dg-lane3"/><text x="63" y="52" text-anchor="middle" class="dg-t">① 수요</text>
+    <rect x="126" y="34" width="110" height="26" rx="6" class="dg-lane2"/><text x="181" y="52" text-anchor="middle" class="dg-t">② 가속기</text>
+    <rect x="244" y="34" width="110" height="26" rx="6" class="dg-lane1"/><text x="299" y="52" text-anchor="middle" class="dg-t">③ 메모리</text>
+    <rect x="362" y="34" width="110" height="26" rx="6" class="dg-lane2"/><text x="417" y="52" text-anchor="middle" class="dg-t">④ 파운드리·기판</text>
+    <rect x="480" y="34" width="112" height="26" rx="6" class="dg-lane2"/><text x="536" y="52" text-anchor="middle" class="dg-t">⑤ 후공정·테스트</text>
+    <rect x="600" y="34" width="112" height="26" rx="6" class="dg-lane3"/><text x="656" y="52" text-anchor="middle" class="dg-t">⑥ 장비·소재</text>
+  </g>
+  <g class="dg-arrow" marker-end="url(#s27cArr)">
+    <line x1="118" y1="47" x2="124" y2="47"/><line x1="236" y1="47" x2="242" y2="47"/><line x1="354" y1="47" x2="360" y2="47"/><line x1="472" y1="47" x2="478" y2="47"/><line x1="592" y1="47" x2="598" y2="47"/>
+  </g>
+  <rect x="8" y="68" width="110" height="282" rx="6" class="dg-panel"/>
+  <rect x="126" y="68" width="110" height="282" rx="6" class="dg-panel"/>
+  <rect x="244" y="68" width="110" height="282" rx="6" class="dg-hi"/>
+  <rect x="362" y="68" width="110" height="282" rx="6" class="dg-panel"/>
+  <rect x="480" y="68" width="112" height="282" rx="6" class="dg-panel"/>
+  <rect x="600" y="68" width="112" height="282" rx="6" class="dg-panel"/>
+  <!-- ① 수요 -->
+  <g font-size="11">
+    <text x="16" y="88" class="dg-t" font-weight="700">하이퍼스케일러</text>
+    <text x="16" y="103" class="dg-s" font-size="10">구글·아마존·MS·메타</text>
+    <text x="16" y="118" class="dg-s" font-size="10">2027 설비투자 약 1조$</text>
+    <text x="16" y="140" class="dg-t" font-weight="700">AI 랩</text>
+    <text x="16" y="155" class="dg-s" font-size="10">OpenAI·앤트로픽</text>
+    <text x="16" y="177" class="dg-t" font-weight="700">네오클라우드</text>
+    <text x="16" y="192" class="dg-s" font-size="10">코어위브·네비우스</text>
+    <text x="16" y="214" class="dg-t" font-weight="700">스마트폰·PC</text>
+    <text x="16" y="229" class="dg-s" font-size="10">2027 출하 −7% 안팎</text>
+    <line x1="14" y1="290" x2="112" y2="290" class="dg-div"/>
+    <text x="16" y="308" class="dg-s" font-size="10">돈의 출발점.</text>
+    <text x="16" y="322" class="dg-s" font-size="10">AI 서버가 DRAM</text>
+    <text x="16" y="336" class="dg-s" font-size="10">수요의 절반을 넘김</text>
+  </g>
+  <!-- ② 가속기 -->
+  <g font-size="11">
+    <text x="134" y="88" class="dg-t" font-weight="700">GPU</text>
+    <text x="134" y="103" class="dg-s" font-size="10">NVIDIA·AMD</text>
+    <text x="134" y="125" class="dg-t" font-weight="700">ASIC·TPU</text>
+    <text x="134" y="140" class="dg-s" font-size="10">브로드컴·마벨·미디어텍</text>
+    <text x="134" y="162" class="dg-t" font-weight="700">디자인하우스</text>
+    <text x="134" y="177" class="dg-s" font-size="10">세미파이브·에이직랜드</text>
+    <text x="134" y="191" class="dg-s" font-size="10">가온칩스·에이디테크</text>
+    <text x="134" y="213" class="dg-t" font-weight="700">CPU</text>
+    <text x="134" y="228" class="dg-s" font-size="10">에이전트 실행 몫</text>
+    <line x1="132" y1="290" x2="230" y2="290" class="dg-div"/>
+    <text x="134" y="308" class="dg-s" font-size="10">칩 1개에 HBM</text>
+    <text x="134" y="322" class="dg-s" font-size="10">288~432GB.</text>
+    <text x="134" y="336" class="dg-s" font-size="10">ASIC이 GPU를 추월</text>
+  </g>
+  <!-- ③ 메모리 -->
+  <g font-size="11">
+    <text x="252" y="88" class="dg-t" font-weight="700">HBM</text>
+    <text x="252" y="103" class="dg-s" font-size="10">시장 약 2,000억$</text>
+    <text x="252" y="125" class="dg-t" font-weight="700">DRAM·SOCAMM</text>
+    <text x="252" y="140" class="dg-s" font-size="10">서버가 52%로</text>
+    <text x="252" y="162" class="dg-t" font-weight="700">NAND·eSSD</text>
+    <text x="252" y="177" class="dg-s" font-size="10">KV 캐시·HDD 대체</text>
+    <text x="252" y="199" class="dg-t" font-weight="700">3사</text>
+    <text x="252" y="214" class="dg-s" font-size="10">삼성전자·SK하이닉스</text>
+    <text x="252" y="228" class="dg-s" font-size="10">마이크론</text>
+    <text x="252" y="243" class="dg-s" font-size="10">중국 CXMT·YMTC</text>
+    <line x1="250" y1="290" x2="348" y2="290" class="dg-div"/>
+    <text x="252" y="308" class="dg-t" font-size="10" font-weight="700">이익이 몰리는 칸</text>
+    <text x="252" y="322" class="dg-s" font-size="10">2027 영업이익</text>
+    <text x="252" y="336" class="dg-s" font-size="10">삼성+SK 약 1,100조원</text>
+  </g>
+  <!-- ④ 파운드리·기판 -->
+  <g font-size="11">
+    <text x="370" y="88" class="dg-t" font-weight="700">파운드리</text>
+    <text x="370" y="103" class="dg-s" font-size="10">TSMC·삼성(4·2nm)</text>
+    <text x="370" y="125" class="dg-t" font-weight="700">첨단 패키징</text>
+    <text x="370" y="140" class="dg-s" font-size="10">CoWoS·EMIB·CoPoS</text>
+    <text x="370" y="162" class="dg-t" font-weight="700">기판·MLCC</text>
+    <text x="370" y="177" class="dg-s" font-size="10">삼성전기</text>
+    <text x="370" y="199" class="dg-t" font-weight="700">PCB·CCL</text>
+    <text x="370" y="214" class="dg-s" font-size="10">이수페타시스·두산</text>
+    <line x1="368" y1="290" x2="466" y2="290" class="dg-div"/>
+    <text x="370" y="308" class="dg-s" font-size="10">HBM4 베이스다이도</text>
+    <text x="370" y="322" class="dg-s" font-size="10">파운드리에서 만든다.</text>
+    <text x="370" y="336" class="dg-s" font-size="10">2027 병목은 패키징</text>
+  </g>
+  <!-- ⑤ 후공정·테스트 -->
+  <g font-size="11">
+    <text x="488" y="88" class="dg-t" font-weight="700">OSAT(외주)</text>
+    <text x="488" y="103" class="dg-s" font-size="10">하나마이크론·SFA</text>
+    <text x="488" y="117" class="dg-s" font-size="10">두산테스나·네패스</text>
+    <text x="488" y="139" class="dg-t" font-weight="700">테스터·번인</text>
+    <text x="488" y="154" class="dg-s" font-size="10">디아이·와이씨·엑시콘</text>
+    <text x="488" y="176" class="dg-t" font-weight="700">프로브·소켓</text>
+    <text x="488" y="191" class="dg-s" font-size="10">티에스이·리노·티에프이</text>
+    <text x="488" y="213" class="dg-t" font-weight="700">본딩·검사</text>
+    <text x="488" y="228" class="dg-s" font-size="10">한미·한화비전·인텍</text>
+    <line x1="486" y1="290" x2="586" y2="290" class="dg-div"/>
+    <text x="488" y="308" class="dg-s" font-size="10">HBM은 자체, 범용은</text>
+    <text x="488" y="322" class="dg-s" font-size="10">외주로. 가격(P)에서</text>
+    <text x="488" y="336" class="dg-s" font-size="10">물량(Q)으로</text>
+  </g>
+  <!-- ⑥ 장비·소재 -->
+  <g font-size="11">
+    <text x="608" y="88" class="dg-t" font-weight="700">전공정 장비</text>
+    <text x="608" y="103" class="dg-s" font-size="10">ASML·Lam·원익IPS</text>
+    <text x="608" y="117" class="dg-s" font-size="10">PSK·테스·HPSP</text>
+    <text x="608" y="139" class="dg-t" font-weight="700">부품</text>
+    <text x="608" y="154" class="dg-s" font-size="10">하나머티·티씨케이</text>
+    <text x="608" y="176" class="dg-t" font-weight="700">소재</text>
+    <text x="608" y="191" class="dg-s" font-size="10">솔브레인·한솔케미칼</text>
+    <text x="608" y="205" class="dg-s" font-size="10">ENF·원익머트리얼즈</text>
+    <line x1="606" y1="290" x2="706" y2="290" class="dg-div"/>
+    <text x="608" y="308" class="dg-s" font-size="10">WFE 2027</text>
+    <text x="608" y="322" class="dg-s" font-size="10">약 2,000억$. 소재는</text>
+    <text x="608" y="336" class="dg-s" font-size="10">웨이퍼 투입에 연동</text>
+  </g>
+  <!-- 인프라 띠 -->
+  <rect x="8" y="362" width="704" height="64" rx="6" class="dg-lane3"/>
+  <text x="18" y="382" class="dg-t" font-size="12" font-weight="800">밑바닥 인프라 — 병목이 옮겨 가는 곳</text>
+  <text x="18" y="400" class="dg-s" font-size="10.5">광 연결(CPO·NIC 2배): Coherent·Lumentum·이수페타시스 · 전력(변압기·차단기·PJM 용량가격): LS일렉트릭·효성중공업</text>
+  <text x="18" y="416" class="dg-s" font-size="10.5">유안타: 병목의 정점은 메모리(2026~27) → 패키징(2027) → 광(2028) → 전력(2030)으로 이동한다</text>
+</svg>

@@ -1,0 +1,67 @@
+<svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="iM증권 LTA 스트레스 테스트: DRAM 가격이 고점 대비 60% 안팎 빠져야 장기계약 해지 유인이 생긴다">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">장기계약(LTA)이 깨지려면 DRAM 값이 얼마나 빠져야 하나 — iM</text>
+  <line x1="96" y1="330" x2="96" y2="70.0" class="dg-axis"/>
+  <line x1="92" y1="330" x2="470" y2="330" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="333.5" text-anchor="end" class="dg-m" font-size="10">$0</text>
+  <line x1="92" y1="280.0" x2="470" y2="280.0" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="283.5" text-anchor="end" class="dg-m" font-size="10">$0.5</text>
+  <line x1="92" y1="230" x2="470" y2="230" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="233.5" text-anchor="end" class="dg-m" font-size="10">$1</text>
+  <line x1="92" y1="180.0" x2="470" y2="180.0" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="183.5" text-anchor="end" class="dg-m" font-size="10">$1.5</text>
+  <line x1="92" y1="130" x2="470" y2="130" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="133.5" text-anchor="end" class="dg-m" font-size="10">$2</text>
+  <line x1="92" y1="80.0" x2="470" y2="80.0" class="dg-div" stroke-dasharray="2 3"/>
+  <text x="88" y="83.5" text-anchor="end" class="dg-m" font-size="10">$2.5</text>
+  <text x="16" y="64.0" class="dg-m" font-size="10">DRAM ASP ($/Gb)</text>
+  <line x1="96" y1="285.0" x2="470" y2="285.0" class="dg-sig" stroke-dasharray="6 3"/>
+  <text x="270" y="281.0" text-anchor="middle" class="dg-s" font-size="9.5">2025 평균 $0.45 (삼성)</text>
+  <text x="180" y="350" text-anchor="middle" class="dg-t" font-size="12" font-weight="800">삼성전자</text>
+  <rect x="150" y="82.99999999999997" width="60" height="247.00000000000003" rx="3" class="dg-lo"/>
+  <line x1="146" y1="83.0" x2="214" y2="83.0" stroke-width="3" class="dg-ab"/>
+  <text x="220" y="87.0" class="dg-t" font-size="10.5" font-weight="700">고점 4Q27E</text>
+  <text x="140" y="87.0" text-anchor="end" class="dg-s" font-size="10">$2.47</text>
+  <line x1="146" y1="199.0" x2="214" y2="199.0" stroke-width="3" class="dg-ab"/>
+  <text x="220" y="203.0" class="dg-t" font-size="10.5" font-weight="700">① −47%</text>
+  <text x="140" y="203.0" text-anchor="end" class="dg-s" font-size="10">$1.31</text>
+  <line x1="146" y1="224.5" x2="214" y2="224.5" stroke-width="3" class="dg-pdl1"/>
+  <text x="220" y="228.5" class="dg-t" font-size="10.5" font-weight="700">② −57~58%</text>
+  <text x="140" y="228.5" text-anchor="end" class="dg-s" font-size="10">$1.05</text>
+  <line x1="146" y1="308.0" x2="214" y2="308.0" stroke-width="3" class="dg-pdl1"/>
+  <text x="220" y="312.0" class="dg-t" font-size="10.5" font-weight="700">③ −91%</text>
+  <text x="140" y="312.0" text-anchor="end" class="dg-s" font-size="10">$0.22</text>
+  <text x="370" y="350" text-anchor="middle" class="dg-t" font-size="12" font-weight="800">SK하이닉스</text>
+  <rect x="340" y="93.0" width="60" height="237.0" rx="3" class="dg-lo"/>
+  <line x1="336" y1="93.0" x2="404" y2="93.0" stroke-width="3" class="dg-ab"/>
+  <text x="410" y="97.0" class="dg-t" font-size="10.5" font-weight="700">고점 4Q27E</text>
+  <text x="330" y="97.0" text-anchor="end" class="dg-s" font-size="10">$2.37</text>
+  <line x1="336" y1="219.0" x2="404" y2="219.0" stroke-width="3" class="dg-ab"/>
+  <text x="410" y="223.0" class="dg-t" font-size="10.5" font-weight="700">① −53%</text>
+  <text x="330" y="223.0" text-anchor="end" class="dg-s" font-size="10">$1.11</text>
+  <line x1="336" y1="241.0" x2="404" y2="241.0" stroke-width="3" class="dg-pdl1"/>
+  <text x="410" y="245.0" class="dg-t" font-size="10.5" font-weight="700">② −62~63%</text>
+  <text x="330" y="245.0" text-anchor="end" class="dg-s" font-size="10">$0.89</text>
+  <line x1="336" y1="302.0" x2="404" y2="302.0" stroke-width="3" class="dg-pdl1"/>
+  <text x="410" y="306.0" class="dg-t" font-size="10.5" font-weight="700">③ −88%</text>
+  <text x="330" y="306.0" text-anchor="end" class="dg-s" font-size="10">$0.28</text>
+  <rect x="488" y="40" width="224" height="300" rx="8" class="dg-panel"/>
+  <text x="498" y="62" class="dg-t" font-size="11" font-weight="800">① LTA 하단 대용치</text>
+  <text x="498" y="78" class="dg-s" font-size="10">2018 슈퍼사이클 정점 영업이익률</text>
+  <text x="498" y="92" class="dg-s" font-size="10">(삼성 72%·SK 66%)을 지키는 가격.</text>
+  <text x="498" y="106" class="dg-s" font-size="10">고객도 이 아래로는 못 깎는다고 본다.</text>
+  <text x="498" y="130" class="dg-t" font-size="11" font-weight="800">② 해지 유인이 생기는 선</text>
+  <text x="498" y="146" class="dg-s" font-size="10">①에서 금융 보강(선수금·보증)</text>
+  <text x="498" y="160" class="dg-s" font-size="10">18~21%가 더 빠져야 한다</text>
+  <text x="498" y="174" class="dg-s" font-size="10">(마이크론·샌디스크 공시로 추정).</text>
+  <text x="498" y="198" class="dg-t" font-size="11" font-weight="800">③ 현금원가</text>
+  <text x="498" y="214" class="dg-s" font-size="10">여기까지 와야 공급사가 감산.</text>
+  <text x="498" y="240" class="dg-t" font-size="11" font-weight="800">결론</text>
+  <text x="498" y="256" class="dg-s" font-size="10">고점 대비 −60% 안팎까지는 계약이</text>
+  <text x="498" y="270" class="dg-s" font-size="10">이익을 받친다. 그때도 DRAM 영업</text>
+  <text x="498" y="284" class="dg-s" font-size="10">이익률 삼성 65%·SK 57%.</text>
+  <text x="498" y="306" class="dg-s" font-size="10">하락은 '실적 급락'보다 새 계약</text>
+  <text x="498" y="320" class="dg-s" font-size="10">조건(물량·기간·선수금) 약화로 먼저 온다.</text>
+  <text x="16" y="378" class="dg-s" font-size="10.5">원본: iM 표15(p.53)·그림3·4(p.6). 고점은 iM이 가정한 4Q27E 분기 ASP. 2025 평균은 iM 삼성 연간 ASP(p.83).</text>
+  <text x="16" y="394" class="dg-s" font-size="10.5">같은 리포트의 수요 쪽 시험: 2022년 같은 공급 과잉(충족률 +7.5%)이 되려면 2027 서버 출하가 +18% 대신 −7%여야 한다.</text>
+  <text x="16" y="410" class="dg-s" font-size="10.5">지난 10년 서버 출하 최저는 −2%(2023). 반대편: 키움은 2028 DRAM −54%를 예상 — ② 선에 가깝다.</text>
+</svg>

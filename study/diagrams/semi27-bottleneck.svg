@@ -1,0 +1,104 @@
+<svg viewBox="0 0 720 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2026~2030 병목 이동 지도: 메모리에서 패키징, 광, 전력으로 정점이 옮겨 간다 (유안타)">
+  <text x="360" y="20" text-anchor="middle" class="dg-t" font-size="14" font-weight="800">병목은 사라지지 않고 옮겨 간다 — 2026~2030</text>
+  <text x="183.0" y="52" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2026</text>
+  <text x="253.0" y="52" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2027E</text>
+  <text x="323.0" y="52" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2028E</text>
+  <text x="393.0" y="52" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2029E</text>
+  <text x="463.0" y="52" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">2030E</text>
+  <text x="510" y="52" class="dg-s" font-size="10.5" font-weight="700">다른 하우스의 근거</text>
+  <defs><marker id="s27bArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <path d="M183 79 L253 119 L323 159 L463 239" class="dg-arrow" stroke-dasharray="5 4" marker-end="url(#s27bArr)"/>
+  <text x="10" y="75" class="dg-t" font-size="11.5" font-weight="700">메모리 생산능력</text>
+  <text x="10" y="89" class="dg-s" font-size="9.5">HBM·DRAM</text>
+  <rect x="150" y="62" width="66" height="34" rx="4" class="dg-yes"/>
+  <text x="183.0" y="83" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">정점</text>
+  <rect x="220" y="62" width="66" height="34" rx="4" class="dg-yes"/>
+  <text x="253.0" y="83" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">정점</text>
+  <rect x="290" y="62" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="323.0" y="83" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="360" y="62" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="393.0" y="83" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="430" y="62" width="66" height="34" rx="4" class="dg-lo"/>
+  <text x="463.0" y="83" text-anchor="middle" class="dg-t" font-size="11">중간</text>
+  <text x="510" y="83" class="dg-s" font-size="10">8/8 · 신규 팹 기여 2028~</text>
+  <text x="10" y="115" class="dg-t" font-size="11.5" font-weight="700">첨단 패키징</text>
+  <text x="10" y="129" class="dg-s" font-size="9.5">CoWoS·SoIC·본딩</text>
+  <rect x="150" y="102" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="183.0" y="123" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="220" y="102" width="66" height="34" rx="4" class="dg-yes"/>
+  <text x="253.0" y="123" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">정점</text>
+  <rect x="290" y="102" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="323.0" y="123" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="360" y="102" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="393.0" y="123" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="430" y="102" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="463.0" y="123" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <text x="510" y="123" class="dg-s" font-size="10">메리츠·IBK·키움 · CoWoS 캐파</text>
+  <text x="10" y="155" class="dg-t" font-size="11.5" font-weight="700">광 연결</text>
+  <text x="10" y="169" class="dg-s" font-size="9.5">CPO</text>
+  <rect x="150" y="142" width="66" height="34" rx="4" class="dg-out"/>
+  <text x="183.0" y="163" text-anchor="middle" class="dg-t" font-size="11">낮음</text>
+  <rect x="220" y="142" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="253.0" y="163" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="290" y="142" width="66" height="34" rx="4" class="dg-yes"/>
+  <text x="323.0" y="163" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">정점</text>
+  <rect x="360" y="142" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="393.0" y="163" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="430" y="142" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="463.0" y="163" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <text x="510" y="163" class="dg-s" font-size="10">LS · NIC 2배, CPO 27~28</text>
+  <text x="10" y="195" class="dg-t" font-size="11.5" font-weight="700">선단 공정</text>
+  <text x="10" y="209" class="dg-s" font-size="9.5">2nm·High-NA</text>
+  <rect x="150" y="182" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="183.0" y="203" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="220" y="182" width="66" height="34" rx="4" class="dg-lo"/>
+  <text x="253.0" y="203" text-anchor="middle" class="dg-t" font-size="11">중간</text>
+  <rect x="290" y="182" width="66" height="34" rx="4" class="dg-lo"/>
+  <text x="323.0" y="203" text-anchor="middle" class="dg-t" font-size="11">중간</text>
+  <rect x="360" y="182" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="393.0" y="203" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="430" y="182" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="463.0" y="203" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <text x="510" y="203" class="dg-s" font-size="10">하나·BNK · 2nm 원년</text>
+  <text x="10" y="235" class="dg-t" font-size="11.5" font-weight="700">전력</text>
+  <text x="10" y="249" class="dg-s" font-size="9.5">800VDC·SiC·GaN</text>
+  <rect x="150" y="222" width="66" height="34" rx="4" class="dg-lo"/>
+  <text x="183.0" y="243" text-anchor="middle" class="dg-t" font-size="11">중간</text>
+  <rect x="220" y="222" width="66" height="34" rx="4" class="dg-lo"/>
+  <text x="253.0" y="243" text-anchor="middle" class="dg-t" font-size="11">중간</text>
+  <rect x="290" y="222" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="323.0" y="243" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="360" y="222" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="393.0" y="243" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="430" y="222" width="66" height="34" rx="4" class="dg-yes"/>
+  <text x="463.0" y="243" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">정점</text>
+  <text x="510" y="243" class="dg-s" font-size="10">iM·BNK·하나 · 491 vs 223GW</text>
+  <text x="10" y="278" class="dg-t" font-size="11.5" font-weight="700">AI 가속기</text>
+  <rect x="150" y="262" width="66" height="34" rx="4" class="dg-mid"/>
+  <text x="183.0" y="283" text-anchor="middle" class="dg-t" font-size="11">높음</text>
+  <rect x="220" y="262" width="66" height="34" rx="4" class="dg-out"/>
+  <text x="253.0" y="283" text-anchor="middle" class="dg-t" font-size="11">낮음</text>
+  <rect x="290" y="262" width="66" height="34" rx="4" class="dg-out"/>
+  <text x="323.0" y="283" text-anchor="middle" class="dg-t" font-size="11">낮음</text>
+  <rect x="360" y="262" width="66" height="34" rx="4" class="dg-out"/>
+  <text x="393.0" y="283" text-anchor="middle" class="dg-t" font-size="11">낮음</text>
+  <rect x="430" y="262" width="66" height="34" rx="4" class="dg-out"/>
+  <text x="463.0" y="283" text-anchor="middle" class="dg-t" font-size="11">낮음</text>
+  <text x="510" y="283" class="dg-s" font-size="10">하나 · 공급 GW가 수요 추격</text>
+  <line x1="8" y1="296" x2="712" y2="296" class="dg-div"/>
+  <text x="10" y="318" class="dg-t" font-size="11.5" font-weight="700">테스트(수요 강도)</text>
+  <rect x="150" y="302" width="66" height="34" rx="4" class="dg-in"/>
+  <text x="183.0" y="323" text-anchor="middle" class="dg-t" font-size="11">증가</text>
+  <rect x="220" y="302" width="66" height="34" rx="4" class="dg-kin"/>
+  <text x="253.0" y="323" text-anchor="middle" class="dg-t" font-size="11">확대</text>
+  <rect x="290" y="302" width="66" height="34" rx="4" class="dg-tki"/>
+  <text x="323.0" y="323" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">가속</text>
+  <rect x="360" y="302" width="66" height="34" rx="4" class="dg-tki"/>
+  <text x="393.0" y="323" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">가속</text>
+  <rect x="430" y="302" width="66" height="34" rx="4" class="dg-tki"/>
+  <text x="463.0" y="323" text-anchor="middle" class="dg-t" font-size="11" font-weight="800">가속</text>
+  <text x="510" y="323" class="dg-s" font-size="10">IBK·삼성 · P→Q</text>
+  <text x="10" y="356" class="dg-s" font-size="10.5">원본: 유안타 그림 18(p.63, 당사 판단 — 수급 격차·해소 리드타임·우회 가능성 종합). 점선은 정점이 옮겨 가는 길.</text>
+  <text x="10" y="372" class="dg-s" font-size="10.5">AI 가속기는 2028년 이후 병목에서 벗어난다는 판단 — 칩보다 꽂을 자리(패키징·광·전력)가 모자란다.</text>
+  <text x="10" y="388" class="dg-s" font-size="10.5">오른쪽 열은 같은 병목을 다룬 다른 하우스(리포트 외 연결: 유안타 그림에는 없다).</text>
+</svg>
