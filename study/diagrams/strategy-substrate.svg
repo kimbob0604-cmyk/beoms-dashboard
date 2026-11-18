@@ -1,0 +1,42 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI 기판 층 구조와 막힌 소재 네 가지">
+  <defs><marker id="strategy-substrateA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">AI 기판: 칩보다 먼저 막힌 소재 네 가지</text>
+  <rect x="10" y="40" width="280" height="44" rx="8" class="dg-lane1"/>
+  <text x="150" y="67" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">칩렛: GPU · HBM · I/O</text>
+  <rect x="10" y="92" width="280" height="44" rx="8" class="dg-lane2"/>
+  <text x="150" y="119" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">인터포저 (2.5D)</text>
+  <rect x="10" y="144" width="280" height="44" rx="8" class="dg-hi"/>
+  <text x="150" y="171" class="dg-t" font-size="10.8" font-weight="700" text-anchor="middle">FC-BGA 기판: 코어 + ABF 빌드업 20~30층</text>
+  <rect x="10" y="196" width="280" height="44" rx="8" class="dg-panel"/>
+  <text x="150" y="223" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">PCB (메인보드)</text>
+  <text x="150" y="266" class="dg-s" font-size="10.5" text-anchor="middle">기판이 커질수록 (70 → 100 → 120mm)</text>
+  <text x="150" y="284" class="dg-s" font-size="10.5" text-anchor="middle">휨(warpage) · 신호 손실(표피효과) ↑</text>
+  <rect x="305" y="40" width="405" height="96" rx="8" class="dg-panel"/>
+  <text x="315" y="60" class="dg-t" font-size="12" font-weight="800" text-anchor="start">① T-Glass (유리섬유 코어)</text>
+  <text x="315" y="82" class="dg-s" font-size="10.5" text-anchor="start">닛토보 독점 · 열팽창 2.8 vs E-Glass 5.6</text>
+  <text x="315" y="101" class="dg-s" font-size="10.5" text-anchor="start">E-Glass까지 부족: 7628 3.9 → 14.6위안/m</text>
+  <text x="315" y="120" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">대체: 중국거석 · Grace Fabric</text>
+  <rect x="305" y="144" width="405" height="96" rx="8" class="dg-panel"/>
+  <text x="315" y="164" class="dg-t" font-size="12" font-weight="800" text-anchor="start">② ABF (빌드업 절연 필름)</text>
+  <text x="315" y="186" class="dg-s" font-size="10.5" text-anchor="start">아지노모토 약 95% · 신공장 2032년</text>
+  <text x="315" y="205" class="dg-s" font-size="10.5" text-anchor="start">부족 ≈10% (2026E) → ≈45% (2028F)</text>
+  <text x="315" y="224" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">대체: Wazam (CBF 국산화)</text>
+  <rect x="305" y="248" width="405" height="96" rx="8" class="dg-panel"/>
+  <text x="315" y="268" class="dg-t" font-size="12" font-weight="800" text-anchor="start">③ HVLP4+ 동박</text>
+  <text x="315" y="290" class="dg-s" font-size="10.5" text-anchor="start">Rz 0.5~0.8μm (Rubin) · &lt;0.5 (Rubin Ultra)</text>
+  <text x="315" y="309" class="dg-s" font-size="10.5" text-anchor="start">매끈함 + 접착력 = 양산 난제</text>
+  <text x="315" y="328" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">미쓰이금속 · Defu · 롯데에너지머티리얼즈</text>
+  <rect x="305" y="352" width="405" height="96" rx="8" class="dg-panel"/>
+  <text x="315" y="372" class="dg-t" font-size="12" font-weight="800" text-anchor="start">④ 세라믹 기판</text>
+  <text x="315" y="394" class="dg-s" font-size="10.5" text-anchor="start">열전도 최대 230 vs 유기 0.37~0.6 W/m·K</text>
+  <text x="315" y="413" class="dg-s" font-size="10.5" text-anchor="start">휨 50% 수준 · Rubin Ultra(2027)부터</text>
+  <text x="315" y="432" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">교세라 · Kingshine</text>
+  <rect x="10" y="300" width="280" height="160" rx="8" class="dg-hi"/>
+  <text x="20" y="320" class="dg-t" font-size="12" font-weight="800" text-anchor="start">공급자 성격</text>
+  <text x="20" y="342" class="dg-s" font-size="10.5" text-anchor="start">일본 = 베타: 보수적 증설</text>
+  <text x="20" y="361" class="dg-s" font-size="10.5" text-anchor="start">안정적 마진 (닛토보 GPM ≈43%)</text>
+  <text x="20" y="380" class="dg-s" font-size="10.5" text-anchor="start">중국 = 알파: 빠른 국산화</text>
+  <text x="20" y="399" class="dg-s" font-size="10.5" text-anchor="start">공격적 가격·증설</text>
+  <text x="20" y="418" class="dg-s" font-size="10.5" text-anchor="start">Grace Fabric 주가 40배</text>
+  <text x="20" y="437" class="dg-s" font-size="10.5" text-anchor="start">엔비디아: 기판 CAPA 3년 2.5배</text>
+</svg>

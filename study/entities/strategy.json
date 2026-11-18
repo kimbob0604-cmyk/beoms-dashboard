@@ -1,0 +1,278 @@
+{
+ "_note": "Study › 전략 색인 (strategy-2027: NH투자증권 2027 글로벌 투자전략). 기존 키는 재사용, 여기는 새 키만.",
+ "c:asset-allocation": {
+  "name": "자산배분",
+  "en": "Asset allocation",
+  "desc": "주식·채권·대체투자를 얼마씩 담을지 정하는 일. NH 2027: 주식 확대(미국·한국), 채권 중립(미국 투자등급만 확대), 대체 축소(금만 확대)."
+ },
+ "c:core-satellite": {
+  "name": "Core-Satellite",
+  "en": "Core-satellite portfolio",
+  "desc": "중심(Core)에 큰 비중의 기본 자산을 두고, 둘레(Satellite)에 작은 비중으로 테마를 붙이는 구성. NH 2027은 Core = 미국 주식, Satellite = AI 밸류체인 국가·자본 효율화·안정적 현금흐름·독자 모멘텀."
+ },
+ "c:disinflation": {
+  "name": "디스인플레이션",
+  "en": "Disinflation",
+  "desc": "물가가 오르긴 하되 오름폭이 줄어드는 것(물가 하락인 디플레이션과 다르다). NH는 미국 CPI가 3.4%(2026) → 2.6%(2027)로 내려가 상반기 주식·채권 모두에 우호적이라고 본다."
+ },
+ "c:nominal-growth": {
+  "name": "명목 성장률",
+  "en": "Nominal GDP growth",
+  "desc": "실질 성장률 + 물가 상승률. 장기 국채 금리는 대개 명목 성장률 근처에 머문다 — 금리가 크게 내려가기 어렵다는 논리의 근거."
+ },
+ "c:term-premium": {
+  "name": "기간 프리미엄",
+  "en": "Term premium",
+  "desc": "장기채를 들고 있는 대가로 요구하는 추가 금리. 10년물 금리 = 앞으로의 단기금리 기대 + 기간 프리미엄. 주식과 채권이 같이 움직일수록 커진다."
+ },
+ "c:real-rate": {
+  "name": "실질금리",
+  "en": "Real interest rate",
+  "desc": "명목 금리에서 기대 물가를 뺀 금리. 금처럼 이자가 없는 자산은 실질금리가 오르면 불리하다."
+ },
+ "c:tips": {
+  "name": "TIPS (물가연동국채)",
+  "en": "Treasury Inflation-Protected Securities",
+  "desc": "물가만큼 원금이 불어나는 미국 국채. 그 금리가 시장의 실질금리다. NH의 바스켓 스프레드 기준은 10년 TIPS 2.6%."
+ },
+ "c:gold": {
+  "name": "금",
+  "en": "Gold",
+  "desc": "이자가 없는 안전자산. 2026년 실질금리 상승으로 ≈5,400 → ≈3,900달러/온스로 내렸지만, NH는 2027년 대체투자 중 유일하게 비중 확대."
+ },
+ "c:ig-bond": {
+  "name": "투자등급 회사채",
+  "en": "Investment-grade corporate bond",
+  "desc": "신용등급 BBB− 이상 회사채. NH 2027 채권 중 유일한 비중 확대 — 특히 AI 투자 자금을 조달하는 미국 빅테크 회사채(ETF AIBN)."
+ },
+ "c:ai-dependence": {
+  "name": "AI 의존도",
+  "en": "AI concentration risk",
+  "desc": "경제·증시가 AI 투자와 소수 빅테크에 기대는 정도. S&P500 상위 5종목 비중 ≈30%(역대 최고), 신흥국 지수 반도체 비중 ≈27%."
+ },
+ "c:korea-discount": {
+  "name": "코리아 디스카운트",
+  "en": "Korea discount",
+  "desc": "한국 주식이 비슷한 이익의 해외 주식보다 낮은 배수로 거래되는 현상. 2027E KOSPI 순이익 1,130조원이면 PER 4배 아래지만, NH는 메모리 2사 2028 이익 추정이 5~6배 벌어져 있어 보수적으로 보면 싸지 않다고 본다."
+ },
+ "c:tpa": {
+  "name": "TPA (통합 포트폴리오 접근)",
+  "en": "Total Portfolio Approach",
+  "desc": "자산군별 고정 비중(SAA) 대신 하나의 기준 포트폴리오와 팩터로 위험을 재는 연기금 운용 방식. CPP·GIC·호주 Future Fund·NZ Super, 2026.7 CalPERS가 도입."
+ },
+ "c:terminal-rate": {
+  "name": "최종금리",
+  "en": "Terminal rate",
+  "desc": "금리 인상(또는 인하) 사이클이 멈출 것으로 보는 정책금리 수준. 2026.11 시장 반영 연준 최종금리 4.50~4.75%(현재 4.00%), NH 하우스 전망은 4.25% 동결."
+ },
+ "c:fomc": {
+  "name": "FOMC 투표위원",
+  "en": "Federal Open Market Committee",
+  "desc": "미국 기준금리를 정하는 연준 위원회. 지역 연은 총재는 순번으로 투표권을 갖는다. 2027년 투표위원은 매파 4 → 1명."
+ },
+ "c:debt-ceiling": {
+  "name": "부채한도",
+  "en": "Debt ceiling",
+  "desc": "미국 재무부가 빌릴 수 있는 국채 총액의 법정 상한. 41.1조달러(2025년 상향), 2027년 5월 전후 도달 추정."
+ },
+ "c:x-date": {
+  "name": "X-Date",
+  "en": "X-Date",
+  "desc": "부채한도에 닿은 뒤 비상조치와 현금까지 바닥나 정부가 지급을 못 하게 되는 날. NH II장은 2027년 말경, I장은 2027.10~2028.2."
+ },
+ "c:midterm": {
+  "name": "미국 중간선거 (2026.11)",
+  "en": "US midterm elections",
+  "desc": "2026년 11월 3일 중간선거에서 민주당이 상·하원을 가져갔다. 데이터센터 규제·부채한도 협상의 불확실성을 키우는 한편, 헬스케어(ACA·메디케이드)·운송(관세 완화)에는 우호적이라는 해석."
+ },
+ "c:dc-regulation": {
+  "name": "데이터센터 규제",
+  "en": "Data center moratorium risk",
+  "desc": "전력요금·물 사용 반발로 주정부가 신규 데이터센터를 막거나 늦추는 움직임. 중간선거 뒤 8개 주 주지사가 중단을 말했고 그 주들이 계획 용량의 41%."
+ },
+ "c:per-band": {
+  "name": "PER 밴드",
+  "en": "PER band chart",
+  "desc": "지수(또는 주가)를 12개월 선행 EPS × 여러 PER(예: 14.5·16.5·18.5·20.5·22.5배) 선과 함께 그린 그림. 목표 지수 = 예상 EPS × 적용 PER."
+ },
+ "c:eps": {
+  "name": "EPS (주당순이익)",
+  "en": "Earnings per share",
+  "desc": "순이익 ÷ 주식 수. 지수에서는 구성 종목 이익을 지수 단위로 환산한 값. S&P500 12개월 선행 EPS ≈410달러(2026 말)."
+ },
+ "c:fcf": {
+  "name": "FCF (잉여현금흐름)",
+  "en": "Free cash flow",
+  "desc": "영업으로 번 현금(OCF)에서 설비투자(CAPEX)를 뺀 돈. 배당·자사주·부채 상환에 쓸 수 있는 진짜 남는 현금. 2027년 하이퍼스케일러 5사 FCF −103십억달러."
+ },
+ "c:fcf-yield": {
+  "name": "FCF 수익률",
+  "en": "FCF yield",
+  "desc": "FCF ÷ 시가총액. 지금 값에 사면 현금 기준으로 몇 %를 버는지. NH는 여기서 10년 TIPS를 뺀 스프레드로 바스켓을 고른다."
+ },
+ "c:cape": {
+  "name": "실러 CAPE",
+  "en": "Cyclically adjusted P/E (Shiller)",
+  "desc": "주가 ÷ 물가 조정한 최근 10년 평균 이익. 경기 영향을 줄인 장기 밸류 지표. 2026.10 40.7배 — 1999~2000년을 빼면 1881년 이후 최고."
+ },
+ "c:erp": {
+  "name": "주식위험프리미엄",
+  "en": "Equity risk premium",
+  "desc": "주식이 안전자산보다 더 벌어야 할 몫. NH 정의: 실질 ERP = 1/CAPE − 10년 TIPS. 2026년 ≈0으로 2000년 이후 처음."
+ },
+ "c:hyperscaler": {
+  "name": "하이퍼스케일러",
+  "en": "Hyperscaler",
+  "desc": "초대형 클라우드·AI 인프라 사업자(마이크로소프트·알파벳·아마존·메타, 오라클 포함 5사). 2027년 CAPEX 1.1~1.17조달러, FCF는 적자."
+ },
+ "c:six-baskets": {
+  "name": "6개 바스켓",
+  "en": "Six cash-rich baskets",
+  "desc": "NH II장이 고른 '설비투자 뒤에도 현금이 남는' 묶음. 현금형(바이오·메디테크·전력)과 성장형(빅파마·반도체·소프트웨어). 2027F FCF 수익률 − TIPS 스프레드 1.4~4.0%p. 종목명은 공개하지 않았다."
+ },
+ "c:quality-factor": {
+  "name": "퀄리티·FCF 팩터",
+  "en": "Quality / FCF factor",
+  "desc": "높은 ROE·낮은 부채·풍부한 현금 기업이 시장보다 나은지 보는 기준(ETF QUAL·COWZ). 금리가 오르기 시작할 때와 하이퍼 FCF가 줄 때 강했다."
+ },
+ "c:barbell": {
+  "name": "바벨 전략",
+  "en": "Barbell strategy",
+  "desc": "성격이 반대인 두 자산을 양 끝에 담고 가운데는 비우는 구성. NH 중국: 공격 = AI 업종, 방어 = 고배당주."
+ },
+ "c:party-congress": {
+  "name": "중국 당대회",
+  "en": "National Congress of the CPC",
+  "desc": "5년마다 열리는 중국 공산당 전국대표대회. 21차는 2027년 10월. 직후 1중전회에서 상무위원을 뽑고, 의제가 이후 주도 업종으로 이어진다(18차 개혁·도시화 → 20차 기술 자립)."
+ },
+ "c:sfisf": {
+  "name": "SFISF",
+  "en": "Securities, Funds and Insurance companies Swap Facility",
+  "desc": "인민은행이 국채·주식 ETF를 담보로 증권·펀드·보험사에 유동성을 주어 주식을 사게 하는 장치. 1차 500억 → 2차 550억 → 3차 1,000억위안(한도 5,000억위안)."
+ },
+ "c:vn-capital": {
+  "name": "베트남 자본시장 개방",
+  "en": "Vietnam capital market reform",
+  "desc": "은행 대출에 기댄 자금 조달(신용/GDP 145%)을 주식·국채·회사채·해외차입·FDI로 넓히는 개혁. 연 10% 성장에 5년 1.46조달러 투자가 필요해서다."
+ },
+ "c:ftse-em": {
+  "name": "FTSE 신흥국 편입 (베트남)",
+  "en": "FTSE Russell EM inclusion",
+  "desc": "베트남이 FTSE 프런티어에서 신흥국 지수로 올라가는 단계. 2027년 3월 20%·6월 35%·9월 35% 편입 예정."
+ },
+ "c:msci-em": {
+  "name": "MSCI 신흥국 편입",
+  "en": "MSCI Emerging Markets inclusion",
+  "desc": "베트남 정부 목표는 2030년 전 MSCI EM 편입. 2027년 6월 MSCI 리뷰에서 관찰국 등재 여부가 첫 신호."
+ },
+ "c:cn-localization": {
+  "name": "중국 반도체 장비 국산화",
+  "en": "China semiconductor equipment localization",
+  "desc": "중국 팹에서 자국산 장비 비중. ≈35%(2025) → 42%(2026E) → 2030F ≈56%(Base). 신규 팹 국산 50% 의무화. 식각·증착이 앞서고 노광은 1% 미만."
+ },
+ "c:cpu-gpu-ratio": {
+  "name": "서버 CPU:GPU 비율",
+  "en": "Server CPU-to-GPU ratio",
+  "desc": "GPU 하나당 서버 CPU 수. 학습 서버는 1:4(0.25)인데 에이전트는 계획·도구 호출을 CPU가 처리해 2030년 Base 1.1배로 오른다는 NH 가정. 서버 CPU 출하 3,000만 → 7,800만 개의 근거."
+ },
+ "c:ai-security": {
+  "name": "AI 사이버보안",
+  "en": "AI-era cybersecurity",
+  "desc": "에이전트마다 신원·권한이 생기고 AI로 공격이 빨라져 보안이 AI 도입 속도를 정한다는 논리. ETF BUG·CIBR, 종목 팔로알토."
+ },
+ "c:onsite-power": {
+  "name": "온사이트 전력",
+  "en": "On-site power",
+  "desc": "계통 연결을 기다리지 않고 데이터센터 옆에서 바로 만드는 전기(연료전지·가스엔진·배터리). 확보까지 0~7개월 vs 대형 가스터빈 60~72개월."
+ },
+ "c:etf": {
+  "name": "ETF",
+  "en": "Exchange-traded fund",
+  "desc": "지수·테마를 그대로 따라가도록 만든 상장 펀드. NH 2027은 테마 6개와 금·금광에 ETF를 붙였다. 새 테마 ETF는 순자산이 작아(수백만~수천만 달러) 유동성을 따로 봐야 한다."
+ },
+ "c:fcbga": {
+  "name": "FC-BGA 기판",
+  "en": "Flip-chip ball grid array substrate",
+  "desc": "AI 칩·CPU를 메인보드에 잇는 패키지 기판. T-Glass CCL 코어 위아래로 ABF 절연층과 구리 회로를 20~30층 이상 쌓는다. 대면적·고다층이 될수록 휨·신호 손실이 문제."
+ },
+ "c:abf": {
+  "name": "ABF (빌드업 필름)",
+  "en": "Ajinomoto Build-up Film",
+  "desc": "FC-BGA 기판 층 사이 절연 필름. 아지노모토가 약 95%를 만들고 신공장은 2032년 — 2027년부터 부족이 커진다(≈10% → ≈45%, 2026E → 2028F). 중국 Wazam이 대체(CBF) 양산."
+ },
+ "c:t-glass": {
+  "name": "T-Glass (저열팽창 유리섬유)",
+  "en": "Low-CTE glass fabric",
+  "desc": "열팽창계수 2.8(×10⁻⁶/℃)로 일반 E-Glass(5.6)의 절반이라 큰 AI 기판이 덜 휜다. 닛토보 독점. 부족분이 E-Glass로 몰려 7628 패브릭 값이 3.7배."
+ },
+ "c:hvlp": {
+  "name": "HVLP 동박",
+  "en": "Hyper Very Low Profile copper foil",
+  "desc": "표면이 아주 매끈한 동박. 224Gbps 신호는 도체 표면으로만 흘러(표피효과) 거칠면 손실이 크다. Rubin은 HVLP4(Rz 0.5~0.8μm), Rubin Ultra는 HVLP5(<0.5μm)."
+ },
+ "co:palantir": {
+  "name": "팔란티어",
+  "en": "Palantir Technologies (PLTR)",
+  "desc": "데이터 분석·AI 운영 플랫폼(Gotham·Foundry·AIP). NH 2027 AI Enabler 최선호. FY3Q26 매출 23.1억달러(+96%), 영업이익률 61.7%, 시총 406.8십억달러."
+ },
+ "co:panw": {
+  "name": "팔로알토 네트웍스",
+  "en": "Palo Alto Networks (PANW)",
+  "desc": "글로벌 1위 사이버보안 플랫폼(NGFW·Cortex XSIAM). NH 2027 AI Enabler 유망종목. 시총 267.2십억달러, FY27/7E 영업이익 4,186백만달러."
+ },
+ "co:ups": {
+  "name": "UPS",
+  "en": "United Parcel Service",
+  "desc": "미국 택배·물류. 아마존 물량 50% 감축 뒤 고마진 고객 확대, 배당수익률 5.9%. NH 2027 Non-AI(운송) 유망종목, 시총 94.6십억달러."
+ },
+ "co:naura": {
+  "name": "북방화창",
+  "en": "NAURA Technology (002371.CN)",
+  "desc": "중국 최대 반도체 장비사(식각·증착·세정 등 가장 넓은 공정). 중국 국산 장비 TAM 비중 약 30%. NH 2027 AI HW 유망종목, 시총 392.1십억위안."
+ },
+ "co:jushi": {
+  "name": "중국거석",
+  "en": "China Jushi (600176.CN)",
+  "desc": "세계 1위 유리섬유(점유율 약 30%). T-Glass 부족으로 E-Glass 수요·단가가 뛰는 수혜. NH 2027 기판 소재 유망종목, 2027F POR ≈7배."
+ },
+ "co:wazam": {
+  "name": "Wazam Material",
+  "en": "Wazam New Materials (603186.CN)",
+  "desc": "중국 CCL·소재 기업. ABF 대체 필름(CBF)을 양산하며 국산화 1순위. NH 2027 기판 소재 최선호, 시총 22.9십억위안."
+ },
+ "co:ajinomoto": {
+  "name": "아지노모토",
+  "en": "Ajinomoto (2802.JP)",
+  "desc": "조미료 회사이자 ABF 필름 세계 약 95% 공급자. 신공장 2032년 가동. 2026.8 중국향 ABF 공급 30% 감축."
+ },
+ "co:nittobo": {
+  "name": "닛토보",
+  "en": "Nitto Boseki (3110.JP)",
+  "desc": "T-Glass(저열팽창 유리섬유) 독점 공급자. E-Glass 라인을 T-Glass로 돌리며 E-Glass 부족을 낳았다."
+ },
+ "co:ibiden": {
+  "name": "이비덴",
+  "en": "Ibiden (4062.JP)",
+  "desc": "하이엔드 FC-BGA 기판 글로벌 1위(엔비디아·인텔). 2028년 1분기 생산능력 3배 계획."
+ },
+ "co:deepseek": {
+  "name": "DeepSeek",
+  "en": "DeepSeek",
+  "desc": "중국 AI 모델 회사. 작업당 비용이 미국 최상위 모델의 수십 분의 1이고 2026년 토큰 호출 점유율 1위(≈25%). 2027년 상반기 본토 상장 예정(기업가치 750억달러)."
+ },
+ "co:moonshot": {
+  "name": "MoonShot AI",
+  "en": "Moonshot AI (Kimi)",
+  "desc": "중국 AI 모델 회사(Kimi). 2027년 상반기 홍콩 상장 예정(기업가치 500억달러)."
+ },
+ "co:databricks": {
+  "name": "Databricks",
+  "en": "Databricks",
+  "desc": "기업 데이터 기반 AI 플랫폼. 2027년 하반기 미국 상장 예정(기업가치 1,900억달러)."
+ },
+ "n:vn": {
+  "name": "베트남",
+  "en": "Vietnam",
+  "desc": "연 10% 성장을 목표로 자본시장을 여는 신흥국. 2026년 3분기 누적 GDP +9.95%, FTSE 신흥국 편입 2027년 단계 진행. NH 2027 '독자적 모멘텀' 시장."
+ }
+}

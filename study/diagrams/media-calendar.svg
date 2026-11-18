@@ -1,0 +1,57 @@
+<svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="미디어·통신·플랫폼 2026.11~2030 주요 일정">
+  <defs><marker id="media-calendarA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">2026.11 → 2030 일정표 — 리포트에 날짜가 적힌 사건만</text>
+  <rect x="6" y="40" width="708" height="100" rx="8" class="dg-hi"/>
+  <text x="16" y="60" class="dg-t" font-size="12" font-weight="800" text-anchor="start">엔터</text>
+  <rect x="6" y="150" width="708" height="100" rx="8" class="dg-lane1"/>
+  <text x="16" y="170" class="dg-t" font-size="12" font-weight="800" text-anchor="start">게임·플랫폼</text>
+  <rect x="6" y="260" width="708" height="100" rx="8" class="dg-lane2"/>
+  <text x="16" y="280" class="dg-t" font-size="12" font-weight="800" text-anchor="start">통신·정책</text>
+  <rect x="104" y="48" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="176" y="66" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">26.11.11</text>
+  <text x="176" y="84" class="dg-s" font-size="9.5" text-anchor="middle">JYP 오브더블루 선공개</text>
+  <text x="176" y="99" class="dg-s" font-size="9.5" text-anchor="middle">음원</text>
+  <rect x="256" y="48" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="328" y="66" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">27.1.11</text>
+  <text x="328" y="84" class="dg-s" font-size="9.5" text-anchor="middle">오브더블루 데뷔 (JYP)</text>
+  <rect x="408" y="48" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="480" y="66" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">27.1Q</text>
+  <text x="480" y="84" class="dg-s" font-size="9.5" text-anchor="middle">라이즈 정규 (SM)</text>
+  <rect x="560" y="48" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="632" y="66" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">27.3.27~28</text>
+  <text x="632" y="84" class="dg-s" font-size="9.5" text-anchor="middle">위버스콘 인도 (하이브)</text>
+  <text x="16" y="134" class="dg-s" font-size="9.5" text-anchor="start">2027: 소녀시대 20주년·EXO 15주년, NCT WISH 고척돔, 롤라팔루자 인디아(KATSEYE)</text>
+  <rect x="104" y="158" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="176" y="176" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">26.11.19</text>
+  <text x="176" y="194" class="dg-s" font-size="9.5" text-anchor="middle">GTA6 출시 · 앤트로픽</text>
+  <text x="176" y="209" class="dg-s" font-size="9.5" text-anchor="middle">IPO</text>
+  <rect x="256" y="158" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="328" y="176" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">26.12.31~27.1</text>
+  <text x="328" y="194" class="dg-s" font-size="9.5" text-anchor="middle">구글 결제 수수료</text>
+  <text x="328" y="209" class="dg-s" font-size="9.5" text-anchor="middle">30→25%</text>
+  <rect x="408" y="158" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="480" y="176" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">27.3.31</text>
+  <text x="480" y="194" class="dg-s" font-size="9.5" text-anchor="middle">네이버파이낸셜–두나무</text>
+  <text x="480" y="209" class="dg-s" font-size="9.5" text-anchor="middle">주식교환</text>
+  <rect x="560" y="158" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="632" y="176" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">1H27</text>
+  <text x="632" y="194" class="dg-s" font-size="9.5" text-anchor="middle">NAVER 55MW 가동 →</text>
+  <text x="632" y="209" class="dg-s" font-size="9.5" text-anchor="middle">3Q 실적 반영</text>
+  <text x="16" y="244" class="dg-s" font-size="9.5" text-anchor="start">27 봄~: 국내 신작 출시 재개 · 2027말 NHN 100MW</text>
+  <rect x="104" y="268" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="176" y="286" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">27.3</text>
+  <text x="176" y="304" class="dg-s" font-size="9.5" text-anchor="middle">AI 데이터센터 특별법 시행</text>
+  <rect x="256" y="268" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="328" y="286" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">2027</text>
+  <text x="328" y="304" class="dg-s" font-size="9.5" text-anchor="middle">통신 3사 CapEx</text>
+  <text x="328" y="319" class="dg-s" font-size="9.5" text-anchor="middle">7.3조 (+14.4%)</text>
+  <rect x="408" y="268" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="480" y="286" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">2028~</text>
+  <text x="480" y="304" class="dg-s" font-size="9.5" text-anchor="middle">DC 매출 본격 (통신)</text>
+  <rect x="560" y="268" width="144" height="66" rx="6" class="dg-gate"/>
+  <text x="632" y="286" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">28말→29.1Q</text>
+  <text x="632" y="304" class="dg-s" font-size="9.5" text-anchor="middle">6G 핵심 규격 → 표준</text>
+  <text x="632" y="319" class="dg-s" font-size="9.5" text-anchor="middle">완료</text>
+  <text x="16" y="354" class="dg-s" font-size="9.5" text-anchor="start">2029 / 2030: SKT 5GW / 6G 상용화</text>
+  <text x="16" y="410" class="dg-m" font-size="9" text-anchor="start">※ 두 리포트에 적힌 날짜만 모았다(교보 p.16·24·26·30, NH p.89·95·97·98·99·100·107·113·114). 지난 날짜(2026.11)는 리포트 발간 시점 기준 예정이었다.</text>
+</svg>

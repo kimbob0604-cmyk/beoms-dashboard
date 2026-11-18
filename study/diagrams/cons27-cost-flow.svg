@@ -1,0 +1,54 @@
+<svg viewBox="0 0 760 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="음식료 원가가 영업이익률로 가는 경로: 코코아·곡물·유가·환율과 가격 인상·판관비">
+  <defs><marker id="cons27-cost-flowA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="380" y="22" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">원가 → 원가율 → 영업이익률: 무엇이 언제 들어오나</text>
+  <rect x="10" y="42" width="250" height="94" rx="8" class="dg-lane2"/>
+  <text x="20" y="61" class="dg-t" font-size="12" font-weight="700" text-anchor="start">코코아 (유리)</text>
+  <text x="20" y="78" class="dg-s" font-size="10.5" text-anchor="start">고점 1만$/t → 연초 3천 → 현재 5천</text>
+  <text x="20" y="95" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">투입가 YoY −50% (7월~, 교보)</text>
+  <text x="20" y="112" class="dg-s" font-size="10.5" text-anchor="start">선물 → 투입 2~3분기 지연</text>
+  <line x1="262" y1="89" x2="318" y2="230" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="10" y="144" width="250" height="94" rx="8" class="dg-lane3"/>
+  <text x="20" y="163" class="dg-t" font-size="12" font-weight="700" text-anchor="start">곡물 (부담)</text>
+  <text x="20" y="180" class="dg-s" font-size="10.5" text-anchor="start">YTD 소맥+17 대두+15 원당+25</text>
+  <text x="20" y="197" class="dg-s" font-size="10.5" text-anchor="start">옥수수+1% · 고점 대비 −10~−23%</text>
+  <text x="20" y="214" class="dg-s" font-size="10.5" text-anchor="start">엘니뇨 변수 (교보)</text>
+  <line x1="262" y1="191" x2="318" y2="230" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="10" y="246" width="250" height="94" rx="8" class="dg-lane3"/>
+  <text x="20" y="265" class="dg-t" font-size="12" font-weight="700" text-anchor="start">유가 → 포장·물류</text>
+  <text x="20" y="282" class="dg-s" font-size="10.5" text-anchor="start">포장 PPI +37% · BDI +52% (교보)</text>
+  <text x="20" y="299" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">NH: 납사·PET 하향 안정 전망</text>
+  <text x="20" y="316" class="dg-s" font-size="10.5" text-anchor="start">중동 리스크가 재발 변수</text>
+  <line x1="262" y1="293" x2="318" y2="230" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="10" y="348" width="250" height="94" rx="8" class="dg-lane2"/>
+  <text x="20" y="367" class="dg-t" font-size="12" font-weight="700" text-anchor="start">환율</text>
+  <text x="20" y="384" class="dg-s" font-size="10.5" text-anchor="start">NH 2027 평균 1,370원 (원화 강세)</text>
+  <text x="20" y="401" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">원재료 대부분 수입 → 원가↓</text>
+  <text x="20" y="418" class="dg-s" font-size="10.5" text-anchor="start">롯데웰푸드 10원↓ = OP +20억</text>
+  <line x1="262" y1="395" x2="318" y2="230" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="320" y="175" width="170" height="110" rx="8" class="dg-lane1"/>
+  <text x="405.0" y="194" class="dg-t" font-size="12" font-weight="700" text-anchor="middle">매출원가율</text>
+  <text x="405.0" y="211" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">음식료 주요사 평균</text>
+  <text x="405.0" y="228" class="dg-s" font-size="10.5" text-anchor="middle">≈ 64% (NH)</text>
+  <text x="405.0" y="245" class="dg-s" font-size="10.5" text-anchor="middle">2022 65.2% 고점</text>
+  <text x="405.0" y="262" class="dg-s" font-size="10.5" text-anchor="middle">1%p = 영업이익률 1%p</text>
+  <line x1="492" y1="230" x2="548" y2="230" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="550" y="175" width="200" height="110" rx="8" class="dg-lane1"/>
+  <text x="650.0" y="194" class="dg-t" font-size="12" font-weight="700" text-anchor="middle">영업이익률</text>
+  <text x="650.0" y="211" class="dg-s" font-size="10.5" text-anchor="middle">커버리지 합산 영업이익</text>
+  <text x="650.0" y="228" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">2026E +13.0% · 2027E +12.8%</text>
+  <text x="650.0" y="245" class="dg-s" font-size="10.5" text-anchor="middle">(교보 8개사)</text>
+  <rect x="320" y="42" width="430" height="110" rx="8" class="dg-mid"/>
+  <text x="330" y="61" class="dg-t" font-size="12" font-weight="700" text-anchor="start">회사의 대응 (판가·비용)</text>
+  <text x="330" y="78" class="dg-s" font-size="10.5" text-anchor="start">가격 인상: 3Q26 CJ·농심·롯데칠성 핵심 SKU → 4Q부터 효과 (교보)</text>
+  <text x="330" y="95" class="dg-s" font-size="10.5" text-anchor="start">판관비: 희망퇴직·공장 통폐합 — 롯데웰푸드 3Q 누적 1천억원 절감</text>
+  <text x="330" y="112" class="dg-s" font-size="10.5" text-anchor="start">판촉비 경쟁 자제: 국내는 수익성 우선 (NH)</text>
+  <text x="330" y="129" class="dg-s" font-size="10.5" text-anchor="start">라면은 해외 가격 인상 여력 (교보)</text>
+  <line x1="535" y1="152" x2="535" y2="173" class="dg-arrow" marker-end="url(#cons27-cost-flowA)"/>
+  <rect x="320" y="310" width="430" height="140" rx="8" class="dg-panel"/>
+  <text x="330" y="329" class="dg-t" font-size="12" font-weight="700" text-anchor="start">두 하우스의 차이</text>
+  <text x="330" y="346" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">NH: 2027년 원가 부담 전반적 완화 — 환율·유가·부자재 모두 우호</text>
+  <text x="330" y="363" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">교보: 원가별로 갈린다 — 코코아는 큰 수혜, 곡물·포장·물류는 부담</text>
+  <text x="330" y="380" class="dg-s" font-size="10.5" text-anchor="start">그래서 교보는 코코아 쓰는 롯데웰푸드, NH는 원가율 우수 오리온</text>
+  <text x="330" y="397" class="dg-s" font-size="10.5" text-anchor="start">주의: NH 그림의 2027F 원가율(≈63.8%)은 2026E와 거의 같다</text>
+  <text x="330" y="414" class="dg-s" font-size="10.5" text-anchor="start">→ '완화'는 원가율 하락보다 '더 오르지 않음'에 가깝다</text>
+</svg>

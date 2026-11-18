@@ -1,0 +1,79 @@
+<svg viewBox="0 0 720 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자동차 신사업 4개 시장과 신사업이 멀티플 확장으로 이어지는 6단계">
+  <defs><marker id="nh-mobility-reratingA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="22" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">자동차 리레이팅 지도: 신사업 4곳 × 6단계 확인표</text>
+
+  <text x="20" y="48" class="dg-m" font-size="11" font-weight="700">① 자동차 밖 성장 시장 (NH p.77) — 데이터센터·ESS는 이익이 빠르고 로보틱스는 늦다</text>
+  <rect x="20" y="58" width="160" height="78" rx="8" class="dg-ok"/>
+  <text x="100" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">AI 데이터센터</text>
+  <text x="100" y="98" class="dg-t" font-size="10" text-anchor="middle">Growth-Driven</text>
+  <text x="100" y="115" class="dg-t" font-size="10" text-anchor="middle">이미 실적으로 증명</text>
+  <text x="100" y="129" class="dg-t" font-size="9.5" text-anchor="middle">열관리 · 터빈 발전기</text>
+  <rect x="193" y="58" width="160" height="78" rx="8" class="dg-ok"/>
+  <text x="273" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">ESS</text>
+  <text x="273" y="98" class="dg-t" font-size="10" text-anchor="middle">Asset-utilization-Driven</text>
+  <text x="273" y="115" class="dg-t" font-size="10" text-anchor="middle">기존 자산 활용도 최고</text>
+  <text x="273" y="129" class="dg-t" font-size="9.5" text-anchor="middle">배터리 · 전력전자</text>
+  <rect x="366" y="58" width="160" height="78" rx="8" class="dg-panel"/>
+  <text x="446" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">방산</text>
+  <text x="446" y="98" class="dg-m" font-size="10" text-anchor="middle">Policy-Driven</text>
+  <text x="446" y="115" class="dg-m" font-size="10" text-anchor="middle">정책이 수요를 만든다</text>
+  <rect x="539" y="58" width="161" height="78" rx="8" class="dg-hi"/>
+  <text x="619" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">로보틱스</text>
+  <text x="619" y="98" class="dg-t" font-size="10" text-anchor="middle">Expectation-Driven</text>
+  <text x="619" y="115" class="dg-t" font-size="10" text-anchor="middle">기대가 가장 앞섬</text>
+  <text x="619" y="129" class="dg-t" font-size="9.5" text-anchor="middle">이익 기여는 가장 늦다</text>
+
+  <text x="20" y="166" class="dg-m" font-size="11" font-weight="700">② 신사업이 멀티플이 되는 6단계 (NH p.78) — 각 칸의 질문에 '예'가 나와야 다음 칸</text>
+  <rect x="20" y="176" width="216" height="24" rx="5" class="dg-band"/>
+  <text x="128" y="192" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">실행: 실체 확인</text>
+  <rect x="252" y="176" width="216" height="24" rx="5" class="dg-band"/>
+  <text x="360" y="192" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">경제성: 성장이 가치가 됨</text>
+  <rect x="484" y="176" width="216" height="24" rx="5" class="dg-band"/>
+  <text x="592" y="192" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">Earnings mix: 평가 방식 변화</text>
+
+  <rect x="20" y="210" width="100" height="70" rx="7" class="dg-panel"/>
+  <text x="70" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">Story</text>
+  <text x="70" y="252" class="dg-m" font-size="10" text-anchor="middle">말뿐인가?</text>
+  <rect x="136" y="210" width="100" height="70" rx="7" class="dg-panel"/>
+  <text x="186" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">CapEx</text>
+  <text x="186" y="252" class="dg-m" font-size="10" text-anchor="middle">진짜 돈을</text>
+  <text x="186" y="266" class="dg-m" font-size="10" text-anchor="middle">넣고 있나?</text>
+  <rect x="252" y="210" width="100" height="70" rx="7" class="dg-panel"/>
+  <text x="302" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">Revenue</text>
+  <text x="302" y="252" class="dg-m" font-size="10" text-anchor="middle">실제 고객이</text>
+  <text x="302" y="266" class="dg-m" font-size="10" text-anchor="middle">있나?</text>
+  <rect x="368" y="210" width="100" height="70" rx="7" class="dg-panel"/>
+  <text x="418" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">EBIT</text>
+  <text x="418" y="252" class="dg-m" font-size="10" text-anchor="middle">돈을 벌고</text>
+  <text x="418" y="266" class="dg-m" font-size="10" text-anchor="middle">있나?</text>
+  <rect x="484" y="210" width="100" height="70" rx="7" class="dg-panel"/>
+  <text x="534" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">ROIC</text>
+  <text x="534" y="252" class="dg-m" font-size="10" text-anchor="middle">투자 대비</text>
+  <text x="534" y="266" class="dg-m" font-size="10" text-anchor="middle">충분한가?</text>
+  <rect x="600" y="210" width="100" height="70" rx="7" class="dg-hi"/>
+  <text x="650" y="232" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">Multiple</text>
+  <text x="650" y="252" class="dg-t" font-size="10" text-anchor="middle">회사 전체의</text>
+  <text x="650" y="266" class="dg-t" font-size="10" text-anchor="middle">평가가 바뀌나?</text>
+  <line x1="121" y1="245" x2="133" y2="245" class="dg-arrow" marker-end="url(#nh-mobility-reratingA)"/>
+  <line x1="237" y1="245" x2="249" y2="245" class="dg-arrow" marker-end="url(#nh-mobility-reratingA)"/>
+  <line x1="353" y1="245" x2="365" y2="245" class="dg-arrow" marker-end="url(#nh-mobility-reratingA)"/>
+  <line x1="469" y1="245" x2="481" y2="245" class="dg-arrow" marker-end="url(#nh-mobility-reratingA)"/>
+  <line x1="585" y1="245" x2="597" y2="245" class="dg-arrow" marker-end="url(#nh-mobility-reratingA)"/>
+
+  <text x="20" y="310" class="dg-m" font-size="11" font-weight="700">③ 지금 어디쯤인가 (NH p.79~81)</text>
+  <rect x="20" y="320" width="216" height="96" rx="8" class="dg-lo"/>
+  <text x="128" y="340" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">현대차그룹 (완성차)</text>
+  <text x="32" y="360" class="dg-t" font-size="10">· Story 단계: 연초 급등 → 되돌림</text>
+  <text x="32" y="378" class="dg-t" font-size="10">· CapEx·외부 고객 구체화 전</text>
+  <text x="32" y="396" class="dg-t" font-size="10">· 다음 확인: 외부 판매, BD 흑자</text>
+  <rect x="252" y="320" width="216" height="96" rx="8" class="dg-hi"/>
+  <text x="360" y="340" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">현대모비스 (Top-pick)</text>
+  <text x="264" y="360" class="dg-t" font-size="10">· Revenue 진입: 2026.11 액추에이터</text>
+  <text x="264" y="378" class="dg-t" font-size="10">· Non-captive 20%(2027)→40%(2033)</text>
+  <text x="264" y="396" class="dg-t" font-size="10">· 다음 확인: CapEx 규모, 외부 고객</text>
+  <rect x="484" y="320" width="216" height="96" rx="8" class="dg-ok"/>
+  <text x="592" y="340" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">모딘 (끝까지 간 사례)</text>
+  <text x="496" y="360" class="dg-t" font-size="10">· 차량 열관리 → 데이터센터 냉각</text>
+  <text x="496" y="378" class="dg-t" font-size="10">· 매출·영업이익률 함께 상승</text>
+  <text x="496" y="396" class="dg-t" font-size="10">· 12M PER 상향 = Multiple 단계</text>
+</svg>

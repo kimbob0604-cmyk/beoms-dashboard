@@ -1,0 +1,47 @@
+<svg viewBox="0 0 720 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="데이터센터 사업 사다리: Colocation, 네오클라우드, 토큰팩토리와 국내 사업자 계획">
+  <defs><marker id="media-dc-ladderA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">데이터센터 사업의 세 계단 — 위로 갈수록 부가가치도, 위험도 커진다</text>
+  <rect x="6" y="300" width="420" height="100" rx="8" class="dg-lane2"/>
+  <text x="18" y="322" class="dg-t" font-size="12" font-weight="800" text-anchor="start">① Colocation (공간·전력 임대)</text>
+  <text x="18" y="344" class="dg-t" font-size="10" text-anchor="start">매출 = 계약전력(kW) × kW당 단가 × 기간 + 부대서비스</text>
+  <text x="18" y="364" class="dg-s" font-size="9.5" text-anchor="start">투자: 토지·건물·수전·UPS·냉각 · 감가: 건물 중심</text>
+  <text x="18" y="382" class="dg-s" font-size="9.5" text-anchor="start">장점: 장기 임대 매출, GPU 세대교체 부담 없음 · 장벽: 전력·입지·인허가</text>
+  <rect x="61" y="190" width="365" height="100" rx="8" class="dg-lane1"/>
+  <text x="73" y="212" class="dg-t" font-size="12" font-weight="800" text-anchor="start">② 네오클라우드 (GPU 임대)</text>
+  <text x="73" y="234" class="dg-t" font-size="10" text-anchor="start">매출 = 과금 GPU 시간 × 시간당 단가</text>
+  <text x="73" y="254" class="dg-s" font-size="9.5" text-anchor="start">투자: GPU 서버·네트워크·스토리지 · 감가: GPU가 큼</text>
+  <text x="73" y="272" class="dg-s" font-size="9.5" text-anchor="start">장점: AI 연산 수요를 직접 매출화 · 단점: 장비 투자비·금융비용</text>
+  <rect x="116" y="80" width="310" height="100" rx="8" class="dg-hi"/>
+  <text x="128" y="102" class="dg-t" font-size="12" font-weight="800" text-anchor="start">③ 토큰팩토리 (AI 추론 판매)</text>
+  <text x="128" y="124" class="dg-t" font-size="10" text-anchor="start">매출 = 모델별 입·출력 토큰 × 토큰당 단가</text>
+  <text x="128" y="144" class="dg-s" font-size="9.5" text-anchor="start">투자: 추론 소프트웨어·API 플랫폼·GPU 일부</text>
+  <text x="128" y="162" class="dg-s" font-size="9.5" text-anchor="start">장점: 소프트웨어 최적화로 부가가치 · 단점: 가격 경쟁·수요 변동</text>
+  <line x1="450" y1="390" x2="450" y2="90" class="dg-arrow" marker-end="url(#media-dc-ladderA)"/>
+  <text x="460" y="250" class="dg-t" font-size="10" font-weight="700" text-anchor="start">부가가치 ↑</text>
+  <text x="460" y="266" class="dg-t" font-size="10" font-weight="700" text-anchor="start">위험 ↑</text>
+  <rect x="500" y="40" width="214" height="360" rx="8" class="dg-panel"/>
+  <text x="512" y="60" class="dg-t" font-size="11.5" font-weight="800" text-anchor="start">국내 계획 (NH p.107·108)</text>
+  <text x="512" y="86" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">SK텔레콤</text>
+  <text x="590" y="86" class="dg-t" font-size="9.5" text-anchor="start">5GW (2029)</text>
+  <text x="512" y="102" class="dg-s" font-size="9" text-anchor="start">아마존 Colo 1GW+네오 1GW</text>
+  <text x="512" y="128" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">KT</text>
+  <text x="590" y="128" class="dg-t" font-size="9.5" text-anchor="start">약 600MW → 1GW (2031)</text>
+  <text x="512" y="144" class="dg-s" font-size="9" text-anchor="start">현재 152MW·12개</text>
+  <text x="512" y="170" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">LG유플러스</text>
+  <text x="590" y="170" class="dg-t" font-size="9.5" text-anchor="start">약 300MW → 400MW (2030)</text>
+  <text x="512" y="186" class="dg-s" font-size="9" text-anchor="start">현재 171MW·8개</text>
+  <text x="512" y="212" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">네이버</text>
+  <text x="590" y="212" class="dg-t" font-size="9.5" text-anchor="start">1GW</text>
+  <text x="512" y="228" class="dg-s" font-size="9" text-anchor="start">브룩필드 Asset Light</text>
+  <text x="512" y="254" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">GS</text>
+  <text x="590" y="254" class="dg-t" font-size="9.5" text-anchor="start">2.4GW</text>
+  <text x="512" y="270" class="dg-s" font-size="9" text-anchor="start">Colocation</text>
+  <text x="512" y="296" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">삼성SDS</text>
+  <text x="590" y="296" class="dg-t" font-size="9.5" text-anchor="start">230MW → 830MW (2031)</text>
+  <text x="512" y="338" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">NHN</text>
+  <text x="590" y="338" class="dg-t" font-size="9.5" text-anchor="start">100MW (2027말)</text>
+  <text x="512" y="354" class="dg-s" font-size="9" text-anchor="start">정부 GPU 사업</text>
+  <text x="512" y="388" class="dg-m" font-size="9.5" text-anchor="start">정부 목표: 2035년 18.4GW</text>
+  <text x="6" y="430" class="dg-s" font-size="9.5" text-anchor="start">통신사는 ①을 오래 해 왔고(CSP 고객), 이제 ②·③으로 오르려 한다. NAVER는 ②를 SPV(설비 보유)와 운영사로 나눠 자산을 가볍게, NHN은 정부 GPU로 감가 부담 없이 ②를 한다.</text>
+  <text x="6" y="446" class="dg-m" font-size="9" text-anchor="start">※ 계단 칸의 식·투자·장단점은 NH p.109 표를 옮긴 것이다.</text>
+</svg>

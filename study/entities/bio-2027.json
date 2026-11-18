@@ -1,0 +1,570 @@
+{
+ "_note": "Study › 바이오 › 2027 전망 (3사 종합) 색인 추가분. 기존 키(entities.json·다른 조각)는 재사용하고 여기엔 새 키만.",
+ "c:decoupling": {
+  "name": "디커플링 (한·미 바이오 주가)",
+  "en": "Decoupling",
+  "desc": "같은 업종인데 나라마다 주가 방향이 갈리는 것. 2026년 미국 바이오(XBI·NBI)는 +23~28% 올랐고 한국 코스닥 제약은 -46% 빠졌다. 3사 모두 원인을 반도체·AI 쏠림 수급과 국내 업종 고유 악재(신뢰 훼손)로 본다."
+ },
+ "c:upfront": {
+  "name": "계약금 (업프론트)",
+  "en": "Upfront payment",
+  "desc": "기술이전 계약 때 바로 받는 돈. 총액(마일스톤 포함)은 임상·허가·매출 조건이 붙은 \"최대치\"라, 실제로 확정된 돈은 계약금뿐이다. 다올은 총액 대비 계약금 비중을 미국 10%·중국 6%·한국 약 3%로 비교했다."
+ },
+ "c:milestone": {
+  "name": "마일스톤·로열티",
+  "en": "Milestone / Royalty",
+  "desc": "기술이전 총액 중 계약금 말고 나머지. 임상 진입·허가·매출 목표를 넘을 때마다 받는 돈(마일스톤)과 판매액의 몇 %(로열티). 실패하면 받지 못한다."
+ },
+ "c:licensing": {
+  "name": "기술이전 (L/O)·기술도입",
+  "en": "Licensing out / in",
+  "desc": "신약 후보의 개발·판매 권리를 다른 회사에 넘기는 계약(L/O, 라이선스 아웃). 받는 쪽에선 기술도입(L/I). 국내 바이오텍의 주된 돈벌이이자 주가 재료."
+ },
+ "c:mfn": {
+  "name": "MFN (최혜국 약가)",
+  "en": "Most Favored Nation pricing",
+  "desc": "미국 약값을 다른 선진국 최저 수준에 맞추라는 트럼프 정부의 약가 정책. 빅파마와 개별 협상으로 진행됐고, GLOBE(파트B)·GUARD(파트D) 같은 국제참조가격 모델로 이어진다(NH)."
+ },
+ "c:sec232": {
+  "name": "의약품 232조 관세",
+  "en": "Section 232 pharmaceutical tariff",
+  "desc": "미국 무역확장법 232조(국가안보)로 수입 의약품에 매기는 관세. 미국 내 생산 투자를 약속하면 면제·완화된다 — 국내 CDMO·셀트리온의 미국 공장 투자가 이 맥락이다."
+ },
+ "c:biosecure": {
+  "name": "바이오시큐어법 (생물보안법)",
+  "en": "BIOSECURE Act",
+  "desc": "중국계 바이오 장비·서비스(우시 등)를 미국 연방 조달·보조금에서 빼려는 법. 2024년 초안엔 회사 이름이 있었지만 2025년 말 제정본에서 빠졌고, 우려 기업은 국방부 1260H 목록·OMB 명단으로 따로 정한다. 지정되면 국내 CDMO의 듀얼소싱·신규 수주 기회지만, 기존 계약엔 전환 기간이 있어 수혜까지 시차가 있다."
+ },
+ "c:list-1260h": {
+  "name": "1260H 목록",
+  "en": "DoD Section 1260H list",
+  "desc": "미국 국방부가 지정하는 \"중국 군사기업\" 목록. 바이오시큐어법이 우려 기업을 정하는 한 경로. 우시앱텍은 2026.6 포함됐다가 법원 가처분으로 11월 빠졌다(NH)."
+ },
+ "c:coins-act": {
+  "name": "COINS Act (대중국 투자 규제)",
+  "en": "COINS Act / outbound investment rule",
+  "desc": "미국 법인(제약사·VC)이 중국 민감 기술(바이오 포함)에 지분투자·JV·NewCo를 못 하게 하는 규정. 2026.10 초안(NPRM), 2027년 최종 규칙 예상. 일반 기술이전은 일단 대상이 아니지만, 지분투자가 붙은 계약은 걸릴 수 있다. 국내 바이오텍에는 기술이전 상대가 늘어날 기회로 본다."
+ },
+ "c:newco": {
+  "name": "NewCo 모델",
+  "en": "NewCo deal structure",
+  "desc": "중국 바이오텍이 신약 권리를 미국 VC가 세운 새 회사(NewCo)에 넘기고 지분을 받는 구조. COINS Act 이후 급감했다(다올: 중국 기술이전 중 투자결합형 비중 2026년 급감)."
+ },
+ "c:pbm": {
+  "name": "PBM (약제급여관리업체)",
+  "en": "Pharmacy Benefit Manager",
+  "desc": "미국에서 보험사 대신 약값·처방목록을 협상하는 중간 업체. 리베이트로 이익을 내 약가 거품의 원인으로 지목된다. 2026년 초당적 PBM 개혁법 제정(NH)."
+ },
+ "c:ira-sc": {
+  "name": "IRA의 SC 제형 합산 규칙",
+  "en": "IRA same-drug rule (IV+SC)",
+  "desc": "2026.11.5 CMS 최종 규칙: 같은 회사가 파는 두 제품이 활성성분을 공유하고 제형만 바꾼 것이면 같은 약으로 본다. 피하주사(SC) 제형으로 새로 허가받아도 정맥주사(IV)와 지출을 합쳐 협상 대상에 든다 — 키트루다 Qlex가 IRA를 피하기 어려워졌다는 뜻."
+ },
+ "c:glp1": {
+  "name": "GLP-1 계열 (인크레틴)",
+  "en": "GLP-1 / incretin agonists",
+  "desc": "식욕을 줄이고 인슐린 분비를 돕는 장 호르몬(GLP-1·GIP)을 흉내 낸 약. 위고비(세마글루타이드)·마운자로/젭바운드(터제파타이드)가 1세대 비만약. 2세대는 작용점을 3개로 늘리거나(GLP-1/GIP/GCG) 다른 호르몬(아밀린)을 더한다."
+ },
+ "c:amylin": {
+  "name": "아밀린",
+  "en": "Amylin analogue",
+  "desc": "췌장에서 인슐린과 함께 나와 포만감을 주는 호르몬. GLP-1과 함께 쓰면 감량이 더 크다(카그리세마 = 카그릴린타이드 + 세마글루타이드)."
+ },
+ "c:muscle-preserve": {
+  "name": "근육 보존 비만약",
+  "en": "Muscle-sparing obesity drugs",
+  "desc": "GLP-1로 빠지는 체중의 상당 부분이 근육이라는 문제를 푸는 약. 액티빈·마이오스타틴 억제, UCN2, ALK7 억제 등. 3사 모두 \"감량 폭 다음 경쟁축은 체성분(지방만 빼기)\"이라고 본다."
+ },
+ "c:alk7": {
+  "name": "ALK7",
+  "en": "Activin receptor-like kinase 7",
+  "desc": "지방세포에 있는 수용체. 막으면 지방 분해가 늘고 근육은 지킨다는 가설. siRNA로 간·지방에서 ALK7을 끄는 약(애로우헤드 ARO-ALK7, 올릭스 OLX501A 등)에 빅파마(로슈·GSK)가 2026년 잇달아 들어왔다."
+ },
+ "c:ucn2": {
+  "name": "UCN2 (유로코르틴2)",
+  "en": "Urocortin 2",
+  "desc": "CRF2 수용체에 붙는 펩타이드. 근육을 지키면서 체중을 줄이는 기전으로 연구된다. 한미약품 HM17321(LA-UCN2)이 2026년 제넨텍(로슈)에 기술이전됐다."
+ },
+ "c:sirna": {
+  "name": "siRNA (RNA 간섭)",
+  "en": "Small interfering RNA",
+  "desc": "특정 유전자의 mRNA를 잘라 단백질을 못 만들게 하는 약. 한 번 맞으면 몇 달 간다. 간으로 보내는 GalNAc 기술이 표준이고, 지방·근육 등 간 밖으로 보내는 기술이 경쟁 포인트."
+ },
+ "c:mash": {
+  "name": "MASH (대사이상 지방간염)",
+  "en": "Metabolic dysfunction-associated steatohepatitis",
+  "desc": "비만·당뇨로 간에 지방이 끼고 염증·섬유화가 오는 병(옛 NASH). 비만약(GLP-1 계열)이 MASH로 넓어지는 중. 지표는 \"MASH 해소\"와 \"섬유화 1단계 이상 개선\"."
+ },
+ "c:fcrn": {
+  "name": "FcRn 억제제",
+  "en": "Neonatal Fc receptor inhibitor",
+  "desc": "자가항체(IgG)의 수명을 늘리는 FcRn을 막아 몸속 IgG를 줄이는 약. 중증근무력증·그레이브스병 등 자가항체 질환에 쓴다. 한올바이오파마의 바토클리맙·IMVT-1402가 이 계열."
+ },
+ "c:tl1a": {
+  "name": "TL1A",
+  "en": "TNF-like ligand 1A",
+  "desc": "장 염증(궤양성 대장염·크론병)과 섬유화에 관여하는 사이토카인. MSD·로슈·사노피·애브비가 모두 확보한 면역 분야 최대 타깃."
+ },
+ "c:pd1-vegf": {
+  "name": "PD-(L)1×VEGF 이중항체",
+  "en": "PD-(L)1 x VEGF bispecific",
+  "desc": "면역관문(PD-1)과 혈관 생성(VEGF)을 한 항체로 동시에 막는 약. 이보네시맙이 키트루다를 직접 비교 3상에서 이겨 \"키트루다 다음 백본\" 후보가 됐다. 빅파마 대부분이 중국에서 들여왔다."
+ },
+ "c:cdmo": {
+  "name": "CDMO·CMO",
+  "en": "Contract (Development &) Manufacturing Organization",
+  "desc": "바이오의약품을 대신 만들어 주는 회사. CMO는 생산만, CDMO는 공정 개발까지. 삼성바이오로직스·론자·우시바이오로직스가 3강."
+ },
+ "c:biosimilar-wave": {
+  "name": "바이오시밀러 웨이브",
+  "en": "Biosimilar waves",
+  "desc": "블록버스터 특허가 몰려 끝나는 시기마다 시밀러 출시가 몰리는 것. 셀트리온은 2028~2030년을 \"3차 웨이브\"로 본다(키트루다·옵디보 등)."
+ },
+ "c:fda-bs-reform": {
+  "name": "FDA 바이오시밀러 요건 완화",
+  "en": "FDA biosimilar development reform",
+  "desc": "FDA가 바이오시밀러 비교 임상(3상)을 원칙적으로 면제하고, 교체처방(interchangeable) 지정 요건도 낮추는 방향. 개발비·기간이 줄어 시밀러 대상 약이 많아진다(다올·NH)."
+ },
+ "c:aidd": {
+  "name": "AI 신약개발 (AIDD)",
+  "en": "AI-driven drug discovery",
+  "desc": "AI로 타깃 발굴·후보 설계·임상 설계를 하는 것. NH는 \"2.0 단계\"에 들어섰고 2028년 말~29년 첫 AI 신약 3상 결과가 다음 변곡점이라 본다. 다올은 \"이제는 임상 성과로 증명할 때\"."
+ },
+ "c:ai-biomarker": {
+  "name": "AI 바이오마커",
+  "en": "AI biomarker",
+  "desc": "AI가 병리 이미지 등에서 약이 잘 들을 환자를 골라내는 진단 지표. 아스트라제네카 AVANZAR 3상(1Q27)이 AI 바이오마커를 쓰는 첫 3상(NH)."
+ },
+ "c:pdufa": {
+  "name": "PDUFA 날짜",
+  "en": "PDUFA date",
+  "desc": "FDA가 신약 허가 여부를 정하기로 약속한 기한."
+ },
+ "c:crl": {
+  "name": "CRL (보완요구서한)",
+  "en": "Complete Response Letter",
+  "desc": "FDA가 \"지금 상태로는 허가 못 한다\"며 보완을 요구하는 편지. 사실상 반려. HLB는 2024.5·2025.3·2026.7 세 번 받았다."
+ },
+ "c:sotp": {
+  "name": "SOTP (부분 합산 가치)",
+  "en": "Sum-of-the-parts",
+  "desc": "회사를 사업별로 쪼개 각각 값을 매긴 뒤 더하는 방식. 다올은 4종목 모두 SOTP로 목표주가를 냈다(본업 + 신약 파이프라인 + 순현금 등)."
+ },
+ "c:ev-ebitda": {
+  "name": "EV/EBITDA",
+  "en": "EV / EBITDA",
+  "desc": "기업가치(시총 + 순부채)를 상각 전 영업이익으로 나눈 배수. 설비가 큰 CDMO·시밀러 회사를 비교할 때 NH가 썼다."
+ },
+ "c:top-tier-bs": {
+  "name": "시밀러 상위 사업자 재편",
+  "en": "Top-tier biosimilar consolidation",
+  "desc": "요건 완화로 개발 장벽이 낮아지면 가격 경쟁이 세져, 개발·생산·판매를 다 갖춘 대형사 중심으로 재편된다는 시각(다올·NH)."
+ },
+ "ind:obesity": {
+  "name": "비만",
+  "en": "Obesity",
+  "desc": "GLP-1 계열이 연 매출 수백억 달러로 키운 시장. 2027년엔 감량 폭보다 체성분·편의성(경구·월 1회)이 경쟁축."
+ },
+ "ind:graves": {
+  "name": "그레이브스병",
+  "en": "Graves' disease",
+  "desc": "갑상선을 자극하는 자가항체 때문에 생기는 갑상선기능항진증. 약을 끊으면 재발이 잦다. FcRn 억제로 자가항체를 줄이는 접근(IMVT-1402)이 2027년 허가용 임상 결과를 낸다. 미국 재발 잠재 환자 약 33만명(교보)."
+ },
+ "ind:mg": {
+  "name": "중증근무력증 (MG)",
+  "en": "Myasthenia gravis",
+  "desc": "신경-근육 연결부를 공격하는 자가항체로 근육이 약해지는 병. FcRn 억제제(비브가르트 등)의 첫 시장."
+ },
+ "ind:ra": {
+  "name": "류마티스관절염 (RA)",
+  "en": "Rheumatoid arthritis",
+  "desc": "관절을 공격하는 자가면역 질환. D2T(difficult-to-treat)는 기존 약 2가지 이상에 실패한 환자."
+ },
+ "ind:epilepsy": {
+  "name": "뇌전증",
+  "en": "Epilepsy",
+  "desc": "뇌 신경세포의 비정상 방전으로 발작이 반복되는 병. SK바이오팜 엑스코프리(세노바메이트)의 시장."
+ },
+ "ind:alzheimers": {
+  "name": "알츠하이머병",
+  "en": "Alzheimer's disease",
+  "desc": "치매의 가장 흔한 원인. 항아밀로이드 항체(레켐비·키순라) 다음으로 경구약·무증상 단계 예방이 관전 포인트."
+ },
+ "ind:uc": {
+  "name": "궤양성 대장염",
+  "en": "Ulcerative colitis",
+  "desc": "대장 점막에 염증이 반복되는 염증성 장질환(IBD). TL1A 계열의 첫 시장."
+ },
+ "ind:amd": {
+  "name": "황반변성",
+  "en": "Age-related macular degeneration",
+  "desc": "망막 중심(황반)이 망가지는 노인성 실명 원인. 습성은 아일리아(VEGF 억제) 눈 주사가 표준."
+ },
+ "co:samsung-biologics": {
+  "name": "삼성바이오로직스",
+  "en": "Samsung Biologics",
+  "code": "207940",
+  "bio": {
+   "m": "kr",
+   "c": "207940"
+  },
+  "desc": "세계 최대급 바이오의약품 CDMO. 1~4공장 풀가동, 5공장 램프업, 미국 록빌 공장(6만L) 인수, 폴리펩타이드 인수로 펩타이드 CDMO 진출. 다올 목표가 200만원(SOTP)."
+ },
+ "co:sk-biopharm": {
+  "name": "SK바이오팜",
+  "en": "SK Biopharmaceuticals",
+  "code": "326030",
+  "bio": {
+   "m": "kr",
+   "c": "326030"
+  },
+  "desc": "뇌전증 신약 엑스코프리(세노바메이트)를 미국에서 직접 판다. 2027년 미국 매출 1조원 돌파 전망. 두 번째 상업화 후보로 오파칼림을 바이오헤이븐에서 들여왔다. 다올 16만·교보 15만원."
+ },
+ "co:olix": {
+  "name": "올릭스",
+  "en": "OliX Pharmaceuticals",
+  "code": "226950",
+  "bio": {
+   "m": "kr",
+   "c": "226950"
+  },
+  "desc": "siRNA 신약 회사. 비만 ALK7(OLX501A), MASH(OLX702A, 릴리 기술이전), 황반변성(OLX301A), 탈모(OLX104C). 교보 톱픽(Not Rated)."
+ },
+ "co:hlb": {
+  "name": "HLB",
+  "en": "HLB",
+  "code": "028300",
+  "bio": {
+   "m": "kr",
+   "c": "028300"
+  },
+  "desc": "간암 신약 리보세라닙+캄렐리주맙 병용으로 미국 허가에 도전 중. CRL을 세 번(2024.5·2025.3·2026.7) 받았고 4번째 PDUFA가 2027.4.9."
+ },
+ "co:aribio": {
+  "name": "아리바이오",
+  "en": "AriBio",
+  "desc": "비상장. 경구 알츠하이머 약 AR1001(PDE5 억제, 약물 재창출) 글로벌 3상을 2026.11 CTAD에서 발표. 중국 푸싱제약에 기술이전(선급 900억원)."
+ },
+ "co:sk-bioscience": {
+  "name": "SK바이오사이언스",
+  "en": "SK bioscience",
+  "code": "302440",
+  "bio": {
+   "m": "kr",
+   "c": "302440"
+  },
+  "desc": "백신 회사. 소아용 폐렴구균 백신(GBP410) 글로벌 3상 결과가 2H27(NH 별 3개)."
+ },
+ "co:hk-inno-n": {
+  "name": "HK이노엔",
+  "en": "HK inno.N",
+  "code": "195940",
+  "bio": {
+   "m": "kr",
+   "c": "195940"
+  },
+  "desc": "위산 분비 억제제 케이캡(테고프라잔). 미국 FDA 허가(1Q27)와 유럽 기술이전이 2027 모멘텀(NH)."
+ },
+ "co:daewoong": {
+  "name": "대웅제약",
+  "en": "Daewoong Pharmaceutical",
+  "code": "069620",
+  "bio": {
+   "m": "kr",
+   "c": "069620"
+  },
+  "desc": "보툴리눔 톡신 나보타(메디톡스와 민사 2심 1Q27), 베르시포로신 탑라인(1H27)."
+ },
+ "co:dnd-pharmatech": {
+  "name": "디앤디파마텍",
+  "en": "D&D Pharmatech",
+  "code": "347850",
+  "bio": {
+   "m": "kr",
+   "c": "347850"
+  },
+  "desc": "경구·장기지속 펩타이드 비만·MASH 후보 DD01의 글로벌 기술이전을 추진(NH 1H27, 교보 2026 연내 목표)."
+ },
+ "co:immunovant": {
+  "name": "이뮤노반트",
+  "en": "Immunovant",
+  "ticker": "IMVT",
+  "desc": "한올바이오파마의 FcRn 억제제(바토클리맙·IMVT-1402) 북미·유럽 권리를 가진 미국 회사. 시총 약 9.9조원(NH)."
+ },
+ "co:novo": {
+  "name": "노보 노디스크",
+  "en": "Novo Nordisk",
+  "ticker": "NVO",
+  "desc": "위고비·오젬픽(세마글루타이드). 다음 비만약은 카그리세마(아밀린+GLP-1, 4Q26 FDA 승인 예정)와 3중 작용제 UBT251(중국에서 도입, 계약 규모 20억 달러 — NH)."
+ },
+ "co:sanofi": {
+  "name": "사노피",
+  "en": "Sanofi",
+  "ticker": "SNY",
+  "desc": "듀피젠트(아토피·천식) 특허 만료를 앞두고 면역 분야 대형 인수가 필요한 회사(교보). TL1A도 확보."
+ },
+ "co:hengrui": {
+  "name": "항서제약 (Hengrui)",
+  "en": "Jiangsu Hengrui",
+  "desc": "중국 최대 제약사. 2026년 BMS에 최대 $15.2B 항암 기술이전, 3중 작용제 비만약 KAI-4729(중국 2상·글로벌 1상 준비, NH)."
+ },
+ "co:arrowhead": {
+  "name": "애로우헤드",
+  "en": "Arrowhead Pharmaceuticals",
+  "ticker": "ARWR",
+  "desc": "siRNA 회사. ARO-ALK7(비만, 8주 내장지방 -14.1%)·ARO-INHBE, 플로자시란(중성지방, 3상에서 급성 췌장염 78% 감소)."
+ },
+ "co:alnylam": {
+  "name": "알닐람",
+  "en": "Alnylam Pharmaceuticals",
+  "ticker": "ALNY",
+  "desc": "최대 RNAi 회사. ALK7 siRNA ALN-2232를 초기 개발 중."
+ },
+ "co:biohaven": {
+  "name": "바이오헤이븐",
+  "en": "Biohaven",
+  "ticker": "BHVN",
+  "desc": "SK바이오팜에 Kv7 활성화제 오파칼림(BHV-7000)을 넘긴 미국 회사(2026.8, 선급 4억 달러)."
+ },
+ "co:biomarin": {
+  "name": "바이오마린",
+  "en": "BioMarin",
+  "ticker": "BMRN",
+  "desc": "희귀질환 회사. 2026.10 한미약품·녹십자의 파브리병 후보 HM15421(LA-GLA)을 6,347억원에 도입."
+ },
+ "co:wuxi-apptec": {
+  "name": "우시앱텍",
+  "en": "WuXi AppTec",
+  "ticker": "2359.HK",
+  "desc": "중국 최대 CRO·CDMO. 2026.6 미국 국방부 1260H 목록에 올랐다가 법원 가처분으로 11월 빠졌다. OMB 명단(12월)에 다시 오를지가 관전 포인트."
+ },
+ "co:wuxi-bio": {
+  "name": "우시바이오로직스",
+  "en": "WuXi Biologics",
+  "ticker": "2269.HK",
+  "desc": "중국 바이오의약품 CDMO. 2024년 생물보안법 초안에 이름이 있었다(제정본에선 빠짐). 2027F 영업이익률 33.3%, EV/EBITDA 13.6배(NH 컨센)."
+ },
+ "co:lonza": {
+  "name": "론자",
+  "en": "Lonza",
+  "ticker": "LONN",
+  "desc": "스위스 CDMO. 삼성바이오로직스의 대표 경쟁사. 2027F 영업이익률 24.6%, EV/EBITDA 18.5배(NH 컨센)."
+ },
+ "co:sandoz": {
+  "name": "산도즈",
+  "en": "Sandoz",
+  "ticker": "SDZ",
+  "desc": "노바티스에서 분사한 세계 최대 제네릭·바이오시밀러 회사. 셀트리온의 비교 대상(2027F EV/EBITDA 16.4배)."
+ },
+ "co:biocon": {
+  "name": "바이오콘",
+  "en": "Biocon Biologics",
+  "desc": "인도 바이오시밀러 회사. 2027F 영업이익률 10.1%(NH 컨센)."
+ },
+ "co:insilico": {
+  "name": "인실리코 메디슨",
+  "en": "Insilico Medicine",
+  "desc": "AI 신약 회사. AI로 찾은 타깃(TNIK)·설계한 렌토서팁(특발성 폐섬유증)이 2026.7 3상에 들어갔다. 릴리(27.5억 달러)·다케다와 계약, SK바이오팜과도 협력."
+ },
+ "co:isomorphic": {
+  "name": "아이소모픽 랩스",
+  "en": "Isomorphic Labs",
+  "desc": "구글 딥마인드에서 나온 AI 신약 회사(알파폴드). 2026.5 시리즈 B 21억 달러(다올), 시리즈 C 기업가치 400억 달러 기대·첫 임상 진입(NH)."
+ },
+ "co:tempus": {
+  "name": "템퍼스 AI",
+  "en": "Tempus AI",
+  "ticker": "TEM",
+  "desc": "임상·유전체 데이터 회사. 아스트라제네카와 데이터 파운데이션 모델 2.0을 만든다(NH)."
+ },
+ "co:absci": {
+  "name": "앱사이",
+  "en": "Absci",
+  "ticker": "ABSI",
+  "desc": "AI 항체 설계 회사. 탈모 후보 ABS-201 1/2상 26주 유효성 데이터가 1Q27(NH)."
+ },
+ "d:retatrutide": {
+  "name": "레타트루타이드",
+  "en": "Retatrutide (LY3437943)",
+  "co": [
+   "co:lilly"
+  ],
+  "tags": [
+   "c:glp1"
+  ],
+  "mod": "펩타이드 (3중 작용제)",
+  "desc": "GLP-1/GIP/글루카곤 3중 작용제. TRIUMPH-1 80주 최대 28.3% 감량(교보). 1Q27 FDA 신청. NH는 릴리의 다음 비만 백본으로 본다."
+ },
+ "d:cagrisema": {
+  "name": "카그리세마",
+  "en": "CagriSema (cagrilintide + semaglutide)",
+  "co": [
+   "co:novo"
+  ],
+  "tags": [
+   "c:amylin",
+   "c:glp1"
+  ],
+  "mod": "펩타이드 복합제",
+  "desc": "아밀린 유사체 카그릴린타이드 + 세마글루타이드. 4Q26 FDA 승인 예정, 고용량 3상은 2027~28년(NH)."
+ },
+ "d:semaglutide": {
+  "name": "세마글루타이드 (위고비·오젬픽)",
+  "en": "Semaglutide",
+  "co": [
+   "co:novo"
+  ],
+  "tags": [
+   "c:glp1"
+  ],
+  "mod": "펩타이드",
+  "desc": "1세대 대표 GLP-1. IRA 2차 협상가 30일분 274달러(정가 959달러 대비 -71%), MFN 합의 인하도 따로 붙는다(다올). MASH도 FDA 가속승인."
+ },
+ "d:tirzepatide": {
+  "name": "터제파타이드 (마운자로·젭바운드)",
+  "en": "Tirzepatide",
+  "co": [
+   "co:lilly"
+  ],
+  "tags": [
+   "c:glp1"
+  ],
+  "mod": "펩타이드 (2중 작용제)",
+  "desc": "GLP-1/GIP 2중 작용제. 현재 감량 효과 1위 비만약. 국내 소비자가 2개월 약 67.8만원(교보)."
+ },
+ "d:efpeglenatide": {
+  "name": "에페 (에페글레나타이드)",
+  "en": "Efpeglenatide",
+  "co": [
+   "co:hanmi-pharm"
+  ],
+  "tags": [
+   "c:glp1"
+  ],
+  "mod": "펩타이드 (주 1회)",
+  "desc": "한미약품의 GLP-1. 2026.10~11 국내 허가·출시된 첫 국산 GLP-1 비만약. 3상 40주 -9.75%. 첫해 목표 1,000억원."
+ },
+ "d:hm15275": {
+  "name": "HM15275 (LA-TRIA, 잔트루타이드)",
+  "en": "HM15275",
+  "co": [
+   "co:hanmi-pharm"
+  ],
+  "tags": [
+   "c:glp1"
+  ],
+  "mod": "펩타이드 (3중 작용제)",
+  "desc": "한미약품의 GLP-1/GIP/글루카곤 3중 작용제. 미국 2상 1H27 종료, 데이터 2027년 중순~하반기. 다음 대형 기술이전 후보(3사 공통)."
+ },
+ "d:hm17321": {
+  "name": "HM17321 (LA-UCN2)",
+  "en": "HM17321",
+  "co": [
+   "co:hanmi-pharm",
+   "co:roche"
+  ],
+  "tags": [
+   "c:ucn2",
+   "c:muscle-preserve"
+  ],
+  "mod": "펩타이드",
+  "desc": "근육은 지키고 지방만 빼는 UCN2 유사체. 2026.8 제넨텍(로슈)에 총 23.1억 달러·계약금 1.9억 달러에 기술이전. 영장류 84일 체지방 -76.6%, 제지방 +8.3%. 1상 완료 2027.3."
+ },
+ "d:efinopegdutide": {
+  "name": "에피노페그듀타이드",
+  "en": "Efinopegdutide (MK-6024, HM12525A)",
+  "co": [
+   "co:merck",
+   "co:hanmi-pharm"
+  ],
+  "tags": [
+   "c:glp1",
+   "c:mash"
+  ],
+  "mod": "펩타이드 (2중 작용제)",
+  "desc": "GLP-1/글루카곤 2중 작용제. 한미가 MSD에 넘겼다. MASH 2b상 7mg 해소 63%·섬유화 개선 52%. 3상 진입 여부가 2027 변수."
+ },
+ "d:sonefeglutide": {
+  "name": "소네페글루타이드 (HM15912)",
+  "en": "Sonefeglutide",
+  "co": [
+   "co:hanmi-pharm",
+   "co:lilly"
+  ],
+  "tags": [],
+  "mod": "펩타이드 (GLP-2)",
+  "desc": "단장증후군용 장기지속 GLP-2. 2026.6 릴리에 1조 8,973억원(계약금 6.0%)에 기술이전."
+ },
+ "d:olx501a": {
+  "name": "OLX501A",
+  "en": "OLX501A",
+  "co": [
+   "co:olix"
+  ],
+  "tags": [
+   "c:alk7",
+   "c:sirna"
+  ],
+  "mod": "siRNA",
+  "desc": "올릭스의 ALK7 siRNA 비만약. 비만 영장류에서 ALK7 89% 억제·내장지방 -29%. 1H27 1상 IND 목표."
+ },
+ "d:imvt-1402": {
+  "name": "IMVT-1402",
+  "en": "IMVT-1402",
+  "co": [
+   "co:hanall",
+   "co:immunovant"
+  ],
+  "tags": [
+   "c:fcrn"
+  ],
+  "mod": "단일항체",
+  "desc": "한올바이오파마가 만든 차세대 FcRn 억제제(바토클리맙 후속). 그레이브스병 허가용 2b상·중증근무력증 결과가 2027년. 난치성 류마티스관절염 600mg ACR20 92.5%."
+ },
+ "d:cenobamate": {
+  "name": "엑스코프리 (세노바메이트)",
+  "en": "Xcopri (cenobamate)",
+  "co": [
+   "co:sk-biopharm"
+  ],
+  "tags": [],
+  "mod": "저분자",
+  "desc": "SK바이오팜이 개발·미국 직판하는 뇌전증 약. 월 처방 5만 건 돌파, 2027년 미국 매출 1조원 이상 전망. 전신발작·소아 적응증 확장 2027."
+ },
+ "d:ofkalim": {
+  "name": "오파칼림 (BHV-7000)",
+  "en": "Opakalim (BHV-7000)",
+  "co": [
+   "co:sk-biopharm",
+   "co:biohaven"
+  ],
+  "tags": [],
+  "mod": "저분자",
+  "desc": "Kv7.2/7.3 칼륨 채널 활성화 뇌전증 후보. SK바이오팜이 2026.8 도입(최대 7.95억 달러). RISE2 부분 임상 보류, RISE3 탑라인 2026년 12월."
+ },
+ "d:eylea": {
+  "name": "아일리아",
+  "en": "Eylea (aflibercept)",
+  "co": [
+   "co:regeneron"
+  ],
+  "tags": [
+   "c:vegf"
+  ],
+  "mod": "융합단백질",
+  "desc": "황반변성 눈 주사. 2mg 매출 2022년 102억 → 2027년 33억 달러(다올). 셀트리온 아이덴젤트 2026.12.31, 삼성 오퓨비즈 2027.1부터 미국 출시 가능."
+ },
+ "d:rivoceranib": {
+  "name": "리보세라닙",
+  "en": "Rivoceranib",
+  "co": [
+   "co:hlb"
+  ],
+  "tags": [
+   "c:vegf",
+   "c:tki"
+  ],
+  "mod": "저분자",
+  "desc": "HLB의 VEGFR-2 억제제. 캄렐리주맙(PD-1)과 간암 1차 병용으로 미국 허가 신청, 4번째 PDUFA 2027.4.9."
+ }
+}

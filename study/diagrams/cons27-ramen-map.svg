@@ -1,0 +1,45 @@
+<svg viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="한국 라면 수출 지도: 미국·중국·유럽·중남미와 삼양식품 CAPA">
+  <defs><marker id="cons27-ramen-mapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="380" y="22" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">라면 수출 지도 — 2026년 1~10월 19.2억 달러(+26%), 다음 무대는 유럽·중남미</text>
+  <rect x="270" y="175" width="220" height="110" rx="8" class="dg-lane1"/>
+  <text x="380.0" y="194" class="dg-t" font-size="12" font-weight="700" text-anchor="middle">한국 라면 수출</text>
+  <text x="380.0" y="211" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">19.2억 달러 (+26%, 1~10월)</text>
+  <text x="380.0" y="228" class="dg-s" font-size="10.5" text-anchor="middle">물량 기여 22.7%p</text>
+  <text x="380.0" y="245" class="dg-s" font-size="10.5" text-anchor="middle">단가 기여 3.6%p</text>
+  <text x="380.0" y="262" class="dg-s" font-size="10.5" text-anchor="middle">kg당 4.2$ (미국 5.2 · 중국 3.7)</text>
+  <rect x="10" y="45" width="240" height="130" rx="8" class="dg-panel"/>
+  <text x="20" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">미국 — 성숙 시장, 점유율 싸움</text>
+  <text x="20" y="81" class="dg-s" font-size="10.5" text-anchor="start">소비 52.3억 식, 5년 연 +0.7%</text>
+  <text x="20" y="98" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">수출 2.5억$ (+26%)</text>
+  <text x="20" y="115" class="dg-s" font-size="10.5" text-anchor="start">도요수산 47 → 34% (2020→25)</text>
+  <text x="20" y="132" class="dg-s" font-size="10.5" text-anchor="start">농심 22 → 32% · 삼양 4 → 12%</text>
+  <text x="20" y="149" class="dg-s" font-size="10.5" text-anchor="start">한국 라면 1.5$ vs 일본 0.5~0.8$</text>
+  <rect x="510" y="45" width="240" height="130" rx="8" class="dg-panel"/>
+  <text x="520" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">유럽 — 이제 개화</text>
+  <text x="520" y="81" class="dg-s" font-size="10.5" text-anchor="start">18개국 30억 식, 연 +7% (→2030 +6%)</text>
+  <text x="520" y="98" class="dg-s" font-size="10.5" text-anchor="start">1인당 4개 (미국 15 · 멕시코 12)</text>
+  <text x="520" y="115" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">수출 2.5억$ (+38%, 1~9월)</text>
+  <text x="520" y="132" class="dg-s" font-size="10.5" text-anchor="start">네덜란드 9,600만$ · 영국 6,000만$</text>
+  <text x="520" y="149" class="dg-s" font-size="10.5" text-anchor="start">거래선 조정 → 2027 재가속(교보)</text>
+  <rect x="10" y="300" width="240" height="130" rx="8" class="dg-panel"/>
+  <text x="20" y="319" class="dg-t" font-size="12" font-weight="700" text-anchor="start">중국 — 수출에서 현지 생산으로</text>
+  <text x="20" y="336" class="dg-s" font-size="10.5" text-anchor="start">수출 +24% (1~10월)</text>
+  <text x="20" y="353" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">삼양 자싱 공장 2027.1 가동</text>
+  <text x="20" y="370" class="dg-s" font-size="10.5" text-anchor="start">11억 식대, 투자 2,072억원</text>
+  <text x="20" y="387" class="dg-s" font-size="10.5" text-anchor="start">중국 물량 이관 → 밀양 여력은</text>
+  <text x="20" y="404" class="dg-s" font-size="10.5" text-anchor="start">미국·유럽(고단가)으로</text>
+  <rect x="510" y="300" width="240" height="130" rx="8" class="dg-panel"/>
+  <text x="520" y="319" class="dg-t" font-size="12" font-weight="700" text-anchor="start">중남미 — 차세대 엔진 (교보)</text>
+  <text x="520" y="336" class="dg-s" font-size="10.5" text-anchor="start">8개국 49.3억 식 ≈ 미국 규모</text>
+  <text x="520" y="353" class="dg-t" font-size="10.5" font-weight="700" text-anchor="start">중남미 수출 +140% (1~9월)</text>
+  <text x="520" y="370" class="dg-s" font-size="10.5" text-anchor="start">멕시코 4,490만$ (+182%) · 비중 73%</text>
+  <text x="520" y="387" class="dg-s" font-size="10.5" text-anchor="start">브라질: 닛신 77%, 한국 약 0.1%</text>
+  <text x="520" y="404" class="dg-s" font-size="10.5" text-anchor="start">삼양 브라질 법인(2026.9)</text>
+  <line x1="270" y1="200" x2="252" y2="150" class="dg-arrow" marker-end="url(#cons27-ramen-mapA)"/>
+  <line x1="490" y1="200" x2="508" y2="150" class="dg-arrow" marker-end="url(#cons27-ramen-mapA)"/>
+  <line x1="270" y1="260" x2="252" y2="320" class="dg-arrow" marker-end="url(#cons27-ramen-mapA)"/>
+  <line x1="490" y1="260" x2="508" y2="320" class="dg-arrow" marker-end="url(#cons27-ramen-mapA)"/>
+  <rect x="10" y="445" width="740" height="48" rx="8" class="dg-lane3"/>
+  <text x="20" y="465" class="dg-t" font-size="11.5" font-weight="700" text-anchor="start">삼양식품 CAPA 사다리</text>
+  <text x="20" y="484" class="dg-s" font-size="10.5" text-anchor="start">기존 국내 ≈ 27.5억 식(역산)  →  + 중국 11억 식 (2027.1, +약 40%)  →  + 베트남 11억 식 (2029.1, 2,186억원, +약 30%)  ≈ 49.5억 식</text>
+</svg>

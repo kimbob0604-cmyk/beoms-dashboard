@@ -1,0 +1,61 @@
+<svg viewBox="0 0 720 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2027년 분기별 글로벌·국내 제약바이오 이벤트 일정표">
+  <defs><marker id="bio27-calendarA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">2027 일정표 — 세 하우스의 일정 표를 한 장으로</text>
+  <rect x="10" y="34" width="134" height="26" rx="6" class="dg-lo"/>
+  <text x="77" y="52" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">2026 말</text>
+  <rect x="10" y="66" width="134" height="100" rx="6" class="dg-lane1"/>
+  <text x="17" y="86" class="dg-s" font-size="10" text-anchor="start">OMB 우려 기업 명단 12/18</text>
+  <text x="17" y="105" class="dg-s" font-size="10" text-anchor="start">카그리세마 승인</text>
+  <text x="17" y="124" class="dg-s" font-size="10" text-anchor="start">HARMONi-3 편평 (4Q)</text>
+  <rect x="10" y="172" width="134" height="100" rx="6" class="dg-lane2"/>
+  <text x="17" y="192" class="dg-s" font-size="10" text-anchor="start">오파칼림 RISE3 탑라인 (12월)</text>
+  <text x="17" y="211" class="dg-s" font-size="10" text-anchor="start">아이덴젤트 미국 12/31</text>
+  <text x="17" y="230" class="dg-s" font-size="10" text-anchor="start">DD01 기술이전 목표</text>
+  <rect x="152" y="34" width="134" height="26" rx="6" class="dg-hi"/>
+  <text x="219" y="52" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">1Q27</text>
+  <rect x="152" y="66" width="134" height="100" rx="6" class="dg-lane1"/>
+  <text x="159" y="86" class="dg-t" font-size="10" font-weight="800" text-anchor="start">레타트루타이드 FDA 신청</text>
+  <text x="159" y="105" class="dg-t" font-size="10" font-weight="800" text-anchor="start">IRA 2029 대상 발표 2/1</text>
+  <text x="159" y="124" class="dg-s" font-size="10" text-anchor="start">AVANZAR (AI 바이오마커)</text>
+  <text x="159" y="143" class="dg-s" font-size="10" text-anchor="start">COINS 최종 규칙 (3월)</text>
+  <rect x="152" y="172" width="134" height="100" rx="6" class="dg-lane2"/>
+  <text x="159" y="192" class="dg-s" font-size="10" text-anchor="start">HM17321 1상 완료 (3월)</text>
+  <text x="159" y="211" class="dg-s" font-size="10" text-anchor="start">케이캡 FDA 허가</text>
+  <text x="159" y="230" class="dg-s" font-size="10" text-anchor="start">OLX501A 옵션 기한 3/31</text>
+  <text x="159" y="249" class="dg-s" font-size="10" text-anchor="start">세노바메이트 현탁액</text>
+  <rect x="294" y="34" width="134" height="26" rx="6" class="dg-hi"/>
+  <text x="361" y="52" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">2Q27</text>
+  <rect x="294" y="66" width="134" height="100" rx="6" class="dg-lane1"/>
+  <text x="301" y="86" class="dg-t" font-size="10" font-weight="800" text-anchor="start">HARMONi-3 비편평 (1H)</text>
+  <text x="301" y="105" class="dg-s" font-size="10" text-anchor="start">sac-TMT 첫 PDUFA 6/15</text>
+  <text x="301" y="124" class="dg-s" font-size="10" text-anchor="start">바이오시큐어 지침 (6월)</text>
+  <rect x="294" y="172" width="134" height="100" rx="6" class="dg-lane2"/>
+  <text x="301" y="192" class="dg-t" font-size="10" font-weight="800" text-anchor="start">HLB PDUFA 4/9</text>
+  <text x="301" y="211" class="dg-t" font-size="10" font-weight="800" text-anchor="start">HM15275 2상 종료 (1H)</text>
+  <text x="301" y="230" class="dg-s" font-size="10" text-anchor="start">OLX501A IND (1H)</text>
+  <text x="301" y="249" class="dg-s" font-size="10" text-anchor="start">VRN11 기술이전 (1H)</text>
+  <rect x="436" y="34" width="134" height="26" rx="6" class="dg-hi"/>
+  <text x="503" y="52" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">3Q27</text>
+  <rect x="436" y="66" width="134" height="100" rx="6" class="dg-lane1"/>
+  <text x="443" y="86" class="dg-s" font-size="10" text-anchor="start">TROPION-Lung15 (2~3Q)</text>
+  <rect x="436" y="172" width="134" height="100" rx="6" class="dg-lane2"/>
+  <text x="443" y="192" class="dg-s" font-size="10" text-anchor="start">유한 MARIPOSA OS (2~3Q)</text>
+  <text x="443" y="211" class="dg-s" font-size="10" text-anchor="start">HM17321 1상 데이터 (2~3Q)</text>
+  <text x="443" y="230" class="dg-s" font-size="10" text-anchor="start">한미 LA-TRIA 2상 데이터</text>
+  <text x="443" y="249" class="dg-s" font-size="10" text-anchor="start">(NH 2027 중순 · 2H)</text>
+  <rect x="578" y="34" width="134" height="26" rx="6" class="dg-hi"/>
+  <text x="645" y="52" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">4Q27</text>
+  <rect x="578" y="66" width="134" height="100" rx="6" class="dg-lane1"/>
+  <text x="585" y="86" class="dg-s" font-size="10" text-anchor="start">TroFuse-004 (2H~)</text>
+  <text x="585" y="105" class="dg-s" font-size="10" text-anchor="start">키순라 무증상 AD (4Q~)</text>
+  <text x="585" y="124" class="dg-s" font-size="10" text-anchor="start">BsUFA 만료 (9월)</text>
+  <rect x="578" y="172" width="134" height="100" rx="6" class="dg-lane2"/>
+  <text x="585" y="192" class="dg-t" font-size="10" font-weight="800" text-anchor="start">IMVT-1402 그레이브스</text>
+  <text x="585" y="211" class="dg-s" font-size="10" text-anchor="start">GBP410 3상 (2H)</text>
+  <text x="585" y="230" class="dg-s" font-size="10" text-anchor="start">YH35324 CSU 2상</text>
+  <text x="585" y="249" class="dg-s" font-size="10" text-anchor="start">OLX104C 2a 종료 (11월)</text>
+  <text x="140" y="162" class="dg-m" font-size="9" font-weight="700" text-anchor="end">글로벌</text>
+  <text x="140" y="268" class="dg-m" font-size="9" font-weight="700" text-anchor="end">국내</text>
+  <text x="360" y="296" class="dg-m" font-size="10" text-anchor="middle">굵은 글씨 = 두 하우스 이상이 적은 일정. 출처: NH p.207~210·214 · 교보 p.21~22 · 다올 p.22~24·31·37.</text>
+  <text x="360" y="312" class="dg-m" font-size="10" text-anchor="middle">하우스마다 시기가 다르면(예: LA-TRIA 2상) 둘 다 적었다.</text>
+</svg>

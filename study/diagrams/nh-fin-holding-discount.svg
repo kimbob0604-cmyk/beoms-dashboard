@@ -1,0 +1,74 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="지주회사 할인 구조: SK 주주가 SK하이닉스를 갖는 경로, 할인이 생기는 이유와 줄이는 정책">
+  <defs><marker id="nh-fin-holding-discountA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">지주회사 할인 — 왜 생기고, 무엇이 줄이나</text>
+
+  <!-- 왼쪽: 지분 사슬 -->
+  <rect x="10" y="34" width="220" height="300" rx="8" class="dg-lane1"/>
+  <text x="120" y="54" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">예: SK 주주가 하이닉스를 갖는 길</text>
+  <rect x="35" y="66" width="170" height="38" rx="6" class="dg-panel"/>
+  <text x="120" y="82" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">SK 주주</text>
+  <text x="120" y="97" class="dg-m" font-size="10" text-anchor="middle">자사주 24.8% (20.3% 소각 예정)</text>
+  <rect x="35" y="124" width="170" height="38" rx="6" class="dg-hi"/>
+  <text x="120" y="140" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">SK (지주)</text>
+  <text x="120" y="155" class="dg-s" font-size="10" text-anchor="middle">시총 32.5조 · NAV 할인 60.2%</text>
+  <rect x="35" y="182" width="170" height="38" rx="6" class="dg-mid"/>
+  <text x="120" y="198" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">SK스퀘어 (중간지주)</text>
+  <text x="120" y="213" class="dg-s" font-size="10" text-anchor="middle">SK가 32.2% 보유</text>
+  <rect x="35" y="240" width="170" height="38" rx="6" class="dg-mid"/>
+  <text x="120" y="256" class="dg-t" font-size="11.5" font-weight="700" text-anchor="middle">SK하이닉스</text>
+  <text x="120" y="271" class="dg-s" font-size="10" text-anchor="middle">SK스퀘어가 20.0% 보유</text>
+  <g class="dg-arrow" marker-end="url(#nh-fin-holding-discountA)">
+    <line x1="120" y1="105" x2="120" y2="122"/><line x1="120" y1="163" x2="120" y2="180"/><line x1="120" y1="221" x2="120" y2="238"/>
+  </g>
+  <text x="120" y="298" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">SK 1주에 담긴 하이닉스 몫</text>
+  <text x="120" y="314" class="dg-s" font-size="10.5" text-anchor="middle">32.2% × 20.0% ≈ 6.4%</text>
+  <text x="120" y="328" class="dg-m" font-size="9.5" text-anchor="middle">두 번 거쳐 가서 할인도 두 번 붙는다</text>
+
+  <!-- 가운데: 할인 이유 -->
+  <rect x="245" y="34" width="225" height="300" rx="8" class="dg-panel"/>
+  <text x="357" y="54" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">할인이 생기는 이유</text>
+  <g font-size="10.5">
+    <circle cx="258" cy="76" r="4" class="dg-no"/><text x="268" y="80" class="dg-t" font-weight="700">중복상장</text>
+    <text x="268" y="95" class="dg-s">좋은 자회사는 따로 사면 된다</text>
+    <circle cx="258" cy="116" r="4" class="dg-no"/><text x="268" y="120" class="dg-t" font-weight="700">지배주주 우선 결정</text>
+    <text x="268" y="135" class="dg-s">합병 비율·분할을 대주주 쪽으로</text>
+    <circle cx="258" cy="156" r="4" class="dg-no"/><text x="268" y="160" class="dg-t" font-weight="700">현금이 자회사에 묶임</text>
+    <text x="268" y="175" class="dg-s">배당·상표권료로만 지주에 온다</text>
+    <circle cx="258" cy="196" r="4" class="dg-no"/><text x="268" y="200" class="dg-t" font-weight="700">일반주주 목소리 약함</text>
+    <text x="268" y="215" class="dg-s">이사·감사 선임을 대주주가 정함</text>
+    <circle cx="258" cy="236" r="4" class="dg-no"/><text x="268" y="240" class="dg-t" font-weight="700">비상장 자회사 가치 불투명</text>
+    <text x="268" y="255" class="dg-s">LS전선·CJ올리브영·SK에코플랜트</text>
+  </g>
+  <line x1="255" y1="272" x2="460" y2="272" class="dg-div"/>
+  <text x="357" y="292" class="dg-t" font-size="10.5" font-weight="700" text-anchor="middle">할인율 = 1 − 시총 ÷ NAV</text>
+  <text x="357" y="308" class="dg-s" font-size="10" text-anchor="middle">NAV = 자회사 지분가치 합 − 순차입금</text>
+  <text x="357" y="323" class="dg-m" font-size="9.5" text-anchor="middle">(보통 상장사는 시가, 비상장은 추정가)</text>
+
+  <!-- 오른쪽: 줄이는 정책 -->
+  <rect x="485" y="34" width="225" height="300" rx="8" class="dg-lane2"/>
+  <text x="597" y="54" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">할인을 줄이는 정책</text>
+  <g font-size="10.5">
+    <circle cx="498" cy="76" r="4" class="dg-ok"/><text x="508" y="80" class="dg-t" font-weight="700">중복상장 가이드라인</text>
+    <text x="508" y="95" class="dg-s">'26.8 · 모회사 주주 동의 권고</text>
+    <circle cx="498" cy="116" r="4" class="dg-ok"/><text x="508" y="120" class="dg-t" font-weight="700">이사 주주충실의무</text>
+    <text x="508" y="135" class="dg-s">'25.7 · 회사 + 주주에게 의무</text>
+    <circle cx="498" cy="156" r="4" class="dg-ok"/><text x="508" y="160" class="dg-t" font-weight="700">합병 공정가액 의무화</text>
+    <text x="508" y="175" class="dg-s">'26.12 · 시가 ±10% 대신 공정가</text>
+    <circle cx="498" cy="196" r="4" class="dg-ok"/><text x="508" y="200" class="dg-t" font-weight="700">집중투표·감사위원 3%룰</text>
+    <text x="508" y="215" class="dg-s">'26.7~9 · 2027.3 주총부터 적용</text>
+    <circle cx="498" cy="236" r="4" class="dg-ok"/><text x="508" y="240" class="dg-t" font-weight="700">자사주 소각 의무화</text>
+    <text x="508" y="255" class="dg-s">'26.3 · LS 12.4%·CJ 7.3% 남음</text>
+    <circle cx="498" cy="276" r="4" class="dg-ok"/><text x="508" y="280" class="dg-t" font-weight="700">의무공개매수·베어허그</text>
+    <text x="508" y="295" class="dg-s">추진 중 · 경영권 프리미엄 공유</text>
+  </g>
+  <g class="dg-arrow" marker-end="url(#nh-fin-holding-discountA)">
+    <line x1="472" y1="180" x2="483" y2="180"/>
+  </g>
+
+  <!-- 아래 띠 -->
+  <rect x="10" y="348" width="700" height="80" rx="8" class="dg-band"/>
+  <text x="24" y="370" class="dg-t" font-size="11.5" font-weight="800">숫자로 보면</text>
+  <text x="24" y="388" class="dg-s" font-size="10.5">7개 지주 평균 NAV 할인율은 지금 50% 후반 — 2020년 이후 범위(50~60% 초중반) 안이라 여전히 싸다.</text>
+  <text x="24" y="405" class="dg-s" font-size="10.5">NH: 정책은 2025~26년에 들어왔고, 효과는 2027.3 정기주총부터 보인다 → 할인이 줄어드는 해.</text>
+  <text x="24" y="421" class="dg-m" font-size="9.5">SK·LS 숫자는 NH p.379·381·384. 할인율 식과 하이닉스 몫 계산은 리포트 외 설명.</text>
+</svg>

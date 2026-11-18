@@ -1,0 +1,24 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="2027년 확인 일정: 미국 정책, 중국, 베트남, 시장">
+  <defs><marker id="strategy-calendarA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">2027 일정표 — 리포트가 꼽은 확인 지점</text>
+  <rect x="10" y="36" width="700" height="100" rx="8" class="dg-lane1"/>
+  <text x="20" y="58" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">미국 정책</text>
+  <text x="110" y="58" class="dg-s" font-size="10.5" text-anchor="start">3월 전 송전·인허가법(BAAJA) 발효? (확률 60%↑)</text>
+  <text x="110" y="84" class="dg-s" font-size="10.5" text-anchor="start">5월 전후 부채한도 41.1조$ 도달 → 9~10월 예산 합의</text>
+  <text x="110" y="110" class="dg-s" font-size="10.5" text-anchor="start">연말 X-Date · 연준 최종금리 4.50~4.75% (시장) vs 4.25% (하우스)</text>
+  <rect x="10" y="144" width="700" height="100" rx="8" class="dg-lane2"/>
+  <text x="20" y="166" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">중국</text>
+  <text x="110" y="166" class="dg-s" font-size="10.5" text-anchor="start">2027.1 보험사 자산부채 규정 시행 · SFISF 3차 1,000억위안</text>
+  <text x="110" y="192" class="dg-s" font-size="10.5" text-anchor="start">10월 21차 당대회 → 1중전회 → 10월 말~11월 금융공작회의</text>
+  <text x="110" y="218" class="dg-s" font-size="10.5" text-anchor="start">11월 G20(영국)·APEC(베트남) · 상해종합 밴드 3,350~4,000P</text>
+  <rect x="10" y="252" width="700" height="100" rx="8" class="dg-lane3"/>
+  <text x="20" y="274" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">베트남</text>
+  <text x="110" y="274" class="dg-s" font-size="10.5" text-anchor="start">2026.12.28 HNX 300개사 → HOSE 이전</text>
+  <text x="110" y="300" class="dg-s" font-size="10.5" text-anchor="start">1Q FTSE 편입 20% · 중앙청산소·옴니버스 계좌 / 2Q 35% · MSCI 리뷰</text>
+  <text x="110" y="326" class="dg-s" font-size="10.5" text-anchor="start">3Q FTSE 35% · 연간 리뷰 / 4Q MSCI 피드백 반영 개편</text>
+  <rect x="10" y="360" width="700" height="100" rx="8" class="dg-panel"/>
+  <text x="20" y="382" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">시장·기업</text>
+  <text x="110" y="382" class="dg-s" font-size="10.5" text-anchor="start">상반기 OpenAI·DeepSeek·MoonShot IPO, 하반기 Databricks</text>
+  <text x="110" y="408" class="dg-s" font-size="10.5" text-anchor="start">AMGN 비만약 MariTide 3상 결과 (상반기) · 프랑스 대선 4/18·5/2</text>
+  <text x="110" y="434" class="dg-s" font-size="10.5" text-anchor="start">4Q27 하이퍼스케일러 FCF 재축적 시작? → AI 재평가 신호</text>
+</svg>

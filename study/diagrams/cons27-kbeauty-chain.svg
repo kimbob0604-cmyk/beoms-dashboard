@@ -1,0 +1,51 @@
+<svg viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="K뷰티 밸류체인: 브랜드 → ODM → 채널 → 지역, 그리고 헤어케어·EBD 확장">
+  <defs><marker id="cons27-kbeauty-chainA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="380" y="22" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">K뷰티 밸류체인 — 2027 수출 178억 달러(+22.9%)를 누가 만드나</text>
+  <rect x="10" y="45" width="170" height="130" rx="8" class="dg-lane1"/>
+  <text x="20" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">브랜드</text>
+  <text x="20" y="81" class="dg-t" font-size="10" font-weight="700" text-anchor="start">대형: 아모레퍼시픽·LG생활건강</text>
+  <text x="20" y="98" class="dg-t" font-size="10" font-weight="700" text-anchor="start">인디·디바이스: 에이피알·달바</text>
+  <text x="20" y="115" class="dg-s" font-size="10" text-anchor="start">수백 개 인디 브랜드</text>
+  <text x="20" y="132" class="dg-s" font-size="10" text-anchor="start">해외 매출 환산 → 환율 민감</text>
+  <rect x="200" y="45" width="170" height="130" rx="8" class="dg-lane2"/>
+  <text x="210" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">ODM (생산)</text>
+  <text x="210" y="81" class="dg-t" font-size="10" font-weight="700" text-anchor="start">코스맥스·한국콜마·코스메카</text>
+  <text x="210" y="98" class="dg-s" font-size="10" text-anchor="start">인디 브랜드 대신 개발·생산</text>
+  <text x="210" y="115" class="dg-s" font-size="10" text-anchor="start">매출 대부분 원화 → 환율 덜 민감</text>
+  <text x="210" y="132" class="dg-s" font-size="10" text-anchor="start">코스맥스 미국 법인 2Q26 흑자</text>
+  <rect x="390" y="45" width="170" height="130" rx="8" class="dg-lane3"/>
+  <text x="400" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">채널</text>
+  <text x="400" y="81" class="dg-t" font-size="10" font-weight="700" text-anchor="start">아마존·틱톡샵 (UGC 발굴)</text>
+  <text x="400" y="98" class="dg-s" font-size="10" text-anchor="start">틱톡샵 美 GMV 158 → 234억$</text>
+  <text x="400" y="115" class="dg-s" font-size="10" text-anchor="start">올리브영·실리콘투(B2B 수출)</text>
+  <text x="400" y="132" class="dg-s" font-size="10" text-anchor="start">→ 오프라인 리테일러 입점</text>
+  <rect x="580" y="45" width="170" height="130" rx="8" class="dg-panel"/>
+  <text x="590" y="64" class="dg-t" font-size="12" font-weight="700" text-anchor="start">지역 (2026E 비중)</text>
+  <text x="590" y="81" class="dg-t" font-size="10" font-weight="700" text-anchor="start">아시아 45% (2020년 82%)</text>
+  <text x="590" y="98" class="dg-t" font-size="10" font-weight="700" text-anchor="start">유럽 24% · 북미 23%</text>
+  <text x="590" y="115" class="dg-s" font-size="10" text-anchor="start">유럽이 북미를 처음 추월</text>
+  <text x="590" y="132" class="dg-s" font-size="10" text-anchor="start">중남미 성장률 최고 (90%, base)</text>
+  <line x1="182" y1="110" x2="198" y2="110" class="dg-arrow" marker-end="url(#cons27-kbeauty-chainA)"/>
+  <line x1="372" y1="110" x2="388" y2="110" class="dg-arrow" marker-end="url(#cons27-kbeauty-chainA)"/>
+  <line x1="562" y1="110" x2="578" y2="110" class="dg-arrow" marker-end="url(#cons27-kbeauty-chainA)"/>
+  <rect x="10" y="195" width="360" height="125" rx="8" class="dg-mid"/>
+  <text x="20" y="214" class="dg-t" font-size="12" font-weight="700" text-anchor="start">다음 카테고리 ① 헤어케어</text>
+  <text x="20" y="231" class="dg-s" font-size="10" text-anchor="start">한국 화장품 수출 중 4%뿐 (기초 77% · 색조 16%)</text>
+  <text x="20" y="248" class="dg-t" font-size="10" font-weight="700" text-anchor="start">헤어케어 수출 4.8억$(2025) → 8.9억(27F) → 11.6억(28F)</text>
+  <text x="20" y="265" class="dg-s" font-size="10" text-anchor="start">글로벌 825억$(2026), 유럽 252억$(30%)</text>
+  <text x="20" y="282" class="dg-s" font-size="10" text-anchor="start">스키니피케이션: 두피를 피부처럼 — GLP-1 확산</text>
+  <text x="20" y="299" class="dg-s" font-size="10" text-anchor="start">려+미쟝센+라보에이치 3,750억 → 5,000억원(27F)</text>
+  <rect x="390" y="195" width="360" height="125" rx="8" class="dg-mid"/>
+  <text x="400" y="214" class="dg-t" font-size="12" font-weight="700" text-anchor="start">다음 카테고리 ② 롱제비티·더마</text>
+  <text x="400" y="231" class="dg-t" font-size="10" font-weight="700" text-anchor="start">에이피알: EBD(뷰티 디바이스)·스킨부스터</text>
+  <text x="400" y="248" class="dg-s" font-size="10" text-anchor="start">elf Beauty가 Rhode 인수 후 재평가된 경로 참조</text>
+  <text x="400" y="265" class="dg-t" font-size="10" font-weight="700" text-anchor="start">아모레: 더마 비중 29%(+6%p, 2027F)</text>
+  <text x="400" y="282" class="dg-s" font-size="10" text-anchor="start">코스알엑스·에스트라·일리윤·아이오페</text>
+  <text x="400" y="299" class="dg-s" font-size="10" text-anchor="start">헤어 브랜드 비중 9% — 해외 비중 낮아 여지</text>
+  <rect x="10" y="335" width="740" height="128" rx="8" class="dg-panel"/>
+  <text x="20" y="356" class="dg-t" font-size="11.5" font-weight="700" text-anchor="start">숫자로 보는 2027 (NH, HS 33)</text>
+  <text x="20" y="378" class="dg-s" font-size="10.5" text-anchor="start">145억$(2026E, +31.6%) → 178억$(2027F, +22.9%) — 증가액은 +35억 → +33억$로 거의 같다. 성장률 둔화 = 높은 기저.</text>
+  <text x="20" y="398" class="dg-s" font-size="10.5" text-anchor="start">Bull 31% · Base 23% · Worst 13%. 북미+유럽 비중 46% → 50%. 스킨케어 비중 81 → 82%.</text>
+  <text x="20" y="418" class="dg-s" font-size="10.5" text-anchor="start">한국산 수입 점유율(2026): 미국 27.1% · 일본 45.9% · EU 6.7% · 브라질 10.3% · 중국 14.1%(하락 멈춤)</text>
+  <text x="20" y="438" class="dg-s" font-size="10.5" text-anchor="start">화장품 업종 12MF PER 12.5배 — 역대 최저 구간(환율·운반비 탓).</text>
+</svg>

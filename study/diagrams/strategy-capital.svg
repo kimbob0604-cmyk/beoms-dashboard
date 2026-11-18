@@ -1,0 +1,29 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="자본의 효율성: 현금이 남는 곳과 느는 곳, 2027년 이동 순서">
+  <defs><marker id="strategy-capitalA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">현금이 남는 곳 → 느는 곳: 2027년 바스켓 이동 순서</text>
+  <rect x="10" y="34" width="700" height="62" rx="8" class="dg-panel"/>
+  <text x="20" y="54" class="dg-t" font-size="12" font-weight="800" text-anchor="start">잣대: FCF 수익률 − 10년 TIPS(2.6%) = 스프레드</text>
+  <text x="20" y="76" class="dg-s" font-size="10.5" text-anchor="start">CAPE 40.7배 · 실질 ERP ≈0 → 멀티플 쿠션 없음 → '현금이 어디서 나오나'</text>
+  <rect x="10" y="106" width="345" height="150" rx="8" class="dg-lane2"/>
+  <text x="20" y="126" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">① 상반기: 현금이 남는 곳</text>
+  <text x="20" y="148" class="dg-s" font-size="10.5" text-anchor="start">현금형: 바이오 2.8 · 메디테크 2.1 · 전력 1.4%p</text>
+  <text x="20" y="172" class="dg-s" font-size="10.5" text-anchor="start">성장형: 빅파마 1.4 · 반도체 4.0 · 소프트웨어 1.4%p</text>
+  <text x="20" y="196" class="dg-s" font-size="10.5" text-anchor="start">빅파마: 배당 후 690억$ 남음 (자사주의 4배)</text>
+  <text x="20" y="220" class="dg-s" font-size="10.5" text-anchor="start">소프트웨어: CAPEX/영업현금 4%</text>
+  <rect x="365" y="106" width="345" height="150" rx="8" class="dg-lane1"/>
+  <text x="375" y="126" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">참고: 하이퍼스케일러 (돈이 나가는 곳)</text>
+  <text x="375" y="148" class="dg-s" font-size="10.5" text-anchor="start">2027 CAPEX 1,107 vs 영업현금 ≈1,004십억$</text>
+  <text x="375" y="172" class="dg-s" font-size="10.5" text-anchor="start">FCF −103십억$ → 스프레드 −3.5%p</text>
+  <text x="375" y="196" class="dg-s" font-size="10.5" text-anchor="start">배당 530억$ + 자사주 240억$(차입)</text>
+  <text x="375" y="220" class="dg-s" font-size="10.5" text-anchor="start">수주잔고 ≈1.7~2.5조$ = 회수 대기</text>
+  <rect x="10" y="266" width="700" height="90" rx="8" class="dg-lane3"/>
+  <text x="20" y="286" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">② 하반기: 하이퍼 FCF 재축적 기대(4Q27~2028) + 금리 안정</text>
+  <text x="20" y="308" class="dg-s" font-size="10.5" text-anchor="start">AI 하드웨어: 먼저 '가진 쪽'(NVDA·AVGO·AMD·DELL / CEG·VST·NEE) → 확인 뒤 '짓는 쪽'(장비·전력기기)</text>
+  <text x="20" y="332" class="dg-s" font-size="10.5" text-anchor="start">짓는 쪽: 실적 전망은 올랐는데 주가 −33~−42% → 트리거 = 금리 안정 · 데이터센터 규제 해소</text>
+  <rect x="10" y="366" width="700" height="94" rx="8" class="dg-hi"/>
+  <text x="20" y="386" class="dg-t" font-size="12.5" font-weight="800" text-anchor="start">③ 끝: Physical AI (현금이 아니라 금리가 가격을 정하는 자산)</text>
+  <text x="20" y="408" class="dg-s" font-size="10.5" text-anchor="start">후보: TSLA · SpaceX · NVDA · ISRG · TXN · ADI · TER · ROK · SYM · DE</text>
+  <text x="20" y="432" class="dg-s" font-size="10.5" text-anchor="start">성장/퀄리티 팩터는 TIPS 12개월 변화와 반대로 움직인다 → 금리가 내려야 차례</text>
+  <path d="M182 256 L182 264" class="dg-arrow" marker-end="url(#strategy-capitalA)"/>
+  <path d="M360 356 L360 364" class="dg-arrow" marker-end="url(#strategy-capitalA)"/>
+</svg>

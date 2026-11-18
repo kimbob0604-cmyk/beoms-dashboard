@@ -1,0 +1,48 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="미국 제약바이오 정책 지도: 약가, 관세, 중국 견제, 의회와 국내 영향">
+  <defs><marker id="bio27-us-policyA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">미국 정책 4층과 국내 영향 (2027)</text>
+  <rect x="10" y="36" width="700" height="100" rx="8" class="dg-lane1"/>
+  <text x="22" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="start">① 약가</text>
+  <text x="100" y="58" class="dg-s" font-size="10.5" text-anchor="start">IRA 2차 협상가 2027.1 적용 (15개, 위고비 -71%)</text>
+  <text x="100" y="77" class="dg-s" font-size="10.5" text-anchor="start">2029 적용 대상 발표 2027.2.1 — 키트루다?</text>
+  <text x="100" y="96" class="dg-s" font-size="10.5" text-anchor="start">SC 제형도 IV와 합산 (2026.11 최종 규칙)</text>
+  <text x="100" y="115" class="dg-s" font-size="10.5" text-anchor="start">MFN·GLOBE(19개국 참조, 한국 포함)</text>
+  <line x1="440" y1="86" x2="470" y2="86" class="dg-arrow" marker-end="url(#bio27-us-policyA)"/>
+  <rect x="478" y="44" width="224" height="84" rx="6" class="dg-gate"/>
+  <text x="488" y="64" class="dg-s" font-size="10.5" text-anchor="start">빅파마 매출 압박 → 딜 수요↑</text>
+  <text x="488" y="83" class="dg-s" font-size="10.5" text-anchor="start">알테오젠: SC 전략 변수</text>
+  <text x="488" y="102" class="dg-s" font-size="10.5" text-anchor="start">시밀러 출시 땐 SC 협상 제외 여지</text>
+  <rect x="10" y="142" width="700" height="100" rx="8" class="dg-lane2"/>
+  <text x="22" y="164" class="dg-t" font-size="13" font-weight="800" text-anchor="start">② 관세</text>
+  <text x="100" y="164" class="dg-s" font-size="10.5" text-anchor="start">특허의약품 기본 100%</text>
+  <text x="100" y="183" class="dg-s" font-size="10.5" text-anchor="start">한국 15% 상한</text>
+  <text x="100" y="202" class="dg-s" font-size="10.5" text-anchor="start">바이오시밀러는 제외 → 2027 상반기 재검토</text>
+  <text x="100" y="221" class="dg-s" font-size="10.5" text-anchor="start">미국 내 생산 투자 = 면제·완화</text>
+  <line x1="440" y1="192" x2="470" y2="192" class="dg-arrow" marker-end="url(#bio27-us-policyA)"/>
+  <rect x="478" y="150" width="224" height="84" rx="6" class="dg-gate"/>
+  <text x="488" y="170" class="dg-s" font-size="10.5" text-anchor="start">삼바 록빌·셀트리온 브랜치버그</text>
+  <text x="488" y="189" class="dg-s" font-size="10.5" text-anchor="start">미국 공장 인수로 선제 대응</text>
+  <text x="488" y="208" class="dg-s" font-size="10.5" text-anchor="start">(다올 단독)</text>
+  <rect x="10" y="248" width="700" height="100" rx="8" class="dg-lane3"/>
+  <text x="22" y="270" class="dg-t" font-size="13" font-weight="800" text-anchor="start">③ 중국 견제</text>
+  <text x="100" y="270" class="dg-s" font-size="10.5" text-anchor="start">바이오시큐어법: OMB 명단 2026.12.18</text>
+  <text x="100" y="289" class="dg-s" font-size="10.5" text-anchor="start">→ 지침 2027.6 → 금지 2028 하반기</text>
+  <text x="100" y="308" class="dg-s" font-size="10.5" text-anchor="start">COINS Act: 지분·JV 금지, 최종 2027</text>
+  <text x="100" y="327" class="dg-s" font-size="10.5" text-anchor="start">중국 측도 siRNA·CGT 플랫폼 이전 금지안</text>
+  <line x1="440" y1="298" x2="470" y2="298" class="dg-arrow" marker-end="url(#bio27-us-policyA)"/>
+  <rect x="478" y="256" width="224" height="84" rx="6" class="dg-gate"/>
+  <text x="488" y="276" class="dg-s" font-size="10.5" text-anchor="start">CDMO: 듀얼소싱·신규 수주 (시차)</text>
+  <text x="488" y="295" class="dg-s" font-size="10.5" text-anchor="start">바이오텍: 기술이전 상대 증가</text>
+  <text x="488" y="314" class="dg-s" font-size="10.5" text-anchor="start">확인 지표 = 계약·수주 공시</text>
+  <rect x="10" y="354" width="700" height="100" rx="8" class="dg-panel"/>
+  <text x="22" y="376" class="dg-t" font-size="13" font-weight="800" text-anchor="start">④ 의회</text>
+  <text x="100" y="376" class="dg-s" font-size="10.5" text-anchor="start">중간선거: 민주당 상·하원</text>
+  <text x="100" y="395" class="dg-s" font-size="10.5" text-anchor="start">거부권 무력화 60석은 실패</text>
+  <text x="100" y="414" class="dg-s" font-size="10.5" text-anchor="start">약가·PBM·대중국 = 초당적</text>
+  <text x="100" y="433" class="dg-s" font-size="10.5" text-anchor="start">2028 대선까지 큰 틀 유지</text>
+  <line x1="440" y1="404" x2="470" y2="404" class="dg-arrow" marker-end="url(#bio27-us-policyA)"/>
+  <rect x="478" y="362" width="224" height="84" rx="6" class="dg-gate"/>
+  <text x="488" y="382" class="dg-s" font-size="10.5" text-anchor="start">국내 영향은 우선 제한적 (NH)</text>
+  <text x="488" y="401" class="dg-s" font-size="10.5" text-anchor="start">중장기: IRA 강화 시 빅파마 부담</text>
+  <text x="360" y="468" class="dg-m" font-size="10" text-anchor="middle">출처: 다올 p.22~28 · NH p.205~207. 교보는 정책을 거의 다루지 않았다.</text>
+</svg>

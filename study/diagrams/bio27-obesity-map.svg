@@ -1,0 +1,57 @@
+<svg viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="비만약 세대 지도: GLP-1, 다중 작용, 근육 보존, 편의성과 국내 후보">
+  <defs><marker id="bio27-obesity-mapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">비만약 세대 지도 — &quot;얼마나 빼나&quot;에서 &quot;무엇을 빼나&quot;로</text>
+  <rect x="10" y="36" width="170" height="254" rx="8" class="dg-lo"/>
+  <text x="95" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">1세대</text>
+  <text x="95" y="76" class="dg-t" font-size="11" font-weight="700" text-anchor="middle">GLP-1 · GLP-1/GIP</text>
+  <text x="20" y="102" class="dg-m" font-size="10" font-weight="700" text-anchor="start">글로벌</text>
+  <text x="20" y="120" class="dg-s" font-size="10.5" text-anchor="start">위고비(세마글루타이드)</text>
+  <text x="20" y="137" class="dg-s" font-size="10.5" text-anchor="start">마운자로·젭바운드</text>
+  <text x="20" y="154" class="dg-s" font-size="10.5" text-anchor="start">(터제파타이드)</text>
+  <text x="20" y="171" class="dg-s" font-size="10.5" text-anchor="start">레거시 백본 (NH)</text>
+  <line x1="18" y1="205" x2="172" y2="205" class="dg-div"/>
+  <text x="20" y="224" class="dg-m" font-size="10" font-weight="700" text-anchor="start">국내</text>
+  <text x="20" y="242" class="dg-s" font-size="10.5" text-anchor="start">한미 에페 (국내 출시)</text>
+  <text x="20" y="259" class="dg-s" font-size="10.5" text-anchor="start">40주 -9.75%</text>
+  <line x1="182" y1="70" x2="192" y2="70" class="dg-arrow" marker-end="url(#bio27-obesity-mapA)"/>
+  <rect x="187" y="36" width="170" height="254" rx="8" class="dg-mid"/>
+  <text x="272" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">2세대 ①</text>
+  <text x="272" y="76" class="dg-t" font-size="11" font-weight="700" text-anchor="middle">다중 작용 (3중·아밀린)</text>
+  <text x="197" y="102" class="dg-m" font-size="10" font-weight="700" text-anchor="start">글로벌</text>
+  <text x="197" y="120" class="dg-s" font-size="10.5" text-anchor="start">레타트루타이드 80주 28.3%</text>
+  <text x="197" y="137" class="dg-s" font-size="10.5" text-anchor="start">(1Q27 FDA 신청)</text>
+  <text x="197" y="154" class="dg-s" font-size="10.5" text-anchor="start">카그리세마 (4Q26 승인 예정)</text>
+  <text x="197" y="171" class="dg-s" font-size="10.5" text-anchor="start">UBT251 · KAI-4729</text>
+  <line x1="195" y1="205" x2="349" y2="205" class="dg-div"/>
+  <text x="197" y="224" class="dg-m" font-size="10" font-weight="700" text-anchor="start">국내</text>
+  <text x="197" y="242" class="dg-s" font-size="10.5" text-anchor="start">한미 HM15275 (3중)</text>
+  <text x="197" y="259" class="dg-s" font-size="10.5" text-anchor="start">2상 결과 2027 중순~하반기</text>
+  <line x1="359" y1="70" x2="369" y2="70" class="dg-arrow" marker-end="url(#bio27-obesity-mapA)"/>
+  <rect x="364" y="36" width="170" height="254" rx="8" class="dg-hi"/>
+  <text x="449" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">2세대 ②</text>
+  <text x="449" y="76" class="dg-t" font-size="11" font-weight="700" text-anchor="middle">근육 보존 · 지방만</text>
+  <text x="374" y="102" class="dg-m" font-size="10" font-weight="700" text-anchor="start">글로벌</text>
+  <text x="374" y="120" class="dg-s" font-size="10.5" text-anchor="start">ALK7 siRNA: 로슈–Rona,</text>
+  <text x="374" y="137" class="dg-s" font-size="10.5" text-anchor="start">GSK–SiranBio, 애로우헤드</text>
+  <text x="374" y="154" class="dg-s" font-size="10.5" text-anchor="start">ActRII: 릴리 비마그루맙</text>
+  <text x="374" y="171" class="dg-s" font-size="10.5" text-anchor="start">마이오스타틴: 로슈 중단</text>
+  <line x1="372" y1="205" x2="526" y2="205" class="dg-div"/>
+  <text x="374" y="224" class="dg-m" font-size="10" font-weight="700" text-anchor="start">국내</text>
+  <text x="374" y="242" class="dg-s" font-size="10.5" text-anchor="start">한미 HM17321 (UCN2, 제넨텍)</text>
+  <text x="374" y="259" class="dg-s" font-size="10.5" text-anchor="start">올릭스 OLX501A (ALK7)</text>
+  <text x="374" y="276" class="dg-s" font-size="10.5" text-anchor="start">한미 HM500197 (마이오스타틴)</text>
+  <line x1="536" y1="70" x2="546" y2="70" class="dg-arrow" marker-end="url(#bio27-obesity-mapA)"/>
+  <rect x="541" y="36" width="170" height="254" rx="8" class="dg-mid"/>
+  <text x="626" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">2세대 ③</text>
+  <text x="626" y="76" class="dg-t" font-size="11" font-weight="700" text-anchor="middle">편의성 · 유지</text>
+  <text x="551" y="102" class="dg-m" font-size="10" font-weight="700" text-anchor="start">글로벌</text>
+  <text x="551" y="120" class="dg-s" font-size="10.5" text-anchor="start">경구 (올포글리프론 등)</text>
+  <text x="551" y="137" class="dg-s" font-size="10.5" text-anchor="start">월 1회 장기지속</text>
+  <text x="551" y="154" class="dg-s" font-size="10.5" text-anchor="start">끊어도 체중 유지</text>
+  <line x1="549" y1="205" x2="703" y2="205" class="dg-div"/>
+  <text x="551" y="224" class="dg-m" font-size="10" font-weight="700" text-anchor="start">국내</text>
+  <text x="551" y="242" class="dg-s" font-size="10.5" text-anchor="start">디앤디파마텍 DD01</text>
+  <text x="551" y="259" class="dg-s" font-size="10.5" text-anchor="start">삼성에피스 세마 월 1회 제형</text>
+  <text x="360" y="306" class="dg-m" font-size="10.5" text-anchor="middle">경쟁축: 감량 폭 → 체성분(근육 보존)·편의성 — 3/3. 진한 칸(근육 보존)에 빅파마 딜이 몰렸다(ALK7 딜 2024~26년 4건).</text>
+  <text x="360" y="322" class="dg-m" font-size="10" text-anchor="middle">출처: 다올 p.29~33 · 교보 p.13·19·31 · NH p.212·216. 경구·월 1회 칸은 다올·NH의 언급 수준.</text>
+</svg>

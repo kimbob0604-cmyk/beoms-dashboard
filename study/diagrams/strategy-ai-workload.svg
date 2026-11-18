@@ -1,0 +1,49 @@
+<svg viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="추론과 에이전트가 하드웨어 수요를 바꾸는 길">
+  <defs><marker id="strategy-ai-workloadA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">학습 → 추론 → 에이전트: GPU 혼자에서 '같이 늘어나는' 부품으로</text>
+  <rect x="10" y="36" width="220" height="104" rx="8" class="dg-panel"/>
+  <text x="120" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">학습</text>
+  <text x="20" y="80" class="dg-s" font-size="10.5" text-anchor="start">대규모 사전학습</text>
+  <text x="20" y="100" class="dg-s" font-size="10.5" text-anchor="start">비중 ≈64% (2023)</text>
+  <text x="20" y="120" class="dg-s" font-size="10.5" text-anchor="start">GPU 중심</text>
+  <path d="M232 88 L248 88" class="dg-arrow" marker-end="url(#strategy-ai-workloadA)"/>
+  <rect x="250" y="36" width="220" height="104" rx="8" class="dg-panel"/>
+  <text x="360" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">추론</text>
+  <text x="260" y="80" class="dg-s" font-size="10.5" text-anchor="start">실시간 요청 처리</text>
+  <text x="260" y="100" class="dg-s" font-size="10.5" text-anchor="start">비중 ≈71% (2028F)</text>
+  <text x="260" y="120" class="dg-s" font-size="10.5" text-anchor="start">조율·전송 중요</text>
+  <path d="M472 88 L488 88" class="dg-arrow" marker-end="url(#strategy-ai-workloadA)"/>
+  <rect x="490" y="36" width="220" height="104" rx="8" class="dg-panel"/>
+  <text x="600" y="58" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">에이전트</text>
+  <text x="500" y="80" class="dg-s" font-size="10.5" text-anchor="start">계획·도구 호출·재계획</text>
+  <text x="500" y="100" class="dg-s" font-size="10.5" text-anchor="start">수십~수백 번 반복</text>
+  <text x="500" y="120" class="dg-s" font-size="10.5" text-anchor="start">VM형: 상시 가상 PC</text>
+  <rect x="10" y="150" width="700" height="56" rx="8" class="dg-hi"/>
+  <text x="20" y="172" class="dg-t" font-size="12" font-weight="800" text-anchor="start">바뀌는 숫자: 서버 CPU:GPU 0.25 → 1.1배 (2030 Base) · 서버 CPU 3,000만 → 7,800만 개</text>
+  <text x="20" y="194" class="dg-s" font-size="10.5" text-anchor="start">GPU는 토큰을 만들고, 컴파일·브라우징·API 호출·상태 관리는 CPU와 DRAM이 맡는다</text>
+  <rect x="10" y="230" width="167" height="128" rx="8" class="dg-lane1"/>
+  <text x="93" y="252" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">CPU</text>
+  <text x="18" y="276" class="dg-s" font-size="10" text-anchor="start">AMD 점유율 34.5%</text>
+  <text x="18" y="300" class="dg-s" font-size="10" text-anchor="start">2030 TAM 600억 → 2,200억$</text>
+  <text x="18" y="324" class="dg-s" font-size="10" text-anchor="start">Helios 랙 CPU 5% → 20~25%</text>
+  <rect x="187" y="230" width="167" height="128" rx="8" class="dg-lane2"/>
+  <text x="270" y="252" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">서버 조립 (OEM)</text>
+  <text x="195" y="276" class="dg-s" font-size="10" text-anchor="start">투자 주체 다변화</text>
+  <text x="195" y="300" class="dg-s" font-size="10" text-anchor="start">네오클라우드·소버린·기업</text>
+  <text x="195" y="324" class="dg-s" font-size="10" text-anchor="start">델 주문 609억$ (+988%)</text>
+  <rect x="364" y="230" width="167" height="128" rx="8" class="dg-lane3"/>
+  <text x="447" y="252" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">메모리·장비</text>
+  <text x="372" y="276" class="dg-s" font-size="10" text-anchor="start">메모리 P → Q 사이클</text>
+  <text x="372" y="300" class="dg-s" font-size="10" text-anchor="start">4사 영업이익 ≈905십억$</text>
+  <text x="372" y="324" class="dg-s" font-size="10" text-anchor="start">장비 135 → 230십억$ (2028F)</text>
+  <rect x="541" y="230" width="167" height="128" rx="8" class="dg-panel"/>
+  <text x="624" y="252" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">네트워크·광</text>
+  <text x="549" y="276" class="dg-s" font-size="10" text-anchor="start">연산 → 연결로 축 이동</text>
+  <text x="549" y="300" class="dg-s" font-size="10" text-anchor="start">Optical AI 18 → 90십억$+</text>
+  <text x="549" y="324" class="dg-s" font-size="10" text-anchor="start">3.2T 이후 CPO</text>
+  <path d="M360 206 L360 226" class="dg-arrow" marker-end="url(#strategy-ai-workloadA)"/>
+  <rect x="10" y="370" width="700" height="80" rx="8" class="dg-panel"/>
+  <text x="20" y="390" class="dg-t" font-size="12" font-weight="800" text-anchor="start">중국 쪽 갈래: 메모리 증설 + 국산화</text>
+  <text x="20" y="412" class="dg-s" font-size="10.5" text-anchor="start">장비 국산화율 ≈35% (2025) → 42% (2026E) → ≈56% (2030F Base), 신규 팹 국산 50% 의무</text>
+  <text x="20" y="434" class="dg-s" font-size="10.5" text-anchor="start">노광(ASML)은 1% 미만 → DUV 다중 패터닝 → 식각·증착 단계 증가 → 북방화창·AMEC</text>
+</svg>

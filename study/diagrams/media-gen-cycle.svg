@@ -1,0 +1,48 @@
+<svg viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="K팝 세대 사이클: 데뷔 시기와 3~5년차 수확기, 음반 판매량 고점">
+  <defs><marker id="media-gen-cycleA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">K팝 세대 사이클 — 데뷔 후 3~5년차에 외형과 마진이 함께 커진다</text>
+  <text x="8" y="69" class="dg-t" font-size="11" font-weight="700" text-anchor="start">3세대</text>
+  <rect x="90" y="50" width="165" height="28" rx="5" class="dg-lane1"/>
+  <text x="90" y="94" class="dg-t" font-size="9.5" text-anchor="start">EXO·BTS·세븐틴·TWICE·BLACKPINK</text>
+  <text x="8" y="139" class="dg-t" font-size="11" font-weight="700" text-anchor="start">4세대</text>
+  <rect x="288" y="120" width="99" height="28" rx="5" class="dg-lane1"/>
+  <text x="288" y="164" class="dg-t" font-size="9.5" text-anchor="start">Stray Kids·TXT·ENHYPEN·aespa</text>
+  <rect x="387" y="120" width="99" height="28" rx="5" class="dg-hi"/>
+  <text x="387" y="115" class="dg-s" font-size="9.5" text-anchor="start">수확기 → 음반 고점 2023년 1.16억 장</text>
+  <text x="8" y="209" class="dg-t" font-size="11" font-weight="700" text-anchor="start">5세대</text>
+  <rect x="453" y="190" width="99" height="28" rx="5" class="dg-lane1"/>
+  <text x="453" y="234" class="dg-t" font-size="9.5" text-anchor="start">BOYNEXTDOOR·TWS·NCT WISH·CORTIS·KATSEYE</text>
+  <rect x="552" y="190" width="99" height="28" rx="5" class="dg-hi"/>
+  <text x="552" y="185" class="dg-s" font-size="9.5" text-anchor="start">2027F 1.02억 장 · 업사이클 (NH)</text>
+  <text x="8" y="279" class="dg-t" font-size="11" font-weight="700" text-anchor="start">2027 신인</text>
+  <rect x="585" y="260" width="33" height="28" rx="5" class="dg-lane1"/>
+  <text x="321" y="304" class="dg-t" font-size="9.5" text-anchor="start">하이브 미국 보이·걸 · SMTR25 · 오브더블루(27.1.11) · YG 보이·걸 (교보)</text>
+  <rect x="618" y="260" width="33" height="28" rx="5" class="dg-hi"/>
+  <text x="618" y="255" class="dg-s" font-size="9.5" text-anchor="start">조기 수익화? (교보)</text>
+  <line x1="90" y1="330" x2="684" y2="330" class="dg-axis"/>
+  <line x1="90" y1="326" x2="90" y2="334" class="dg-axis"/>
+  <text x="90" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2012</text>
+  <line x1="156" y1="326" x2="156" y2="334" class="dg-axis"/>
+  <text x="156" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2014</text>
+  <line x1="222" y1="326" x2="222" y2="334" class="dg-axis"/>
+  <text x="222" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2016</text>
+  <line x1="288" y1="326" x2="288" y2="334" class="dg-axis"/>
+  <text x="288" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2018</text>
+  <line x1="354" y1="326" x2="354" y2="334" class="dg-axis"/>
+  <text x="354" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2020</text>
+  <line x1="420" y1="326" x2="420" y2="334" class="dg-axis"/>
+  <text x="420" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2022</text>
+  <line x1="486" y1="326" x2="486" y2="334" class="dg-axis"/>
+  <text x="486" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2024</text>
+  <line x1="552" y1="326" x2="552" y2="334" class="dg-axis"/>
+  <text x="552" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2026</text>
+  <line x1="618" y1="326" x2="618" y2="334" class="dg-axis"/>
+  <text x="618" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2028</text>
+  <line x1="684" y1="326" x2="684" y2="334" class="dg-axis"/>
+  <text x="684" y="348" class="dg-m" font-size="9.5" text-anchor="middle">2030</text>
+  <rect x="6" y="358" width="708" height="96" rx="8" class="dg-panel"/>
+  <text x="18" y="378" class="dg-t" font-size="9.8" text-anchor="start">연한 칸 = 데뷔 시기, 진한 칸 = 데뷔 3~5년차(팬덤이 쌓여 앨범당 판매·공연 규모가 가장 커지는 때). NH는 이 주기가 약 5년마다 돈다고 본다.</text>
+  <text x="18" y="398" class="dg-t" font-size="9.8" text-anchor="start">교보의 근거: 데뷔 → 초동 밀리언셀러까지 3세대 평균 6.4년, 3세대 이후 1.8년. CORTIS는 1년이 안 걸렸다(0.7년). 수확기가 앞당겨지는 중.</text>
+  <text x="18" y="418" class="dg-t" font-size="9.8" text-anchor="start">NH의 근거: 2024~25년엔 5세대 데뷔 비용이 마진을 눌렀고, 2026년 음반이 2년 만에 반등했다. 2027년은 5세대가 3~5년차로 들어서는 첫해.</text>
+  <text x="18" y="440" class="dg-m" font-size="9" text-anchor="start">※ 세대 구분은 두 리포트의 분류(교보 p.17, NH p.128 주석)를 따랐다. 3세대의 수확기와 칸 길이는 리포트에 없어 표시하지 않았거나 대략이다.</text>
+</svg>

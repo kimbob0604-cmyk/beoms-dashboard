@@ -1,0 +1,92 @@
+<svg viewBox="0 0 720 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="금융 섹터 이익 지도: 금리·대출·거래대금·자본규제가 은행·보험·증권 이익과 주주환원으로 이어지는 길">
+  <defs><marker id="nh-fin-profit-mapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">금융 이익 지도 — 2027년 NH가 보는 바람의 방향</text>
+
+  <!-- 머리 -->
+  <g font-size="12" font-weight="800">
+    <rect x="10" y="34" width="170" height="26" rx="6" class="dg-lane3"/><text x="95" y="52" text-anchor="middle" class="dg-t">① 바깥 변수</text>
+    <rect x="200" y="34" width="330" height="26" rx="6" class="dg-lane1"/><text x="365" y="52" text-anchor="middle" class="dg-t">② 업종별 이익 공식 (2027F)</text>
+    <rect x="550" y="34" width="160" height="26" rx="6" class="dg-lane2"/><text x="630" y="52" text-anchor="middle" class="dg-t">③ 주주에게</text>
+  </g>
+
+  <!-- ① 변수 -->
+  <g font-size="10.5">
+    <rect x="10" y="70" width="170" height="62" rx="6" class="dg-panel"/>
+    <text x="20" y="88" class="dg-t" font-weight="700">금리</text>
+    <text x="20" y="104" class="dg-s">'26 기준금리 7·8월 인상</text>
+    <text x="20" y="119" class="dg-s">NH: '26.11·'27.2 한 번씩 더</text>
+    <rect x="10" y="140" width="170" height="62" rx="6" class="dg-panel"/>
+    <text x="20" y="158" class="dg-t" font-weight="700">대출·자본 규제</text>
+    <text x="20" y="174" class="dg-s">가계 규제 지속, RWA 완화</text>
+    <text x="20" y="189" class="dg-s">→ 기업대출 +8.0%</text>
+    <rect x="10" y="210" width="170" height="62" rx="6" class="dg-panel"/>
+    <text x="20" y="228" class="dg-t" font-weight="700">주식시장 거래대금</text>
+    <text x="20" y="244" class="dg-s">2Q26 118조 → 11월 56조</text>
+    <text x="20" y="259" class="dg-s">상반기 역기저 부담</text>
+    <rect x="10" y="280" width="170" height="62" rx="6" class="dg-panel"/>
+    <text x="20" y="298" class="dg-t" font-weight="700">보험 제도</text>
+    <text x="20" y="314" class="dg-s">관리급여·8주룰 (청구↓)</text>
+    <text x="20" y="329" class="dg-s">판매수수료 분급 (신계약↓)</text>
+  </g>
+
+  <!-- ② 업종 -->
+  <g font-size="10.5">
+    <rect x="200" y="70" width="330" height="84" rx="6" class="dg-hi"/>
+    <text x="210" y="88" class="dg-t" font-size="11.5" font-weight="800">은행 · 순이익 20.1조 (+0.8%)</text>
+    <text x="210" y="105" class="dg-t">이자이익 = 대출 × NIM → 49.0조 (+7.5%)</text>
+    <text x="210" y="121" class="dg-s">대출 +5.0%, NIM +2bp ('26 하반기 하락의 기저)</text>
+    <text x="210" y="137" class="dg-s">비이자 12.9조 (−5.5%) · 대손비용률 0.44%</text>
+    <text x="210" y="150" class="dg-m" font-size="9.5">금융지주 4사 합산</text>
+
+    <rect x="200" y="162" width="330" height="84" rx="6" class="dg-mid"/>
+    <text x="210" y="180" class="dg-t" font-size="11.5" font-weight="800">보험 · 보험손익 6.3조 (+7.9%)</text>
+    <text x="210" y="197" class="dg-t">보험손익 = CSM 상각 + 예실차 + 자동차(PAA)</text>
+    <text x="210" y="213" class="dg-s">CSM 상각은 제자리, 개선은 예실차·자동차에서</text>
+    <text x="210" y="229" class="dg-s">+ 투자손익 (FVPL 비중이 클수록 출렁임)</text>
+    <text x="210" y="242" class="dg-m" font-size="9.5">손보 4사 + 생보 2사</text>
+
+    <rect x="200" y="254" width="330" height="88" rx="6" class="dg-lo"/>
+    <text x="210" y="272" class="dg-t" font-size="11.5" font-weight="800">증권 · 2027 이익은 2026보다 낮다</text>
+    <text x="210" y="289" class="dg-t">리테일 = 브로커리지 + WM + 이자 (핵심)</text>
+    <text x="210" y="305" class="dg-s">+ 발행어음·IMA 운용 마진 100~150bp</text>
+    <text x="210" y="321" class="dg-s">+ PI 운용: 금리·주가·환율에 출렁</text>
+    <text x="210" y="336" class="dg-m" font-size="9.5">하반기부터 전년 대비 개선</text>
+  </g>
+
+  <g class="dg-arrow" marker-end="url(#nh-fin-profit-mapA)">
+    <line x1="181" y1="101" x2="198" y2="105"/>
+    <line x1="181" y1="171" x2="198" y2="125"/>
+    <line x1="181" y1="241" x2="198" y2="290"/>
+    <line x1="181" y1="311" x2="198" y2="210"/>
+    <line x1="181" y1="96" x2="198" y2="320"/>
+    <line x1="531" y1="112" x2="548" y2="150"/>
+    <line x1="531" y1="204" x2="548" y2="204"/>
+    <line x1="531" y1="298" x2="548" y2="256"/>
+  </g>
+
+  <!-- ③ 주주 -->
+  <g font-size="10.5">
+    <rect x="550" y="70" width="160" height="272" rx="6" class="dg-lane2"/>
+    <text x="560" y="90" class="dg-t" font-weight="800">자본 → 환원</text>
+    <text x="560" y="108" class="dg-s">은행: CET1 상향 평준화</text>
+    <text x="560" y="123" class="dg-s">→ 총주주환원율 50%대</text>
+    <text x="560" y="138" class="dg-s">→ 배당 비과세 5개사</text>
+    <line x1="560" y1="150" x2="700" y2="150" class="dg-div"/>
+    <text x="560" y="168" class="dg-s">보험: 기본자본 K-ICS</text>
+    <text x="560" y="183" class="dg-s">→ 진성자본이 있는 곳만</text>
+    <text x="560" y="198" class="dg-s">  배당·M&amp;A 여력</text>
+    <line x1="560" y1="210" x2="700" y2="210" class="dg-div"/>
+    <text x="560" y="228" class="dg-s">증권: 배당성향 30~40%</text>
+    <text x="560" y="243" class="dg-s">배당수익률 8~9%대('26E)</text>
+    <line x1="560" y1="255" x2="700" y2="255" class="dg-div"/>
+    <text x="560" y="273" class="dg-t" font-weight="700">값을 정하는 식</text>
+    <text x="560" y="290" class="dg-s">PBR ≈ (ROE − g) ÷ (COE − g)</text>
+    <text x="560" y="306" class="dg-s">변동성↓ → 베타↓ → COE↓</text>
+    <text x="560" y="322" class="dg-s">→ 같은 ROE에 PBR↑</text>
+  </g>
+
+  <rect x="10" y="354" width="700" height="66" rx="8" class="dg-band"/>
+  <text x="24" y="375" class="dg-t" font-size="11.5" font-weight="800">한 줄로</text>
+  <text x="24" y="393" class="dg-s" font-size="10.5">은행은 이자이익이 받치고 환원이 늘어 '저변동 피난처', 보험은 이익보다 자본이 승부, 증권은 거래대금 역기저를 견딜 리테일 체력.</text>
+  <text x="24" y="410" class="dg-m" font-size="9.5">숫자는 NH p.388~444. 화살표 연결과 PBR 식(고든 성장 모형)은 리포트 외 정리.</text>
+</svg>

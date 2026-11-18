@@ -1,0 +1,73 @@
+<svg viewBox="0 0 720 450" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="휴머노이드 개화 3단계와 미국의 대중국 로봇 공급망 제재 흐름, K-공급망의 자리">
+  <defs><marker id="nh-mobility-supplyA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="22" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">휴머노이드 개화 3단계 × 미국의 대중 제재 → K-공급망의 기회</text>
+
+  <text x="20" y="48" class="dg-m" font-size="11" font-weight="700">① 산업 단계 (NH p.46·51)</text>
+  <rect x="20" y="58" width="205" height="72" rx="8" class="dg-lo"/>
+  <text x="122" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">1단계 하드웨어 개발</text>
+  <text x="122" y="99" class="dg-m" font-size="10.5" text-anchor="middle">관절·손·액추에이터 설계</text>
+  <text x="122" y="116" class="dg-m" font-size="10.5" text-anchor="middle">시제품 · 소량 생산</text>
+  <rect x="258" y="58" width="205" height="72" rx="8" class="dg-hi"/>
+  <text x="360" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">2단계 지능 고도화 ← 지금</text>
+  <text x="360" y="99" class="dg-t" font-size="10.5" text-anchor="middle">데이터용 양산 연 1.5만 대 안팎</text>
+  <text x="360" y="116" class="dg-t" font-size="10.5" text-anchor="middle">2027F 출하 12.5만 대 · RFM 학습</text>
+  <rect x="496" y="58" width="204" height="72" rx="8" class="dg-panel"/>
+  <text x="598" y="80" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">3단계 성장기</text>
+  <text x="598" y="99" class="dg-m" font-size="10.5" text-anchor="middle">연 100만 대 이상</text>
+  <text x="598" y="116" class="dg-m" font-size="10.5" text-anchor="middle">NH 2028 하반기 · 시장 2030</text>
+  <line x1="227" y1="94" x2="254" y2="94" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <line x1="465" y1="94" x2="492" y2="94" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+
+  <text x="20" y="162" class="dg-m" font-size="11" font-weight="700">② 미국 제재 흐름 (NH p.48·50)</text>
+  <rect x="20" y="172" width="128" height="66" rx="7" class="dg-panel"/>
+  <text x="84" y="192" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">2026.7 FCC</text>
+  <text x="84" y="209" class="dg-m" font-size="10" text-anchor="middle">외국산 로봇 완제품</text>
+  <text x="84" y="224" class="dg-m" font-size="10" text-anchor="middle">판매 제한 시작</text>
+  <rect x="163" y="172" width="128" height="66" rx="7" class="dg-panel"/>
+  <text x="227" y="192" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">2026.10.28</text>
+  <text x="227" y="209" class="dg-m" font-size="10" text-anchor="middle">232조 결과: 안보 위협</text>
+  <text x="227" y="224" class="dg-m" font-size="10" text-anchor="middle">대통령 포고령</text>
+  <rect x="306" y="172" width="128" height="66" rx="7" class="dg-panel"/>
+  <text x="370" y="192" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">2027.4.26</text>
+  <text x="370" y="209" class="dg-m" font-size="10" text-anchor="middle">교역국 협상 결과</text>
+  <text x="370" y="224" class="dg-m" font-size="10" text-anchor="middle">보고 기한(180일)</text>
+  <rect x="449" y="172" width="118" height="66" rx="7" class="dg-hi"/>
+  <text x="508" y="192" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">2027 상반기</text>
+  <text x="508" y="209" class="dg-t" font-size="10" text-anchor="middle">핵심 부품 관세</text>
+  <text x="508" y="224" class="dg-t" font-size="10" text-anchor="middle">우방국 쿼터·면제</text>
+  <rect x="582" y="172" width="118" height="66" rx="7" class="dg-no"/>
+  <text x="641" y="192" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">그다음 (예상)</text>
+  <text x="641" y="209" class="dg-t" font-size="10" text-anchor="middle">301조 관세</text>
+  <text x="641" y="224" class="dg-t" font-size="10" text-anchor="middle">Entity List 지정</text>
+  <line x1="149" y1="205" x2="160" y2="205" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <line x1="292" y1="205" x2="303" y2="205" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <line x1="435" y1="205" x2="446" y2="205" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <line x1="568" y1="205" x2="579" y2="205" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <text x="360" y="258" class="dg-m" font-size="10" text-anchor="middle">선례: 드론 — FCC 핵심 부품(모터 포함) 65% 미국 생산(2029년 75%), 국방부는 2027.8까지 자석 생산을 우방국에서</text>
+
+  <text x="20" y="286" class="dg-m" font-size="11" font-weight="700">③ 누가 빠지고 누가 들어가나 (NH p.49·51)</text>
+  <rect x="20" y="296" width="215" height="132" rx="8" class="dg-no"/>
+  <text x="127" y="318" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">중국 공급망 (배제 대상)</text>
+  <text x="34" y="340" class="dg-t" font-size="10.5">· 희토류 채굴 70%</text>
+  <text x="34" y="358" class="dg-t" font-size="10.5">· NdFeB 영구자석 판매 90%+</text>
+  <text x="34" y="376" class="dg-t" font-size="10.5">· 모터 원가 경쟁력(Inovance</text>
+  <text x="34" y="392" class="dg-t" font-size="10.5">  매출총이익률 25% 안팎)</text>
+  <text x="34" y="412" class="dg-t" font-size="10.5">· 하모닉 감속기 후발 진입</text>
+  <rect x="252" y="296" width="200" height="132" rx="8" class="dg-panel"/>
+  <text x="352" y="318" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">미국의 빈칸</text>
+  <text x="266" y="340" class="dg-t" font-size="10.5">· 자석 생산능력 1만 톤</text>
+  <text x="266" y="358" class="dg-t" font-size="10.5">· 2028F 휴머노이드 32.4만 대</text>
+  <text x="266" y="376" class="dg-t" font-size="10.5">  × 13kg = 4,212톤(42%)</text>
+  <text x="266" y="396" class="dg-t" font-size="10.5">· 액추에이터 Assembly는</text>
+  <text x="266" y="412" class="dg-t" font-size="10.5">  2028년부터 외부 위탁</text>
+  <rect x="470" y="296" width="230" height="132" rx="8" class="dg-ok"/>
+  <text x="585" y="318" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">K-공급망 (기회)</text>
+  <text x="484" y="340" class="dg-t" font-size="10.5">· 중국 전자석 수출 한국 12%</text>
+  <text x="484" y="356" class="dg-t" font-size="10.5">  (2026.9 YTD, 독일 다음 2위)</text>
+  <text x="484" y="376" class="dg-t" font-size="10.5">· 모터: 로보티즈·삼현</text>
+  <text x="484" y="394" class="dg-t" font-size="10.5">· 액추에이터: 현대모비스</text>
+  <text x="484" y="412" class="dg-t" font-size="10.5">· 감속기: 에스피지</text>
+  <line x1="236" y1="362" x2="249" y2="362" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <line x1="453" y1="362" x2="467" y2="362" class="dg-arrow" marker-end="url(#nh-mobility-supplyA)"/>
+  <text x="360" y="444" class="dg-m" font-size="9.5" text-anchor="middle">한국도 232조 관세에서 자유롭지 않다 — 우방국 쿼터·미국 투자 조건부 면제가 NH의 기본 가정</text>
+</svg>

@@ -1,0 +1,52 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="조선 격차 축소: 중국은 증설과 저가 수주로 LNG선까지 들어오고, 한국은 중국과 경쟁하지 않는 엔진·유지보수·미국 함정으로 간다">
+  <defs><marker id="nh-industrials-ship-gapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="24" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">축소되는 격차: 중국은 밀고 들어오고, 한국은 비켜 간다</text>
+
+  <rect x="20" y="45" width="320" height="170" rx="8" class="dg-no"/>
+  <text x="180" y="70" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">중국 조선소</text>
+  <text x="36" y="96" class="dg-t" font-size="10.5">· 증설·재가동 2,740만CGT 중 75%</text>
+  <text x="36" y="118" class="dg-t" font-size="10.5">· 헝리·후동중화·양쯔장·뉴타임즈</text>
+  <text x="36" y="140" class="dg-t" font-size="10.5">· 2026 대형 LNG선 32척 수주(한국 46)</text>
+  <text x="36" y="162" class="dg-t" font-size="10.5">· 2030년 인도 슬롯까지 일부 채움</text>
+  <text x="36" y="184" class="dg-t" font-size="10.5">· 탱커·벌크 선가↑, 미 항만수수료 유예</text>
+  <text x="36" y="204" class="dg-m" font-size="9.5">설비를 채우려 값을 덜 올림 → 선가지수 +1.4%</text>
+
+  <rect x="380" y="45" width="320" height="170" rx="8" class="dg-panel"/>
+  <text x="540" y="70" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">한국 조선소</text>
+  <text x="396" y="96" class="dg-t" font-size="10.5">· 2025 인도 1,220만CGT (증설 규모의 45%)</text>
+  <text x="396" y="118" class="dg-t" font-size="10.5">· 주력 LNG선 선가↓ + 원화 강세</text>
+  <text x="396" y="140" class="dg-t" font-size="10.5">· 대형 군함 수주 실패, 주가 연초比 −30~50%</text>
+  <text x="396" y="162" class="dg-t" font-size="10.5">· 2027 수주 403억$ (−20.7%)</text>
+  <text x="396" y="184" class="dg-t" font-size="10.5">· 상선 230억$ (−37.0%), 해양 95억$ (+68%)</text>
+  <text x="396" y="204" class="dg-m" font-size="9.5">2029년까지 슬롯은 차 있어 선가 급락은 아님</text>
+
+  <line x1="340" y1="130" x2="378" y2="130" class="dg-arrow" marker-end="url(#nh-industrials-ship-gapA)"/>
+  <text x="360" y="120" class="dg-m" font-size="9" text-anchor="middle">압박</text>
+
+  <line x1="540" y1="217" x2="540" y2="252" class="dg-arrow" marker-end="url(#nh-industrials-ship-gapA)"/>
+  <text x="360" y="245" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">돌파구 = 중국과 경쟁하지 않는 곳</text>
+
+  <rect x="20" y="258" width="215" height="125" rx="8" class="dg-hi"/>
+  <text x="127" y="280" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">① 발전용 엔진</text>
+  <text x="32" y="302" class="dg-t" font-size="10">LCOE $103/MWh, 가장 싼</text>
+  <text x="32" y="320" class="dg-t" font-size="10">데이터센터 전원(CCGT보다 6%↓)</text>
+  <text x="32" y="338" class="dg-t" font-size="10">HD현대중공업 1.5GW(2028)</text>
+  <text x="32" y="356" class="dg-t" font-size="10">→ 3.0GW(2029), 최대 4.0GW</text>
+  <text x="32" y="374" class="dg-m" font-size="9">바르질라는 2029년분까지 마감</text>
+
+  <rect x="252" y="258" width="215" height="125" rx="8" class="dg-hi"/>
+  <text x="359" y="280" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">② 엔진 유지보수(MRO)</text>
+  <text x="264" y="302" class="dg-t" font-size="10">신규 엔진의 생애 서비스 매출</text>
+  <text x="264" y="320" class="dg-t" font-size="10">기존보다 50% 이상 많음</text>
+  <text x="264" y="338" class="dg-t" font-size="10">보증 끝나는 4~5년차부터</text>
+  <text x="264" y="356" class="dg-t" font-size="10">AM 매출 연 20%+ (HD마린솔)</text>
+  <text x="264" y="374" class="dg-m" font-size="9">발전용 LTSA 이익 2030F 1,030억원</text>
+
+  <rect x="485" y="258" width="215" height="125" rx="8" class="dg-hi"/>
+  <text x="592" y="280" class="dg-t" font-size="12" font-weight="800" text-anchor="middle">③ 미국 함정</text>
+  <text x="497" y="302" class="dg-t" font-size="10">NGLS 13척 × 약 4.5억$</text>
+  <text x="497" y="320" class="dg-t" font-size="10">설계 제출 2027.3, 선정 FY28</text>
+  <text x="497" y="338" class="dg-t" font-size="10">충남급 호위함 평가(11/12)</text>
+  <text x="497" y="356" class="dg-t" font-size="10">변수: NDAA 해외 건조 제한</text>
+  <text x="497" y="374" class="dg-m" font-size="9">미국 안 설비가 있어야 수주</text>
+</svg>

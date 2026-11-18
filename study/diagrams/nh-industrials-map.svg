@@ -1,0 +1,60 @@
+<svg viewBox="0 0 720 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="산업재 5개 업종 지도: 철강이 건설과 조선에 소재를 대고, 분양가가 건설 마진을, 조선 인도가 해운 운임을, 운임이 다시 선박 발주를 움직인다">
+  <defs><marker id="nh-industrials-mapA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="24" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">산업재 지도: 다섯 업종은 소재·운임·금리로 이어진다</text>
+
+  <rect x="250" y="55" width="200" height="110" rx="8" class="dg-hi"/>
+  <text x="350" y="78" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">건설</text>
+  <text x="350" y="100" class="dg-t" font-size="10" text-anchor="middle">Positive · 삼성E&amp;A·현대건설</text>
+  <text x="350" y="120" class="dg-m" font-size="10" text-anchor="middle">주택 GPM 10%대로 회복</text>
+  <text x="350" y="140" class="dg-m" font-size="10" text-anchor="middle">중동 가스·원전·AI 데이터센터</text>
+
+  <rect x="530" y="55" width="180" height="110" rx="8" class="dg-panel"/>
+  <text x="620" y="78" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">부동산·리츠</text>
+  <text x="620" y="100" class="dg-t" font-size="10" text-anchor="middle">리츠 Neutral · ESR켄달</text>
+  <text x="620" y="120" class="dg-m" font-size="10" text-anchor="middle">국채 3년물 3% 후반</text>
+  <text x="620" y="140" class="dg-m" font-size="10" text-anchor="middle">물류센터 공실 16→12%</text>
+
+  <rect x="10" y="175" width="160" height="110" rx="8" class="dg-panel"/>
+  <text x="90" y="198" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">철강/비철금속</text>
+  <text x="90" y="220" class="dg-t" font-size="10" text-anchor="middle">Positive · 세아베스틸지주</text>
+  <text x="90" y="240" class="dg-m" font-size="10" text-anchor="middle">열연 롤마진 한국 $362</text>
+  <text x="90" y="260" class="dg-m" font-size="10" text-anchor="middle">중국 $147 (톤당)</text>
+
+  <rect x="250" y="300" width="200" height="110" rx="8" class="dg-hi"/>
+  <text x="350" y="323" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">조선</text>
+  <text x="350" y="345" class="dg-t" font-size="10" text-anchor="middle">HD현대중공업·HD현대마린솔루션</text>
+  <text x="350" y="365" class="dg-m" font-size="10" text-anchor="middle">2027 수주 403억$ (−21%)</text>
+  <text x="350" y="385" class="dg-m" font-size="10" text-anchor="middle">돌파구: 엔진·MRO·미국 함정</text>
+
+  <rect x="530" y="300" width="180" height="110" rx="8" class="dg-panel"/>
+  <text x="620" y="323" class="dg-t" font-size="13" font-weight="800" text-anchor="middle">운송</text>
+  <text x="620" y="345" class="dg-t" font-size="10" text-anchor="middle">Neutral · 글로비스·대한항공</text>
+  <text x="620" y="365" class="dg-m" font-size="10" text-anchor="middle">운임은 소폭 하락</text>
+  <text x="620" y="385" class="dg-m" font-size="10" text-anchor="middle">PCTC만 선복 부족</text>
+
+  <line x1="170" y1="205" x2="248" y2="128" class="dg-arrow" marker-end="url(#nh-industrials-mapA)"/>
+  <text x="196" y="150" class="dg-t" font-size="9.5" font-weight="700" text-anchor="middle">철근·형강</text>
+  <text x="196" y="162" class="dg-m" font-size="9" text-anchor="middle">수요 52%</text>
+
+  <line x1="170" y1="262" x2="248" y2="335" class="dg-arrow" marker-end="url(#nh-industrials-mapA)"/>
+  <text x="196" y="318" class="dg-t" font-size="9.5" font-weight="700" text-anchor="middle">후판</text>
+  <text x="196" y="330" class="dg-m" font-size="9" text-anchor="middle">선박 강판</text>
+
+  <line x1="530" y1="110" x2="452" y2="110" class="dg-arrow" marker-end="url(#nh-industrials-mapA)"/>
+  <text x="490" y="100" class="dg-t" font-size="9.5" font-weight="700" text-anchor="middle">분양가↑</text>
+  <text x="490" y="126" class="dg-m" font-size="9" text-anchor="middle">주택 마진</text>
+
+  <line x1="450" y1="335" x2="528" y2="335" class="dg-arrow" marker-end="url(#nh-industrials-mapA)"/>
+  <text x="490" y="326" class="dg-t" font-size="9.5" font-weight="700" text-anchor="middle">새 배 인도</text>
+  <line x1="530" y1="378" x2="452" y2="378" class="dg-arrow" marker-end="url(#nh-industrials-mapA)"/>
+  <text x="490" y="395" class="dg-t" font-size="9.5" font-weight="700" text-anchor="middle">운임→발주</text>
+  <text x="490" y="352" class="dg-m" font-size="9" text-anchor="middle">선복↑ 운임↓</text>
+
+  <text x="10" y="432" class="dg-m" font-size="10" font-weight="700">밖에서 미는 힘</text>
+  <rect x="10" y="440" width="220" height="30" rx="15" class="dg-lo"/>
+  <text x="120" y="459" class="dg-t" font-size="9.5" text-anchor="middle">중국: 조선 증설 · 철강 감산</text>
+  <rect x="250" y="440" width="220" height="30" rx="15" class="dg-lo"/>
+  <text x="360" y="459" class="dg-t" font-size="9.5" text-anchor="middle">AI DC·에너지 안보: 시공·발전 엔진</text>
+  <rect x="490" y="440" width="220" height="30" rx="15" class="dg-lo"/>
+  <text x="600" y="459" class="dg-t" font-size="9.5" text-anchor="middle">전쟁 병목 → 운임 · 금리 → 리츠</text>
+</svg>

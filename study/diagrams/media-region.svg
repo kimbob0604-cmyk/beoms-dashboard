@@ -1,0 +1,47 @@
+<svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="K팝 지역 확장 지도: 미국, 유럽, 중남미, 인도, 일본·중국">
+  <defs><marker id="media-regionA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="dg-arrowhead"/></marker></defs>
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">K팝의 무대가 넓어진다 — 어디서, 무엇으로 돈을 버나</text>
+  <rect x="6" y="36" width="350" height="150" rx="8" class="dg-hi"/>
+  <text x="18" y="58" class="dg-t" font-size="12" font-weight="800" text-anchor="start">미국 (교보·NH 공통)</text>
+  <text x="18" y="80" class="dg-t" font-size="10" text-anchor="start">실물 음반 1H26 +25.9%, CD +58.6% (RIAA)</text>
+  <text x="18" y="98" class="dg-t" font-size="10" text-anchor="start">K팝 빼면 CD 증가율 16.0% → 6.7%</text>
+  <text x="18" y="116" class="dg-t" font-size="10" text-anchor="start">미국향 앨범 수출 3Q26 누적 9,288만 달러 (+123.6%)</text>
+  <text x="18" y="134" class="dg-t" font-size="10" text-anchor="start">수출 중 미국 비중 21.2% → 25.6%</text>
+  <text x="18" y="152" class="dg-t" font-size="10" text-anchor="start">LP가 실물의 74.4% · BTS LP 첫 주 20.8만 장</text>
+  <text x="18" y="170" class="dg-t" font-size="10" text-anchor="start">수익 문법: 음원·공연 (KATSEYE Hot100 7곡, NH)</text>
+  <rect x="364" y="36" width="350" height="150" rx="8" class="dg-lane1"/>
+  <text x="376" y="58" class="dg-t" font-size="12" font-weight="800" text-anchor="start">공연 — 미국 Z세대 (교보)</text>
+  <text x="376" y="80" class="dg-t" font-size="10" text-anchor="start">K팝 팬 48%가 24세 이하</text>
+  <text x="376" y="98" class="dg-t" font-size="10" text-anchor="start">슈퍼팬 비중: K팝 34% · Pop 26% · Country 22%</text>
+  <text x="376" y="116" class="dg-t" font-size="10" text-anchor="start">Z세대 월 라이브 지출 101달러 &gt; 밀레니얼 94</text>
+  <text x="376" y="134" class="dg-t" font-size="10" text-anchor="start">티켓값 부담 응답 Z세대 75% → 57% (−18%p)</text>
+  <text x="376" y="152" class="dg-t" font-size="10" text-anchor="start">연 2회 관람 29% → 37%</text>
+  <text x="376" y="170" class="dg-t" font-size="10" text-anchor="start">JYP 스트레이키즈 북미 14·유럽 7개 도시</text>
+  <rect x="6" y="194" width="232" height="150" rx="8" class="dg-lane2"/>
+  <text x="18" y="216" class="dg-t" font-size="12" font-weight="800" text-anchor="start">유럽 (교보)</text>
+  <text x="18" y="238" class="dg-t" font-size="10" text-anchor="start">독일향 음반 수출 +181.2%</text>
+  <text x="18" y="256" class="dg-t" font-size="10" text-anchor="start">영국 +111.1% · 네덜란드 +66.0%</text>
+  <text x="18" y="274" class="dg-t" font-size="10" text-anchor="start">프랑스 +52.2% (3Q26 누적)</text>
+  <text x="18" y="292" class="dg-t" font-size="10" text-anchor="start">수출 중 유럽 4국 비중</text>
+  <text x="18" y="310" class="dg-s" font-size="10" text-anchor="start">   8.2% → 10.8%</text>
+  <rect x="244" y="194" width="232" height="150" rx="8" class="dg-lane3"/>
+  <text x="256" y="216" class="dg-t" font-size="12" font-weight="800" text-anchor="start">중남미 (교보)</text>
+  <text x="256" y="238" class="dg-t" font-size="10" text-anchor="start">미국 음반 중 라틴 음악 9.1%</text>
+  <text x="256" y="256" class="dg-t" font-size="10" text-anchor="start">중남미 음반 시장 +17.1% (2025)</text>
+  <text x="256" y="274" class="dg-t" font-size="10" text-anchor="start">BTS 멕시코+브라질 조회 17.2%</text>
+  <text x="256" y="292" class="dg-t" font-size="10" text-anchor="start">Stray Kids 17.3%</text>
+  <text x="256" y="310" class="dg-t" font-size="10" text-anchor="start">하이브 산토스 브라보스 · JYP</text>
+  <text x="256" y="328" class="dg-s" font-size="10" text-anchor="start">   STRAYCITY 5회 약 27만 명</text>
+  <rect x="482" y="194" width="232" height="150" rx="8" class="dg-mid"/>
+  <text x="494" y="216" class="dg-t" font-size="12" font-weight="800" text-anchor="start">인도 (교보)</text>
+  <text x="494" y="238" class="dg-t" font-size="10" text-anchor="start">라이브 이벤트 1,450억 루피</text>
+  <text x="494" y="256" class="dg-s" font-size="10" text-anchor="start">   (2025, +44%) → 1,960억 (2028E)</text>
+  <text x="494" y="274" class="dg-t" font-size="10" text-anchor="start">1만 명+ 콘서트 75일 → 130일</text>
+  <text x="494" y="292" class="dg-t" font-size="10" text-anchor="start">하이브 인도 법인(2025)</text>
+  <text x="494" y="310" class="dg-t" font-size="10" text-anchor="start">위버스콘 첫 해외: 뉴델리</text>
+  <text x="494" y="328" class="dg-s" font-size="10" text-anchor="start">   2027.3.27~28</text>
+  <rect x="6" y="352" width="708" height="80" rx="8" class="dg-panel"/>
+  <text x="18" y="372" class="dg-t" font-size="10" text-anchor="start">일본·중국 (NH): K팝 음반 수출액은 지난 2년 전체 판매량이 줄 때도 미국·중국 몫이 늘며 순성장했다(NH p.129).</text>
+  <text x="18" y="392" class="dg-t" font-size="10" text-anchor="start">돈 버는 방식이 지역마다 다르다: 아시아는 같은 CD를 여러 장(수집), 미국은 비싼 LP 한 장 + 음원·공연, 신흥국은 공연·현지화 IP.</text>
+  <text x="18" y="412" class="dg-s" font-size="10" text-anchor="start">그래서 같은 "해외 확장"도 숫자로는 ① 앨범 ASP(LP), ② 공연 회차·좌석, ③ 현지 IP 수로 나눠 봐야 한다 — 계산 카드 두 개가 이 순서다.</text>
+</svg>

@@ -1,0 +1,342 @@
+{
+ "_note": "Study › 미디어·통신·플랫폼 색인 (media-2027 종합 문서: 교보 엔터 + NH 플랫폼/게임·통신·엔터/미디어)",
+ "c:kpop-gen": {
+  "name": "K팝 세대 (3·4·5세대)",
+  "en": "K-pop generations",
+  "desc": "데뷔 시기로 나눈 아이돌 묶음. 3세대(EXO·BTS·BLACKPINK 등 2012~16), 4세대(Stray Kids·TXT·ENHYPEN·aespa 등 2018~20), 5세대(BOYNEXTDOOR·TWS·NCT WISH·CORTIS 등 2023~25). NH는 데뷔 3~5년차에 외형·마진이 함께 커지는 주기가 약 5년마다 돈다고 본다."
+ },
+ "c:first-week": {
+  "name": "초동 · 밀리언셀러",
+  "en": "First-week sales",
+  "desc": "앨범 발매 첫 주(7일) 판매량. 초동 100만 장을 넘기면 \"초동 밀리언셀러\". 팬덤의 크기와 결속을 가장 빨리 보여 주는 지표라 신인 성장 속도를 잴 때 쓴다(교보 p.17~18)."
+ },
+ "c:album-asp": {
+  "name": "앨범 ASP (평균 출고가)",
+  "en": "Average selling price",
+  "desc": "앨범 한 장의 평균 출고가. 써클차트 기준 11,315원(2023) → 13,285원(3Q26 누적, 교보). LP는 평균 3.5만 원이라 LP 비중이 오르면 ASP가 오른다. 음반 매출 = 판매량 × ASP."
+ },
+ "c:lp-vinyl": {
+  "name": "LP · 바이닐",
+  "en": "Vinyl LP",
+  "desc": "레코드판. 미국 실물 음반 매출의 74.4%(1H26)가 LP인데 K팝은 여전히 CD 중심(국내 Top400 중 LP 1.2%). 미국 일반 소비자는 비싸도 수집 가치가 큰 LP를 선호해 K팝 ASP를 올릴 수단으로 꼽힌다(교보·NH)."
+ },
+ "c:platform-album": {
+  "name": "플랫폼 앨범",
+  "en": "Platform album",
+  "desc": "CD 대신 QR·NFC로 음원을 듣게 하는 앨범(인형·키링 등과 결합). K팝 앨범 판매량 중 비중 11.3%(2023) → 17.8%(2026.9 누적, 교보)."
+ },
+ "c:superfan": {
+  "name": "슈퍼팬",
+  "en": "Superfan",
+  "desc": "음악에 돈과 시간을 가장 많이 쓰는 팬층(Luminate 조사). 미국 장르별 슈퍼팬 비중 K팝 34%, Pop 26%, Country 22%(교보 p.11)."
+ },
+ "c:localized-ip": {
+  "name": "현지화 IP",
+  "en": "Localized K-pop IP",
+  "desc": "한국 제작 시스템으로 현지 멤버를 뽑아 만든 그룹. 하이브의 KATSEYE(미국)·&TEAM(일본)·산토스 브라보스(중남미)가 대표. 교보는 \"장르·지역에 구애받지 않는 성장 기반\"으로 본다."
+ },
+ "c:md-licensing": {
+  "name": "MD · 라이선싱",
+  "en": "Merchandise & licensing",
+  "desc": "굿즈 판매와 IP 사용료. 공연·팬덤과 함께 커지며, 하이브는 MD 제작·판매 현지화로 배송비·수수료를 줄이는 중(NH), 에스엠은 에스파×PUBG 같은 협업으로 늘리는 중(교보)."
+ },
+ "c:target-per": {
+  "name": "Target PER 밸류에이션",
+  "en": "Target P/E valuation",
+  "desc": "목표주가 = 예상 지배순이익 × 목표 PER ÷ 주식 수. 교보는 에스엠 2027E 순이익 1,320억 원 × 19.4배, JYP 1,080억 원 × 20.4배(2024년 평균 PER에 20% 할증)로 계산했다."
+ },
+ "c:ott": {
+  "name": "OTT",
+  "en": "Over-the-top streaming",
+  "desc": "넷플릭스 같은 인터넷 동영상 서비스. NH는 글로벌 OTT의 성장 동력 둔화와 방송 광고 축소가 겹쳐 콘텐츠 제작 수요가 줄어든다고 본다."
+ },
+ "c:retail-media": {
+  "name": "리테일미디어",
+  "en": "Retail media",
+  "desc": "아마존·쿠팡·네이버쇼핑·올리브영 같은 유통 플랫폼 안의 광고 지면. 광고를 본 곳에서 바로 사므로 광고 효율(ROAS)을 재기 쉽다(NH p.137)."
+ },
+ "c:popup-store": {
+  "name": "팝업스토어",
+  "en": "Pop-up store",
+  "desc": "짧게 여는 체험형 매장. 오프라인 경험이 SNS로 2차 확산되고, 성수·명동·홍대처럼 외국인 관광객이 몰리는 곳에서 효과가 커진다(NH)."
+ },
+ "c:roas": {
+  "name": "ROAS (광고 효율)",
+  "en": "Return on ad spend",
+  "desc": "광고비 1원당 매출. 경기 불확실성 속에 광고주가 인지도보다 \"매출로 바로 이어지는 광고\"를 찾으면서 중요해졌다."
+ },
+ "c:display-ad": {
+  "name": "검색 광고 vs 디스플레이(발견형) 광고",
+  "en": "Search vs display ads",
+  "desc": "검색 광고는 사용자가 찾을 때 뜨는 광고, 디스플레이 광고는 피드·숏폼에서 먼저 보여 주는 광고. 국내 디지털 광고에서 2025년 디스플레이(5.20조)가 검색(4.88조)을 다시 넘었다(NH p.94)."
+ },
+ "c:agent-commerce": {
+  "name": "Agent 커머스 · A2A",
+  "en": "Agentic commerce",
+  "desc": "AI 비서가 검색·비교·결제까지 대신하는 쇼핑. 아마존 Alexa for shopping 누적 3.5억 명. 소비자 AI와 판매자 AI가 직접 거래(A2A)하면 포털 검색 광고가 줄 수 있다(NH p.93)."
+ },
+ "c:stablecoin-krw": {
+  "name": "원화 스테이블코인",
+  "en": "KRW stablecoin",
+  "desc": "원화에 가치를 묶은 디지털 자산. 디지털자산기본법 논의는 2027년 이후로 미뤄질 전망이고, 정부 방침상 은행 중심 컨소시엄 가능성이 높다(NH p.95)."
+ },
+ "c:google-fee": {
+  "name": "구글 결제 수수료 인하",
+  "en": "Google Play fee cut",
+  "desc": "2027년 1월부터 플레이스토어 수수료가 30%에서 25%(앱스토어 20% + 결제 5%) 수준으로 내려간다. 자체 결제·외부 링크에도 적용. 모바일 비중이 큰 넷마블·엔씨·카카오게임즈·컴투스가 수혜(NH p.98)."
+ },
+ "c:colocation": {
+  "name": "Colocation (코로케이션)",
+  "en": "Colocation",
+  "desc": "데이터센터 공간·전력·냉각을 빌려주는 사업. 매출 = 계약전력(kW) × kW당 단가 × 기간. 통신사가 오래 해 온 사업이다(NH p.109)."
+ },
+ "c:token-factory": {
+  "name": "토큰팩토리",
+  "en": "Token factory",
+  "desc": "GPU로 AI 추론을 돌려 만든 토큰을 팔고 사용량만큼 받는 사업. 네오클라우드가 GPU 시간을 파는 것과 달리 결과물(토큰)을 판다(NH p.109)."
+ },
+ "c:ai-dc-act": {
+  "name": "AI 데이터센터 특별법",
+  "en": "AI Data Center Act",
+  "desc": "인허가 일괄 처리, 비수도권 전력계통영향평가 면제, 시설 기준 완화. 국회 통과, 2027년 3월 시행 예정. 정부 목표는 2035년까지 AI 데이터센터 18.4GW(NH p.107)."
+ },
+ "c:cable-landing": {
+  "name": "해저케이블 · 육양국",
+  "en": "Submarine cable & landing station",
+  "desc": "해저 광케이블이 육지에 닿는 기지국. 한국은 부산·거제·태안에 있고 부산 확대, 해남·새만금 신설을 추진한다. 데이터센터 유치의 핵심 연결 고리(NH p.106)."
+ },
+ "c:ntn": {
+  "name": "NTN (비지상 네트워크)",
+  "en": "Non-Terrestrial Network",
+  "desc": "위성 등 땅 밖의 통신망. SpaceX가 800MHz 지상 주파수를 사서 위성+지상 5G를 결합한 스타링크 모바일을 추진하면서 6G 표준에서 NTN 통합 논의가 커졌다(NH p.110)."
+ },
+ "c:6g": {
+  "name": "6G",
+  "en": "6th generation mobile",
+  "desc": "3GPP 첫 6G 표준(Release 21)은 2028년 말 핵심 규격, 2029년 1분기 표준 완료 예정 → 상용화 2030년. 속도보다 Agent AI·로봇·자율주행·위성까지 잇는 \"연결(Connectivity)\"이 축(NH p.113)."
+ },
+ "c:5g-penetration": {
+  "name": "5G 보급률",
+  "en": "5G handset penetration",
+  "desc": "휴대폰 가입자 중 5G 단말 비중. 2027년 말 87.2%, 5G 가입자 4,073만 명 전망(NH). 성숙기라 가입자 증가로 매출이 크게 늘긴 어렵지만 마케팅·투자비가 줄어 현금은 좋아진다."
+ },
+ "c:capex-dep": {
+  "name": "CapEx · 감가상각비",
+  "en": "Capital expenditure & depreciation",
+  "desc": "설비투자와 그 비용을 나눠 인식하는 감가상각비. 통신 3사 CapEx는 2027년 7.3조 원(+14.4%)으로 데이터센터 때문에 다시 늘지만, 초기 5G 장비가 내용연수를 다 채워 감가는 크게 늘지 않는다(NH p.116)."
+ },
+ "c:shareholder-return": {
+  "name": "주주환원수익률",
+  "en": "Total shareholder yield",
+  "desc": "(배당 + 자사주 매입) ÷ 시가총액. KT는 보유 자사주 6.1%와 2028년까지 5천억 원 추가 매입으로 10.3%까지 오른다고 NH는 계산했다."
+ },
+ "c:adr-revpar": {
+  "name": "ADR · RevPAR",
+  "en": "Average daily rate / Revenue per available room",
+  "desc": "ADR은 팔린 객실의 평균 가격, RevPAR은 전체 객실당 매출(= ADR × 객실 점유율). 객실 공급이 제한된 채 수요가 늘면 ADR이 올라 호텔 이익이 레버리지로 커진다(NH)."
+ },
+ "c:ggr": {
+  "name": "GGR (총게임매출)",
+  "en": "Gross gaming revenue",
+  "desc": "카지노가 고객 베팅에서 남긴 돈(베팅액 − 당첨금). 마카오 GGR은 중국 VIP 수요 약화로 하락세(NH p.135)."
+ },
+ "c:tourism-fund": {
+  "name": "관광진흥기금 · 출국세",
+  "en": "Tourism promotion fund",
+  "desc": "카지노 매출 등에서 걷는 관광 기금. 인상안(출국세 인상 포함)이 국회 위원회 심사 중이라 카지노 실적의 제도 리스크로 꼽힌다. 완화 결정이 주가 전환점(NH)."
+ },
+ "c:arpu": {
+  "name": "ARPU",
+  "en": "Average revenue per user",
+  "desc": "가입자 한 명당 평균 매출. 스타링크 모바일 같은 제4 이동통신사가 들어오면 미국 통신 3사의 가입자 이탈·ARPU 하락이 우려된다(NH p.111)."
+ },
+ "c:kpop-midsize": {
+  "name": "중소기획사 5세대 IP",
+  "en": "Mid-size K-pop agencies",
+  "desc": "4사(하이브·SM·JYP·YG) 밖 기획사의 그룹. 플레이브(블래스트)·idntt(모드하우스)·리센느(더뮤즈)·A2O LITE·MEOVV 등. ATEEZ(KQ)는 북미 흥행, KQ는 상장 준비 중 — NH는 \"4사 구도 균열 가능성\"으로 본다."
+ },
+ "c:netflix-per": {
+  "name": "넷플릭스 12MF PER",
+  "en": "Netflix forward P/E",
+  "desc": "넷플릭스의 12개월 선행 PER. 광고 성장이 더뎌 하향 중(NH p.138) — OTT가 콘텐츠 수요를 받쳐 주던 힘이 약해졌다는 신호로 쓰였다."
+ },
+ "n:in": {
+  "name": "인도",
+  "en": "India",
+  "desc": "K팝의 신흥 시장. 라이브 이벤트 시장 1,450억 루피(2025, +44%) → 1,960억 루피(2028E), 1만 명 이상 콘서트 75일(2024) → 130일(2025). 하이브 인도 법인(2025), 위버스콘 첫 해외 개최(2027.3, 뉴델리)(교보 p.24)."
+ },
+ "co:hybe": {
+  "name": "하이브",
+  "en": "HYBE",
+  "desc": "BTS·세븐틴·TXT·ENHYPEN·르세라핌·&TEAM·BOYNEXTDOOR·TWS·아일릿·CORTIS·KATSEYE. 교보·NH 공통 톱픽(목표주가 275,000 / 250,000원). 2027 실적은 BTS 투어 시점 가정에 따라 교보(매출 3.81조·영업이익 0.44조)와 NH(5.14조·0.61조)가 크게 갈린다.",
+  "code": "352820"
+ },
+ "co:sm": {
+  "name": "에스엠",
+  "en": "SM Entertainment",
+  "desc": "동방신기~에스파·라이즈·NCT WISH·하츠투하츠, 2027 신인 SMTR25. 교보 관심종목(목표주가 110,000원), NH도 NCT WISH·라이즈로 주목. 최대주주 카카오.",
+  "code": "041510"
+ },
+ "co:jyp": {
+  "name": "JYP Ent.",
+  "en": "JYP Entertainment",
+  "desc": "스트레이키즈·TWICE·NMIXX·NEXZ·킥플립, 2027.1.11 신인 오브더블루. 교보 목표주가 62,000원(2027E 순이익 1,080억 × 20.4배).",
+  "code": "035900"
+ },
+ "co:yg": {
+  "name": "와이지엔터테인먼트",
+  "en": "YG Entertainment",
+  "desc": "빅뱅·BLACKPINK·TREASURE·BABYMONSTER, 2027 신인 보이·걸그룹 준비. 교보 목표주가 60,000원.",
+  "code": "122870"
+ },
+ "co:naver": {
+  "name": "NAVER",
+  "en": "NAVER",
+  "desc": "검색·커머스·핀테크. NH 플랫폼 톱픽(목표주가 320,000원): AI Factory(네오클라우드) 2027 상반기 55MW → 2028 말 200MW, 2027F 영업이익 2.32조.",
+  "code": "035420"
+ },
+ "co:nhn": {
+  "name": "NHN",
+  "en": "NHN",
+  "desc": "게임(한게임)·결제·클라우드. 정부 GPU를 받아 감가 부담 없이 AI 데이터센터를 돌린다. 2027 말 100MW 목표. NH 톱픽(목표주가 110,000원).",
+  "code": "181710"
+ },
+ "co:krafton": {
+  "name": "크래프톤",
+  "en": "KRAFTON",
+  "desc": "PUBG. 2027년 팰월드 모바일·PUBG 데드넷·NO LAW 등 신작 6개 출시 예정. NH 게임 톱픽(목표주가 310,000원), 2027F 영업이익 1.57조.",
+  "code": "259960"
+ },
+ "co:kakao": {
+  "name": "카카오",
+  "en": "Kakao",
+  "desc": "카카오톡. 대화 정보로 Agent AI(카나나)를 구현하는 것이 과제(NH). 에스엠 최대주주.",
+  "code": "035720"
+ },
+ "co:kakaogames": {
+  "name": "카카오게임즈",
+  "en": "Kakao Games",
+  "desc": "2027 신작 오딘Q·크로노 오디세이 등. 구글 수수료 인하 수혜 후보(NH).",
+  "code": "293490"
+ },
+ "co:ncsoft": {
+  "name": "엔씨소프트 (NC)",
+  "en": "NCSOFT",
+  "desc": "2027 신작 호라이즌: 스틸 프론티어·Time Takers·신더시티 등. 구글 수수료 인하 수혜 후보(NH).",
+  "code": "036570"
+ },
+ "co:netmarble": {
+  "name": "넷마블",
+  "en": "Netmarble",
+  "desc": "2027 신작 나 혼자만 레벨업: 카르마 등. 모바일 비중이 커 구글 수수료 인하 수혜 1순위 후보. 하이브 2대 주주(7.08%).",
+  "code": "251270"
+ },
+ "co:com2us": {
+  "name": "컴투스",
+  "en": "Com2uS",
+  "desc": "2027 신작 도원암귀·가치아쿠타 등. 구글 수수료 인하 수혜 후보(NH).",
+  "code": "078340"
+ },
+ "co:nexon": {
+  "name": "넥슨",
+  "en": "NEXON",
+  "desc": "일본 상장. 2027 신작 Vindictus: Defying Fate·낙원 등(NH)."
+ },
+ "co:skt": {
+  "name": "SK텔레콤",
+  "en": "SK Telecom",
+  "desc": "2029년까지 AI 데이터센터 5GW(SK하이퍼), 기존 DC·해저케이블은 SK호라이즌. NH 통신 톱픽(목표주가 125,000원), 2027F DPS 3,320원.",
+  "code": "017670"
+ },
+ "co:kt": {
+  "name": "KT",
+  "en": "KT",
+  "desc": "IDC 152MW(12개) → 2031년 1GW. 국가 기간망·해저케이블·KT SAT(위성). 2027F 배당수익률 5.0%, 자사주 포함 주주환원수익률 10.3%(NH).",
+  "code": "030200"
+ },
+ "co:lguplus": {
+  "name": "LG유플러스",
+  "en": "LG Uplus",
+  "desc": "IDC 171MW(8개) → 2030년 400MW. 2027F DPS 720원, 배당수익률 4.4%(NH).",
+  "code": "032640"
+ },
+ "co:gspnl": {
+  "name": "GS피앤엘",
+  "en": "GS P&L",
+  "desc": "파르나스 호텔(그랜드·웨스틴 등) 운영. 서구권 관광객 증가와 객실 부족으로 ADR 상승 수혜. NH 레저 톱픽(목표주가 51,000원), 최소 배당성향 50%.",
+  "code": "499790"
+ },
+ "co:cheil": {
+  "name": "제일기획",
+  "en": "Cheil Worldwide",
+  "desc": "삼성 계열 광고대행사. 리테일미디어(닷컴)·팝업(갤럭시 언팩) 레퍼런스, 배당성향 60%+자사주 소각. NH 미디어 톱픽(목표주가 23,000원).",
+  "code": "030000"
+ },
+ "co:paradise": {
+  "name": "파라다이스",
+  "en": "Paradise",
+  "desc": "외국인 카지노. 일본 VIP가 중국 VIP 약세를 메우는 중(NH).",
+  "code": "034230"
+ },
+ "co:gkl": {
+  "name": "GKL",
+  "en": "Grand Korea Leisure",
+  "desc": "외국인 카지노(세븐럭). 관광진흥기금 인상안이 부담(NH).",
+  "code": "114090"
+ },
+ "co:lotte-tour": {
+  "name": "롯데관광개발",
+  "en": "Lotte Tour Development",
+  "desc": "제주 드림타워 카지노(NH).",
+  "code": "032350"
+ },
+ "co:dunamu": {
+  "name": "두나무",
+  "en": "Dunamu",
+  "desc": "업비트 운영사. 네이버파이낸셜과 포괄적 주식교환(교환일 2027.3.31 예정), 공정위 기업결합 심사 미통과(NH p.95)."
+ },
+ "co:naver-fin": {
+  "name": "네이버파이낸셜",
+  "en": "Naver Financial",
+  "desc": "네이버의 결제·핀테크 자회사. 두나무와 결합하면 커머스·핀테크·스테이블코인으로 영향력 확대 기대(NH)."
+ },
+ "co:studio-dragon": {
+  "name": "스튜디오드래곤",
+  "en": "Studio Dragon",
+  "desc": "드라마 제작사. NH 방송콘텐츠 묶음(CJ ENM·SBS·스튜디오드래곤)에 속한다 — 광고 예산이 방송·제작사로 덜 흐르는 구조 변화의 영향권.",
+  "code": "253450"
+ },
+ "co:spacex": {
+  "name": "SpaceX (스타링크)",
+  "en": "SpaceX / Starlink",
+  "desc": "저궤도 위성 인터넷. 2026.10 미국 800MHz 주파수 인수, 11월 퀄컴과 지상 5G 협력 → 스타링크 모바일로 미국 제4 이동통신사 가능성(NH)."
+ },
+ "co:netflix": {
+  "name": "넷플릭스",
+  "en": "Netflix",
+  "desc": "글로벌 OTT. 광고 성장이 더뎌 12MF PER 하향(NH p.138).",
+  "ticker": "NFLX"
+ },
+ "co:nebius": {
+  "name": "네비우스",
+  "en": "Nebius",
+  "desc": "네오클라우드. 계약전력 1.0GW(2025.6) → 5.0GW(2026.6)(NH p.89).",
+  "ticker": "NBIS"
+ },
+ "co:brookfield": {
+  "name": "브룩필드",
+  "en": "Brookfield",
+  "desc": "인프라 투자사. NAVER AI Factory 첫 200MW의 설비(SPV)에 최대 90억 달러 투자(NH p.91)."
+ },
+ "co:take-two": {
+  "name": "테이크투 (록스타 게임즈)",
+  "en": "Take-Two / Rockstar Games",
+  "desc": "GTA 제작사. GTA6 2026.11.19 출시 — 전작 GTA5는 2.3억 장. 다른 게임사들이 출시를 미룰 만큼 큰 IP(NH p.97).",
+  "ticker": "TTWO"
+ },
+ "co:google-play": {
+  "name": "구글 플레이",
+  "en": "Google Play",
+  "desc": "안드로이드 앱 장터. 2027.1부터 결제 수수료 인하(NH p.98). 모회사 알파벳은 co:alphabet."
+ }
+}
