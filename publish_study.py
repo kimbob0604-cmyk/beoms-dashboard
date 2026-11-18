@@ -11,10 +11,12 @@
 
   python3 publish_study.py
 """
+import os
 import re
 import shutil
 import subprocess
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -41,10 +43,11 @@ def ensure_pages(remote: str):
     if not m:
         return
     repo = m.group(1)
-    if subprocess.run(['gh', 'api', f'repos/{repo}/pages'], capture_output=True).returncode == 0:
+    env = {k: v for k, v in os.environ.items() if k not in ('GITHUB_TOKEN', 'GH_TOKEN')}   # 대시보드 전용 토큰 빼고 본인 gh 로그인으로
+    if subprocess.run(['gh', 'api', f'repos/{repo}/pages'], capture_output=True, env=env).returncode == 0:
         return
     r = subprocess.run(['gh', 'api', '-X', 'POST', f'repos/{repo}/pages', '-f', f'source[branch]={BRANCH}', '-f', 'source[path]=/'],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, env=env)
     print('GitHub Pages 켬' if r.returncode == 0 else f'GitHub Pages 켜기 실패: {r.stderr.strip()[:200]}')
 
 
@@ -94,17 +97,21 @@ def main() -> int:
     name = P.git('config', 'user.name', cwd=ROOT)
     email = P.git('config', 'user.email', cwd=ROOT)
     env = {'GIT_AUTHOR_NAME': name, 'GIT_AUTHOR_EMAIL': email, 'GIT_COMMITTER_NAME': name, 'GIT_COMMITTER_EMAIL': email}
-    import os
     commit = subprocess.run(['git', 'commit-tree', tree, '-m', f'Study 갱신 {datetime.now():%Y-%m-%d %H:%M}'],
                             cwd=REPO, check=True, capture_output=True, text=True, env={**os.environ, **env}).stdout.strip()
     P.git('update-ref', f'refs/heads/{BRANCH}', commit, cwd=REPO)
-    try:
-        P.git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
-    except subprocess.CalledProcessError as e:   # 큰 첫 배포(약 240MB)는 HTTP 업로드가 한 번씩 끊긴다 → 한 번 더
-        print(f'Study 사이트 푸시 실패, 다시 시도: {(e.stderr or "").strip()[:200]}')
-        import time
+    # config.py 가 읽어 오는 GITHUB_TOKEN 은 대시보드 저장소 전용이라, 그대로 두면 gh 로그인 대신 그 토큰으로 푸시해 403 이 난다
+    # (2026-11-18). 푸시할 때만 빼서 본인 gh 로그인(keyring)을 쓰게 한다.
+    push_env = {k: v for k, v in os.environ.items() if k not in ('GITHUB_TOKEN', 'GH_TOKEN')}
+    for attempt in (1, 2):   # 큰 첫 배포(약 240MB)는 HTTP 업로드가 한 번씩 끊긴다 → 한 번 더
+        r = subprocess.run(['git', 'push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}'], cwd=REPO,
+                           capture_output=True, text=True, env=push_env)
+        if r.returncode == 0:
+            break
+        print(f'Study 사이트 푸시 실패({attempt}): {r.stderr.strip()[:200]}')
+        if attempt == 2:
+            return 1
         time.sleep(10)
-        P.git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
     P.git('update-ref', f'refs/remotes/origin/{BRANCH}', commit, cwd=REPO)
     subprocess.run(['git', 'prune', '--expire=now'], cwd=REPO, capture_output=True)
     ensure_pages(remote)

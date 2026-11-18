@@ -151,7 +151,7 @@ def main() -> int:
     fcntl.flock(lock, fcntl.LOCK_EX)
     try:
         rc = _publish()
-        try:   # Beom's Study 는 따로 beoms-study 사이트로 (STUDY_PASS 가 있을 때만). 실패해도 대시보드 배포 결과는 그대로
+        try:   # Beom's Study 는 따로 beoms-study 사이트로 (STUDY_PASS 가 있을 때만). 바뀐 파일이 없으면 올리지 않는다
             import publish_study
             publish_study.main()
         except Exception as e:
