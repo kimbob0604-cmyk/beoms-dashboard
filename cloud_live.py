@@ -5,7 +5,7 @@
 전날 밤 배포본에 멈춘다(2026-11-18 09:00~10:34). 그 사이를 이 스크립트가 맡는다: 배포본(gh-pages)의
 home.json·quotes.json·live_base.json 을 읽고, 네이버 시세·지수만 새로 받아 장중 칸을 다시 계산해 그 자리에 쓴다.
 
-다시 계산하는 칸: 지수(종가·등락·투자자별 순매수·상승/하락 수·1분봉·순매수 스냅샷·오늘 일봉), 시장 폭(breadth),
+다시 계산하는 칸: 지수(종가·등락·투자자별 순매수·상승/하락 수·1분봉·순매수 스냅샷(빈 시각은 다음 금융)·오늘 일봉), 시장 폭(breadth),
 업종 등락, 시총 상위(big), 급등·급락(movers), 거래대금 급증(spike), quotes.json, 다른 카드 종목들의 가격·등락률.
 그대로 두는 칸: 신고가·수급·리비전·목표가·공시·리포트 목록과 이동평균 시장 폭 (맥이 깨어나 다시 만든다).
 계산 규칙은 build_home.py 와 같다. 기준(전일 종가·회사 시총·업종·20일 평균 거래대금)은 맥이 만든 live_base.json.
@@ -29,6 +29,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import index_snap  # noqa: E402
 from collectors import naver  # noqa: E402
 
 # build_home.py 와 같은 값
@@ -156,7 +157,7 @@ def spike(info: dict) -> dict:
     return {'d': None, 'live': True, 'n': len(rows), 'list': rows[:10]}
 
 
-def index_entry(session, code: str, name: str, old: dict, now: datetime) -> dict:
+def index_entry(session, code: str, name: str, old: dict, now: datetime, daum: list = None) -> dict:
     """build_home.build_index 의 한 지수 (일봉은 옛 1년치에 오늘 봉만 바꾼다)"""
     rows = naver.fetch_index(session, code)
     time.sleep(DELAY)
@@ -169,6 +170,8 @@ def index_entry(session, code: str, name: str, old: dict, now: datetime) -> dict
     if last['date'] == today and last['frgn'] is not None and minute:
         t = min(now.strftime('%H:%M'), SNAP_END[code], minute[-1]['t'])
         snap = sorted([s for s in snap if s[0] != t] + [[t, last['frgn'], last['org'], last['ind'], last['prog']]])
+    if last['date'] == today and daum:      # 빈 시각은 다음 금융 시간대별 값으로 (index_snap.combine 규칙)
+        snap = index_snap.combine(code, snap, daum)
     ohlc = {k: list(v) for k, v in ((old or {}).get('ohlc') or {'d': [], 'o': [], 'h': [], 'l': [], 'c': [], 'v': []}).items()}
     try:
         for b in naver.fetch_index_ohlc(session, code, 3):
@@ -216,10 +219,11 @@ def update(home: dict, quotes_json: dict, base: dict, quotes: list, session, now
          **{c: [i['p'], i['ch']] for c, i in info.items()}}
     per = periods_now(home, info)
     old_idx = {x['c']: x for x in home.get('idx', [])}
+    daum = index_snap.fetch_daum(now.strftime('%Y-%m-%d'))
     idx = []
     for code, name in INDEX:
         try:
-            idx.append(index_entry(session, code, name, old_idx.get(code), now))
+            idx.append(index_entry(session, code, name, old_idx.get(code), now, daum.get(code)))
         except (OSError, ValueError, KeyError) as e:
             print(f'  지수 {code} 실패 (옛 값 유지): {e}')
             if code in old_idx:

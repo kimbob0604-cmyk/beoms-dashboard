@@ -8,9 +8,9 @@
   // 09:00 ~ 15:30 (선물은 15:45)
   const session = x => (x.c === 'FUT' ? 406 : 391);
   const isFut = x => x.c === 'FUT';
-  // 선물 순매수는 네이버가 단위를 표시하지 않아 받은 숫자 그대로 (지수는 억원)
-  const signed = v => (v == null ? '–' : `${v > 0 ? '+' : ''}${Math.round(v).toLocaleString('ko-KR')}`);
-  const flowFmt = x => (isFut(x) ? signed : v => U.eok(v, true));
+  // 선물 순매수도 억원: 네이버 숫자 = 계약 수 × 선물 가격 × 25만 원 (2026-11-18 다음 금융 계약 수와 맞춰 확인).
+  // 장중 차트의 선물 순매수는 다음 금융 계약 수로 계산한 근삿값 (index_snap.py)
+  const flowFmt = () => v => U.eok(v, true);
   const contracts = v => (v >= 1e4 ? `${(v / 1e4).toFixed(1)}만` : Math.round(v).toLocaleString('ko-KR'));
 
   const $ = id => document.getElementById(id);
@@ -56,7 +56,7 @@
       <div class="hm-ix-chart"></div>
       ${x.f != null ? `<div class="hm-ix-flow${isFut(x) ? ' three' : ''}">${flows.map(([n, v, k]) =>
         `<div class="inv-${k}"><span>${n}</span><b class="${U.cls(v)}">${ff(v)}</b></div>`).join('')}</div>` : ''}
-      ${isFut(x) ? `<p class="muted small">최근월물 · 투자자별 순매수는 네이버 값 그대로 (네이버가 단위를 표시하지 않음)</p>` : b ? `<div class="hm-breadth">
+      ${isFut(x) ? `<p class="muted small">최근월물 · 순매수 억원 = 계약 수 × 선물 가격 × 25만 원. 위 카드 숫자는 네이버 값(15~20분 늦음), 장중 선은 다음 금융 계약 수로 계산한 근삿값</p>` : b ? `<div class="hm-breadth">
         <div class="hm-bd-bar"><i class="up-bg" style="flex:${b.up}"></i><i class="flat-bg" style="flex:${b.fl}"></i><i class="dn-bg" style="flex:${b.dn}"></i></div>
         <div class="small hm-bd-txt"><span class="up">상승 ${b.up}</span><span class="muted">보합 ${b.fl}</span><span class="down">하락 ${b.dn}</span>
           <span class="muted">상승 비율 ${Math.round(b.up / total * 100)}%</span></div>
@@ -91,7 +91,7 @@
     const panes = [{ h: 3, baseline: base, fmt: v => idxNum(v),
       series: [{ type: 'line', values: price, split: true, area: true, width: 1.7 }] }];
     if (hasFlow) {
-      panes.push({ h: 1.6, zero: true, label: `투자자별 누적 순매수${isFut(x) ? '' : ' (억원)'}`, fmt: ff,
+      panes.push({ h: 1.6, zero: true, label: `투자자별 누적 순매수 (억원${isFut(x) ? '·근사' : ''})`, fmt: ff,
         series: inv.map(s => ({ type: 'line', values: s.vals, color: s.color, connect: true, width: 1.6, last: true })) });
     }
     const last = (arr, i) => { for (let k = i; k >= 0; k--) if (arr[k] != null) return arr[k]; return null; };
