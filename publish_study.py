@@ -98,7 +98,13 @@ def main() -> int:
     commit = subprocess.run(['git', 'commit-tree', tree, '-m', f'Study 갱신 {datetime.now():%Y-%m-%d %H:%M}'],
                             cwd=REPO, check=True, capture_output=True, text=True, env={**os.environ, **env}).stdout.strip()
     P.git('update-ref', f'refs/heads/{BRANCH}', commit, cwd=REPO)
-    P.git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
+    try:
+        P.git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
+    except subprocess.CalledProcessError as e:   # 큰 첫 배포(약 240MB)는 HTTP 업로드가 한 번씩 끊긴다 → 한 번 더
+        print(f'Study 사이트 푸시 실패, 다시 시도: {(e.stderr or "").strip()[:200]}')
+        import time
+        time.sleep(10)
+        P.git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
     P.git('update-ref', f'refs/remotes/origin/{BRANCH}', commit, cwd=REPO)
     subprocess.run(['git', 'prune', '--expire=now'], cwd=REPO, capture_output=True)
     ensure_pages(remote)
