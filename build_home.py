@@ -16,6 +16,7 @@
 - mab      시장 폭: 20·60·120일 이동평균 위에 있는 종목 비율(%) 최근 120거래일 (코스피·코스닥)
 - spike    거래대금 급증: 20일 평균 대비 3배 이상 (시총 500억·평균 5억 이상). 장중이면 그때까지의 거래대금
 - sectors·big 의 w1·m1·m3: 1주·1개월·3개월 수익률(%) (업종은 시총 가중)
+- live_base.json 맥이 잘 때 GitHub Actions(cloud_live.py)가 홈·quotes.json 을 장중 시세로 다시 계산할 기준 (live_base)
 - quotes.json 전 종목 [가격, 등락률] + _d 시세 날짜·_t 장중 시각 (관심종목 카드·종목 패널 장중 시세용)
 - dart     최근 공시일의 눈에 띄는 공시 (잠정실적 서프·쇼크, 큰 수주, 최대주주 변경, 큰 자사주 소각·취득, 자금조달)
 
@@ -260,6 +261,34 @@ def ma_breadth(conn, markets):
             **{m: {str(w): [pct(a, b) for a, b in zip(above[m][w], total[m][w])] for w in MA_WINDOWS} for m in above}}
 
 
+def trd_sums(conn, dates):
+    """날짜들에 걸친 종목별 거래대금 합(억원)과 값이 있는 날 수"""
+    sums, cnt = defaultdict(float), defaultdict(int)
+    q = f"SELECT code, trd_val FROM price_daily WHERE date IN ({','.join('?' * len(dates))})"
+    for code, v in conn.execute(q, dates):
+        if v:
+            sums[code] += v
+            cnt[code] += 1
+    return sums, cnt
+
+
+def live_base(conn, info, pd):
+    """
+    맥이 잘 때 GitHub Actions(cloud_live.py)가 DB 없이 홈을 장중 시세로 다시 계산할 기준 → live_base.json.
+    s: {종목: [시장(0 코스피·1 코스닥), 회사 시총(억원), 기준가(이 시총일 때 주가), 업종 번호(w, 없으면 -1),
+              최근 20거래일 평균 거래대금(억원, 15일 미만이면 0)]}
+    장중 시세(apply_live)를 얹기 전 값이라, 장중 시총 = 시총 × 장중가 / 기준가.
+    """
+    dates = [r[0] for r in conn.execute('SELECT DISTINCT date FROM price_daily ORDER BY date DESC LIMIT 20')]
+    sums, cnt = trd_sums(conn, dates)
+    ws = sorted({i['w'] for i in info.values() if i.get('w')})
+    wi = {w: k for k, w in enumerate(ws)}
+    rows = {c: [0 if i['mk'] == 'KOSPI' else 1, i['mc'], i['p'], wi.get(i['w'], -1),
+                round(sums[c] / cnt[c], 1) if cnt[c] >= 15 else 0]
+            for c, i in info.items() if i.get('mc') and i.get('p')}
+    return {'d': pd, 'w': ws, 's': rows}
+
+
 def trd_spike(conn, info, live):
     """거래대금이 20일 평균의 SPIKE_X 배 이상인 종목"""
     dates = [r[0] for r in conn.execute('SELECT DISTINCT date FROM price_daily ORDER BY date DESC LIMIT 21')]
@@ -271,12 +300,7 @@ def trd_spike(conn, info, live):
     else:
         cur = dict(conn.execute('SELECT code, trd_val FROM price_daily WHERE date = ?', (dates[0],)).fetchall())
         prev, day = dates[1:21], dates[0]
-    sums, cnt = defaultdict(float), defaultdict(int)
-    q = f"SELECT code, trd_val FROM price_daily WHERE date IN ({','.join('?' * len(prev))})"
-    for code, v in conn.execute(q, prev):
-        if v:
-            sums[code] += v
-            cnt[code] += 1
+    sums, cnt = trd_sums(conn, prev)
     rows = []
     for c, i in info.items():
         if c not in cur or not cur[c] or cnt[c] < 15 or (i.get('mc') or 0) < SPIKE_MCAP:
@@ -291,6 +315,7 @@ def trd_spike(conn, info, live):
 def build(conn) -> dict:
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
     info, pd = market_info(conn, d)
+    write_json(DATA / 'live_base.json', live_base(conn, info, pd))
     live = apply_live(conn, info, pd)
     price_date = conn.execute('SELECT MAX(date) FROM quote_live').fetchone()[0] if live else pd
     rets = period_returns(conn, info, price_date or pd)
