@@ -96,5 +96,58 @@ class MergeTest(unittest.TestCase):
         self.assertEqual(I.merge(self.conn, {'date': '2026-11-16', 'KOSPI': [['09:06', 1, 1, 1, 1]]}, '2026-11-17'), 0)
 
 
+DAUM_KOSPI = {'data': [
+    {'date': '2026-11-18 15:35:00', 'foreignStraightPurchasePrice': -2e11, 'institutionStraightPurchasePrice': 3e11, 'individualStraightPurchasePrice': -1e11},
+    {'date': '2026-11-18 15:31:00', 'foreignStraightPurchasePrice': -1e11, 'institutionStraightPurchasePrice': 3e11, 'individualStraightPurchasePrice': -2e11},
+    {'date': '2026-11-18 09:03:00', 'foreignStraightPurchasePrice': 65_312_000_000, 'institutionStraightPurchasePrice': -5.68e10, 'individualStraightPurchasePrice': -1.07e10},
+    {'date': '2026-11-17 15:30:00', 'foreignStraightPurchasePrice': 1, 'institutionStraightPurchasePrice': 1, 'individualStraightPurchasePrice': 1}]}
+DAUM_FUT = {'data': [
+    {'date': '2026-11-18 08:45:00', 'foreignSettlement': 10, 'institutionalSettlement': -5, 'privateSettlement': -5},
+    {'date': '2026-11-18 09:10:00', 'foreignSettlement': 1000, 'institutionalSettlement': -400, 'privateSettlement': -600}]}
+
+
+class DaumTest(unittest.TestCase):
+    def test_rows_in_eok_today_only_and_close_slot(self):
+        rows = I.daum_rows('KOSPI', DAUM_KOSPI, '2026-11-18')
+        self.assertEqual(rows, [['09:03', 653, -568, -107, None], ['15:30', -2000, 3000, -1000, None]])   # 마감 뒤는 마지막 값 하나
+
+    def test_futures_contracts_to_eok(self):
+        rows = I.daum_rows('FUT', DAUM_FUT, '2026-11-18', I.price_at([['09:00', 780.0], ['09:30', 790.0]]))
+        self.assertEqual(rows, [['09:10', 1950, -780, -1170, None]])        # 1000계약 × 780 × 25만 ÷ 1억, 09:00 전은 뺀다
+        self.assertEqual(I.daum_rows('FUT', DAUM_FUT, '2026-11-18'), [])    # 가격이 없으면 못 바꾼다
+
+    def test_combine(self):
+        naver = [['09:05', 1.0, 2.0, 3.0, 4.0], ['10:00', 5.0, 6.0, 7.0, 8.0]]
+        daum = [['09:03', 9, 9, 9, None], ['09:05', 0, 0, 0, None], ['09:30', 1, 1, 1, None]]
+        self.assertEqual(I.combine('KOSPI', naver, daum),
+                         [['09:03', 9, 9, 9, None], ['09:05', 1.0, 2.0, 3.0, 4.0], ['09:30', 1, 1, 1, None], ['10:00', 5.0, 6.0, 7.0, 8.0]])
+        self.assertEqual(I.combine('FUT', naver, daum), daum + [['10:00', 5.0, 6.0, 7.0, 8.0]])   # 선물: 다음 구간은 다음만
+        self.assertEqual(I.combine('KOSPI', naver, []), naver)
+
+    def test_merge_daum_fills_and_replaces_futures(self):
+        c = sqlite3.connect(':memory:')
+        c.executescript("""
+            CREATE TABLE index_minute (date TEXT, code TEXT, t TEXT, price REAL, PRIMARY KEY (date, code, t));
+            CREATE TABLE index_snap (date TEXT, code TEXT, t TEXT, close REAL, frgn REAL, org REAL, ind REAL, prog REAL,
+                                     PRIMARY KEY (date, code, t));""")
+        c.execute("INSERT INTO index_minute VALUES ('2026-11-18', 'KOSPI', '09:00', 5000.0)")
+        c.execute("INSERT INTO index_snap VALUES ('2026-11-18', 'KOSPI', '10:00', 5010, 5, 6, 7, 8)")
+        c.execute("INSERT INTO index_snap VALUES ('2026-11-18', 'FUT', '09:20', 780, 99, 99, 99, NULL)")   # 늦게 들어온 네이버 선물
+        daum = {'KOSPI': [['09:03', 9, 9, 9, None], ['10:00', 0, 0, 0, None], ['13:00', 1, 1, 1, None]],
+                'FUT': [['09:10', 1, 2, 3, None], ['09:30', 4, 5, 6, None]]}
+        self.assertEqual(I.merge_daum(c, daum, '2026-11-18', upto='12:00'), 4)
+        rows = c.execute('SELECT code, t, close, frgn, prog FROM index_snap ORDER BY code, t').fetchall()
+        self.assertEqual(rows, [('FUT', '09:10', None, 1.0, None), ('FUT', '09:30', None, 4.0, None),
+                                ('KOSPI', '09:03', 5000.0, 9.0, None), ('KOSPI', '10:00', 5010.0, 5.0, 8.0)])
+        self.assertEqual(I.merge_daum(c, daum, '2026-11-18', upto='12:00'), 0)          # 두 번째는 바뀐 것 없음
+
+    def test_take_keeps_daum_series(self):
+        with tempfile.TemporaryDirectory() as d:
+            got = {'KOSPI': [['09:03', 1, 2, 3, None]]}
+            I.take(Path(d), datetime(2026, 11, 18, 9, 5), lambda url: reply('20261118'), daum=lambda: got)
+            self.assertEqual(json.loads((Path(d) / '2026-11-18.json').read_text())['daum'], got)
+            self.assertEqual(I.take(Path(d), datetime(2026, 11, 18, 9, 5), lambda url: reply('20261118'), daum=lambda: got), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
