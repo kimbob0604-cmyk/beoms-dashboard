@@ -7,7 +7,9 @@ home.json·quotes.json·live_base.json 을 읽고, 네이버 시세·지수만 �
 
 다시 계산하는 칸: 지수(종가·등락·투자자별 순매수·상승/하락 수·1분봉·순매수 스냅샷(빈 시각은 다음 금융)·오늘 일봉), 시장 폭(breadth),
 업종 등락, 시총 상위(big), 급등·급락(movers), 거래대금 급증(spike), quotes.json, 다른 카드 종목들의 가격·등락률.
-그대로 두는 칸: 신고가·수급·리비전·목표가·공시·리포트 목록과 이동평균 시장 폭 (맥이 깨어나 다시 만든다).
+신고가: 맥이 올린 live_high.json(어제까지의 축별 창 최고 등)으로 오늘 장중 신고가를 판정해 data/high/<오늘>.json 과
+홈 신고가 카드를 쓴다 (2026-11-19, build_newhigh.live_base · high_today — 11-17·11-18 로 맥 결과와 같음을 확인).
+그대로 두는 칸: 수급·리비전·목표가·공시·리포트 목록과 이동평균 시장 폭 (맥이 깨어나 다시 만든다).
 계산 규칙은 build_home.py 와 같다. 기준(전일 종가·회사 시총·업종·20일 평균 거래대금)은 맥이 만든 live_base.json.
 
 맥이 최근 4분 안에 배포했으면(home.json 의 built, by 없음) 아무것도 안 한다 — 맥이 깨어 있으면 맥 것이 우선이다.
@@ -245,6 +247,64 @@ def update(home: dict, quotes_json: dict, base: dict, quotes: list, session, now
     return out, q, len(info)
 
 
+HIGH_AXES = ('hist', 'w52', 'd120', 'd60')     # newhigh.AXES (우선순위 순)
+HIGH_TOL = 1e-9                                 # 같은 값은 신고가가 아니다 — 소수 반올림 차이로 같은 값이 넘는 것으로 잡히지 않게
+
+
+def high_today(lh: dict, info: dict, day: str, stamp: str):
+    """맥이 만든 live_high.json(어제까지의 기준) × 장중 시세 → 오늘 신고가 (build_newhigh.build 와 같은 모양, 잠정).
+    오늘 수정 종가 = 마지막 수정 종가 × (1 + 등락률) 이 축별 창 최고보다 크면 신고가, 가장 높은 축 하나.
+    기준이 오늘 것이거나(맥이 이미 오늘을 확정) 오늘이 기준 다음 7일 안이 아니면 None."""
+    if not lh or not lh.get('s') or lh.get('d', '') >= day or day not in lh.get('next', []):
+        return None
+    j = lh['next'].index(day)
+    today, recent, n_ax, uni = [], [], [0] * len(HIGH_AXES), 0
+    for c, b in lh['s'].items():
+        i = info.get(c)
+        if not i or i.get('ch') is None or not i.get('p') or b.get('a') is None:
+            continue
+        if (i.get('mc') or 0) < lh['min_mc']:
+            continue
+        uni += 1
+        cur = b['a'] * (1 + i['ch'] / 100)
+        y = b['y'][j] if isinstance(b['y'], list) else b['y']
+        refs = {'hist': b['h'], 'w52': y, 'd120': b['q'], 'd60': b['s']}
+        lab = next((ax for ax in HIGH_AXES if refs[ax] is not None and cur > refs[ax] * (1 + HIGH_TOL)), None)
+        row = {'c': c, 'n': b['n'], 'mk': b['mk'], 'w': b['w'], 'mc': i['mc'], 'p': i['p'], 'ch': i['ch'],
+               'tv': round(i['tv']) if i.get('tv') else None, 'f1': None, 'o1': None,
+               'f5': b.get('f5'), 'o5': b.get('o5'), 'gx': b.get('gx')}
+        if lab:
+            n_ax[HIGH_AXES.index(lab)] += 1
+            today.append({**row, 'ax': lab, 'run': b['r'] + 1, 'n20': b['k'] + 1, 'new': not b['z']})
+        if lab not in ('hist', 'w52') and b.get('rc'):
+            ax, last, n52, adj = b['rc']
+            recent.append({**row, 'ax': ax, 'last': last, 'n20': n52, 'since': round(cur / adj - 1, 4)})
+    counts = [x for x in lh.get('counts', []) if x[0] < day][-119:] + [[day, *n_ax]]
+    return {'date': day, 'at': stamp, 'prov': True, 'basis': 'close', 'min_mc': lh['min_mc'], 'universe': uni,
+            'days': lh.get('days', 20), 'hist_from': lh.get('hist_from'), 'flow_date': lh.get('flow_date'),
+            'today': today, 'recent': recent, 'counts': counts, 'by': 'cloud'}
+
+
+def high_card(high: dict) -> dict:
+    """홈 신고가 카드 (build_home.build_high): 52주 이상만, 시총 순 8개"""
+    top = sorted((s for s in high['today'] if s['ax'] in ('hist', 'w52')), key=lambda s: -(s.get('mc') or 0))
+    keys = ('c', 'n', 'mk', 'mc', 'p', 'ch', 'w')
+    return {'d': high['date'], 'at': high['at'], 'n': len(top), 'list': [{**{k: s[k] for k in keys}, 'run': s['run']} for s in top[:8]]}
+
+
+def write_high(folder: Path, high: dict):
+    """data/high/<오늘>.json 과 dates.json (오늘을 맨 앞에)"""
+    d = folder / 'data' / 'high'
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{high['date']}.json").write_text(json.dumps(high, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+    try:
+        dates = json.loads((d / 'dates.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        dates = []
+    if high['date'] not in dates:
+        (d / 'dates.json').write_text(json.dumps(sorted([high['date'], *dates], reverse=True)), encoding='utf-8')
+
+
 def mac_fresh(home: dict, now: datetime) -> bool:
     if home.get('by') == 'cloud' or not home.get('built'):
         return False
@@ -285,10 +345,24 @@ def site(folder: Path, force: bool = False, session=None, now=None) -> int:
         print(f"기준 {base['d']} 이 시세 날짜 {day} 보다 늦지 않음 — 맥의 장 마감 빌드가 이미 반영됨, 건너뜀")
         return SKIP
     home, q, n = update(home, quotes_json, base, quotes, session, now)
+    # 신고가: 맥이 올린 live_high.json(어제까지 기준)으로 오늘 장중 신고가를 판정 → data/high/<오늘>.json · 홈 신고가 카드
+    note = ''
+    try:
+        lh = json.loads((data / 'live_high.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        lh = None
+    try:
+        high = high_today(lh, live_info(base, quotes), day, home['live'])
+    except (KeyError, TypeError, ValueError, ZeroDivisionError) as e:
+        high, note = None, f' · 신고가 실패 {type(e).__name__}'
+    if high:
+        write_high(folder, high)
+        home['high'] = high_card(high)
+        note = f" · 신고가 {len(high['today'])} (52주 이상 {home['high']['n']})"
     for name, obj in (('home.json', home), ('quotes.json', q)):
         (data / name).write_text(json.dumps(obj, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     ix = ' · '.join(f"{x['n']} {x['v']:,.2f} ({x['ch']:+.2f}%)" for x in home['idx'] if x.get('v') is not None)
-    print(f'{hm} 장중 갱신: 종목 {n} · {ix}')
+    print(f'{hm} 장중 갱신: 종목 {n} · {ix}{note}')
     return 0
 
 
