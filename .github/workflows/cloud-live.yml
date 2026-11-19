@@ -1,7 +1,8 @@
 # 맥이 잘 때 장중 갱신을 대신한다 (평일 09:00~15:50 한국 시각).
-#  - 5분마다: 지수 투자자별 누적 순매수 스냅샷 → snap 브랜치 (index_snap.py take). 맥은 깨어난 뒤 merge 로 빈 시각을 채운다.
-#  - 10분마다: 공개 사이트 홈·quotes.json 을 장중 시세로 다시 계산해 gh-pages 에 올린다 (cloud_live.py site).
-#    맥이 최근 15분 안에 배포했으면 건너뛴다 — 맥이 깨어 있으면 맥 것이 우선.
+#  - 1분마다: 지수 투자자별 누적 순매수 스냅샷 → snap 브랜치 (index_snap.py take). 맥은 깨어난 뒤 merge 로 빈 시각을 채운다.
+#  - 1분마다: 공개 사이트 홈·quotes.json 을 장중 시세로 다시 계산해 gh-pages 에 올리고 배포 워크플로(pages.yml)를 부른다
+#    (cloud_live.py site). 맥이 최근 4분 안에 배포했으면 건너뛴다 — 맥이 깨어 있으면 맥 것이 우선.
+#  - 2026-11-19 사용자 요청으로 5·10분 → 1분. 한 바퀴가 1분을 넘으면 기다리지 않고 바로 다음 바퀴.
 #
 # GitHub 예약 실행은 몇 분~몇 시간 늦거나 아예 빠진다(2026-11-18 오전에는 5분 간격 예약이 한 번도 안 돌았다).
 # 그래서 짧은 실행을 자주 거는 대신, 한 번 시작하면 장 마감까지 안에서 돌고(한 실행은 최대 6시간이라 5시간 40분에서
@@ -70,6 +71,7 @@ jobs:
           started=$(date +%s)
           n=0
           while :; do
+            t0=$(date +%s)
             hm=$(date +%H%M); dow=$(date +%u)
             if [ "$dow" -gt 5 ] || [ "$hm" -gt 1555 ]; then echo "$(date +%H:%M) 장 끝 — 종료"; break; fi
             if [ $(( $(date +%s) - started )) -gt $(( 340 * 60 )) ]; then
@@ -77,22 +79,26 @@ jobs:
               gh workflow run cloud-live.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
               break
             fi
-            if [ "$hm" -lt 0900 ]; then sleep 60; continue; fi
+            if [ "$hm" -lt 0900 ]; then sleep $(( 60 - $(date +%s) % 60 + 20 )); continue; fi
 
-            # 5분마다: 지수 순매수 스냅샷
+            # 1분마다: 지수 순매수 스냅샷
             python3 index_snap.py take snapdir
             ( cd snapdir && git add -A && if ! git diff --cached --quiet; then
                 git commit -qm "snap $(date -u +%FT%H:%MZ)" && git push -q origin snap || echo "snap 올리기 실패"; fi )
 
-            # 10분마다: 사이트 홈
-            if [ $((n % 2)) -eq 0 ]; then
-              ( cd site && git fetch -q --depth 1 --filter=blob:none origin gh-pages && git reset -q --hard FETCH_HEAD ) || echo "gh-pages 받기 실패"
-              force=""; [ "$n" -eq 0 ] && [ "${{ inputs.force }}" = "true" ] && force="--force"
-              if python3 cloud_live.py site site $force; then
-                ( cd site && git add data/home.json data/quotes.json && git commit -qm "장중 갱신(Actions) $(date +%H:%M)" \
-                  && git push -q origin HEAD:gh-pages ) || echo "gh-pages 올리기 실패 (그새 맥이 배포했을 수 있음 — 다음 차례에)"
+            # 1분마다: 사이트 홈 → gh-pages → 배포 워크플로 (GITHUB_TOKEN 으로 한 푸시는 워크플로를 부르지 않으므로 직접 부른다)
+            ( cd site && git fetch -q --depth 1 --filter=blob:none origin gh-pages && git reset -q --hard FETCH_HEAD ) || echo "gh-pages 받기 실패"
+            force=""; [ "$n" -eq 0 ] && [ "${{ inputs.force }}" = "true" ] && force="--force"
+            if python3 cloud_live.py site site $force; then
+              if ( cd site && git add data/home.json data/quotes.json && git commit -qm "장중 갱신(Actions) $(date +%H:%M)" \
+                   && git push -q origin HEAD:gh-pages ); then
+                gh workflow run pages.yml -R "$GITHUB_REPOSITORY" --ref main || echo "배포 워크플로 호출 실패"
+              else
+                echo "gh-pages 올리기 실패 (그새 맥이 배포했을 수 있음 — 다음 차례에)"
               fi
             fi
             n=$((n + 1))
-            sleep $(( 300 - $(date +%s) % 300 + 20 ))   # 5분 경계 + 20초 (네이버 값이 그 분에 바뀐 뒤)
+            # 다음 바퀴: 이번 바퀴 시작 + 1분 (1분을 넘겼으면 바로)
+            left=$(( t0 + 60 - $(date +%s) ))
+            if [ "$left" -gt 0 ]; then sleep "$left"; fi
           done
