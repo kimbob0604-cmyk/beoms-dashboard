@@ -182,7 +182,25 @@ launchd(`com.kimbob.beomdashboard.live`)가 1분마다 부른다(2026-11-19 10�
   날짜별 탭은 최신 날짜를 보고 있으면 새 날짜(예: 장중 새 거래일 신고가)로 저절로 넘어간다.
 - 맥이 잘 때(cloud-live): 홈·시세에 더해 신고가도 계산한다. 맥이 올린 `live_high.json`(어제까지의 축별 창 최고 등, `build_newhigh.live_base`)에
   장중 등락률을 붙여 판정 → `data/high/<오늘>.json`·홈 신고가 카드 (11-17·11-18 로 맥 결과와 같음을 확인).
-  공시·리포트·수급·텔레그램 탭은 맥이 깨어나야 갱신된다(가격만 화면에서 실시간).
+  공시·리포트·수급은 아래 '맥이 잘 때 클라우드 수집'이 맡는다. 텔레그램 탭(실적 덱·DOC_POOL·탐방·컨콜)은 로그인이 맥에만 있어 맥이 깨어나야 갱신된다.
+
+### 맥이 잘 때 클라우드 수집 (cloud-data, 2026-11-19)
+
+맥이 자는 동안 GitHub Actions(`.github/workflows/cloud-data.yml`)가 공시(DART·KIND)·증권사 리포트·종목별 수급을 맥과 같은 코드로 받아 빌드해 올린다.
+- 맥 신호: `live.py` 가 5분마다 `cloud_sync.py beat` → mac 브랜치에 빈 커밋. 15분 넘게 없으면 클라우드가 일한다(맥이 30분째 깨어 있으면 클라우드는 끝남).
+- DB 이력: `live.py` 가 6시간마다 `cloud_sync.py snapshot` → dashboard.db 를 lzma+AES-256-GCM 으로 잠가 릴리스 `dbsnap` 첨부로 덮어 올림(약 47MB, 1분).
+  암호는 `.env` 의 CLOUD_DB_PASS(처음 `python3 cloud_sync.py new-pass` 로 만듦). 첨부를 덮어써서 저장소가 불어나지 않는다.
+- 클라우드 한 차례(2분마다, `cloud_data.py cycle`): 수급 새 거래일(매일 06시~) · DART 공시·KIND 시각·리포트(평일 07:00~19:30, 사본 뒤 빈 날 최대 7일)
+  → build_dart·build_events·build_naver --no-high·build_digest → 홈의 공시·리포트·수급·목표가 카드 → gh-pages → pages.yml.
+  사이트 data 폴더를 그대로 public/data 로 이어 빌드하므로 다른 탭 파일은 그대로이고 바뀐 파일만 올라간다. 11-19 시험에서 맥 결과와 같았다(기관 세부 제외).
+- 빠지는 것: 기관 세부(KIS 키), 텔레그램 탭(로그인), 신고가는 cloud_live 가 따로. 맥이 깨어나 배포하면 맥 것으로 덮인다.
+- 처음 한 번, 저장소 비밀값 두 개를 직접 등록한다(값은 화면에 나오지 않음):
+
+```bash
+grep '^CLOUD_DB_PASS=' .env | cut -d= -f2- | gh secret set CLOUD_DB_PASS -R kimbob0604-cmyk/beoms-dashboard
+grep '^DART_API_KEY=' ~/stock-dashboard/.env | cut -d= -f2- | tr -d '"\r ' | gh secret set DART_API_KEY -R kimbob0604-cmyk/beoms-dashboard
+```
+- 시험: `gh workflow run cloud-data.yml -R kimbob0604-cmyk/beoms-dashboard -f force=true` (맥이 깨어 있어도 한 차례).
 - 매일 06:00~23:59: 종목별 수급이 새 거래일로 올라왔는지 삼성전자 1종목으로 확인하고, 올라왔으면 전 종목 수급(약 9분)을 받는다.
   네이버가 KRX 종목별 투자자 매매동향을 올리는 시각이 날마다 다르다(11/3 분은 20:20 무렵, 11/4 분은 다음 날 05시까지도 안 올라옴). 그 전에는 홈 '외국인 + 기관' 카드에 이전 거래일 값과 '네이버 공개 전' 표시가 나온다.
 화면은 장중에 1분마다 home.json 이 바뀌었는지 확인해 다시 그린다. GitHub Pages 반영까지 30~40초가 더 걸린다.
