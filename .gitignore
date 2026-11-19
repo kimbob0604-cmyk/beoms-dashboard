@@ -20,3 +20,8 @@ study_src/
 
 # Study 전용 사이트 배포 작업 저장소
 .publish_study/
+
+# 클라우드 동기화 (cloud_sync.py·cloud_data.py)
+.cloudsync/
+.cloud_state.json
+db/.snap_sha

@@ -339,17 +339,23 @@ def build(conn) -> dict:
         'movers': {'up': [slim(s) for s in sorted(movers, key=lambda s: -s['ch'])[:8]],
                    'dn': [slim(s) for s in sorted(movers, key=lambda s: s['ch'])[:8]]},
     }
+    out.update(json_cards())
+    return out
+
+
+def json_cards() -> dict:
+    """다른 탭이 만든 JSON 으로 채우는 홈 카드 (리비전·목표가·수급·신고가·공시·리포트).
+    클라우드(cloud_data.py)도 맥이 잘 때 공시·리포트·수급을 새로 빌드한 뒤 이 카드만 홈에 갈아 끼운다."""
     growth, flow, high = latest_json('growth'), latest_json('flow'), latest_json('high')
     recent_path = DATA / 'reports' / 'recent.json'
     recent = json.loads(recent_path.read_text(encoding='utf-8')) if recent_path.exists() else None
-    out['rev'] = growth and build_rev(growth)
-    out['tgt'] = recent and build_tgt(recent)
-    out['flow'] = flow and build_flow(flow)
-    out['high'] = high and build_high(high)
-    out['dart'] = build_dart()
-    out['reports'] = recent and [{**slim(r), 'id': r['id'], 'd': r['d'], 'b': r['b'], 't': r['t'], 'op': r.get('op'),
-                                  'g': r.get('g'), 'pg': r.get('pg')} for r in recent['reports'][:10]]
-    return out
+    return {'rev': growth and build_rev(growth),
+            'tgt': recent and build_tgt(recent),
+            'flow': flow and build_flow(flow),
+            'high': high and build_high(high),
+            'dart': build_dart(),
+            'reports': recent and [{**slim(r), 'id': r['id'], 'd': r['d'], 'b': r['b'], 't': r['t'], 'op': r.get('op'),
+                                    'g': r.get('g'), 'pg': r.get('pg')} for r in recent['reports'][:10]]}
 
 
 def main():

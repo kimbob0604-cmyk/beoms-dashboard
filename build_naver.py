@@ -359,10 +359,16 @@ def main():
         print(f"flow/{fd}.json: {len(data['stocks'])}종목")
 
     # 신고가: 가격 이력으로 직접 계산 (build_newhigh.py — 역사적·52주·120일·60일, 종가 기준)
-    import build_newhigh
-    data = build_newhigh.write_all(conn)
-    hd = data['date']
-    print(f"high/{hd}.json{' (잠정)' if data['prov'] else ''}: 대상 {data['universe']}종목, 신고가 {len(data['today'])}, 최근 {len(data['recent'])}")
+    if '--no-high' in sys.argv:   # 클라우드(cloud_data.py): 가격 이력 DB(history.db 1.6GB)가 없다 — 신고가는 cloud_live 가 따로
+        try:
+            hd = json.loads((DATA / 'high' / 'dates.json').read_text())[0]
+        except (OSError, ValueError, IndexError):
+            hd = None
+    else:
+        import build_newhigh
+        data = build_newhigh.write_all(conn)
+        hd = data['date']
+        print(f"high/{hd}.json{' (잠정)' if data['prov'] else ''}: 대상 {data['universe']}종목, 신고가 {len(data['today'])}, 최근 {len(data['recent'])}")
 
     rd = max(filter(None, [d, fd, hd]))
     recent, stocks = build_reports(conn, rd)

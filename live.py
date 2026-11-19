@@ -42,6 +42,8 @@ START, END = dtime(9, 0), dtime(15, 50)
 DART_START, DART_END = dtime(7, 0), dtime(19, 30)
 FLOW_START = dtime(6, 0)
 AFTER_STAMP = LOG_DIR / 'live_after_close.stamp'   # 장 마감 뒤 시세를 한 번 받은 날
+# 클라우드(cloud-data 워크플로)에 '맥 깨어 있음' 신호(5분)와 DB 사본(6시간)을 보낸다 — cloud_sync.py
+BEAT_EVERY, SNAP_EVERY = 300, 6 * 3600
 # 느린 수집: (이름, 간격 초, 시작, 끝, 평일만) — 마지막으로 돈 시각은 logs/live_slow_<이름>.stamp 의 수정 시각
 SLOW = (('tg', 300, dtime(6, 0), dtime(23, 59), False),
         ('tgsearch', 900, dtime(6, 0), dtime(23, 59), False),
@@ -125,6 +127,32 @@ def slow_due(name: str, every: int, start, end, weekday_only: bool, now: datetim
         return True
 
 
+def stamp_age(name: str) -> float:
+    try:
+        return time.time() - (LOG_DIR / name).stat().st_mtime
+    except OSError:
+        return float('inf')
+
+
+def spawn(*args):
+    """따로 떠서 돈다 (1분 갱신을 기다리게 하지 않음)"""
+    subprocess.Popen([sys.executable, *args], cwd=ROOT, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+def dart_gap() -> int:
+    """마지막으로 받은 공시일부터 오늘까지 (맥이 며칠 잤어도 빈 날을 이어 받게, 최대 7일)"""
+    try:
+        con = sqlite3.connect(f'file:{DB}?mode=ro', uri=True, timeout=30)
+        try:
+            last = con.execute('SELECT MAX(date) FROM dart_filing').fetchone()[0]
+        finally:
+            con.close()
+        return max(1, min(7, (datetime.now().date() - datetime.fromisoformat(last).date()).days))
+    except (sqlite3.Error, TypeError, ValueError):
+        return 1
+
+
 def quote_date() -> str:
     try:
         con = sqlite3.connect(f'file:{DB}?mode=ro', uri=True, timeout=30)
@@ -184,8 +212,13 @@ def main() -> int:
     except BlockingIOError:
         return 0   # 직전 장중 갱신이 아직 도는 중
     if any(slow_due(*x, t) for x in SLOW) or force:   # 느린 수집은 따로 (1분 갱신을 막지 않게). 이미 돌고 있으면 그쪽이 바로 끝난다
-        subprocess.Popen([sys.executable, str(ROOT / 'live.py'), '--slow', *(['--force'] if force else [])], cwd=ROOT,
-                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        spawn('live.py', '--slow', *(['--force'] if force else []))
+    if stamp_age('cloud_beat.stamp') >= BEAT_EVERY - 30:      # 클라우드에 '맥 깨어 있음' (실패해도 다음 분에 다시)
+        (LOG_DIR / 'cloud_beat.stamp').touch()
+        spawn('cloud_sync.py', 'beat')
+    if stamp_age('cloud_snapshot.stamp') >= SNAP_EVERY and stamp_age('cloud_snapshot.try') >= 1800:   # DB 사본 (실패하면 30분 뒤 다시)
+        (LOG_DIR / 'cloud_snapshot.try').touch()
+        spawn('cloud_sync.py', 'snapshot')
     with open(LOG_DIR / f'live_{datetime.now():%Y%m%d}.log', 'a', encoding='utf-8') as log:
         if daily_running():
             log.write(f'--- {datetime.now():%H:%M:%S} 정기 실행(daily.py)이 도는 중 — 장중 갱신은 그대로 진행\n')
@@ -219,7 +252,7 @@ def main() -> int:
             ok |= run(['index_snap.py', 'merge'], log) == 0
         if filings:
             dart0, rep0 = fingerprint(DB, DART_FP), fingerprint(DB, RESEARCH_FP)
-            run(['collect_dart.py'], log)
+            run(['collect_dart.py', '--days', str(dart_gap())], log)
             run(['collect_dart.py', 'times', '--latest'], log)   # KIND 최신 100건 공시 시각
             run(['collect_naver.py', 'research', '--days', '2'], log)
             new_dart = changed(dart0, fingerprint(DB, DART_FP))
