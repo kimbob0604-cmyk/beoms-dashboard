@@ -24,6 +24,7 @@ MON = {m: i + 1 for i, m in enumerate(['jan', 'feb', 'mar', 'apr', 'may', 'jun',
 PATS = [   # (정규식, (년, 월, 일) 뽑기) — 표지에 흔한 꼴
     (r'(20\d\d)\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일', lambda m: (m[1], m[2], m[3])),
     (r'(20\d\d)\s*[./-]\s*(\d{1,2})\s*[./-]\s*(\d{1,2})(?!\d)', lambda m: (m[1], m[2], m[3])),
+    (r'(?<!\d)(20\d\d)(0[1-9]|1[0-2])([0-2]\d|3[01])(?!\d)', lambda m: (m[1], m[2], m[3])),   # 20261117 (유진 표지)
     (r'(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s*,?\s*(20\d\d)', lambda m: (m[3], MON[m[2].lower()[:3]], m[1])),
     (r'(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2}),?\s*(20\d\d)', lambda m: (m[3], MON[m[1].lower()[:3]], m[2])),
 ]

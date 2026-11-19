@@ -51,3 +51,26 @@ OCR: 쪽을 200dpi JPEG로 렌더(`study_src/dl-kyobo-jmj/pages`) → `study_ocr
 - 픽셀 읽기(`study_chart.py`)는 쓰지 않았다(여러 리포트 문서 미지원 — semi-2027 메모와 같은 이유). 라벨이 없는 그림(CD 플레이어 미보유 등)은 차트 없이 설명만.
 - 시총은 리포트 기준일 값이다. 대시보드 실시간 시총으로 POR을 다시 계산할지 결정 필요(energy와 같은 질문).
 - 커밋 대상(이 세션 것만): `study/tree/media.json`, `study/entities/media.json`, `study/docs/media-2027.json`, `study/diagrams/media-*.svg`(6), `docs/study-media-plan.md`.
+
+## 2026-11-18 추가 — 유진·BNK 통신, 키움 엔터/레저
+
+넣은 리포트(`study_src/pdf/`, 요약 `study_src/media-2027/_work/digest-<키>.md`, 문서 수정 스크립트 `t5.py`):
+
+| 키 | 하우스 | 제목 | 표지 | 쪽 | 새 그림 |
+|---|---|---|---|---|---|
+| rg-14724 | 유진 이찬영 | 2027 OUTLOOK 통신서비스·통신장비: 새 판 깔자 | 26.11.17 | 55 | 8 (e10~e37) |
+| rg-14731 | BNK 김장원 | 통신서비스: 강점은 살리고 약점은 보완하는 체질 개선 | 26.11.17 | 36 | 8 (b09~b20) |
+| rg-14753 | 키움 임수진 | 2027년 엔터·레저 산업 전망: 기대해도 좋을 2027년 | 26.11.17 | 61 | 8 (w11~w45) |
+
+- 결과: 카드 96 → 135, 그림·표 64 → 88(88/88 카드화), 계산 카드 7 → 9(SK텔레콤 부분 합산(BNK)·시총 분해(유진)). `source.n` 5, 쪽 257.
+- 합의 수: 엔터 2/2 → n/3(재성장·미국·하이브 톱픽·디레이팅·새 IP 조기 수익화·CORTIS/KATSEYE·NCT WISH/라이즈 3/3, LP 2/3, 음반 1억 장 2/3).
+  통신 새 합의(n/3): AIDC가 성장 동력 3/3, CapEx 재상승 3/3, 본업 저성장·마케팅 안정 3/3, SKT DPS 3,320원 3/3, 6G 2030년 이후 2/3, SKT 톱픽 2/3. 레저 새 합의(n/2): 인바운드 증가·환율 영향 작음·ADR·GS피앤엘.
+- 새 견해 차이: ④ 카지노(NH 톱픽 없음 vs 키움 롯데관광개발·파라다이스), ⑤ 데이터센터 용량·매출 숫자, ⑥ 주주환원(KT 10.3% vs 6.8%, LGU 자사주 중단 가능 vs 계속), ⑦ 에스엠(교보 110,000 vs 키움 130,000원).
+  기존 ① CORTIS에 키움 592만 장, ② 신인에 키움 '상향 옵션', ③ 하이브에 키움 OP 5,602억 원(POR 11.9배) 추가.
+- 맞대기 차트: 하이브 매출·이익(3곳), 통신 2027 영업이익(3곳), 2027 DPS(3곳), POR 19개 막대(키움·BNK 시총 추가), 하이브 POR 계산 카드에 키움 입력.
+- 색인 `study/entities/media.json` +13: c:lowyear-ip · c:drop-hold · c:ai-utility · c:dist-energy · c:mvno · c:iot-line · c:spectrum · c:open-ran · c:dbo · co:sk-hyper · co:sk-horizon · co:skylife · co:rfhic.
+  재사용: c:aidc(nh-sectors) · c:pue · c:queue · co:hyosung-hi(energy) · c:grid-act · co:kepco(power) · c:buyback · co:anthropic · co:openai · co:microsoft · c:cpo(semi-2027) · co:qualcomm · co:samsung-elec · c:compound · c:hbm(semi) · c:sotp(bio-2027).
+- 원문 오류·의문: BNK SKT AIDC 목표 15GW(p.10)·5~15GW(p.14)·2029 5GW(p.20) 혼재, 'KKT 29%'(KKR), 주당가치 108,859원은 자사주 제외 주식수로 나눈 값(주석은 '포함').
+  키움 합산 시총 10.9조(p.4·8) vs 9.6조(p.14), 하이브 컨센 대비 +13%(p.17) vs +18.3%(p.22), GS피앤엘 2027 PER 본문 9.6배 vs 표 7.0배, 2025 음반 수출 본문 3억 2,246만 vs 라벨 323.
+  하우스 간: KT·LGU 현재 용량(130~171MW), SKT 2025 DC 매출 NH 3,880억 vs BNK 5,200억(정의 차이), 음반 판매량 NH vs 키움 0.01~0.02억 장 차이.
+- 남은 것: `media-map` 도식은 1차 기준(엔터만 겹침 칸 표시) — 카드 설명에 적어 두었고 그림은 고치지 않았다. 표지 날짜(`study/reports.json` 의 rg-14731·rg-14753 `auto`)는 이 작업 범위 밖이라 그대로 뒀다(표지 26.11.17 확인).
