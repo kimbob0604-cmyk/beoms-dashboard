@@ -261,6 +261,11 @@ def main() -> int:
         today = now.strftime('%Y-%m-%d')
         conn = sqlite3.connect(str(ROOT / 'db' / 'dashboard.db'), timeout=30)
         added, notes = 0, []
+        # 네이버 스냅샷이 넣은 행을 다음 금융 규칙(combine)이 다시 빼는 시각이 있어, 행 수만 보면 매번 '채움'이 된다
+        # (2026-11-19 장 마감 뒤 9행이 매분 들어갔다 빠짐 → live.py 가 1분마다 홈을 다시 빌드). 실제 내용이 바뀌었는지로 판단한다.
+        since = (now - timedelta(days=MERGE_DAYS)).strftime('%Y-%m-%d')
+        snap_rows = lambda: set(conn.execute('SELECT date, code, t, close, frgn, org, ind, prog FROM index_snap WHERE date >= ?', (since,)))
+        before = snap_rows()
         for back in range(MERGE_DAYS):
             day = (now - timedelta(days=back)).strftime('%Y-%m-%d')
             if (now - timedelta(days=back)).weekday() >= 5:
@@ -290,8 +295,11 @@ def main() -> int:
                 added += n
                 if n:
                     notes.append(f'{day} 다음 금융 {n}행')
+        net = added and snap_rows() != before
+        if added and not net:
+            notes.append('결과는 전과 같음')
         print(f"{now:%H:%M:%S} " + (' · '.join(notes) if notes else '채울 시각 없음'))
-        return 0 if added else NOTHING
+        return 0 if net else NOTHING
     print(__doc__)
     return 2
 
