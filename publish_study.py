@@ -68,6 +68,15 @@ def stage(out: Path, pw: str) -> int:
 
 
 def main() -> int:
+    # publish.py(대시보드 배포 뒤)와 live.py(Study 빌드가 바뀌면 1분 안에)가 둘 다 부른다 → .publish_study 작업 저장소는 한 번에 하나
+    import fcntl
+    (ROOT / 'logs').mkdir(exist_ok=True)
+    with open(ROOT / 'logs' / 'publish_study.lock', 'w') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return _main()
+
+
+def _main() -> int:
     pw = study_crypt.password()
     if not pw:
         print('STUDY_PASS 가 없어 Study 사이트 배포를 건너뜀 (.env)')

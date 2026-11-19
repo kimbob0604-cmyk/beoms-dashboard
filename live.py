@@ -36,6 +36,9 @@ DART_START, DART_END = dtime(7, 0), dtime(19, 30)
 FLOW_START = dtime(6, 0)
 TG_EVERY = 600                          # 텔레그램 실적 글 확인 간격(초)
 TG_STAMP = LOG_DIR / 'live_tg.stamp'    # 마지막으로 확인한 시각 (파일 수정 시각)
+PUBLIC = ROOT / 'public'
+STUDY_FILES = ('study.html', 'css/app.css', 'css/study.css', 'js/util.js', 'js/study_chart.js', 'js/study.js')
+STUDY_STAMP = LOG_DIR / 'study_publish.stamp'   # Study 사이트에 마지막으로 올린 빌드의 지문
 
 # 새로 들어온 행이 있는지 보는 지문 (행 수·마지막 rowid — INSERT OR REPLACE 도 rowid 가 커진다, 시각 채움은 COUNT(tm))
 DART_FP = ('SELECT COUNT(*), MAX(rowid) FROM dart_filing', 'SELECT COUNT(*), MAX(rowid), COUNT(tm) FROM dart_event',
@@ -86,6 +89,32 @@ def tg_due(force: bool) -> bool:
         return force or time.time() - TG_STAMP.stat().st_mtime >= TG_EVERY - 30
     except OSError:
         return True
+
+
+def study_sig() -> str:
+    """Study 빌드(public/data/study + 화면 파일)의 지문: 파일 수·크기 합·마지막 수정 시각 (2천여 파일, 수십 ms)"""
+    n = size = last = 0
+    paths = [PUBLIC / rel for rel in STUDY_FILES] + [p for p in (PUBLIC / 'data' / 'study').rglob('*') if p.is_file()]
+    for p in paths:
+        try:
+            st = p.stat()
+        except OSError:
+            continue
+        n, size, last = n + 1, size + st.st_size, max(last, st.st_mtime_ns)
+    return f'{n}:{size}:{last}'
+
+
+def publish_study_if_changed(log):
+    """Study 빌드가 바뀌었으면 Study 사이트(beoms-study)로 올린다. 대시보드에 새 데이터가 없어도 1분 안에 올라가게
+    (전에는 publish.py 가 대시보드를 배포할 때만 같이 올려, 저녁에 Study 만 다시 빌드하면 다음 대시보드 배포까지 기다렸다)"""
+    sig = study_sig()
+    try:
+        if STUDY_STAMP.read_text() == sig:
+            return
+    except OSError:
+        pass
+    if run(['publish_study.py'], log) == 0:
+        STUDY_STAMP.write_text(sig)
 
 
 def run(args, log) -> int:
@@ -158,15 +187,18 @@ def main() -> int:
             run(['build_digest.py'], log)   # 새 리포트·수급이 들어오면 리포트 탭도 (3초)
         elif high_only and run(['build_naver.py', '--high'], log) != 0:
             return 1
+        rc = 0
         if not ok:
             log.write(f'{datetime.now():%H:%M:%S} 새로 받은 것 없음, 배포 건너뜀\n')
-            return 0
-        if market:
-            run(['build_bio.py', '--live'], log)   # 바이오 탭 국장 종목도 장중 가격으로 (네트워크 없음)
-        if run(['build_home.py'], log) != 0 or run(['publish.py'], log) != 0:
-            return 1
-        log.write(f'=== {datetime.now():%H:%M:%S} 끝 ({(datetime.now() - t).total_seconds():.0f}초)\n')
-    return 0
+        else:
+            if market:
+                run(['build_bio.py', '--live'], log)   # 바이오 탭 국장 종목도 장중 가격으로 (네트워크 없음)
+            if run(['build_home.py'], log) != 0 or run(['publish.py'], log) != 0:
+                rc = 1
+        publish_study_if_changed(log)   # publish.py 가 방금 올렸으면 '바뀐 파일 없음'으로 끝난다 (3초)
+        if ok:
+            log.write(f'=== {datetime.now():%H:%M:%S} 끝 ({(datetime.now() - t).total_seconds():.0f}초)\n')
+    return rc
 
 
 if __name__ == '__main__':
