@@ -13,6 +13,7 @@
 """
 
 import json
+import sys
 from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -343,6 +344,11 @@ def build_reports(conn, d):
 
 def main():
     conn = db.connect()
+    if '--high' in sys.argv:   # 장중 매분(live.py): 시세만 바뀌었으면 신고가만 다시 (2초, 전체는 10초)
+        import build_newhigh
+        data = build_newhigh.write_all(conn)
+        print(f"high/{data['date']}.json{' (잠정)' if data['prov'] else ''}: 신고가 {len(data['today'])}, 최근 {len(data['recent'])}")
+        return
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
 
     fd = conn.execute('SELECT MAX(date) FROM flow_daily').fetchone()[0]

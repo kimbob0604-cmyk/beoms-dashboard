@@ -6,7 +6,9 @@ GitHub Pages 배포: public/ 화면 + 최근 KEEP_DAYS일 데이터 → origin �
 매번 gh-pages 를 커밋 하나짜리로 새로 만들어 강제 푸시한다. 매일 수십 MB 의 JSON 이 바뀌어도
 저장소 히스토리가 불어나지 않게 하기 위해서다. 코드(main 브랜치)는 건드리지 않는다.
 배포용 저장소(.publish/)를 지워 없애지 않고 두어, 원격에 이미 있는 파일은 다시 올리지 않는다
-(장중 10분마다 home.json 만 바뀔 때 몇 KB 만 올라간다).
+(장중 1분마다 home.json 만 바뀔 때 몇 KB 만 올라간다).
+푸시한 뒤 배포 워크플로(.github/workflows/pages.yml)를 부른다 — Pages 소스가 'GitHub Actions' 라 푸시만으로는 사이트가 안 바뀐다
+(브랜치 배포의 시간당 10회 한도를 피하려고 2026-11-19 에 바꿈).
 
   python3 publish.py
 """
@@ -35,6 +37,8 @@ RENAMED = {'visits_pub.json': 'visits.json', 'consumer.json': 'consumer.json',
 KEEP_DAYS = 90
 BRANCH = 'gh-pages'
 REPO = ROOT / '.publish'   # 배포용 작업 저장소 (gitignore)
+PAGES_WORKFLOW = 'pages.yml'                   # gh-pages → GitHub Pages 배포 워크플로 (main 브랜치)
+DISPATCHED = REPO / '.git' / 'pages_dispatched'   # 배포 워크플로를 마지막으로 부른 gh-pages 커밋
 # 아직 공개하면 안 되는 화면·데이터 (public/ 기준 경로, 한 줄에 하나). 이 파일이 있으면 배포에서 빼고,
 # 다른 화면의 탭 링크도 지운다. 공개해도 되면 해당 줄(또는 파일)을 지우면 된다.
 HOLD_FILE = ROOT / 'publish_hold.txt'
@@ -127,20 +131,58 @@ def ensure_repo(remote: str):
     subprocess.run(['git', 'fetch', '-q', '--depth', '1', 'origin', BRANCH], cwd=REPO, capture_output=True)
 
 
-def last_deploy_failed(remote: str, commit: str) -> bool:
-    """원격 gh-pages 의 지금 커밋으로 돈 GitHub Pages 배포가 실패·취소로 끝났으면 True.
-    배포가 'syncing_files' 타임아웃으로 실패하면 사이트는 옛 상태로 남는데, 내용이 같으면 다시 올리지 않아
-    그대로 굳는 문제가 있었다(2026-11-09 11:38). gh 가 없거나 확인이 안 되면 False."""
+def repo_slug(remote: str) -> str | None:
     m = re.search(r'github\.com[:/]([^/]+/[^/.]+)', remote)
-    if not m or not commit:
+    return m.group(1) if m else None
+
+
+def gh_env() -> dict:
+    """.env 의 GITHUB_TOKEN 은 대시보드 저장소 내용 쓰기 전용이라 워크플로 호출·실행 조회 권한이 없을 수 있다 → 본인 gh 로그인(keyring)"""
+    return {k: v for k, v in os.environ.items() if k not in ('GITHUB_TOKEN', 'GH_TOKEN')}
+
+
+def dispatch(remote: str, commit: str) -> bool:
+    """GitHub Pages 배포 워크플로(.github/workflows/pages.yml)를 부른다. 그 워크플로가 gh-pages 의 최신 내용을 올린다.
+    브랜치 배포(legacy)는 시간당 10회 한도가 있어 2026-11-19 부터 Pages 소스를 Actions 로 바꾸고 1분마다 이렇게 부른다."""
+    slug = repo_slug(remote)
+    if not slug:
         return False
     try:
-        r = subprocess.run(['gh', 'run', 'list', '-R', m.group(1), '--workflow', 'pages-build-deployment', '-L', '5',
-                            '--json', 'status,conclusion,headSha'], capture_output=True, text=True, timeout=30)
-        runs = [x for x in json.loads(r.stdout or '[]') if x.get('headSha') == commit]
-    except (OSError, ValueError, subprocess.TimeoutExpired):
+        r = subprocess.run(['gh', 'workflow', 'run', PAGES_WORKFLOW, '-R', slug, '--ref', 'main'],
+                           capture_output=True, text=True, timeout=60, env=gh_env())
+    except (OSError, subprocess.TimeoutExpired) as e:
+        print(f'배포 워크플로 호출 실패: {e}')
         return False
-    return bool(runs) and runs[0]['status'] == 'completed' and runs[0]['conclusion'] in ('failure', 'cancelled', 'timed_out')
+    if r.returncode != 0:
+        print(f'배포 워크플로 호출 실패: {r.stderr.strip()[:200]}')
+        return False
+    DISPATCHED.write_text(commit)
+    return True
+
+
+def redeploy_reason(remote: str, head: str) -> str | None:
+    """내용이 같아도 배포 워크플로를 다시 불러야 하는 까닭. 없으면 None.
+    - 지금 gh-pages 커밋으로 워크플로를 부른 적이 없다 (지난번 호출 실패 등)
+    - 가장 최근 배포 실행이 실패·취소로 끝났다 — 배포가 실패하면 사이트는 옛 상태로 남는데, 내용이 같으면 다시 올리지 않아
+      그대로 굳는 문제가 있었다(2026-11-09 11:38). gh 가 없거나 확인이 안 되면 다시 부르지 않는다."""
+    slug = repo_slug(remote)
+    if not slug or not head:
+        return None
+    try:
+        sent = DISPATCHED.read_text().strip()
+    except OSError:
+        sent = ''
+    if sent != head:
+        return '지금 gh-pages 로 배포 워크플로를 부른 기록이 없음'
+    try:
+        r = subprocess.run(['gh', 'run', 'list', '-R', slug, '--workflow', PAGES_WORKFLOW, '-L', '1',
+                            '--json', 'status,conclusion'], capture_output=True, text=True, timeout=30, env=gh_env())
+        runs = json.loads(r.stdout or '[]')
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
+    if runs and runs[0]['status'] == 'completed' and runs[0]['conclusion'] in ('failure', 'cancelled', 'timed_out', 'startup_failure'):
+        return f"지난 배포 실행이 {runs[0]['conclusion']}"
+    return None
 
 
 def main() -> int:
@@ -179,10 +221,12 @@ def _publish() -> int:
     if tree == remote_tree and '--always' not in sys.argv:
         head = subprocess.run(['git', 'rev-parse', f'refs/remotes/origin/{BRANCH}'], cwd=REPO,
                               capture_output=True, text=True).stdout.strip()
-        if not last_deploy_failed(remote, head):
+        why = redeploy_reason(remote, head)
+        if not why:
             print('바뀐 파일 없음, 배포 건너뜀')
             return 0
-        print('지난 배포가 실패해서 같은 내용을 다시 올림')
+        print(f'바뀐 파일 없음, 다시 배포: {why}')
+        return 0 if dispatch(remote, head) else 1
     env = {'GIT_AUTHOR_NAME': name, 'GIT_AUTHOR_EMAIL': email, 'GIT_COMMITTER_NAME': name, 'GIT_COMMITTER_EMAIL': email}
     commit = subprocess.run(['git', 'commit-tree', tree, '-m', f'데이터 갱신 {datetime.now():%Y-%m-%d %H:%M}'],
                             cwd=REPO, check=True, capture_output=True, text=True,
@@ -191,7 +235,9 @@ def _publish() -> int:
     git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
     git('update-ref', f'refs/remotes/origin/{BRANCH}', commit, cwd=REPO)
     subprocess.run(['git', 'prune', '--expire=now'], cwd=REPO, capture_output=True)   # 지난 배포의 파일 정리
-    print(f'{BRANCH} 배포 완료')
+    if not dispatch(remote, commit):   # 푸시만으로는 사이트가 안 바뀐다 (Pages 소스 = Actions). 실패하면 다음 차례에 redeploy_reason 이 다시 부른다
+        return 1
+    print(f'{BRANCH} 푸시·배포 워크플로 호출 완료')
     return 0
 
 

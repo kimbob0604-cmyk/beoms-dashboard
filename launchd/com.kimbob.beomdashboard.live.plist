@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Beom's Dashboard 장중 홈 갱신: 10분마다 live.py (평일 09:00~15:50 밖이면 바로 끝남). 설치: README 참고 -->
+<!-- Beom's Dashboard 갱신: 1분마다 live.py (시간대별로 할 일만 하고, 할 일이 없으면 바로 끝남. 앞 실행이 돌고 있으면 건너뜀).
+     2026-11-19 10분 → 1분 (배포는 Actions 워크플로라 시간당 10회 한도 없음). 설치: README 참고 -->
 <plist version="1.0">
 <dict>
     <key>Label</key>
@@ -16,9 +17,9 @@
     <string>/Users/beomjun/Beom's Dashboard</string>
 
     <key>StartInterval</key>
-    <integer>600</integer>
+    <integer>60</integer>
 
-    <!-- 로그인(재부팅) 직후 10분 기다리지 않고 바로 한 번 -->
+    <!-- 로그인(재부팅) 직후 기다리지 않고 바로 한 번 -->
     <key>RunAtLoad</key>
     <true/>
 
