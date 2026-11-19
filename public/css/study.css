@@ -284,3 +284,28 @@ h1 .sd-chip { font-size: 12px; vertical-align: middle; }
 .sd-reps li { padding: 5px 0; border-top: 1px solid var(--line); line-height: 1.5; }
 .sd-reps li:first-child { border-top: 0; }
 .sd-reps .sd-date { display: inline-block; min-width: 64px; font-variant-numeric: tabular-nums; }
+
+/* 흐름: 섹터 × 날짜 (docs/study-timeline-plan.md) */
+.fl-tabs { display: flex; gap: 6px; margin: 0 0 14px; border-bottom: 1px solid var(--line); }
+.fl-tabs a { padding: 7px 14px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 600; }
+.fl-tabs a.on { color: var(--text); border-bottom-color: var(--accent); }
+.fl-tabs a:hover { text-decoration: none; color: var(--text); }
+.fl-tabs small { font-weight: 500; opacity: .7; }
+.fl-charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; margin: 10px 0 16px; }
+.fl-chart { padding: 10px 12px; }
+.fl-chart h4 { margin: 0 0 4px; font-size: 13px; }
+.fl-week h3 { margin-bottom: 4px; }
+.fl-rep { display: grid; grid-template-columns: 52px 130px 1fr; gap: 10px; padding: 9px 4px; border-top: 1px solid var(--line); color: var(--text); align-items: start; }
+.fl-rep:first-of-type { border-top: 0; }
+.fl-rep:hover { text-decoration: none; background: var(--chip); }
+.fl-d { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--muted); font-size: 13px; }
+.fl-b { line-height: 1.5; }
+.fl-kind { font-size: 11.5px; color: var(--muted); margin-right: 4px; }
+.fl-st { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 999px; font-weight: 700; line-height: 1.6; }
+.fl-up { background: color-mix(in srgb, var(--s3) 18%, transparent); color: var(--s3); }
+.fl-mid { background: var(--chip); color: var(--muted); }
+.fl-down { background: color-mix(in srgb, var(--s8) 16%, transparent); color: var(--s8); }
+.fl-sub { font-size: 16px; margin: 18px 0 8px; }
+.fl-lines li { margin: 4px 0; }
+.fl-cited summary { cursor: pointer; font-weight: 600; }
+@media (max-width: 640px) { .fl-rep { grid-template-columns: 44px 1fr; } .fl-b { grid-column: 1 / -1; } }

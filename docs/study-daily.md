@@ -74,7 +74,8 @@ cd "/Users/beomjun/Beom's Dashboard" && python3 study_tg_daily.py
    - `source` 의 n·houses·date·pages 를 갱신하고, `source.reports` 에 리포트 키를 추가한다(그림 없이 글만 쓴 리포트도 날짜 목록에 나오게).
    - `overview` 도 바뀐 결론에 맞춘다.
    - 기록 문서(`docs/study-*-plan.md`)에 'YYYY-MM-DD 추가' 절을 적는다: 넣은 리포트, 바뀐 합의 수, 새 견해 차이, 원문 오류.
-6. 끝나면 inbox 줄에 `"done": "<문서id>"` 를 적는다.
+6. **흐름**: 그 섹터에 `study/flow/<섹터>.json` 이 있으면 리포트 한 줄을 넣는다 — 성격·시각(낙관/중립/신중)·한 줄 결론·핵심 주장 4~6·목표주가(변경)·흐름 숫자. 날짜·하우스는 reports.json 에서 자동, 카드 연결도 빌드가 자동으로 찾는다(`docs/study-timeline-plan.md`).
+7. 끝나면 inbox 줄에 `"done": "<문서id>"` 를 적는다.
 
 ## 4. 빌드·확인
 

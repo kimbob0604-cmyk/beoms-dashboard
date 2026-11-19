@@ -327,6 +327,11 @@ def main():
     for k, d in doc_out.items():
         (OUT / 'docs' / f'{k}.json').write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')
     print('→', OUT.relative_to(ROOT))
+    try:   # 흐름(섹터 × 날짜) 데이터: study/flow/<섹터>.json 이 있는 섹터만 → data/study/flow/ (build_study_flow.py)
+        import build_study_flow
+        build_study_flow.main()
+    except Exception as e:
+        print(f'흐름 데이터 만들기 실패: {e}')
     return 0
 
 

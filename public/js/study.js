@@ -152,7 +152,7 @@
     const rs = reportsOf(d);
     if (!rs.length) return '';
     return `<section class="card col"><h3>리포트 ${rs.length}건 <small class="muted">표지 발간일 순</small></h3><ul class="sd-reps">${rs.map(r =>
-      `<li><b class="sd-date">${esc(ymd(r.date))}</b> <span>${esc(r.house)}${r.analyst ? ' ' + esc(r.analyst) : ''}</span> <span class="muted">${esc(r.title)}</span></li>`).join('')}</ul></section>`;
+      `<li><b class="sd-date">${esc(ymd(r.date))}</b> <span>${FLOW_IX[d.sector] ? `<a href="?r=${encodeURIComponent(r.key)}">${esc(r.house)}</a>` : esc(r.house)}${r.analyst ? ' ' + esc(r.analyst) : ''}</span> <span class="muted">${esc(r.title)}</span></li>`).join('')}</ul></section>`;
   };
   const figLabel = f => `${f.part || f.date ? '[' + esc([f.part, ymd(f.date)].filter(Boolean).join(' · ')) + '] ' : ''}${f.no === '' ? '' : /^[^\d]/.test(f.no) ? `&lt;${esc(f.no)}&gt; ` : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
 
@@ -316,7 +316,7 @@
   async function showHome() {
     const docs = Object.values(IX.docs);
     const sectors = IX.tree.map(s => `<a class="sd-sector card" href="${nodeHref(s.path)}">
-        <h3>${esc(s.name)}</h3><p class="big">${s.count}<small> 주제</small></p>
+        <h3>${esc(s.name)}</h3><p class="big">${s.count}<small> 주제</small>${FLOW_IX[s.id] ? ` · ${FLOW_IX[s.id].n}<small> 리포트 흐름</small>` : ''}</p>
         <p class="muted small">${s.count ? s.children.map(c => esc(c.name)).join(' · ') : esc(s.desc || '자료가 들어오면 채웁니다')}</p></a>`).join('');
     const kinds = Object.entries(KIND_LABEL).map(([k, l]) => {
       const n = Object.values(IX.entities).filter(e => e.kind === k).length;
@@ -434,11 +434,99 @@
     window.scrollTo(0, 0);
   }
 
+  // ---------- 흐름: 섹터 × 날짜 (data/study/flow/<섹터>.json ← build_study_flow.py, docs/study-timeline-plan.md) ----------
+  let FLOW_IX = {};
+  const FLOWS = {};
+  const getFlow = async sec => FLOWS[sec] || (FLOWS[sec] = await sjson(`data/study/flow/${sec}.json`));
+  const STANCE = { 낙관: 'up', 중립: 'mid', 신중: 'down' };
+  const stanceChip = s => s ? `<span class="fl-st fl-${STANCE[s] || 'mid'}">${esc(s)}</span>` : '';
+  const callLine = r => {
+    if (r.call) return Object.entries({ sam: '삼성', sk: 'SK' }).filter(([k]) => r.call[k]).map(([k, n]) =>
+      `${n} <b>${r.call[k].tp}만</b>${r.call[k].chg && r.call[k].chg !== '—' ? ` <small class="muted">${esc(r.call[k].chg)}</small>` : ''}`).join(' · ');
+    if (r.picks) return r.picks.map(p => `${esc(p.name)} <small class="muted">${esc(p.tp)}</small>`).join(' · ');
+    return '';
+  };
+  // 이 노드 아래 문서가 모두 책이면 '교재'
+  const subDocs = n => [...(n.topics || []).map(t => t.doc), ...n.children.flatMap(subDocs)];
+  const isBook = n => { const ds = subDocs(n); return ds.length > 0 && ds.every(d => IX.docs[d]?.source?.kind === 'book'); };
+
+  function flowCharts(F) {
+    return `<div class="fl-charts">${F.metrics.filter(m => m.points.length >= 3).map(m => `<div class="card fl-chart">
+      <h4>${esc(m.label)} <small class="muted">발간일 순 · ${esc(m.unit)}</small></h4>
+      ${SChart.html({ type: 'bar', x: m.points.map(p => `${ymd(p.date).slice(3)} ${p.house}`), series: [{ name: m.label, values: m.points.map(p => p.v) }], unit: m.unit, src: 'table', dec: Number.isInteger(m.points[0].v) ? 0 : 1 })}
+    </div>`).join('')}</div>`;
+  }
+  function flowHtml(sec, F) {
+    const R = F.reports;
+    const st = FLOW_IX[sec]?.stance || {};
+    return `<p class="muted small">리포트 ${F.order.length}건 · 표지 발간일 ${ymd(FLOW_IX[sec]?.from)}~${ymd(FLOW_IX[sec]?.to)} · 낙관 ${st.낙관 || 0} · 중립 ${st.중립 || 0} · 신중 ${st.신중 || 0} — 최근 주가 위. 리포트를 누르면 결론·숫자·그림을 한 번에 봅니다.</p>
+      ${flowCharts(F)}
+      ${F.weeks.map(w => `<section class="card col fl-week"><h3>${esc(w.label)} <small class="muted">${esc(w.span)}</small></h3>
+        ${w.reports.map(k => { const r = R[k]; return `<a class="fl-rep" href="?r=${encodeURIComponent(k)}">
+          <span class="fl-d">${esc(ymd(r.date))}</span>
+          <span class="fl-h"><b>${esc(r.house)}</b> <small class="muted">${esc(r.analyst || '')}</small><br><span class="fl-kind">${esc(r.kind || '')}</span>${stanceChip(r.stance)}</span>
+          <span class="fl-b">${num(r.headline || r.title)}<br><small>${callLine(r)}</small></span></a>`; }).join('')}</section>`).join('')}`;
+  }
+  async function showSector(n, v) {
+    const F = await getFlow(n.path);
+    const book = n.children.filter(isBook), topic = n.children.filter(k => !isBook(k));
+    const tab = (id, label, cnt) => `<a class="${v === id ? 'on' : ''}" href="?n=${encodeURIComponent(n.path)}&v=${id}">${label}${cnt != null ? ` <small>${cnt}</small>` : ''}</a>`;
+    const kids = ks => `<div class="sd-kids">${ks.map(k => `<a class="sd-kid card${k.count ? '' : ' sd-empty'}" href="${nodeHref(k.path)}">
+      <b>${esc(k.name)}</b><small class="muted">${k.count ? `주제 ${k.count}` : '아직 없음'}</small></a>`).join('')}</div>`;
+    let body;
+    if (v === 'topic') body = `<p class="muted small">주제별로 여러 리포트를 합친 정리입니다(겹치는 내용은 한 번만, n/m 동의). 기준일은 각 문서 쪽에 있습니다.</p>${kids(topic)}`;
+    else if (v === 'book') body = `<p class="muted small">날짜와 상관없는 교재·책입니다.</p>${kids(book)}`;
+    else body = flowHtml(n.path, F);
+    $('body').innerHTML = crumbs(n.path) + `<div class="page-head"><h1>${esc(n.name)}</h1>${n.desc ? `<p>${esc(n.desc)}</p>` : ''}</div>
+      <nav class="fl-tabs">${tab('flow', '흐름', F.order.length)}${tab('topic', '주제', topic.length)}${book.length ? tab('book', '교재', book.length) : ''}</nav>${body}`;
+    window.scrollTo(0, 0);
+  }
+
+  async function showReport(key) {
+    let sec = null, F = null;
+    for (const s of Object.keys(FLOW_IX)) { const f = await getFlow(s); if (f.reports[key]) { sec = s; F = f; break; } }
+    if (!F) return showHome();
+    const r = F.reports[key];
+    const docs = Object.fromEntries(await Promise.all(F.docs.map(async id => [id, await getDoc(id)])));
+    // 흐름 숫자: 이 리포트 값 vs 앞서 나온 리포트들
+    const nums = F.metrics.map(m => {
+      const me = m.points.find(p => p.key === key);
+      if (!me) return '';
+      const before = m.points.filter(p => p.date < r.date && p.key !== key);
+      const all = m.points.map(p => p.v);
+      const avg = before.length ? before.reduce((a, p) => a + p.v, 0) / before.length : null;
+      const u = esc(m.unit);
+      return `<li>${esc(m.label)}: <b>${me.v.toLocaleString('ko-KR')}${u}</b>${avg != null ? ` · 앞선 ${before.length}건 평균 ${avg.toFixed(Number.isInteger(me.v) ? 0 : 1)}${u} (${me.v >= avg ? '위' : '아래'})` : ' · 이 지표의 첫 리포트'} · 전체 ${Math.min(...all)}~${Math.max(...all)}${u}</li>`;
+    }).filter(Boolean).join('');
+    const prev = r.prev && F.reports[r.prev];
+    const lines = r.lines.length ? `<section class="card col"><h3>종합 문서에서 이 리포트가 한 말 <small class="muted">${r.lines.length}줄</small></h3><ul class="fl-lines">${r.lines.map(l =>
+      `<li>${num(l.t)} <a class="small" href="${nodeHref(l.node, `${l.doc}:${l.ti}:${l.ci}`)}">${esc(l.topic.split(' — ')[0])} · ${esc(l.h)} →</a></li>`).join('')}</ul></section>` : '';
+    const figs = r.figs.length ? `<h2 class="fl-sub">이 리포트의 그림·표 ${r.figs.length}개</h2><div class="sd-cards">${r.figs.map(f =>
+      cardHtml(docs[f.doc], f.ti, f.ci, docs[f.doc].topics[f.ti].cards[f.ci]).replace('<div class="sd-txt">', `<div class="sd-txt"><p class="small"><a href="${nodeHref(f.node, `${f.doc}:${f.ti}:${f.ci}`)}">주제에서 보기: ${esc(f.topic.split(' — ')[0])} →</a></p>`)).join('')}</div>` : '';
+    const cited = [...new Map(r.cards.map(c => [`${c.doc}:${c.ti}:${c.ci}`, c])).values()];
+    $('body').innerHTML = `<nav class="sd-crumb"><a href="?">Study</a> › <a href="?n=${encodeURIComponent(sec)}">${esc(nodeMap[sec]?.name || sec)}</a> › <a href="?n=${encodeURIComponent(sec)}&v=flow">흐름</a> › 리포트</nav>
+      <div class="page-head"><h1>${esc(r.house)} <small class="muted">${esc(r.analyst || '')}</small></h1>
+        <p>${esc(r.title)}</p><p class="small">표지 발간일 <b>${esc(ymd(r.cover_date || r.date))}</b>${r.date_note ? ` <span class="muted">(${esc(r.date_note)})</span>` : ''} · <span class="fl-kind">${esc(r.kind || '')}</span>${stanceChip(r.stance)}</p></div>
+      <section class="card col sd-sum"><h3>한 줄 결론</h3><p>${num(r.headline || '')}</p>
+        ${r.claims?.length ? `<h4>핵심 주장</h4><ul>${r.claims.map(c => `<li>${num(c)}</li>`).join('')}</ul>` : ''}
+        ${callLine(r) ? `<p><b class="sd-lab">목표주가·종목</b>${callLine(r)}</p>` : ''}
+        ${r.view28 ? `<p><b class="sd-lab">2028 시각</b>${num(r.view28)}</p>` : ''}
+        ${nums ? `<h4>흐름 숫자 — 앞선 리포트와 비교</h4><ul>${nums}</ul>` : ''}
+        ${prev ? `<p class="small"><b class="sd-lab">직전 같은 성격</b><a href="?r=${encodeURIComponent(r.prev)}">${esc(ymd(prev.date))} ${esc(prev.house)}</a> — ${num(prev.headline || prev.title)}</p>` : ''}
+      </section>
+      ${lines}${figs}
+      ${cited.length ? `<details class="card col fl-cited"><summary>이 리포트가 출처로 적힌 종합 카드 ${cited.length}개</summary><ul>${cited.map(c =>
+        `<li><a href="${nodeHref(c.node, `${c.doc}:${c.ti}:${c.ci}`)}">${esc(c.h || '그림')}</a> <small class="muted">${esc(c.topic.split(' — ')[0])}</small></li>`).join('')}</ul></details>` : ''}`;
+    window.scrollTo(0, 0);
+  }
+
   async function go() {
     const r = route();
     drawTree(r.n || '');
     try {
-      if (r.n) await showNode(r.n, r.c);
+      if (r.r) await showReport(r.r);
+      else if (r.n && FLOW_IX[r.n] && nodeMap[r.n]) await showSector(nodeMap[r.n], r.v || 'flow');
+      else if (r.n) await showNode(r.n, r.c);
       else if (r.e) await showEntity(r.e);
       else if (r.d) await showDoc(r.d);
       else if (r.q) await showSearch(r.q);
@@ -542,6 +630,7 @@
       return;
     }
     index(IX.tree);
+    try { FLOW_IX = await sjson('data/study/flow/index.json'); } catch (e) { FLOW_IX = {}; }   // 흐름이 있는 섹터
     $('asof').textContent = `${U.timeLabel(IX.generated_at)} 빌드`;
     const q = route().q;
     if (q) $('q').value = q;
