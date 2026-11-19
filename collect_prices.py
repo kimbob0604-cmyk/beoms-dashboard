@@ -28,6 +28,7 @@ log = logging.getLogger('collect_prices')
 CLOSE_AFTER = dtime(15, 40)   # 이 시각 뒤면 그날 종가가 확정된 것으로 본다
 PREOPEN = dtime(8, 0)         # 넥스트레이드 프리마켓 시작. 이 뒤로는 네이버 시세가 새 날짜로 바뀐다
 NAVER_MIN_ROWS = 2000         # 이보다 적으면 목록이 덜 온 것으로 보고 쓰지 않음
+NAVER_TRIES = 3               # 목록에 같은 종목이 겹쳐 오면 다시 받아 합치는 횟수 (처음 포함)
 
 
 OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume, chg)
@@ -69,8 +70,16 @@ def expected_session(now: datetime):
     return d
 
 
-def collect_naver(conn, session, d: date) -> int:
-    """네이버 전 종목 시세 중 날짜가 d 인 보통·우선주만 d 의 가격으로 저장 (KRX 가 나중에 덮어씀)"""
+def unique_by_code(rows) -> tuple:
+    """(종목마다 마지막 행만 남긴 목록, 겹친 행 수). 네이버 목록은 시총순이라 시간외 거래 중에 쪽을 넘기는 사이
+    순위가 바뀌면 같은 종목이 두 쪽에 들어온다 (2026-11-19 18:56 UNIQUE 오류로 가격 단계가 죽음).
+    겹친 종목이 있으면 거꾸로 밀려서 빠진 종목도 있을 수 있다."""
+    by = {r['code']: r for r in rows}
+    return list(by.values()), len(rows) - len(by)
+
+
+def naver_list(session) -> list:
+    """네이버 전 종목 시세를 쪽마다 받아 이은 목록 (겹친 종목이 있을 수 있다)"""
     rows = []
     for market in krx.ENDPOINTS:
         page = 1
@@ -81,7 +90,19 @@ def collect_naver(conn, session, d: date) -> int:
                 break
             page += 1
             time.sleep(0.2)
-    rows = [r for r in rows if r['date'] == d.isoformat() and r['close']]
+    return rows
+
+
+def collect_naver(conn, session, d: date) -> int:
+    """네이버 전 종목 시세 중 날짜가 d 인 보통·우선주만 d 의 가격으로 저장 (KRX 가 나중에 덮어씀)"""
+    by = {}
+    for _ in range(NAVER_TRIES):
+        rows, dup = unique_by_code(naver_list(session))
+        by.update({r['code']: r for r in rows})      # 앞에서 받은 것에 덮어 합친다 (밀려서 빠진 종목을 메운다)
+        if not dup:
+            break
+        log.info('네이버 시세 목록에 같은 종목 %d건 겹침 — 한 번 더 받아 합침', dup)
+    rows = [r for r in by.values() if r['date'] == d.isoformat() and r['close']]
     if len(rows) < NAVER_MIN_ROWS:
         return 0
     for r in rows:
