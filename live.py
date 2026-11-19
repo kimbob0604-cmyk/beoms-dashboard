@@ -229,6 +229,9 @@ def main() -> int:
             # 기관 세부(KIS): 네이버 수급이 올라온 거래일을 아직 안 받았을 때만 호출한다 (받았으면 API 호출 없이 10)
             new_det = got(run(['collect_kis_flow.py'], log))
             ok |= new_flow or new_det
+            if new_flow or new_det:   # 기관 세부(KIS)는 클라우드가 못 받는다 → 받은 직후 DB 사본을 다시 올려, 맥이 자도 클라우드 빌드가 옛것으로 돌아가지 않게
+                (LOG_DIR / 'cloud_snapshot.try').touch()
+                spawn('cloud_sync.py', 'snapshot')
             full_naver |= new_flow or new_det
         if market:
             ok |= got(run(['collect_naver.py', 'index'], log))
