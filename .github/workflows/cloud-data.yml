@@ -1,0 +1,113 @@
+# 맥이 자는 동안 공시·리포트·수급을 받아 사이트에 올린다 (cloud_data.py — 맥과 같은 수집·빌드 코드, 2026-11-19).
+#  - 맥은 5분마다 mac 브랜치에 신호를 남긴다(cloud_sync.py beat). 15분 넘게 신호가 없으면 맥이 자는 것으로 보고 일한다.
+#  - DB 이력은 맥이 6시간마다 올리는 암호화 사본(릴리스 dbsnap)을 받아 쓴다.
+#    저장소 비밀값 CLOUD_DB_PASS(맥 .env 와 같은 값)·DART_API_KEY 가 있어야 돈다 — 없으면 경고만 남기고 끝난다.
+#  - 2분마다 한 차례: 종목별 수급 새 거래일(매일 06시~), DART 공시·KIND 시각·증권사 리포트(평일 07:00~19:30)
+#    → 빌드 → gh-pages 커밋·푸시 → 배포 워크플로(pages.yml). 기관 세부(KIS)·텔레그램 탭은 키·로그인이 맥에만 있어 빠진다.
+#  - 코드는 맥이 쓰는 브랜치(CODE_REF, 지금 feat/study)에서 받는다 — main 에는 클라우드 파일만 옮겨 두어 수집·빌드 코드가 옛것이다.
+#    그 브랜치에 푸시된 코드로 돈다(맥에서 고치고 아직 안 올린 코드는 클라우드에 없다).
+#  - 한 실행은 06:50~24:00 안에서 돈다. 맥이 30분째 깨어 있으면 끝내고(러너를 놀리지 않게) 20분마다 걸린 예약이 다시 본다.
+#    5시간 40분이 지나면 다음 실행을 스스로 부른다. 이미 도는 실행이 있으면 새 실행은 바로 끝난다.
+name: cloud-data
+
+on:
+  schedule:
+    - cron: '50 21 * * *'              # 06:50 (한국)
+    - cron: '10,30,50 22-23 * * *'     # 07:10~08:50
+    - cron: '10,30,50 0-14 * * *'      # 09:10~23:50
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '맥이 깨어 있어도·시간 밖이어도 한 차례 돈다 (시험용)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TZ: Asia/Seoul
+      CODE_REF: feat/study
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      CLOUD_DB_PASS: ${{ secrets.CLOUD_DB_PASS }}
+    steps:
+      - name: 이미 도는 실행이 있으면 끝
+        id: dup
+        run: |
+          for i in 1 2 3 4 5 6 7; do
+            older=$(gh run list -R "$GITHUB_REPOSITORY" -w cloud-data.yml -s in_progress --json databaseId \
+                    -q "[.[] | select(.databaseId < ${{ github.run_id }})] | length")
+            [ "${older:-0}" -eq 0 ] && break
+            sleep 30
+          done
+          echo "먼저 도는 실행: $older"
+          echo "skip=$([ "${older:-0}" -gt 0 ] && echo 1 || echo 0)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.dup.outputs.skip == '0'
+        with:
+          ref: ${{ env.CODE_REF }}
+
+      - name: 준비 (비밀값·맥 신호 확인, 패키지)
+        id: prep
+        if: steps.dup.outputs.skip == '0'
+        run: |
+          if [ -z "$CLOUD_DB_PASS" ] || [ -z "$DART_API_KEY" ]; then
+            echo "::warning::저장소 비밀값 CLOUD_DB_PASS·DART_API_KEY 가 없어 끝냄 (README '맥이 잘 때 클라우드 수집')"
+            echo "ok=0" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "${{ inputs.force }}" != "true" ] && python3 cloud_sync.py alive; then
+            echo "맥이 깨어 있음 — 끝"; echo "ok=0" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          pip install -q requests cryptography numpy
+          git config --global user.name cloud-data
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
+          echo "ok=1" >> "$GITHUB_OUTPUT"
+
+      - name: 맥이 잘 때 2분마다
+        if: steps.dup.outputs.skip == '0' && steps.prep.outputs.ok == '1'
+        run: |
+          started=$(date +%s); awake=""; n=0
+          force="${{ inputs.force }}"
+          while :; do
+            t0=$(date +%s); hm=$(date +%H%M)
+            if [ "$hm" -lt 0650 ] && [ "$force" != "true" ]; then echo "$(date +%H:%M) 밤 — 종료"; break; fi
+            if [ $(( t0 - started )) -gt $(( 340 * 60 )) ]; then
+              echo "$(date +%H:%M) 5시간 40분 — 다음 실행을 부르고 종료"
+              gh workflow run cloud-data.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
+              break
+            fi
+            once=""; [ "$force" = "true" ] && [ "$n" -eq 0 ] && once=1
+            if [ -z "$once" ] && python3 cloud_sync.py alive; then
+              awake=${awake:-$t0}
+              if [ $(( t0 - awake )) -gt 1800 ]; then echo "$(date +%H:%M) 맥이 30분째 깨어 있음 — 종료 (다음 예약이 다시 본다)"; break; fi
+              n=$((n + 1)); sleep 120; continue
+            fi
+            awake=""
+            if [ ! -d site ]; then   # 사이트 전체(약 140MB) — 빌더가 이익 성장·신고가 등 다른 탭 파일을 읽고 바뀐 것만 고쳐 쓴다
+              git clone -q --depth 1 --branch gh-pages "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" site
+              ln -sfn "$PWD/site/data" public/data
+            fi
+            rc=0; python3 cloud_sync.py fetch || rc=$?
+            if [ "$rc" -ne 0 ] && [ "$rc" -ne 10 ]; then echo "DB 사본을 못 받음 — 다음 차례에"; n=$((n + 1)); sleep 120; continue; fi
+            ( cd site && git fetch -q --depth 1 origin gh-pages && git reset -q --hard FETCH_HEAD ) || echo "gh-pages 받기 실패"
+            rc=0; python3 cloud_data.py cycle ${once:+--force} || rc=$?
+            if [ "$rc" -eq 0 ]; then
+              if ( cd site && git add -A data && { git diff --cached --quiet && echo "사이트에 바뀐 파일 없음" || {
+                     git commit -qm "클라우드 수집 $(date +%H:%M)" && git push -q origin HEAD:gh-pages \
+                     && gh workflow run pages.yml -R "$GITHUB_REPOSITORY" --ref main && echo "$(date +%H:%M) 올림"; }; } ); then
+                python3 cloud_data.py pushed
+              else
+                echo "gh-pages 올리기 실패 (그새 다른 쪽이 배포했을 수 있음) — 다음 차례에 다시 빌드"
+              fi
+            fi
+            n=$((n + 1))
+            left=$(( t0 + 120 - $(date +%s) ))
+            if [ "$left" -gt 0 ]; then sleep "$left"; fi
+          done
