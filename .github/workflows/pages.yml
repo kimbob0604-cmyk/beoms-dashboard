@@ -1,0 +1,40 @@
+# 공개 사이트 배포: gh-pages 브랜치의 지금 내용을 GitHub Pages 로 올린다.
+#
+# 브랜치에서 바로 배포하면(legacy) 시간당 빌드 10회 한도가 있어 10분 간격이 한계였다. 사용자 워크플로로 올리면 그 한도가 없다
+# (docs.github.com/pages/getting-started-with-github-pages/github-pages-limits). 그래서 2026-11-19 부터 Pages 소스를
+# 'GitHub Actions' 로 두고, 맥(publish.py)과 cloud-live 가 gh-pages 를 푸시한 뒤 이 워크플로를 부른다 → 1분마다 갱신.
+# 줄 서 있는 배포는 가장 새 것 하나만 남고(concurrency), 실행할 때 gh-pages 의 최신 커밋을 받으므로 늘 마지막 내용이 올라간다.
+#
+# 되돌리기: gh api -X PUT repos/<저장소>/pages -f build_type=legacy -f 'source[branch]=gh-pages' -f 'source[path]=/'
+name: pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          retention-days: 1
+      - id: deploy
+        uses: actions/deploy-pages@v4

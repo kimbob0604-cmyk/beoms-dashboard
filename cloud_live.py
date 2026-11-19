@@ -1,7 +1,7 @@
 """
-맥이 잘 때 공개 사이트 홈을 장중 시세로 갱신 — GitHub Actions(.github/workflows/cloud-live.yml)가 10분마다 부른다.
+맥이 잘 때 공개 사이트 홈을 장중 시세로 갱신 — GitHub Actions(.github/workflows/cloud-live.yml)가 1분마다 부른다.
 
-평소에는 맥의 live.py 가 10분마다 DB 로 home.json·quotes.json 을 다시 만들어 배포한다. 맥이 자면(덮개를 닫는 등) 사이트가
+평소에는 맥의 live.py 가 1분마다 DB 로 home.json·quotes.json 을 다시 만들어 배포한다. 맥이 자면(덮개를 닫는 등) 사이트가
 전날 밤 배포본에 멈춘다(2026-11-18 09:00~10:34). 그 사이를 이 스크립트가 맡는다: 배포본(gh-pages)의
 home.json·quotes.json·live_base.json 을 읽고, 네이버 시세·지수만 새로 받아 장중 칸을 다시 계산해 그 자리에 쓴다.
 
@@ -10,7 +10,8 @@ home.json·quotes.json·live_base.json 을 읽고, 네이버 시세·지수만 �
 그대로 두는 칸: 신고가·수급·리비전·목표가·공시·리포트 목록과 이동평균 시장 폭 (맥이 깨어나 다시 만든다).
 계산 규칙은 build_home.py 와 같다. 기준(전일 종가·회사 시총·업종·20일 평균 거래대금)은 맥이 만든 live_base.json.
 
-맥이 최근 15분 안에 배포했으면(home.json 의 built, by 없음) 아무것도 안 한다 — 맥이 깨어 있으면 맥 것이 우선이다.
+맥이 최근 4분 안에 배포했으면(home.json 의 built, by 없음) 아무것도 안 한다 — 맥이 깨어 있으면 맥 것이 우선이다.
+(맥은 장중 1분마다 배포한다. 한 번이 1분을 넘기도 해서 여유를 둔 4분 — 2026-11-19 에 15분에서 줄임)
 맥이 다음에 배포하면 gh-pages 를 새로 만들어 강제 푸시하므로 여기서 올린 커밋은 자연히 사라진다.
 
 GitHub Actions 에서 혼자 돌아야 하므로 표준 라이브러리와 collectors/naver.py(표준 라이브러리만 씀)만 쓴다.
@@ -42,8 +43,8 @@ QUOTE_MIN_ROWS = 2000
 INDEX = (('KOSPI', '코스피'), ('KOSDAQ', '코스닥'), ('FUT', '코스피200 선물'))
 SNAP_END = {'KOSPI': '15:30', 'KOSDAQ': '15:30', 'FUT': '15:45'}
 OPEN, CLOSE = '09:00', '15:50'
-MAC_FRESH = timedelta(minutes=15)
-DELAY = 0.3
+MAC_FRESH = timedelta(minutes=4)
+DELAY = 0.15                 # 시세 목록 쪽 사이 쉬는 시간 (1분 안에 한 바퀴가 끝나게 0.3 → 0.15)
 SKIP, FAIL = 10, 1
 
 
