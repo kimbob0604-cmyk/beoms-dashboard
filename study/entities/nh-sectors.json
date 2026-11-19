@@ -977,5 +977,37 @@
   "name": "양쯔장 조선",
   "en": "Yangzijiang Shipbuilding",
   "desc": "중국 민영 조선소. 증설이 계획대로 진행 중이며 예상보다 일찍 가동될 수 있다."
+ },
+ "co:hyundai-steel": {
+  "name": "현대제철",
+  "en": "Hyundai Steel",
+  "desc": "고로·전기로 겸영. 봉형강(철근·H형강)과 판재류. 데이터센터·ESS·송전철탑을 묶은 '차세대 전력 인프라 판매 TFT'(2026.3), 상상인 2027F 영업이익 5,510억원(+109.5%).",
+  "code": "004020"
+ },
+ "co:dongkuk-steel": {
+  "name": "동국제강",
+  "en": "Dongkuk Steel",
+  "desc": "전기로 봉형강·후판. 반도체·AI 데이터센터 골조용 형강 수요의 수혜(상상인).",
+  "code": "460860"
+ },
+ "c:dc-build-cost": {
+  "name": "데이터센터 MW당 공사비",
+  "en": "Data center construction cost per MW",
+  "desc": "데이터센터 시공 단가. 국내 계약 평균 132억원/IT MW(2026, 미래에셋), 서울 1,042만 달러/MW(Turner & Townsend, 도쿄보다 43% 쌈). IT 부하 기준인지 수전 기준인지에 따라 숫자가 달라진다."
+ },
+ "c:prefab-dc": {
+  "name": "모듈형(사전제작) 데이터센터",
+  "en": "Prefabricated modular data center",
+  "desc": "전력·냉각·랙을 공장에서 조립·검증해 현장에 설치하는 방식(엔비디아 DSX POD, Vertiv 12.5MW 블록). 공기가 줄고 건설사의 현장 작업 범위가 바뀐다."
+ },
+ "c:goes": {
+  "name": "방향성 전기강판 (GOES)",
+  "en": "Grain-oriented electrical steel",
+  "desc": "변압기 철심 소재. 철손이 작을수록 변압기 효율이 높다. 미국 에너지부가 구리와 함께 미국 내 생산 부족을 변압기 병목으로 지적."
+ },
+ "c:cask": {
+  "name": "사용후핵연료 저장용기 (CASK)",
+  "en": "Spent fuel cask",
+  "desc": "원전 부지 안 습식 저장조가 차면 건식 저장으로 옮길 때 쓰는 용기. 한빛 건식저장(4,810다발, 약 130기)이 국내 첫 대량 발주 후보(상상인)."
  }
 }

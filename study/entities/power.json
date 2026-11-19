@@ -447,5 +447,31 @@
   "name": "ABB",
   "en": "ABB",
   "desc": "스위스 전력기기. 데이터센터 800V 직류 배전 구조(SST·SSCB)를 제시, 3Q26 가격 +2%p(NH)."
+ },
+ "c:byop": {
+  "name": "BYOP (자체 전력 조달)",
+  "en": "Bring Your Own Power",
+  "desc": "데이터센터가 쓰는 전력과 망 증설 비용을 스스로 마련·부담해야 한다는 원칙. 2026 중간선거 뒤 양당이 모두 이쪽으로 모인다(하나 해외). 가스터빈·연료전지 같은 자가발전 수요를 키운다."
+ },
+ "c:800vdc": {
+  "name": "800V DC 배전",
+  "en": "800V direct-current power distribution",
+  "desc": "데이터센터 안을 교류(415V AC) 대신 800V 직류로 배전하는 구조. 변환 손실·전류(손실은 전류 제곱)를 줄이고 SST(반도체 변압기)가 핵심 장비. 엔비디아 Kyber 랙(2027~28)과 함께 확산."
+ },
+ "c:rab-cfd": {
+  "name": "RAB · CfD (원전 금융 위험 분담)",
+  "en": "Regulated Asset Base · Contract for Difference",
+  "desc": "RAB는 건설 중부터 요금으로 비용 일부를 회수해 이자 누적을 줄이는 방식(영국 Sizewell C), CfD는 시장가격과 약정가격 차이를 정산해 수입을 고정하는 계약(스웨덴). 원전 자본비용을 10%대에서 3% 이하로 낮추는 장치(상상인)."
+ },
+ "co:venture-global": {
+  "name": "Venture Global",
+  "en": "Venture Global",
+  "desc": "미국 LNG 수출 2위. 계획 캐파 85MTPA 중 35% 미계약 — 단기 액화수수료 급등의 수혜(하나 해외 Top Pick).",
+  "ticker": "VG"
+ },
+ "n:pl": {
+  "name": "폴란드",
+  "en": "Poland",
+  "desc": "첫 원전 Lubiatowo-Kopalino(AP1000 3기). EPC 본계약은 2025년 말 목표에서 2027년 서명으로 늦었지만 2026.10 1호기 장납기 기자재 조달을 먼저 시작."
  }
 }
