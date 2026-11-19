@@ -404,11 +404,21 @@
     } catch (e) { pool = null; }
     if (st.v === 'pool' && !pool) st.v = 'day';
     try {
-      await U.dates('digest', pg, $('date'), load);
+      // 같은 날 갱신(새 리포트·시세)은 펼친 '더 보기'를 그대로 두고 다시 그린다
+      await U.dates('digest', pg, $('date'), load, async d => {
+        if (st.v !== 'day') return;
+        try { data = await U.json(`data/digest/${d}.json`); } catch (e) { return; }
+        render();
+      });
     } catch (e) {
       $('msg').textContent = '리포트 목록을 불러오지 못했습니다.';
       return;
     }
     if (st.v === 'day') load(st.date); else render();
+    // @DOC_POOL 자료: 1분마다 새 날짜·새 글을 확인한다 (맥이 5분마다 받는다)
+    U.live(() => (pool ? ['data/docpool/dates.json', `data/docpool/${poolDay()}.json`] : ['data/docpool/dates.json']), async () => {
+      try { const ds = await U.json('data/docpool/dates.json'); pool = ds.length ? ds : null; } catch (e) { /* 그대로 */ }
+      if (st.v !== 'day') renderOther();
+    });
   })();
 })();

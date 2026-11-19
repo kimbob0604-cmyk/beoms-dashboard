@@ -199,6 +199,71 @@ def build(conn, m: dict = None, flows: dict = None, gx: dict = None) -> dict:
             'today': today, 'recent': recent, 'counts': counts}
 
 
+LIVE_MIN_MCAP = 700   # 다음 날 상한가(+30%)로 1,000억을 넘을 수 있는 종목까지 기준을 싣는다
+LIVE_AHEAD = 7        # 다음 거래일이 마지막 날 + 1~7일 가운데 어느 날이어도 되게 52주 창을 날짜별로 미리 구한다
+
+
+def live_base(conn, m: dict, data: dict, flows: dict = None, gx: dict = None) -> dict:
+    """맥이 잘 때 cloud_live.py 가 다음 거래일 장중 신고가를 판정할 기준 → public/data/live_high.json (2026-11-19).
+
+    마지막 날 D 까지의 행렬에 다음 날 하루를 붙였을 때의 값을 newhigh.evaluate 와 같은 규칙으로 미리 구해 둔다.
+    종목마다: 마지막 수정 종가(a), 역사적 창 최고(h, 봉이 모자라면 없음), 52주 창 최고(y: 다음 날이 D+1…D+7 일 때),
+    120·60일 창 최고(q·s), 최근 19거래일의 연속 신고가 일수(r)·횟수(k)·전날 신고가 여부(z),
+    52주 이상 신고가를 낸 마지막 날(rc: [축, 날짜, 횟수, 그날 수정 종가]), 화면 칸(n·mk·w·mc·p·f5·o5·gx).
+    클라우드는 오늘 수정 종가 = a × (1 + 등락률) 로 '당일 종가 > 창 최고' 를 본다."""
+    from datetime import date as _date, timedelta as _td
+    days, C = m['days'], m['C']
+    T = len(days)
+    D = days[-1]
+    info = stock_info(conn, D)
+    cand = [c for c in m['codes'] if is_common(c) and (info.get(c) or {}).get('mc', 0) >= LIVE_MIN_MCAP]
+    rows = np.array([m['idx'][c] for c in cand], dtype=int)
+    Cu, pre, pb = C[rows], m['pre'][rows], m['pre_bars'][rows]
+    valid = ~np.isnan(Cu)
+    first = np.where(valid.any(axis=1), valid.argmax(axis=1), T)
+    first = np.where(pb > 0, -1, first)
+    bars = pb + valid.sum(axis=1)
+    hist = np.fmax(pre, N._window_max(Cu, 0, T))
+    win = {}
+    for ax, k in N.TRADING.items():
+        ok = (first <= T - k) if T >= k else np.zeros(len(cand), bool)
+        win[ax] = np.where(ok, N._window_max(Cu, max(T - k, 0), T), np.nan)
+    nxt = [(_date.fromisoformat(D) + _td(days=j)).isoformat() for j in range(1, LIVE_AHEAD + 1)]
+    w52 = []
+    for nd in nxt:
+        s = (_date.fromisoformat(nd) - _td(days=N.W52_DAYS)).isoformat()
+        i0 = next((i for i, d in enumerate(days) if d >= s), T)
+        ok = (first <= i0) if days[0] <= s and i0 < T else np.zeros(len(cand), bool)
+        w52.append(np.where(ok, N._window_max(Cu, i0, T), np.nan))
+    span = min(RECENT - 1, T)
+    L = N.history(Cu, days, span, pre, pb)                    # 최근 19거래일 라벨 (오늘을 붙이면 20일 창)
+    anyl = L >= 0
+    run, cnt = N.run_length(anyl), anyl.sum(axis=1)
+    top = anyl & (L <= N.RANK['w52'])
+    last_adj = np.array([Cu[k, np.flatnonzero(valid[k])[-1]] if valid[k].any() else np.nan for k in range(len(cand))])
+    fd = (flows or {}).get('date')
+    num = lambda x: None if x is None or np.isnan(x) else round(float(x), 6)
+    out = {}
+    for k, c in enumerate(cand):
+        if np.isnan(last_adj[k]):
+            continue
+        i = info[c]
+        f = (flows or {}).get('by', {}).get(c) or {}
+        rc = None
+        if top[k].any():
+            j = int(np.flatnonzero(top[k])[-1])
+            t = T - span + j
+            rc = [N.AXES[int(L[k, j])], days[t], int(top[k].sum()), num(Cu[k, t])]
+        y = [num(w[k]) for w in w52]
+        out[c] = {'n': i['n'], 'mk': i['mk'], 'w': i.get('w'), 'mc': i['mc'], 'p': i['p'], 'a': num(last_adj[k]),
+                  'h': num(hist[k]) if bars[k] >= N.MIN_BARS_HIST else None,      # 오늘 전 봉 수 (evaluate 와 같음)
+                  'y': y[0] if len(set(y)) == 1 else y, 'q': num(win['d120'][k]), 's': num(win['d60'][k]),   # 날짜마다 같으면 하나
+                  'r': int(run[k]), 'k': int(cnt[k]), 'z': bool(anyl[k, -1]) if span else False, 'rc': rc,
+                  'f5': f.get('f5'), 'o5': f.get('o5'), 'gx': (gx or {}).get(c)}
+    return {'d': D, 'next': nxt, 'min_mc': MIN_MCAP, 'days': RECENT, 'hist_from': data.get('hist_from'),
+            'flow_date': fd, 'counts': data['counts'][-(SPAN - 1):], 'axes': list(N.AXES), 's': out}
+
+
 def write_all(conn, backfill: int = 0) -> dict:
     """가장 최근 날 + (backfill 이 있으면) 그 전 backfill 거래일을 새 형식으로 쓴다. 가장 최근 날의 데이터를 돌려준다."""
     from build_naver import DATA, build_flow, growth_extract, write_dates, write_json
@@ -211,9 +276,19 @@ def write_all(conn, backfill: int = 0) -> dict:
     for d in targets:
         fd = conn.execute('SELECT MAX(date) FROM flow_daily WHERE date <= ?', (d,)).fetchone()[0]
         flows = {'date': fd, 'by': {s['c']: s for s in build_flow(conn, fd)['stocks']}} if fd else None
-        data = build(conn, matrix(conn, base, d), flows, growth_extract(d))
+        gx = growth_extract(d)
+        data = build(conn, matrix(conn, base, d), flows, gx)
         write_json(DATA / 'high' / f'{d}.json', data)
-        out = out or data
+        if out is None:
+            out = data
+            # 클라우드 장중 신고가 기준: 장중 시세(quote_live)로 붙인 날은 빼고 price_daily 마지막 날까지로 만든다
+            pd = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
+            try:
+                m0 = matrix(conn, base, pd)
+                lb = live_base(conn, m0, {**data, 'counts': [x for x in data['counts'] if x[0] <= pd]}, flows, gx)
+                write_json(DATA / 'live_high.json', lb)
+            except Exception as e:   # 기준을 못 만들어도 신고가 탭 빌드는 그대로
+                print(f'live_high.json 실패: {type(e).__name__} {e}')
     keep = {p.stem for p in (DATA / 'high').glob('20*.json')}
     for p in (DATA / 'high').glob('20*.json'):          # 옛 형식(네이버 목록) 파일은 지운다
         try:

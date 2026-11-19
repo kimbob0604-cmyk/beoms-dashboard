@@ -251,5 +251,10 @@
     if (!data.cos.length && !data.etc.length) return setup();
     $('msg').hidden = true;
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/visits.json'], async () => {
+      data = await U.json('data/visits.json');
+      render();
+    });
   })();
 })();

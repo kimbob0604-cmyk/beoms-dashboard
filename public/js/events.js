@@ -180,5 +180,13 @@
     $('msg').hidden = true;
     $('asof').textContent = `${U.dateLabel(data.to)}까지`;
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/events.json'], async () => {
+      data = await U.json('data/events.json');
+      U.forget('data/events/');                       // 종류별 기업 리스트도 새로 받는다
+      for (const k of Object.keys(lists)) delete lists[k];
+      $('asof').textContent = `${U.dateLabel(data.to)}까지`;
+      render();
+    });
   })();
 })();

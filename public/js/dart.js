@@ -187,7 +187,7 @@
     render();
   }
 
-  // 보고 있는 날짜에 새 공시가 들어오면(장중 10분마다) 조용히 다시 그린다
+  // 보고 있는 날짜에 새 공시가 들어오면(1분마다) 조용히 다시 그린다
   async function refreshSame() {
     if (!data || !U.busyHours()) return;
     try {
@@ -195,7 +195,7 @@
       if (d && d.date === data.date) { data = d; renderBody(); }
     } catch (e) { /* 다음 때 */ }
   }
-  setInterval(refreshSame, 120000);
+  setInterval(refreshSame, 60000);
 
   pg.bind($('filters'));
   U.initTheme($('theme'));

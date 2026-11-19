@@ -257,5 +257,13 @@
       if (best) st.c = best.k;
     }
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/bt/summary.json'], async () => {
+      S = await U.json('data/bt/summary.json');
+      U.forget('data/bt/', ['data/bt/summary.json']);
+      for (const k of Object.keys(detail)) delete detail[k];
+      $('asof').textContent = `${dot(S.end)}까지`;
+      render();
+    });
   })();
 })();

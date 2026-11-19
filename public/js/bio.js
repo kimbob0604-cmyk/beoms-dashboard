@@ -967,5 +967,11 @@
     $('msg').hidden = true;
     $('asof').textContent = `${U.timeLabel(data.generated_at)} 갱신`;
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/bio.json'], async () => {
+      data = await U.json('data/bio.json');
+      $('asof').textContent = `${U.timeLabel(data.generated_at)} 갱신`;
+      render();
+    });
   })();
 })();

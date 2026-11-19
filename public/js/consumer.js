@@ -786,5 +786,12 @@
     try { alt = await U.json('data/altdata.json'); } catch (e) { alt = null; }     // 공개 사이트에는 없다 → 카드 숨김
     $('msg').hidden = true;
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/consumer.json', 'data/consumer_calls.json', 'data/news.json'], async () => {
+      data = await U.json('data/consumer.json');
+      try { calls = await U.json('data/consumer_calls.json'); } catch (e) { /* 그대로 */ }
+      try { news = await U.json('data/news.json'); } catch (e) { /* 그대로 */ }
+      render();
+    });
   })();
 })();

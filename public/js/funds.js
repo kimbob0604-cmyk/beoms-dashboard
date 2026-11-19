@@ -109,6 +109,13 @@
     renderFilters();
     renderTable();
     openDetail();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/fund/index.json'], async () => {
+      data = await U.json('data/fund/index.json');
+      U.forget('data/fund/', ['data/fund/index.json']);   // 종목별 상세도 다음에 열 때 새로
+      renderFilters();
+      renderTable();
+    });
     $('foot').innerHTML = `<p>출처: 금융감독원 DART 정기보고서 원문 주석(비용의 성격별 분류)과 XBRL(손익). 분기 값은 3개월 값, 없으면 누적끼리 뺀 값입니다. 연결이 있으면 연결, 없으면 별도.</p>
       <p>코스피200·코스닥150 구성: ${U.esc(data.ix_as_of || '')}. 지수 정기변경(6월·12월) 뒤에는 목록을 다시 맞춰야 합니다.</p>
       <p>리포트 문장은 네이버 증권 리서치 요약에서 요인 낱말이 든 문장을 뽑은 것이고, 컨센서스는 네이버 종목분석(FnGuide) 분기 추정치입니다. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;

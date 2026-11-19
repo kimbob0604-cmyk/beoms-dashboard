@@ -463,7 +463,19 @@
   (async () => {
     try {
       dates = await U.json('data/growth/dates.json');
-      U.watch('growth', dates[0]);
+      // 1분마다: 최신 날짜를 보고 있으면 새 날짜로 넘어가고, 같은 날 데이터·시세가 바뀌면 다시 그린다 (2026-11-19)
+      U.watch('growth', dates[0], async (q, newer) => {
+        if (newer) {
+          const onLatest = state.date === dates[0];
+          dates = newer;
+          if (onLatest) { state.date = dates[0]; writeState(); }
+          $('date').innerHTML = dates.map(d => `<option value="${d}"${d === state.date ? ' selected' : ''}>${U.dateLabel(d)} 기준</option>`).join('');
+          if (onLatest) loadDate(state.date);
+          return onLatest;
+        }
+        if (state.date !== dates[0]) return;
+        try { if (await U.fresh(`data/growth/${state.date}.json`) || q) loadDate(state.date); } catch (e) { /* 다음 때 */ }
+      });
     } catch (e) {
       showError('데이터 목록을 불러오지 못했습니다. 로컬 서버로 열었는지 확인하세요: python3 serve.py');
       return;

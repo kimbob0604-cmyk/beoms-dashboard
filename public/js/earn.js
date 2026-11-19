@@ -170,7 +170,7 @@ const EarnDeck = (() => {
       if (j && j.date === cur) { cards = j.cards; renderDeck(); }
     } catch (e) { /* 다음 때 */ }
   }
-  setInterval(refresh, 120000);
+  setInterval(refresh, 60000);
 
   return { show };
 })();

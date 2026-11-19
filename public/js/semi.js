@@ -308,5 +308,10 @@
     renderTable();
     $('foot').innerHTML = `<p>국내: 금융감독원 DART 정기보고서 손익(펀더 탭과 같은 수집), 단일판매·공급계약 공시. 해외: 미국 SEC EDGAR 공시(XBRL), 그 밖은 야후 파이낸스 분기 재무. 칸 배정과 제품 설명은 초안(검수 전)입니다.</p>
       <p>실적 vs 예상은 @darthacking 실적 글의 예상치 기준입니다. 투자 판단의 참고용이며 정확성을 보장하지 않습니다.</p>`;
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/semi.json'], async () => {
+      data = await U.json('data/semi.json');
+      renderFilters(); renderAI(); renderChain(); renderDemand(); renderTable();
+    });
   })();
 })();

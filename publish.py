@@ -29,7 +29,7 @@ DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart', 'digest', 'docpool')   # 날짜별 JSON + dates.json (docpool = 리포트 탭 @DOC_POOL 글 목록 — 제목·증권사·의견·목표가·링크만, 2026-11-17 사용자 승인으로 공개)
 CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart', 'earn', 'fund')   # 최신 파일만 (vchart = 탐방 탭 차트, earn = 실적 발표 덱 1년)
 FILES = ('home.json', 'names.json', 'quotes.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json',
-         'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json', 'semi.json', 'live_base.json')   # semi.json = 반도체·AI 인프라 탭, live_base.json = 맥이 잘 때 Actions 장중 갱신 기준(cloud_live.py)   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
+         'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json', 'semi.json', 'live_base.json', 'live_high.json')   # semi.json = 반도체·AI 인프라 탭, live_base.json·live_high.json = 맥이 잘 때 Actions 장중 갱신 기준(cloud_live.py — 홈·시세, 신고가)   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
 # 공개용으로 따로 만든 파일 → 배포본에서의 이름. 탐방 탭: 이 컴퓨터용 visits.json(1:1 대화·공개 채널 원문 포함)은 올리지 않고
 # build_visits.public_view 가 줄인 visits_pub.json 을 data/visits.json 으로 올린다
 RENAMED = {'visits_pub.json': 'visits.json', 'consumer.json': 'consumer.json',

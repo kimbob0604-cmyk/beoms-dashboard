@@ -4,8 +4,14 @@
 launchd(com.kimbob.beomdashboard.live)가 1분마다 부른다 (2026-11-19 사용자 요청으로 10분 → 1분).
 - 09:00~15:50 (평일, 매분): 지수·전 종목 시세 → 신고가 탭(장중 잠정)·홈 → 배포
 - 07:00~19:30 (평일, 매분): DART 새 공시·KIND 공시 시각·새 증권사 리포트. 새로 들어온 행이 있을 때만 공시·리포트를 다시 빌드한다
-- 07:00~19:30 (평일, 10분마다): 텔레그램 실적 글 → 실적 속보·오늘 발표 종목 분봉 → 실적 발표 덱 (바뀐 게 있을 때만 빌드, 40초)
-  텔레그램 로그인 세션을 탐방 노트·Study 수집도 같이 쓴다. 매분 붙으면 세션이 겹쳐 끊길 위험이 커서 10분 간격을 지킨다.
+- 평일 장 마감 뒤: 장중에 맥이 자서 그날 시세가 하나도 없으면 한 번 받는다 → 그날 신고가(잠정)·홈 (저녁 수급이 오면 정규장 종가로 바뀜)
+- 느린 수집(live.py --slow, 매분 부르되 따로 돌고 아래 간격마다): 1분 갱신을 막지 않게 별도 프로세스·잠금으로 돈다.
+    5분  텔레그램 실적 글 → 실적 속보·오늘 발표 종목 분봉 → 실적 발표 덱, @DOC_POOL 리포트 → 리포트 탭
+    15분 텔레그램 탐방 노트 → 탐방 탭, 컨콜 → 소비재 탭, 섹터 뉴스(네이버 검색 API) → 소비재 탭 뉴스
+    30분 네이버 투자전략 리포트 → 전략 트래커 (평일 07:00~20:00)
+  텔레그램 수집기들은 같은 로그인 세션 파일(db/tg_user.session)을 직접 열어서 둘이 동시에 돌면 안 된다 → 차례로 돌고,
+  daily.py 가 돌고 있으면(같은 수집을 한다) 그동안 쉰다. 탐방·컨콜은 전체 방 검색이라 텔레그램이 속도 제한을 걸 수 있어 15분.
+  바뀐 게 있을 때만(DB 행 수·파일 내용) 그 탭을 다시 빌드하고 배포한다.
 - 09:00~ (평일): 맥이 자는 동안 GitHub Actions 가 받아 둔 지수 수급 스냅샷(snap 브랜치)으로 빈 시각을 채운다
 - 맥이 자는 동안에는 GitHub Actions(.github/workflows/cloud-live.yml → cloud_live.py)가 사이트 홈·quotes.json 을
   장중 시세로 1분마다 대신 갱신한다. 맥이 깨어나 배포하면 맥 것이 우선 (gh-pages 를 새로 만들어 덮는다)
@@ -16,7 +22,8 @@ daily.py 와는 따로 돈다(잠금 파일이 다르다 — 아침 정기 실�
 한 번 도는 데 1분이 넘으면(새 공시가 몰리거나 정기 실행과 겹칠 때) 다음 차례는 잠금에 걸려 조용히 건너뛴다.
 
   python3 live.py           # 장 시간 밖이면 아무것도 안 함
-  python3 live.py --force   # 시간 상관없이 한 번 (텔레그램 포함)
+  python3 live.py --force   # 시간 상관없이 한 번 (느린 수집도 모두)
+  python3 live.py --slow    # 느린 수집만 (간격이 된 것만)
 """
 
 import fcntl
@@ -34,8 +41,12 @@ EARN_DB = ROOT / 'db' / 'earn.db'
 START, END = dtime(9, 0), dtime(15, 50)
 DART_START, DART_END = dtime(7, 0), dtime(19, 30)
 FLOW_START = dtime(6, 0)
-TG_EVERY = 600                          # 텔레그램 실적 글 확인 간격(초)
-TG_STAMP = LOG_DIR / 'live_tg.stamp'    # 마지막으로 확인한 시각 (파일 수정 시각)
+AFTER_STAMP = LOG_DIR / 'live_after_close.stamp'   # 장 마감 뒤 시세를 한 번 받은 날
+# 느린 수집: (이름, 간격 초, 시작, 끝, 평일만) — 마지막으로 돈 시각은 logs/live_slow_<이름>.stamp 의 수정 시각
+SLOW = (('tg', 300, dtime(6, 0), dtime(23, 59), False),
+        ('tgsearch', 900, dtime(6, 0), dtime(23, 59), False),
+        ('news', 900, dtime(6, 0), dtime(23, 0), False),
+        ('strategy', 1800, dtime(7, 0), dtime(20, 0), True))
 PUBLIC = ROOT / 'public'
 STUDY_FILES = ('study.html', 'css/app.css', 'css/study.css', 'js/util.js', 'js/study_chart.js', 'js/study.js')
 STUDY_STAMP = LOG_DIR / 'study_publish.stamp'   # Study 사이트에 마지막으로 올린 빌드의 지문
@@ -84,11 +95,45 @@ def changed(before, after) -> bool:
     return before is None or after is None or before != after
 
 
-def tg_due(force: bool) -> bool:
+def db_fp(path: Path, tables) -> tuple | None:
+    """내용 표마다 (행 수, 마지막 rowid) — 새 글이 들어왔는지 보는 지문 (못 읽으면 None = 바뀐 것으로).
+    수집기가 매번 고쳐 쓰는 meta(마지막 확인 시각)·다시 계산하는 표(전략 pick)는 넣지 않는다 — 넣으면 새 글이 없어도 매번 다시 빌드한다"""
     try:
-        return force or time.time() - TG_STAMP.stat().st_mtime >= TG_EVERY - 30
+        con = sqlite3.connect(f'file:{path}?mode=ro', uri=True, timeout=30)
+        try:
+            return tuple(con.execute(f'SELECT COUNT(*), MAX(rowid) FROM "{t}"').fetchone() for t in tables)
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return None
+
+
+def file_fp(path: Path) -> str | None:
+    import hashlib
+    try:
+        return hashlib.sha1(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
+
+
+def slow_due(name: str, every: int, start, end, weekday_only: bool, now: datetime) -> bool:
+    if weekday_only and now.weekday() >= 5 or not start <= now.time() <= end:
+        return False
+    try:
+        return time.time() - (LOG_DIR / f'live_slow_{name}.stamp').stat().st_mtime >= every - 30
     except OSError:
         return True
+
+
+def quote_date() -> str:
+    try:
+        con = sqlite3.connect(f'file:{DB}?mode=ro', uri=True, timeout=30)
+        try:
+            return con.execute('SELECT MAX(date) FROM quote_live').fetchone()[0] or ''
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return ''
 
 
 def study_sig() -> str:
@@ -138,6 +183,9 @@ def main() -> int:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
         return 0   # 직전 장중 갱신이 아직 도는 중
+    if any(slow_due(*x, t) for x in SLOW) or force:   # 느린 수집은 따로 (1분 갱신을 막지 않게). 이미 돌고 있으면 그쪽이 바로 끝난다
+        subprocess.Popen([sys.executable, str(ROOT / 'live.py'), '--slow', *(['--force'] if force else [])], cwd=ROOT,
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
     with open(LOG_DIR / f'live_{datetime.now():%Y%m%d}.log', 'a', encoding='utf-8') as log:
         if daily_running():
             log.write(f'--- {datetime.now():%H:%M:%S} 정기 실행(daily.py)이 도는 중 — 장중 갱신은 그대로 진행\n')
@@ -154,6 +202,17 @@ def main() -> int:
             new_quotes = got(run(['collect_naver.py', 'quotes'], log))
             ok |= new_quotes
             high_only |= new_quotes       # 신고가 탭은 이 시세로 다시 계산한다 (build_naver --high — 장중에는 잠정 판정)
+        if not market and t.weekday() < 5 and t.time() > END:
+            # 장중에 맥이 자서 오늘 시세가 하나도 없으면 한 번 받는다 → 오늘 신고가(잠정)·홈. 휴장일에 매분 다시 받지 않게 하루 한 번
+            today = t.strftime('%Y-%m-%d')
+            try:
+                tried = AFTER_STAMP.read_text().strip() == today
+            except OSError:
+                tried = False
+            if not tried and quote_date() < today:
+                AFTER_STAMP.write_text(today)
+                if got(run(['collect_naver.py', 'quotes'], log)) and quote_date() == today:
+                    ok = high_only = True
         if force or (t.weekday() < 5 and t.time() >= START):
             # 맥이 자는 동안 GitHub Actions 가 받아 둔 지수 수급 스냅샷으로 빈 시각을 채운다 (index_snap.py).
             # 장 마감 뒤에 깨어나도 그날 치를 채우도록 저녁까지 확인한다. 채운 것이 있을 때만(0) 홈을 다시 만든다.
@@ -171,16 +230,6 @@ def main() -> int:
                 if run(['build_dart.py'], log) != 0:
                     return 1
                 run(['build_events.py'], log)   # 이벤트 스터디 기업 리스트에 새 공시 (5초)
-            # 실적 발표 덱: 새 실적 글 → 오늘 발표 종목의 분봉(가진 마지막 분 뒤만) → 바뀐 게 있으면 빌드. 배포는 위 공시와 함께
-            if tg_due(force):
-                TG_STAMP.touch()
-                earn0 = fingerprint(EARN_DB, EARN_FP)
-                if run(['collect_earn.py', 'posts'], log) == 0:
-                    run(['earn_alert.py', '--notify'], log)   # 관심 종목(소비재·의료기기) 실적 공시 속보 → 텔레그램
-                    run(['collect_earn.py', 'minutes', '--today'], log)
-                if changed(earn0, fingerprint(EARN_DB, EARN_FP)):
-                    run(['build_earn.py'], log)
-                    ok = True
         if full_naver:
             if run(['build_naver.py'], log) != 0:
                 return 1
@@ -201,5 +250,64 @@ def main() -> int:
     return rc
 
 
+def slow_main() -> int:
+    """느린 수집 (텔레그램·뉴스·전략). 바뀐 탭만 다시 빌드하고 배포한다"""
+    force = '--force' in sys.argv
+    t = datetime.now()
+    LOG_DIR.mkdir(exist_ok=True)
+    lock = open(LOG_DIR / 'live_slow.lock', 'w')
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return 0
+    due = {x[0] for x in SLOW if force or slow_due(*x, t)}
+    if not due:
+        return 0
+    with open(LOG_DIR / f'live_slow_{t:%Y%m%d}.log', 'a', encoding='utf-8') as log:
+        if daily_running():   # 정기 실행이 같은 수집(텔레그램·뉴스·전략)을 하고 있다 — 세션 파일·DB 가 겹치지 않게 끝난 뒤에
+            log.write(f'--- {t:%H:%M:%S} 정기 실행(daily.py)이 도는 중 — 느린 수집은 다음 차례에\n')
+            return 0
+        for name in due:
+            (LOG_DIR / f'live_slow_{name}.stamp').touch()
+        new = False
+        if 'tg' in due:
+            earn0 = fingerprint(EARN_DB, EARN_FP)
+            if run(['collect_earn.py', 'posts'], log) == 0:
+                run(['earn_alert.py', '--notify'], log)   # 관심 종목(소비재·의료기기) 실적 공시 속보 → 텔레그램
+                run(['collect_earn.py', 'minutes', '--today'], log)
+            if changed(earn0, fingerprint(EARN_DB, EARN_FP)):
+                new |= run(['build_earn.py'], log) == 0
+            pool = lambda: db_fp(ROOT / 'db' / 'docpool.db', ('post',))
+            pool0 = pool()
+            run(['collect_docpool.py'], log)
+            if changed(pool0, pool()):
+                new |= run(['build_docpool.py'], log) == 0
+        if 'tgsearch' in due:
+            vis, cc = (lambda: db_fp(ROOT / 'db' / 'visits.db', ('msg',))), (lambda: db_fp(ROOT / 'db' / 'concall.db', ('msg',)))
+            v0, c0 = vis(), cc()
+            run(['collect_visits.py'], log)
+            if changed(v0, vis()):
+                new |= run(['build_visits.py'], log) == 0
+            run(['collect_visits.py', '--topic', 'concall'], log)
+            if changed(c0, cc()):
+                new |= run(['build_consumer.py'], log) == 0
+        if 'news' in due:
+            n0 = file_fp(PUBLIC / 'data' / 'news.json')
+            run(['collect_news.py'], log)
+            new |= changed(n0, file_fp(PUBLIC / 'data' / 'news.json'))
+        if 'strategy' in due:
+            stg = lambda: db_fp(ROOT / 'db' / 'strategy.db', ('doc', 'tgpost'))
+            s0 = stg()
+            run(['collect_strategy.py'], log)
+            if changed(s0, stg()):
+                new |= run(['build_strategy.py'], log) == 0
+        if not new:
+            log.write(f'{datetime.now():%H:%M:%S} 새로 받은 것 없음 ({", ".join(sorted(due)) or "-"})\n')
+            return 0
+        rc = run(['publish.py'], log)
+        log.write(f'=== {datetime.now():%H:%M:%S} 끝 ({(datetime.now() - t).total_seconds():.0f}초)\n')
+        return rc
+
+
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(slow_main() if '--slow' in sys.argv else main())

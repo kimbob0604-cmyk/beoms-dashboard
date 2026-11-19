@@ -312,5 +312,14 @@
       if (best) st.s = best.id;
     }
     render();
+    // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
+    U.live(['data/st/summary.json'], async () => {
+      S = await U.json('data/st/summary.json');
+      U.forget('data/st/', ['data/st/summary.json']);
+      for (const k of Object.keys(detail)) delete detail[k];
+      T = S.days.length;
+      $('asof').textContent = `${dot(S.end)}까지`;
+      render();
+    });
   })();
 })();

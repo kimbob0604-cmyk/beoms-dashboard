@@ -1,7 +1,50 @@
 // 탭 공통: 숫자 포맷, 테마, JSON 로딩
 const U = (() => {
   const DOW = '일월화수목금토';
-  const cache = {}, last = {};
+  const cache = {}, last = {}, got = {};
+
+  // ── 실시간 시세 덧입히기 (2026-11-19) ──
+  // data/quotes.json({_d: 시세 날짜, _t: 장중 시각, 코드: [가격, 등락률]})은 장중 1분마다 맥(live.py)이나 GitHub Actions(cloud_live.py)가
+  // 새로 올린다. 탭 데이터의 종목 행({c, n, mk, w, mc, p, ch} — build_naver.market_info 모양)은 빌드한 때의 가격이라,
+  // 읽을 때와 시세가 바뀔 때마다 p·ch 를 지금 시세로 바꾸고 시총(mc)은 가격 비율로 맞춘다. 바이오 국장 행({ticker, price, mcap})도.
+  // 날짜별 파일(data/<폴더>/<날짜>.json)은 그날이 시세 날짜보다 앞이면(지난날 화면) 건드리지 않는다.
+  let Q = null, qText = null, qP = null, qVer = 0;   // qVer: 시세가 바뀔 때마다 1씩 — 한 화면의 여러 확인 타이머가 모두 알아채게
+  const orig = new WeakMap();
+  const NO_OVERLAY = /(^|\/)(quotes|home|live_base|live_high|names)\.json|\/dates\.json|^data\/(stocks|chart|vchart|bt|st|events|earn|dart\/s)\//;
+  const DATED = /^data\/[\w-]+\/(\d{4}-\d{2}-\d{2})\.json/;
+  const overlayable = url => !NO_OVERLAY.test(url) && (!DATED.test(url) || !Q?.d || url.match(DATED)[1] >= Q.d);
+  function setQuotes(text) {
+    if (text === qText) return false;
+    qText = text;
+    qVer++;
+    try {
+      const j = JSON.parse(text);
+      Q = { d: j._d, t: j._t, m: j };
+    } catch (e) { Q = null; }
+    return true;
+  }
+  function overlay(o) {
+    if (!Q || !o || typeof o !== 'object') return;
+    if (Array.isArray(o)) { for (const v of o) if (v && typeof v === 'object') overlay(v); return; }
+    const code = typeof o.c === 'string' ? o.c : (typeof o.ticker === 'string' && /^\d{6}$/.test(o.ticker) ? o.ticker : null);
+    const q = code && code[0] !== '_' ? Q.m[code] : null;
+    if (Array.isArray(q) && q[0] != null) {
+      if ('p' in o && 'ch' in o) {
+        let b = orig.get(o);
+        if (!b) { b = { p: o.p, mc: o.mc }; orig.set(o, b); }
+        o.p = q[0];
+        o.ch = q[1];
+        if (b.mc != null && b.p) o.mc = Math.round(b.mc * q[0] / b.p);
+      } else if (typeof o.price === 'number' && 'mcap' in o) {
+        let b = orig.get(o);
+        if (!b) { b = { price: o.price, mcap: o.mcap }; orig.set(o, b); }
+        o.price = q[0];
+        if (b.mcap != null && b.price) o.mcap = b.mcap * q[0] / b.price;
+      }
+    }
+    for (const k in o) { const v = o[k]; if (v && typeof v === 'object') overlay(v); }
+  }
+  const applyQuotes = (url, data) => { if (overlayable(url)) overlay(data); return data; };
 
   const num = (v, nd = 0) => v.toLocaleString('ko-KR', { minimumFractionDigits: nd, maximumFractionDigits: nd });
 
@@ -78,11 +121,11 @@ const U = (() => {
     },
     async json(url) {
       if (!cache[url]) {
-        cache[url] = fetch(U.bust(url), { cache: 'no-store' }).then(async r => {
+        cache[url] = Promise.all([fetch(U.bust(url), { cache: 'no-store' }), overlayable(url) ? U.quotes() : null]).then(async ([r]) => {
           if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
           const text = await r.text();
           last[url] = text;
-          return JSON.parse(text);
+          return (got[url] = applyQuotes(url, JSON.parse(text)));
         });
         cache[url].catch(() => delete cache[url]);
       }
@@ -95,9 +138,52 @@ const U = (() => {
       const text = await r.text();
       if (text === last[url]) return null;
       last[url] = text;
-      const data = JSON.parse(text);
+      const data = (got[url] = applyQuotes(url, JSON.parse(text)));
       cache[url] = Promise.resolve(data);
       return data;
+    },
+    // 받아 둔 파일을 잊는다 → 다음 U.json 이 서버에서 새로 받는다 (종목별·조합별 상세처럼 U.live 목록에 없는 파일)
+    forget(prefix, keep = []) {
+      for (const url of Object.keys(cache)) {
+        if (url.startsWith(prefix) && !keep.includes(url)) { delete cache[url]; delete last[url]; delete got[url]; }
+      }
+    },
+    // data/quotes.json 을 한 번 받아 둔다 (탭 데이터에 덧입힐 시세)
+    quotes() {
+      qP = qP || fetch(U.bust('data/quotes.json', 1), { cache: 'no-store' })
+        .then(r => (r.ok ? r.text() : null)).then(t => { if (t) setQuotes(t); return Q; }).catch(() => null);
+      return qP;
+    },
+    // 시세를 다시 받아 바뀌었으면 읽어 둔 탭 데이터 전부에 다시 덧입히고 true
+    async refreshQuotes() {
+      try {
+        const r = await fetch(U.bust('data/quotes.json', 1), { cache: 'no-store' });
+        if (!r.ok || !setQuotes(await r.text())) return false;
+      } catch (e) { return false; }
+      qP = Promise.resolve(Q);
+      for (const [url, data] of Object.entries(got)) applyQuotes(url, data);
+      return true;
+    },
+    // 열어 둔 화면 실시간: 1분마다(화면이 보일 때)와 탭으로 돌아올 때 시세와 urls 를 다시 받아,
+    // 무엇이든 바뀌었으면 onChange 를 부른다(그 안에서 U.json 으로 다시 읽으면 새 데이터). 2026-11-19
+    // urls 는 배열이나 배열을 돌려주는 함수(보고 있는 날짜에 따라 바뀔 때)
+    live(urls, onChange, every = 60000) {
+      let busy = false, seen = qVer;
+      const tick = async () => {
+        if (document.hidden || busy) return;
+        busy = true;
+        try {
+          await U.refreshQuotes();
+          let changed = seen !== qVer;
+          seen = qVer;
+          for (const url of (typeof urls === 'function' ? urls() : urls)) {
+            try { if (await U.fresh(url)) changed = true; } catch (e) { /* 없는 파일·네트워크 — 다음 차례에 */ }
+          }
+          if (changed) await onChange();
+        } catch (e) { /* 다음 차례에 */ } finally { busy = false; }
+      };
+      setInterval(tick, every);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
     },
     // 2026-11-03 → 11.03 (리포트 날짜처럼 짧게)
     md(d) {
@@ -158,38 +244,61 @@ const U = (() => {
       return api;
     },
     // dates.json → 기준일 select 채우기. 고른 날짜를 돌려준다.
-    async dates(folder, pg, sel, onPick) {
-      const ds = await U.json(`data/${folder}/dates.json`);
+    // onRefresh(날짜): 같은 날 데이터·시세가 바뀌었을 때 다시 그리기 (없으면 onPick — 펼침 상태를 지우는 화면은 따로 준다)
+    async dates(folder, pg, sel, onPick, onRefresh = onPick) {
+      let ds = await U.json(`data/${folder}/dates.json`);
       if (!ds.length) throw new Error('빌드된 날짜 없음');
       pg.latest = ds[0];
       if (!ds.includes(pg.state.date)) pg.state.date = ds[0];
-      sel.innerHTML = ds.map(d => `<option value="${d}"${d === pg.state.date ? ' selected' : ''}>${U.dateLabel(d)} 기준</option>`).join('');
+      const fill = () => {
+        sel.innerHTML = ds.map(d => `<option value="${d}"${d === pg.state.date ? ' selected' : ''}>${U.dateLabel(d)} 기준</option>`).join('');
+      };
+      fill();
       sel.addEventListener('change', e => { pg.state.date = e.target.value; pg.write(); onPick(e.target.value); });
-      // 보고 있는 날짜가 최신이면 같은 날 장중 갱신(신고가·수급·공시 등)도 받아 다시 그린다
-      U.watch(folder, ds[0], async () => {
+      // 1분마다: 최신 날짜를 보고 있으면 새 날짜가 올라왔을 때 그 날짜로 넘어가고(장중 신고가가 새 거래일로 생기는 등),
+      // 같은 날 갱신(신고가·수급·공시 등)이나 시세가 바뀌면 다시 그린다
+      U.watch(folder, ds[0], async (qChanged, newer) => {
+        if (newer) {
+          const onLatest = pg.state.date === ds[0];
+          ds = newer;
+          pg.latest = ds[0];
+          if (onLatest) { pg.state.date = ds[0]; pg.write(); }
+          fill();
+          if (onLatest) onPick(ds[0]);
+          return onLatest;
+        }
         if (pg.state.date !== ds[0]) return;
         try {
-          if (await U.fresh(`data/${folder}/${ds[0]}.json`)) onPick(ds[0]);
+          if (await U.fresh(`data/${folder}/${ds[0]}.json`) || qChanged) onRefresh(ds[0]);
         } catch (e) { /* 다음 확인 때 */ }
       });
       return pg.state.date;
     },
-    // 열어 둔 화면: 5분마다, 그리고 탭으로 돌아올 때 더 새 날짜가 올라왔는지 보고 알려 준다
+    // 열어 둔 화면: 1분마다(화면이 보일 때), 그리고 탭으로 돌아올 때 새 날짜·시세를 확인한다 (2026-11-19 3분 → 1분, 매일).
+    // onSame(시세 바뀜, 새 날짜 목록|null) — 새 날짜를 스스로 처리했으면 true 를 돌려주고, 아니면 '새로 올라왔습니다' 알림을 띄운다
     watch(folder, latest, onSame) {
+      let busy = false, seen = qVer;
       const check = async () => {
-        if (document.hidden) return;
+        if (document.hidden || busy) return;
+        busy = true;
         try {
           const ds = await (await fetch(U.bust(`data/${folder}/dates.json`, 1), { cache: 'no-store' })).json();
+          await U.refreshQuotes();
+          const q = seen !== qVer;
+          seen = qVer;
           if (ds[0] && ds[0] > latest) {
-            U.toast(`${U.dateLabel(ds[0])} 데이터가 새로 올라왔습니다`, '보기', () => {
-              const q = new URLSearchParams(location.search);
-              q.delete('date');
-              location.href = `${location.pathname}${q.toString() ? `?${q}` : ''}${location.hash}`;
-            });
-          } else if (onSame) onSame();
-        } catch (e) { /* 다음 확인 때 */ }
+            latest = ds[0];
+            if (!(onSame && await onSame(q, ds))) {
+              U.toast(`${U.dateLabel(ds[0])} 데이터가 새로 올라왔습니다`, '보기', () => {
+                const p = new URLSearchParams(location.search);
+                p.delete('date');
+                location.href = `${location.pathname}${p.toString() ? `?${p}` : ''}${location.hash}`;
+              });
+            }
+          } else if (onSame) await onSame(q, null);
+        } catch (e) { /* 다음 확인 때 */ } finally { busy = false; }
       };
-      setInterval(() => { if (U.busyHours()) check(); }, 180000);
+      setInterval(check, 60000);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
     },
     toast(msg, label, onClick) {
@@ -210,10 +319,11 @@ const U = (() => {
       const k = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
       return { dow: k.getDay(), min: k.getHours() * 60 + k.getMinutes() };
     },
-    // 맥이 새 데이터를 올리는 시간대 (평일 07:00~21:30, 저녁 20:40 실행 포함): 이때만 열어 둔 화면을 자주 확인한다
+    // 새 데이터가 올라올 수 있는 시간대: 매일 06:00~24:00 (맥 live.py 가 1분마다 도는 때 — 수급은 밤·주말에도, 텔레그램·뉴스도 매일).
+    // 이때 열어 둔 화면을 1분마다 확인한다 (2026-11-19 평일 07:00~21:30 → 매일 06:00~24:00)
     busyHours() {
-      const { dow, min } = U.kst();
-      return dow > 0 && dow < 6 && min >= 420 && min <= 1290;
+      const { min } = U.kst();
+      return min >= 360;
     },
     // 'YYYY-MM-DDTHH:MM:SS'(한국 시각) → 지금으로부터 몇 분 전
     minsAgo(ts) {
