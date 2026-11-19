@@ -29,6 +29,13 @@ DPI = 400
 def render(doc, key):
     figs = {x['key']: x for x in json.loads((ROOT / 'study_src' / doc / 'figures.json').read_text())}
     f = figs[key]
+    if isinstance(f.get('pdf'), str):   # 여러 리포트 종합 문서(study_crop.py): crops.json 의 리포트·쪽·상자(0~1 비율)
+        c = json.loads((ROOT / 'study_src' / doc / 'crops.json').read_text())[key]
+        page = pymupdf.open(ROOT / 'study_src' / 'pdf' / f"{c['pdf']}.pdf")[c['page'] - 1]
+        W, H = page.rect.width, page.rect.height
+        x0, y0, x1, y1 = c.get('box') or [0, 0, 1, 1]
+        pix = page.get_pixmap(dpi=DPI, clip=pymupdf.Rect(x0 * W, y0 * H, x1 * W, y1 * H))
+        return Image.frombytes('RGB', (pix.width, pix.height), pix.samples), f
     pdf = ROOT / 'study_src' / 'pdf' / f'{doc}.pdf'
     page = pymupdf.open(pdf)[f['pdf'] - 1]
     pix = page.get_pixmap(dpi=DPI, clip=pymupdf.Rect(f['rect']))

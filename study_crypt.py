@@ -86,7 +86,8 @@ def encrypt_into(out_study: Path, pw: str) -> tuple[int, int]:
         (CACHE / (rel + '.enc')).unlink(missing_ok=True)
         man.pop(rel)
     man_path.write_text(json.dumps(man))
-    civ = os.urandom(12)
+    # 확인용 조각의 iv 를 열쇠에서 고정으로 뽑는다 — 난수면 lock.json 이 매번 달라져 바뀐 게 없어도 10분마다 사이트 전체를 다시 배포했다
+    civ = hmac.new(key, b'lock-check', hashlib.sha256).digest()[:12]
     lock = {'v': 1, 'kdf': 'PBKDF2-SHA256', 'iter': ITER, 'salt': base64.b64encode(salt).decode(),
             'check': base64.b64encode(civ + AESGCM(key).encrypt(civ, CHECK, None)).decode()}
     (out_study / 'lock.json').write_text(json.dumps(lock))
