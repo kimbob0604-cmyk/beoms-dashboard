@@ -352,5 +352,95 @@
   "en": "Orion Holdings",
   "code": "001800",
   "desc": "오리온 지주사. 유진 배당 성장주: DPS 1,100 → 1,500원, 배당수익률 6.4%."
+ },
+ "co:snowflake": {
+  "name": "스노우플레이크",
+  "en": "Snowflake (SNOW)",
+  "desc": "데이터 클라우드 플랫폼. AI 제품(코딩 에이전트·CoWork) 도입이 기존 사용량까지 늘려 매출 성장이 가이던스를 7%p 상회(하나 김재임 Top pick)."
+ },
+ "co:crowdstrike": {
+  "name": "크라우드스트라이크",
+  "en": "CrowdStrike (CRWD)",
+  "desc": "엔드포인트·클라우드 보안. FY27 순신규 ARR 가이던스를 2개 분기 만에 22.5% → 34%로 상향(하나 김재임 Top pick)."
+ },
+ "co:datadog": {
+  "name": "데이터독",
+  "en": "Datadog (DDOG)",
+  "desc": "IT 모니터링·옵저버빌리티. AI 운영이 복잡해질수록 수요가 커지는 수혜주, Non-AI 고객 매출도 가속(하나 김재임 Top pick)."
+ },
+ "co:huawei": {
+  "name": "화웨이",
+  "en": "Huawei",
+  "desc": "중국 AI 칩(Ascend)·시스템(CloudMatrix·Atlas SuperPoD) 업체. 개별 칩은 엔비디아 H100 이하, 병목은 HBM(하나 백승혜)."
+ },
+ "co:salesforce": {
+  "name": "세일즈포스",
+  "en": "Salesforce (CRM)",
+  "desc": "CRM SaaS. 앤트로픽과 '클로드포스' 공동 출시, 에이전트포스로 맥락·권한·실행을 SaaS가 유지하는 공존 전략."
+ },
+ "co:servicenow": {
+  "name": "서비스나우",
+  "en": "ServiceNow (NOW)",
+  "desc": "업무 자동화 SaaS. 2026 YTD −39.4%로 AI 잠식 우려의 대표 종목, 워크플로우 실행 계층을 핵심 자산으로 내세움."
+ },
+ "co:cambricon": {
+  "name": "캠브리콘",
+  "en": "Cambricon (688256.CH)",
+  "desc": "중국 AI 칩 팹리스. 시총 113.5조원, 2027F PER 43.7배(하나 백승혜). HBM 공급 병목으로 출하 전망 보수적."
+ },
+ "c:distillation": {
+  "name": "증류",
+  "en": "Distillation",
+  "desc": "학습이 끝난 최첨단 모델의 출력으로 다른 모델을 학습시켜 연산·비용을 줄이는 방법. 앤트로픽·OpenAI는 중국 업체의 무단 증류를 보고(하나 백승혜 p.35~36)."
+ },
+ "c:saas-seat": {
+  "name": "SaaS 좌석 과금",
+  "en": "SaaS seat pricing",
+  "desc": "사용자 수(seat)에 따라 내는 SaaS 과금. AI 에이전트가 UI를 건너뛰고 API를 호출하면 좌석 수가 줄어 사용량·성과 과금으로 옮겨 가야 한다는 압력(가트너: 2030년 최대 20% 노출)."
+ },
+ "c:open-weight": {
+  "name": "오픈웨이트 모델",
+  "en": "Open-weight model",
+  "desc": "가중치를 공개해 누구나 자기 서버에서 돌릴 수 있는 AI 모델. 중국 모델 대부분이 이 방식이라 값이 싸고 빠르게 퍼진다."
+ },
+ "co:lockheed": {
+  "name": "록히드마틴",
+  "en": "Lockheed Martin (LMT)",
+  "desc": "미국 방산 대형주. PAC-3 MSE 600 → 2,000발, THAAD 96 → 400발 증산 계약(하나 강재구 차선호). 시총 136.4B달러."
+ },
+ "co:rtx": {
+  "name": "RTX",
+  "en": "RTX (RTX)",
+  "desc": "미국 방산 대형주(하나 강재구 최선호). 토마호크 연 1,000발 이상 등 증산 목표. 시총 267.2B달러."
+ },
+ "co:unitree": {
+  "name": "유니트리",
+  "en": "Unitree (688836.CH)",
+  "desc": "중국 휴머노이드. 시총 50.0조원, 2027F PER 235.5배(하나 백승혜 선호)."
+ },
+ "co:walmart": {
+  "name": "월마트",
+  "en": "Walmart (WMT)",
+  "desc": "미국 최대 유통. 하나 강재구 소비 종목(시총 1.0T달러), iM은 트레이드다운 수혜 할인점."
+ },
+ "co:arista": {
+  "name": "아리스타 네트웍스",
+  "en": "Arista Networks (ANET)",
+  "desc": "AI 네트워크. 2027 AI Fabric 매출 목표 70억달러(+100%). 시총 235.5B달러."
+ },
+ "co:atlassian": {
+  "name": "아틀라시안",
+  "en": "Atlassian (TEAM)",
+  "desc": "협업 SaaS, 에이전트 Rovo 수익화(하나 강재구 생산성 혁신). 시총 35.5B달러."
+ },
+ "co:visa": {
+  "name": "비자",
+  "en": "Visa (V)",
+  "desc": "결제망. 고용 기반 소비·크로스보더 결제(하나 강재구). 시총 777.6B달러."
+ },
+ "co:wayfair": {
+  "name": "웨이페어",
+  "en": "Wayfair (W)",
+  "desc": "온라인 가구. 에이전틱 쇼핑 협력·주택 회복(하나 강재구). 시총 14.6B달러."
  }
 }

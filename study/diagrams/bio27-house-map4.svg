@@ -1,0 +1,91 @@
+<svg viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="네 하우스 비교: 2026 진단, 2027 전망, 톱픽, 강조 테마, 밸류 방식">
+  <text x="360" y="20" class="dg-t" font-size="14" font-weight="800" text-anchor="middle">네 하우스를 한 장에 — 다올 · 교보 · NH · 하나 (2026.11)</text>
+  <rect x="10" y="34" width="110" height="26" rx="6" class="dg-lo"/>
+  <text x="65" y="52" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">질문</text>
+  <rect x="124" y="34" width="144" height="26" rx="6" class="dg-hi"/>
+  <text x="196.0" y="52" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">다올 (84쪽)</text>
+  <rect x="272" y="34" width="144" height="26" rx="6" class="dg-hi"/>
+  <text x="344.0" y="52" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">교보 (47쪽)</text>
+  <rect x="420" y="34" width="144" height="26" rx="6" class="dg-hi"/>
+  <text x="492.0" y="52" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">NH (제약바이오 장)</text>
+  <rect x="568" y="34" width="144" height="26" rx="6" class="dg-hi"/>
+  <text x="640.0" y="52" class="dg-t" font-size="11" font-weight="800" text-anchor="middle">하나 (44쪽)</text>
+  <rect x="10" y="66" width="110" height="63" rx="6" class="dg-lo"/>
+  <text x="65" y="101.5" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">2026 진단</text>
+  <rect x="124" y="66" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="130" y="83" class="dg-s" font-size="9.5" text-anchor="start">반도체 쏠림 + 신뢰 약화</text>
+  <text x="130" y="98" class="dg-s" font-size="9.5" text-anchor="start">금리만으론 설명 안 됨</text>
+  <text x="130" y="113" class="dg-s" font-size="9.5" text-anchor="start">계약금 비중 한국 3.4%</text>
+  <rect x="272" y="66" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="278" y="83" class="dg-s" font-size="9.5" text-anchor="start">수급 쏠림 + 대형 딜 감소</text>
+  <text x="278" y="98" class="dg-s" font-size="9.5" text-anchor="start">바이오텍은 금리 못 피함</text>
+  <text x="278" y="113" class="dg-s" font-size="9.5" text-anchor="start">미국도 8월 뒤 중소형 부진</text>
+  <rect x="420" y="66" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="426" y="83" class="dg-s" font-size="9.5" text-anchor="start">고금리·테크 쏠림 +</text>
+  <text x="426" y="98" class="dg-s" font-size="9.5" text-anchor="start">신뢰 훼손·중국 격차</text>
+  <text x="426" y="113" class="dg-s" font-size="9.5" text-anchor="start">악재는 2026년으로 소멸</text>
+  <rect x="568" y="66" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="574" y="83" class="dg-s" font-size="9.5" text-anchor="start">코스피 제약 ↔ 코스닥 바이오텍</text>
+  <text x="574" y="98" class="dg-s" font-size="9.5" text-anchor="start">디커플링, 금리 5%대</text>
+  <text x="574" y="113" class="dg-s" font-size="9.5" text-anchor="start">코스닥은 신뢰 회복 필요</text>
+  <rect x="10" y="135" width="110" height="63" rx="6" class="dg-lo"/>
+  <text x="65" y="170.5" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">2027 전망</text>
+  <rect x="124" y="135" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="130" y="152" class="dg-s" font-size="9.5" text-anchor="start">동반 상승보다 종목 차별화</text>
+  <text x="130" y="167" class="dg-s" font-size="9.5" text-anchor="start">&quot;확실하거나 새롭거나&quot;</text>
+  <rect x="272" y="135" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="278" y="152" class="dg-s" font-size="9.5" text-anchor="start">밸류 부담 낮지만 선별적</text>
+  <text x="278" y="167" class="dg-s" font-size="9.5" text-anchor="start">수급 돌면 폭발적 상승</text>
+  <rect x="420" y="135" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="426" y="152" class="dg-s" font-size="9.5" text-anchor="start">미국 지수와 커플링 전환</text>
+  <text x="426" y="167" class="dg-s" font-size="9.5" text-anchor="start">반등 중심은 대형 제약사</text>
+  <rect x="568" y="135" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="574" y="152" class="dg-s" font-size="9.5" text-anchor="start">제약사 먼저, 바이오텍은</text>
+  <text x="574" y="167" class="dg-s" font-size="9.5" text-anchor="start">한 분기 뒤 추격</text>
+  <text x="574" y="182" class="dg-s" font-size="9.5" text-anchor="start">금리 동결(1Q27 말) 이후 수익화</text>
+  <rect x="10" y="204" width="110" height="48" rx="6" class="dg-lo"/>
+  <text x="65" y="232.0" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">톱픽</text>
+  <rect x="124" y="204" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="130" y="221" class="dg-t" font-size="9.5" font-weight="800" text-anchor="start">셀트리온 · 한미약품</text>
+  <text x="130" y="236" class="dg-s" font-size="9.5" text-anchor="start">삼성바이오 · SK바이오팜 BUY</text>
+  <rect x="272" y="204" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="278" y="221" class="dg-t" font-size="9.5" font-weight="800" text-anchor="start">한미약품 · 올릭스</text>
+  <text x="278" y="236" class="dg-s" font-size="9.5" text-anchor="start">SK바이오팜 BUY</text>
+  <rect x="420" y="204" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="426" y="221" class="dg-t" font-size="9.5" font-weight="800" text-anchor="start">셀트리온 · 한미약품</text>
+  <text x="426" y="236" class="dg-s" font-size="9.5" text-anchor="start">한올바이오파마 (바이오텍)</text>
+  <rect x="568" y="204" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="574" y="221" class="dg-t" font-size="9.5" font-weight="800" text-anchor="start">셀트리온 · 한미약품</text>
+  <text x="574" y="236" class="dg-s" font-size="9.5" text-anchor="start">SK바이오팜 (관심: 알테오젠)</text>
+  <rect x="10" y="258" width="110" height="63" rx="6" class="dg-lo"/>
+  <text x="65" y="293.5" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">강조 테마</text>
+  <rect x="124" y="258" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="130" y="275" class="dg-s" font-size="9.5" text-anchor="start">정책 · 비만 · 특허 만료</text>
+  <text x="130" y="290" class="dg-s" font-size="9.5" text-anchor="start">AI 신약(임상으로 증명)</text>
+  <rect x="272" y="258" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="278" y="275" class="dg-s" font-size="9.5" text-anchor="start">빅파마 딜 지도(질환별)</text>
+  <text x="278" y="290" class="dg-s" font-size="9.5" text-anchor="start">비인크레틴 비만 · RNA</text>
+  <rect x="420" y="258" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="426" y="275" class="dg-s" font-size="9.5" text-anchor="start">AI 신약 밸류체인</text>
+  <text x="426" y="290" class="dg-s" font-size="9.5" text-anchor="start">중국 항암제 상업화</text>
+  <text x="426" y="305" class="dg-s" font-size="9.5" text-anchor="start">비만 백본 · ALK7</text>
+  <rect x="568" y="258" width="144" height="63" rx="6" class="dg-panel"/>
+  <text x="574" y="275" class="dg-s" font-size="9.5" text-anchor="start">메디케어 확대 → 시밀러</text>
+  <text x="574" y="290" class="dg-s" font-size="9.5" text-anchor="start">MASH(에페) · 오파칼림</text>
+  <text x="574" y="305" class="dg-s" font-size="9.5" text-anchor="start">신규 상장 교체</text>
+  <rect x="10" y="327" width="110" height="48" rx="6" class="dg-lo"/>
+  <text x="65" y="355.0" class="dg-t" font-size="11.5" font-weight="800" text-anchor="middle">밸류 방식</text>
+  <rect x="124" y="327" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="130" y="344" class="dg-s" font-size="9.5" text-anchor="start">4종목 모두 SOTP</text>
+  <text x="130" y="359" class="dg-s" font-size="9.5" text-anchor="start">(EBITDA × 배수 + 신약)</text>
+  <rect x="272" y="327" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="278" y="344" class="dg-s" font-size="9.5" text-anchor="start">산출 근거 미기재</text>
+  <text x="278" y="359" class="dg-s" font-size="9.5" text-anchor="start">(목표가만 제시)</text>
+  <rect x="420" y="327" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="426" y="344" class="dg-s" font-size="9.5" text-anchor="start">EV/EBITDA 경쟁사 비교</text>
+  <text x="426" y="359" class="dg-s" font-size="9.5" text-anchor="start">+ 시총 비율(한올/IMVT)</text>
+  <rect x="568" y="327" width="144" height="48" rx="6" class="dg-panel"/>
+  <text x="574" y="344" class="dg-s" font-size="9.5" text-anchor="start">현가 EBITDA × 배수</text>
+  <text x="574" y="359" class="dg-s" font-size="9.5" text-anchor="start">+ 신약 PV(알테오젠은 EBIT)</text>
+  <text x="360" y="395" class="dg-m" font-size="10.5" text-anchor="middle">네 곳 모두 톱픽: 한미약품(4/4) · 세 곳: 셀트리온(3/4) — 굵은 글씨</text>
+</svg>
