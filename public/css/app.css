@@ -1365,6 +1365,16 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .ef-svg rect.clip { opacity: .65; }
 .ef-row { cursor: pointer; } .ef-row.on td { border-bottom-color: transparent; } .ef-tw { color: var(--muted); font-size: 11px; }
 .ef-det td { background: color-mix(in srgb, var(--muted) 5%, transparent); }
+/* 지수 정기변경 패시브 수급 (rebal.js) */
+.rb-aum { gap: 6px 10px; }
+.rb-num { width: 64px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--hover); color: var(--text); font: inherit; font-size: 13px; text-align: right; }
+.rb-sum { margin: 10px 2px 8px; line-height: 1.7; }
+.rb-bar { position: relative; display: inline-block; width: 90px; height: 8px; vertical-align: middle; background: color-mix(in srgb, var(--muted) 10%, transparent); border-radius: 4px; }
+.rb-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.rb-bar i.up { background: var(--up); } .rb-bar i.down { background: var(--down); }
+.rb-f { display: grid; gap: 3px; padding: 4px 2px; font-size: 13px; line-height: 1.6; }
+.rb-chk { margin: 4px 2px 8px; } .rb-chk summary { cursor: pointer; color: var(--sub); }
+.rb-chk .tbl { margin-top: 6px; }
 .ef-sp { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; margin: 4px 0 6px; }
 @media (max-width: 720px) { .ef-sp { grid-template-columns: 1fr; } }
 .ef-svg { width: 100%; height: auto; display: block; }

@@ -5,6 +5,7 @@
 - flag=2 : 연간 실적·추정 표 (FY-4A ~ FY+2E)
 - flag=4 : 컨센서스 추이 (선택 연도의 현재/1주/1개월/3개월/1년 전)
 - c1010001.aspx 헤더 : 시장(KOSPI/KOSDAQ), 거래소 업종, WICS
+- c1010001.aspx 시세정보 : 발행주식수(보통주)/유동비율 — FnGuide 기준 유동비율 (지수 정기변경 유입 추정, build_rebal.py)
 
 주의: sDT(날짜) 파라미터는 무시되고 항상 최신값이 온다 → 과거 백필 불가.
 """
@@ -108,6 +109,17 @@ _MARKET_RE = re.compile(r'<dt class="line-left">\s*(KOSPI|KOSDAQ|KONEX)\s*:\s*(.
 _WICS_RE = re.compile(r'<dt class="line-left">\s*WICS\s*:\s*(.*?)\s*</dt>', re.S)
 
 
+_FLOAT_RE = re.compile(r'발행주식수/유동비율</th>\s*<td[^>]*>\s*([\d,]+)주\s*/\s*([\d.]+)%', re.S)
+
+
+def parse_float(page: str) -> Optional[Dict]:
+    """c1010001.aspx 시세정보 → {'sh': 발행주식수(보통주), 'ff': 유동비율(소수)}. 칸이 없으면 None"""
+    m = _FLOAT_RE.search(page)
+    if not m:
+        return None
+    return {'sh': int(m.group(1).replace(',', '')), 'ff': round(float(m.group(2)) / 100, 4)}
+
+
 def parse_overview(page: str) -> Dict:
     """c1010001.aspx HTML 헤더 → 이름/시장/거래소업종/WICS"""
     def grab(rx, idx=1):
@@ -154,6 +166,12 @@ def fetch_trend(session, code: str, fy: int, fy_month: int, fin_gubun: str = 'MA
     if not r.text.strip():
         return []
     return parse_trend(r.json())
+
+
+def fetch_float(session, code: str, timeout: float = 10) -> Optional[Dict]:
+    r = session.get(OVERVIEW_URL, params={'cmp_cd': code}, timeout=timeout)
+    r.raise_for_status()
+    return parse_float(r.text)
 
 
 def fetch_overview(session, code: str, timeout: float = 10) -> Dict:

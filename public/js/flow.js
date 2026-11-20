@@ -3,6 +3,7 @@
 //   아래 필터(주체·기간·시장)와 상관없이 그날 전 종목에서 고른다
 // - ETF 기계적 수급: data/etf_flow.json (build_etf_flow.py ← KBJ). ETF 순설정·환매 × 구성 비중을 종목에 나눈 금액
 //   '하루 판정'(etf.day): 그날 몫 ÷ 직전 20일 평균 거래대금으로 매수·매도 세기를 매기고, 행을 펼치면 일별 이력·RSI
+// - 지수 정기변경 패시브 수급: data/rebal.json (build_rebal.py) — 그리기는 js/rebal.js (Rebal)
 // - 수급 지도(찬집·빈집): 가로 = 중기(60·120일) 누적 순매수 ÷ 시총, 세로 = 단기(5·20일) ÷ 시총. 주체·시장·시총·검색 필터를 따른다
 (() => {
   const MAIN = { f: '외국인', o: '기관', fo: '외국인+기관' };
@@ -14,12 +15,13 @@
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   const STREAK_MIN = 3;
   const PAGE = 40;
-  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '', mapS: '20', mapM: '120', ep: 'd', es: 'in', eth: '5', ej: 'act' };
+  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '', mapS: '20', mapM: '120', ep: 'd', es: 'in', eth: '5', ej: 'act',
+    ri: 'KQ150', rv: 'in', rs: 'pe', rt: '1', ra: '', rl: '', rlp: '30', rx: '', rq: '1' };   // r*: 지수 정기변경 칸
 
   const $ = id => document.getElementById(id);
-  const pg = U.page(DEFAULTS, (patch, typing) => { shown = {}; typing ? renderBody() : render(); });
+  const pg = U.page(DEFAULTS, (patch, typing) => { shown = {}; typing ? renderBody(true) : render(); });
   const st = pg.state;
-  let data = null, shown = {}, etf = null;
+  let data = null, shown = {}, etf = null, rebal = null;
 
   // 선택한 주체·기간의 순매수 금액. 시총 대비면 % (소수)
   const amt = (s, who = st.who, d = st.days) =>
@@ -343,10 +345,13 @@
       <p class="muted small fm-note">순유입 몫 = ETF 순설정(+)·환매(−) 금액 × 그 ETF 가 담은 이 종목 비중(운용사 PDF). LP·운용사의 바스켓 매매 추정이라 외국인·기관 순매수에 섞여 있을 수 있습니다. 선물·스왑으로 담는 레버리지·인버스 노출은 빠집니다. 시장·시총·검색 필터를 따릅니다.</p>`;
   }
 
-  function renderBody() {
+  const renderRebal = typing => Rebal.render($('rebal'), $('rebal-title'), rebal, st, pg, typing);
+
+  function renderBody(typing) {
     renderSummary();
     renderList();
     renderMap();
+    renderRebal(typing);
     renderEtf();
   }
 
@@ -376,6 +381,13 @@
   pg.bind($('filters'));
   pg.bind($('flowmap'));
   pg.bind($('etfflow'));
+  pg.bind($('rebal'));
+  $('rebal').addEventListener('click', e => {        // 정기변경 표: 행을 누르면 계산식 펼치기
+    const tr = e.target.closest('tr[data-ro]');
+    if (!tr || e.target.closest('a, button')) return;
+    Rebal.toggle(tr.dataset.ro);
+    renderRebal(true);
+  });
   $('etfflow').addEventListener('click', e => {      // 하루 판정 표: 행을 누르면 일별 이력 펼치기 (종목 이름 링크는 그대로)
     const tr = e.target.closest('tr[data-eo]');
     if (!tr || e.target.closest('a, button')) return;
@@ -394,6 +406,8 @@
       return showError('데이터 목록을 불러오지 못했습니다.');
     }
     try { etf = await U.json('data/etf_flow.json'); } catch (e) { etf = null; }
+    try { rebal = await U.json('data/rebal.json'); } catch (e) { rebal = null; }
     load(st.date);
+    if (rebal) Rebal.quotes(() => data && renderRebal());
   })();
 })();
