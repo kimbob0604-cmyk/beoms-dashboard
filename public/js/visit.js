@@ -242,18 +242,74 @@
     if (b) { open.add(b.dataset.more); renderList(); }
   });
 
+  // 공개 사이트의 전체판: 이 컴퓨터용 visits.json(1:1·공개 채널 원문 포함)을 Study 와 같은 암호로 잠가 올린다
+  // (data/visits_full.json.enc + data/visits_lock.json, publish.py). 열쇠는 Study 와 같아 localStorage 'study_key' 를 같이 쓴다.
+  // 로컬 서버에는 lock 파일이 없고 visits.json 이 이미 전체판이라 아무것도 하지 않는다 (2026-11-20)
+  const FULL = { lock: null, key: null };
+  const b64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+  async function keyOk(k) {
+    try { const c = b64(FULL.lock.check); await crypto.subtle.decrypt({ name: 'AES-GCM', iv: c.slice(0, 12) }, k, c.slice(12)); return true; } catch (e) { return false; }
+  }
+  async function initFull() {
+    try { const r = await fetch('data/visits_lock.json', { cache: 'no-cache' }); if (!r.ok) return; FULL.lock = await r.json(); } catch (e) { return; }
+    try {
+      const saved = localStorage.getItem('study_key');
+      if (saved) {
+        const k = await crypto.subtle.importKey('raw', b64(saved), 'AES-GCM', false, ['decrypt']);
+        if (await keyOk(k)) FULL.key = k;
+      }
+    } catch (e) { /* 저장소를 못 쓰면 공개판 */ }
+  }
+  async function loadData() {
+    if (FULL.key) {
+      try {
+        const r = await fetch(U.bust ? U.bust('data/visits_full.json.enc', 1) : 'data/visits_full.json.enc', { cache: 'no-store' });
+        const b = new Uint8Array(await r.arrayBuffer());
+        return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b.slice(0, 12) }, FULL.key, b.slice(12))));
+      } catch (e) { /* 못 풀면 공개판으로 */ }
+    }
+    return U.json('data/visits.json');
+  }
+  function fullBadge() {
+    if (!FULL.lock) return;
+    let el = $('vfull');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'vfull';
+      el.className = 'small';
+      document.querySelector('.page-head').appendChild(el);
+    }
+    if (FULL.key) { el.innerHTML = '<b>전체판</b> <span class="muted">(1:1·공개 채널 원문 포함, 이 기기에서 잠금 풀림)</span>'; return; }
+    el.innerHTML = `<span class="muted">공개판입니다.</span> <form id="vfull-f" style="display:inline-flex;gap:6px;align-items:center"><input type="password" id="vfull-pw" placeholder="Study 암호" autocomplete="current-password" style="width:130px"> <button type="submit">전체판 열기</button> <span id="vfull-m" class="muted"></span></form>`;
+    $('vfull-f').addEventListener('submit', async e => {
+      e.preventDefault();
+      $('vfull-m').textContent = '확인 중…';
+      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode($('vfull-pw').value), 'PBKDF2', false, ['deriveKey']);
+      const k = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: b64(FULL.lock.salt), iterations: FULL.lock.iter }, base,
+        { name: 'AES-GCM', length: 256 }, true, ['decrypt']);
+      if (!(await keyOk(k))) { $('vfull-m').textContent = '암호가 맞지 않습니다'; return; }
+      try { localStorage.setItem('study_key', btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey('raw', k))))); } catch (err) { /* 이번만 */ }
+      FULL.key = k;
+      data = await loadData();
+      render();
+      fullBadge();
+    });
+  }
+
   (async () => {
     try {
-      data = await U.json('data/visits.json');
+      await initFull();
+      data = await loadData();
     } catch (e) {
       return setup();
     }
+    fullBadge();
     if (!data.cos.length && !data.etc.length) return setup();
     $('msg').hidden = true;
     render();
     // 1분마다(화면이 보일 때) 데이터·시세가 바뀌었으면 다시 그린다 (U.live, 2026-11-19)
     U.live(['data/visits.json'], async () => {
-      data = await U.json('data/visits.json');
+      data = await loadData();
       render();
     });
   })();

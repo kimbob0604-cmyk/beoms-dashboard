@@ -29,7 +29,7 @@ DATA = PUBLIC / 'data'
 DATED = ('growth', 'flow', 'high', 'dart', 'digest', 'docpool')   # 날짜별 JSON + dates.json (docpool = 리포트 탭 @DOC_POOL 글 목록 — 제목·증권사·의견·목표가·링크만, 2026-11-17 사용자 승인으로 공개)
 CURRENT = ('stocks', 'chart', 'reports', 'events', 'bt', 'st', 'vchart', 'earn', 'fund')   # 최신 파일만 (vchart = 탐방 탭 차트, earn = 실적 발표 덱 1년)
 FILES = ('home.json', 'names.json', 'quotes.json', 'events.json', 'digest_index.json', 'digest_weekly.json', 'bio.json',
-         'trends.json', 'naver_trends.json', 'etf_flow.json', 'news.json', 'semi.json', 'live_base.json', 'live_high.json')   # semi.json = 반도체·AI 인프라 탭, live_base.json·live_high.json = 맥이 잘 때 Actions 장중 갱신 기준(cloud_live.py — 홈·시세, 신고가)   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
+         'trends.json', 'naver_trends.json', 'etf_flow.json', 'rebal.json', 'news.json', 'semi.json', 'live_base.json', 'live_high.json')   # semi.json = 반도체·AI 인프라 탭, live_base.json·live_high.json = 맥이 잘 때 Actions 장중 갱신 기준(cloud_live.py — 홈·시세, 신고가)   # rebal.json = 수급 탭 지수 정기변경 칸(build_rebal.py)   # 최신 단일 파일. altdata.json(newsbot 집계)은 일부러 뺐다
 # 공개용으로 따로 만든 파일 → 배포본에서의 이름. 탐방 탭: 이 컴퓨터용 visits.json(1:1 대화·공개 채널 원문 포함)은 올리지 않고
 # build_visits.public_view 가 줄인 visits_pub.json 을 data/visits.json 으로 올린다
 RENAMED = {'visits_pub.json': 'visits.json', 'consumer.json': 'consumer.json',
@@ -109,6 +109,17 @@ def stage(out: Path) -> int:
     for src, dst in RENAMED.items():
         if (DATA / src).exists():
             shutil.copy2(DATA / src, out / 'data' / dst)
+    # 탐방 전체판(이 컴퓨터용 visits.json: 1:1·공개 채널 원문 포함)은 STUDY_PASS 로 잠가 data/visits_full.json.enc 로 함께 올린다.
+    # 화면(visit.js)이 data/visits_lock.json 을 보고 암호를 물어 브라우저 안에서 푼다. 암호가 없으면 공개판만 (2026-11-20 사용자 요청)
+    try:
+        import study_crypt
+        pw = study_crypt.password()
+        if pw and (DATA / 'visits.json').exists():
+            n = study_crypt.seal_file(DATA / 'visits.json', out / 'data' / 'visits_full.json.enc', pw, 'visits_full.json')
+            (out / 'data' / 'visits_lock.json').write_text(json.dumps(study_crypt.lock_obj(pw)))
+            print(f'탐방 전체판 잠금 배포: {n / 1e6:.1f}MB')
+    except Exception as e:
+        print(f'탐방 전체판 잠금 실패(공개판만 배포): {e}')
     hold = held()   # Beom's Study 는 늘 보류 — 다른 사이트(beoms-study)로 publish_study.py 가 올린다
     if hold:
         apply_hold(out, hold)

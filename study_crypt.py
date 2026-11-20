@@ -94,6 +94,23 @@ def encrypt_into(out_study: Path, pw: str) -> tuple[int, int]:
     return n, size
 
 
+def lock_obj(pw: str) -> dict:
+    """화면이 암호를 확인할 때 쓰는 조각 (Study lock.json 과 같은 열쇠)"""
+    key, salt = _key(pw)
+    civ = hmac.new(key, b'lock-check', hashlib.sha256).digest()[:12]
+    return {'v': 1, 'kdf': 'PBKDF2-SHA256', 'iter': ITER, 'salt': base64.b64encode(salt).decode(),
+            'check': base64.b64encode(civ + AESGCM(key).encrypt(civ, CHECK, None)).decode()}
+
+
+def seal_file(src: Path, dst: Path, pw: str, rel: str) -> int:
+    """파일 하나를 Study 와 같은 열쇠로 잠가 dst 에 쓴다 (탐방 전체판 등). 쓴 바이트 수를 돌려준다"""
+    key, _ = _key(pw)
+    enc = _seal(key, rel, Path(src).read_bytes())
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_bytes(enc)
+    return len(enc)
+
+
 def main():
     pw = password()
     if '--check' in sys.argv:

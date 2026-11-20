@@ -215,6 +215,9 @@ cp launchd/com.kimbob.beomdashboard.live.plist ~/Library/LaunchAgents/
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard.live.plist
 ```
 
+탐방 전체판(1:1·공개 채널 원문 포함)은 공개 사이트에도 Study 와 같은 암호(`.env` 의 STUDY_PASS)로 잠가 올린다(`data/visits_full.json.enc` + `visits_lock.json`, publish.py).
+탐방 탭의 '전체판 열기'에 암호를 넣으면 그 기기에서 전체판으로 바뀌고, Study 를 이미 연 기기는 자동으로 전체판이다(2026-11-20).
+
 로컬 서버(serve.py, http://127.0.0.1:8765)는 `com.kimbob.beomdashboard.serve` 가 늘 켜 둔다(로그인하면 뜨고 꺼지면 다시 뜸, 2026-11-20).
 공개 사이트에 없는 전체판(탐방 비공개 방 원문 등)은 이 주소로 본다. 미리보기 도구는 이 포트와 겹치지 않게 8766(`dashboard-2`)을 쓴다.
 
