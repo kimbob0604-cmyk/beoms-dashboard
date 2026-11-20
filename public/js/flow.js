@@ -2,6 +2,7 @@
 // - 수급 시그널 카드: 쌍끌이 순매수·순매도, 외국인 연속 순매수·순매도, 수급 반전 (build_naver.flow_signals 가 고른 종목)
 //   아래 필터(주체·기간·시장)와 상관없이 그날 전 종목에서 고른다
 // - ETF 기계적 수급: data/etf_flow.json (build_etf_flow.py ← KBJ). ETF 순설정·환매 × 구성 비중을 종목에 나눈 금액
+//   '하루 판정'(etf.day): 그날 몫 ÷ 직전 20일 평균 거래대금으로 매수·매도 세기를 매기고, 행을 펼치면 일별 이력·RSI
 // - 수급 지도(찬집·빈집): 가로 = 중기(60·120일) 누적 순매수 ÷ 시총, 세로 = 단기(5·20일) ÷ 시총. 주체·시장·시총·검색 필터를 따른다
 (() => {
   const MAIN = { f: '외국인', o: '기관', fo: '외국인+기관' };
@@ -13,7 +14,7 @@
   const MARKETS = { KOSPI: '코스피', KOSDAQ: '코스닥' };
   const STREAK_MIN = 3;
   const PAGE = 40;
-  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '', mapS: '20', mapM: '120', ep: '5', es: 'in' };
+  const DEFAULTS = { date: '', who: 'f', days: '5', dir: 'buy', unit: 'amt', market: 'all', cap: 'all', q: '', streak: '', both: '', growth: '', mapS: '20', mapM: '120', ep: 'd', es: 'in', eth: '5', ej: 'act' };
 
   const $ = id => document.getElementById(id);
   const pg = U.page(DEFAULTS, (patch, typing) => { shown = {}; typing ? renderBody() : render(); });
@@ -250,10 +251,78 @@
 
   // ---------- ETF 기계적 수급 (KBJ 내보내기) ----------
   const ESORT = { in: ['순유입 큰 순', r => -(r.in ?? 0)], out: ['순유출 큰 순', r => r.in ?? 0], pct: ['거래대금 대비 큰 순', r => -Math.abs(r.pct ?? 0)] };
+  // 하루 판정: 문턱(몫 ÷ ADV20)은 화면에서 고른다 — 판정은 여기서 다시 매긴다
+  const ETH = { 2: [0.02, 0.05], 5: [0.05, 0.10], 10: [0.10, 0.20] };
+  const EST = { b2: ['강한 매수', 'up'], b1: ['매수', 'up'], n: ['영향 작음', ''], s1: ['매도', 'down'], s2: ['강한 매도', 'down'], u: ['모름', ''] };
+  const EMIN = 1;   // 억 — 몫이 이보다 작으면 비율이 커도 '영향 작음' (거래가 거의 없는 종목은 몇천만 원으로도 수십 %가 된다)
+  const judge = (r, th, v) => (r == null ? 'u' : Math.abs(r) < th[0] || Math.abs(v ?? 0) < EMIN ? 'n' : (r > 0 ? 'b' : 's') + (Math.abs(r) >= th[1] ? '2' : '1'));
+  const EJ = { act: ['판정 난 종목', x => x.j !== 'n' && x.j !== 'u'], buy: ['매수 쪽', x => x.j[0] === 'b'], sell: ['매도 쪽', x => x.j[0] === 's'], all: ['전체', () => true] };
+  const ESORT_D = { in: ['몫 ÷ ADV 매수 큰 순', x => -(x.r ?? -9)], out: ['매도 큰 순', x => x.r ?? 9], pct: ['절댓값 큰 순', x => -Math.abs(x.r ?? 0)] };
+  const openE = new Set();
+  const rpCls = p => (p == null ? '' : p <= 0.10 ? 'down' : p >= 0.90 ? 'up' : '');
+  const eokS = v => (v == null ? '–' : Math.abs(v) < 10 ? `${v > 0 ? '+' : ''}${v.toFixed(1)}억` : U.eok(v, true));   // 10억 밑은 소수 한 자리
+
+  // 일별 몫 ÷ ADV20 막대 (±20% 에서 자른다) + RSI 선
+  function etfSpark(x, D) {
+    const W = 520, H = 92, P = 6, n = x.h.length, bw = (W - 2 * P) / n, mid = H / 2, lim = 0.2;
+    const bars = x.h.map(([v, r], i) => { if (r == null) return '';
+      const hh = Math.min(Math.abs(r), lim) / lim * (mid - P), y = r > 0 ? mid - hh : mid;
+      return `<rect class="${r > 0 ? 'up' : 'down'}${Math.abs(r) >= lim ? ' clip' : ''}" x="${(P + i * bw + 1).toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(bw - 2, 1).toFixed(1)}" height="${Math.max(hh, 0.5).toFixed(1)}"><title>${D.hd[i]} · ${eokS(v)} · ADV 대비 ${(r * 100).toFixed(1)}%</title></rect>`; }).join('');
+    const th = ETH[st.eth];
+    const guide = [th[0], -th[0]].map(v => `<line class="ef-g" x1="${P}" x2="${W - P}" y1="${(mid - v / lim * (mid - P)).toFixed(1)}" y2="${(mid - v / lim * (mid - P)).toFixed(1)}"/>`).join('');
+    const rh = x.rh || [], RW = 300;
+    const rp = rh.length > 1 ? rh.map((v, i) => `${(P + i * (RW - 2 * P) / (rh.length - 1)).toFixed(1)},${(H - P - v / 100 * (H - 2 * P)).toFixed(1)}`).join(' ') : '';
+    const ry = v => (H - P - v / 100 * (H - 2 * P)).toFixed(1);
+    return `<div class="ef-sp"><div><div class="muted small">일별 ETF 몫 ÷ ADV20 · ${D.hd[0]}~${D.hd[n - 1]} (점선 ±${th[0] * 100}%, 막대 끝 ±20% 에서 자름)</div>
+        <svg viewBox="0 0 ${W} ${H}" class="ef-svg"><line class="ef-0" x1="${P}" x2="${W - P}" y1="${mid}" y2="${mid}"/>${guide}${bars}</svg></div>
+      <div><div class="muted small">RSI(14) 최근 ${rh.length}거래일 · 지금 ${x.rsi ?? '–'} · 1년 중 ${x.rp == null ? '–' : `상위 ${Math.round((1 - x.rp) * 100)}%`}</div>
+        <svg viewBox="0 0 ${RW} ${H}" class="ef-svg"><line class="ef-g" x1="${P}" x2="${RW - P}" y1="${ry(70)}" y2="${ry(70)}"/><line class="ef-g" x1="${P}" x2="${RW - P}" y1="${ry(30)}" y2="${ry(30)}"/>
+          <polyline class="ef-rsi" points="${rp}"/></svg></div></div>
+      <div class="small">순유입 몫 큰 ETF: ${x.top.map(t => `${U.esc(t[0])} <b class="${U.cls(t[1])}">${t[1] == null ? '–' : eokS(t[1])}</b>${t[2] ? ` <span class="ef-old" title="이 ETF 의 구성 비중(운용사 PDF)이 ${t[2]} 기준 — 그 뒤 바뀐 비중은 반영 안 됨">비중 ${t[2].slice(5)} 기준</span>` : ''}`).join(' · ')}</div>`;
+  }
+
+  function renderEtfDay(box, by) {
+    const D = etf.day, th = ETH[st.eth] || ETH[5];
+    const q = st.q.trim().toLowerCase(), cap = CAPS[st.cap];
+    const all = D.rows.map(x => ({ ...x, j: judge(x.r, th, x.in) })).filter(x => { const s = by[x.c]; if (st.market !== 'all' && s && s.mk !== st.market) return false;
+      if (cap && s && (s.mc < cap[0] || s.mc >= cap[1])) return false; return !q || (x.n || '').toLowerCase().includes(q) || x.c.includes(q); });
+    const cnt = k => all.filter(x => x.j === k).length;
+    const sort = ESORT_D[st.es] || ESORT_D.in;
+    const rows = all.filter((EJ[st.ej] || EJ.act)[1]).sort((a, b) => sort[1](a) - sort[1](b)).slice(0, 60);
+    const pc = v => (v == null ? '–' : `<b class="${U.cls(v)}">${v > 0 ? '+' : ''}${(v * 100).toFixed(1)}%</b>`);
+    const bar = r => { if (r == null) return ''; const w = Math.min(Math.abs(r), 0.2) / 0.2 * 50;
+      return `<span class="ef-bar"><i class="${r > 0 ? 'up' : 'down'}" style="${r > 0 ? 'left:50%' : `left:${50 - w}%`};width:${w}%"></i></span>`; };
+    const old = D.n_stale ? ` · <span class="ef-old" title="그날보다 7일 넘게 묵은 구성 비중을 쓴 ETF — 그 ETF 몫은 옛 비중으로 나눴다">구성 비중이 7일 넘게 묵은 ETF ${D.n_stale}개 (가장 오래된 ${D.holdings_asof})</span>` : '';
+    $('etf-title').innerHTML = `<h2>ETF 기계적 수급</h2><span class="muted small">${D.date} 하루 · 구성종목을 아는 ETF ${D.n_etfs}개가 순유입의 ${D.coverage?.toFixed(0)}% 를 덮음(값은 하한)${old}</span>`;
+    const chips = ['b2', 'b1', 's1', 's2'].map(k => `<span class="ef-st ${EST[k][1]}">${EST[k][0]} ${cnt(k)}</span>`).join('');
+    box.innerHTML = `<div class="frow fm-ctl">${pg.seg('ep', [['d', '하루 판정', '그날 ETF 몫을 직전 20일 평균 거래대금과 견줘 매수·매도 세기를 매김'], ['1', '1일'], ['5', '5일'], ['20', '20일']])}
+        ${pg.seg('eth', [['2', '2%·5%'], ['5', '5%·10%'], ['10', '10%·20%']].map(([k, l]) => [k, l, `몫 ÷ ADV20 이 ±${l.split('·')[0]} 이상이면 매수·매도, ±${l.split('·')[1]} 이상이면 강한`]))}
+        ${pg.seg('ej', Object.entries(EJ).map(([k, v]) => [k, v[0]]))}${pg.seg('es', Object.entries(ESORT_D).map(([k, v]) => [k, v[0]]))}</div>
+      <div class="ef-chips">${chips}<span class="muted small">판정 문턱 ±${th[0] * 100}% · 강한 ±${th[1] * 100}% (몫 ÷ 직전 ${D.adv_n}거래일 평균 거래대금) · 몫 ${EMIN}억 미만은 영향 작음</span></div>
+      <div class="tbl-wrap"><table class="tbl ef-day" data-nosort><thead><tr><th>종목</th><th class="num">시총</th><th>판정</th><th class="num">ETF 몫</th>
+        <th class="num" title="그날 ETF 몫 ÷ 직전 ${D.adv_n}거래일 평균 거래대금(ADV20)">÷ ADV20</th><th></th>
+        <th class="num" title="최근 5거래일 ETF 몫 합">5일 누적</th><th class="num" title="최근 20거래일 ETF 몫 합">20일 누적</th>
+        <th class="num" title="RSI(14). 색은 이 RSI 가 1년 치 RSI 가운데 상위 10%(빨강)·하위 10%(파랑)일 때">RSI</th><th class="num">ETF 수</th><th>몫 큰 ETF</th></tr></thead>
+      <tbody>${rows.map(x => { const s = by[x.c], on = openE.has(x.c), stale = x.top.some(t => t[2]);
+        return `<tr class="ef-row${on ? ' on' : ''}" data-eo="${x.c}"><td><span class="ef-tw">${on ? '▾' : '▸'}</span> ${Stock.link({ c: x.c, n: x.n || s?.n || x.c })}</td><td class="num">${s ? U.eok(s.mc) : '–'}</td>
+          <td><span class="ef-st ${EST[x.j][1]}">${EST[x.j][0]}</span></td><td class="num">${eokS(x.in)}</td><td class="num">${pc(x.r)}</td><td>${bar(x.r)}</td>
+          <td class="num">${x.c5 == null ? '–' : `<span class="${U.cls(x.c5)}">${eokS(x.c5)}</span>`}</td><td class="num">${x.c20 == null ? '–' : `<span class="${U.cls(x.c20)}">${eokS(x.c20)}</span>`}</td>
+          <td class="num"><span class="${rpCls(x.rp)}" title="${x.rp == null ? '' : `1년 중 상위 ${Math.round((1 - x.rp) * 100)}% · ${x.rd} 기준`}">${x.rsi ?? '–'}</span></td><td class="num">${x.ne ?? '–'}</td>
+          <td class="small">${x.top.slice(0, 2).map(t => `${U.esc(t[0])} <span class="muted">${t[1] == null ? '' : eokS(t[1])}</span>`).join(' · ')}${stale ? ' <span class="ef-old" title="순유입 큰 ETF 가운데 구성 비중이 7일 넘게 묵은 것이 있음">⚠</span>' : ''}</td></tr>
+          ${on ? `<tr class="ef-det"><td colspan="11">${etfSpark(x, D)}</td></tr>` : ''}`; }).join('') || '<tr><td colspan="11" class="muted empty">해당 없음</td></tr>'}</tbody></table></div>
+      <p class="muted small fm-note">ETF 몫 = 그날 ETF 순설정(+)·환매(−) 금액 × 그 ETF 가 담은 이 종목 비중(운용사 PDF). ÷ ADV20 = 그 몫이 직전 20거래일 평균 거래대금의 몇 % 인지 — 주가 움직임 가운데 펀더멘털이 아닌 바스켓 매매가 얼마나 되는지 봅니다.
+        구성종목을 아는 ETF 만 더하므로 실제보다 작게 나옵니다(하한). 레버리지·인버스의 선물 노출은 빠집니다. 일별 이력은 ${D.first}부터 ${D.days}거래일(KBJ 가 운용사 PDF 를 쌓기 시작한 날부터). 행을 누르면 일별 막대·RSI 가 펼쳐집니다.
+        이 표에는 몫 ÷ ADV20 이 ±2% 이상이거나 순유입 몫이 큰 ${D.rows.length}종목만 싣습니다(그날 몫이 있는 종목 ${D.n_rows}개).</p>`;
+  }
+
   function renderEtf() {
     const box = $('etfflow');
     if (!etf) { $('etf-title').innerHTML = ''; box.hidden = true; return; }
     box.hidden = false;
+    if (st.ep === 'd' || !etf.periods[st.ep]) {
+      if (etf.day) return renderEtfDay(box, Object.fromEntries(data.stocks.map(s => [s.c, s])));
+      if (st.ep === 'd') st.ep = '5';
+    }
     const P = etf.periods[st.ep] || etf.periods['5'];
     const by = Object.fromEntries(data.stocks.map(s => [s.c, s]));
     const q = st.q.trim().toLowerCase(), cap = CAPS[st.cap];
@@ -264,7 +333,7 @@
     const d = +st.ep, fo = s => (s && s[`f${d}`] != null && s[`o${d}`] != null ? s[`f${d}`] + s[`o${d}`] : null);
     const pc = v => (v == null ? '–' : `<b class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(1)}%</b>`);
     $('etf-title').innerHTML = `<h2>ETF 기계적 수급</h2><span class="muted small">ETF 설정·환매 × 구성 비중 → 종목 · ${P.start}~${P.end} · 구성종목을 아는 ETF ${P.n_etfs}개가 순유입의 ${P.coverage?.toFixed(0)}% 를 덮음(값은 하한) · KBJ ${U.timeLabel(etf.generated_at)} 내보냄 · PDF ${etf.holdings_asof}</span>`;
-    box.innerHTML = `<div class="frow fm-ctl">${pg.seg('ep', [['1', '1일'], ['5', '5일'], ['20', '20일']])}${pg.seg('es', Object.entries(ESORT).map(([k, v]) => [k, v[0]]))}</div>
+    box.innerHTML = `<div class="frow fm-ctl">${pg.seg('ep', [...(etf.day ? [['d', '하루 판정']] : []), ['1', '1일'], ['5', '5일'], ['20', '20일']])}${pg.seg('es', Object.entries(ESORT).map(([k, v]) => [k, v[0]]))}</div>
       <div class="tbl-wrap"><table class="tbl" data-nosort><thead><tr><th>종목</th><th class="num">시총</th><th class="num">ETF 순유입 몫</th><th class="num" title="순유입 몫 ÷ 같은 기간 종목 거래대금">÷ 거래대금</th><th class="num">÷ 시총</th>
         <th class="num" title="같은 기간 외국인+기관 순매수(수량×종가 어림) — 수급 탭 날짜 기준">외국인+기관</th><th class="num">ETF 수</th><th>순유입 큰 ETF</th></tr></thead>
       <tbody>${rows.map(r => { const s = by[r.c];
@@ -307,6 +376,13 @@
   pg.bind($('filters'));
   pg.bind($('flowmap'));
   pg.bind($('etfflow'));
+  $('etfflow').addEventListener('click', e => {      // 하루 판정 표: 행을 누르면 일별 이력 펼치기 (종목 이름 링크는 그대로)
+    const tr = e.target.closest('tr[data-eo]');
+    if (!tr || e.target.closest('a, button')) return;
+    const c = tr.dataset.eo;
+    openE.has(c) ? openE.delete(c) : openE.add(c);
+    renderEtf();
+  });
   U.initTheme($('theme'));
   try { $('summary-box').open = (localStorage.getItem('flSummaryOpen') ?? '1') === '1'; } catch (e) {}
   $('summary-box').addEventListener('toggle', () => { try { localStorage.setItem('flSummaryOpen', $('summary-box').open ? '1' : ''); } catch (e) {} });

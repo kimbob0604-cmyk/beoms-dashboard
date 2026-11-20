@@ -569,6 +569,11 @@ python3 collect_eu.py [--force|--status] # Eurostat EU 화장품 수입 → db/t
   `kbeauty_altdata.json` 을 하루 한 번 그대로 받는다(Amazon 순위 가중 SKU 점유율 국가별, TikTok Shop GMV 지수·WoW, Reddit 언급·감성·글). **공개 배포에서 뺐다**(publish FILES 에 없음 + `publish_hold.txt`).
 - **ETF 기계적 수급** (`build_etf_flow.py` → `data/etf_flow.json`, 수급 탭): KBJ(`kbj/engines/etf/stock_flows.py`)가 `~/kbj-site/data/etf/stocks*.json` 으로 내보낸
   종목별 ETF 순유입 몫(순설정·환매 × 운용사 PDF 비중)을 기간(1·5·20일)마다 합친다. 거래대금·시총 대비, 같은 기간 외국인+기관 순매수, 순유입 큰 ETF. 구성종목을 아는 ETF 만 덮어(14~41%) 값은 하한.
+  - **하루 판정** (2026-11-20, newsbot 커버리지의 '기계적 수급'을 본뜸): KBJ 컨테이너(`kbj-api-1`)가 돌면 `kbj_etf_days.py` 를 그 안에서 읽기 전용으로 돌려
+    날짜별·전 종목 1일 몫을 받아 `db/etf_flow.db` 에 쌓는다(운용사 PDF 가 처음 쌓인 2026-10-20 부터. 빈 날 + 최근 2거래일만 다시 받음, `--refetch` 로 전부).
+    판정 = 그날 몫 ÷ 직전 20거래일 평균 거래대금(ADV20, `price_daily` 거래대금 · 없는 날은 `ohlc_daily` 종가×거래량): ±5% 매수·매도, ±10% 강한(화면에서 2·5 / 5·10 / 10·20 으로 바꿈), 몫 1억 미만은 영향 작음.
+    행을 펼치면 일별 막대(최근 30거래일)·RSI(14) 60일 선, RSI 가 1년 중 상위·하위 10% 면 색. 순유입 큰 ETF 의 구성 비중이 7일 넘게 묵었으면 ⚠.
+    파일에는 |몫 ÷ ADV20| ≥ 2% 이거나 순유입 몫 상위 120 종목만 싣는다. 컨테이너가 없으면(클라우드) 쌓인 날로 만든다.
 - **방한 외래관광객** (`collect_tourism.py` → `tourism.py`, 소비재 탭): 한국문화관광연구원 출입국관광통계서비스(공공데이터포털, 2026-11-16 활용 승인).
   `getEdrcntTourismStatsList` YM + ED_CD=E 로 달마다 국적별 줄 전부. 2015년부터, 하루 한 번 최근 13개월 재수집. 전체(합계 줄이 있으면 그 줄, 없으면 국적 합 — 대륙 소계 '…주' 제외)·국적 상위 12의
   전년비·2019년 대비·누계. 키 등록 전이면 4 로 건너뛴다.

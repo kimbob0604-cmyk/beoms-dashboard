@@ -1354,6 +1354,23 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .alt-ms small.up { color: var(--up); } .alt-ms small.down { color: var(--down); }
 .alt-tbl td { vertical-align: top; } .alt-post { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ef { padding: 10px 16px 12px; }
+.ef-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0 8px; }
+.ef-st { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: color-mix(in srgb, var(--muted) 14%, transparent); }
+.ef-st.up { background: color-mix(in srgb, var(--up) 15%, transparent); color: var(--up); }
+.ef-st.down { background: color-mix(in srgb, var(--down) 15%, transparent); color: var(--down); }
+.ef-bar { position: relative; display: inline-block; width: 90px; height: 8px; vertical-align: middle; background: color-mix(in srgb, var(--muted) 10%, transparent); border-radius: 4px; }
+.ef-bar::after { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--line); }
+.ef-bar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.ef-bar i.up, .ef-svg rect.up { background: var(--up); fill: var(--up); } .ef-bar i.down, .ef-svg rect.down { background: var(--down); fill: var(--down); }
+.ef-svg rect.clip { opacity: .65; }
+.ef-row { cursor: pointer; } .ef-row.on td { border-bottom-color: transparent; } .ef-tw { color: var(--muted); font-size: 11px; }
+.ef-det td { background: color-mix(in srgb, var(--muted) 5%, transparent); }
+.ef-sp { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; margin: 4px 0 6px; }
+@media (max-width: 720px) { .ef-sp { grid-template-columns: 1fr; } }
+.ef-svg { width: 100%; height: auto; display: block; }
+.ef-svg .ef-0 { stroke: var(--line); } .ef-svg .ef-g { stroke: var(--muted); stroke-dasharray: 3 3; opacity: .5; }
+.ef-svg .ef-rsi { fill: none; stroke: var(--accent); stroke-width: 1.6; }
+.ef-old { color: #c98a00; font-size: 11.5px; white-space: nowrap; }
 .tour-kpi { margin: 6px 0; } .tour-chart rect { fill: color-mix(in srgb, var(--muted) 45%, transparent); } .tour-chart rect.last { fill: var(--accent); } .tour19 { stroke: var(--up); stroke-width: 1.5; }
 .eu-tables.one { grid-template-columns: 1fr; }
 .fd-info { display: inline-block; margin-left: 3px; width: 13px; height: 13px; border-radius: 50%; background: var(--muted); color: var(--card); font: 700 9px/13px sans-serif; text-align: center; font-style: normal; opacity: .75; }
