@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Beom's Dashboard 로컬 서버(serve.py, http://127.0.0.1:8765)를 늘 켜 둔다. 로그인하면 뜨고, 꺼지면 다시 띄운다.
+     공개 사이트에 없는 전체판(탐방 비공개 방 원문, Study 등)은 이 주소로 본다. 2026-11-20 사용자 요청.
+     설치: cp launchd/com.kimbob.beomdashboard.serve.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.kimbob.beomdashboard.serve.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kimbob.beomdashboard.serve</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <string>/Users/beomjun/Beom's Dashboard/serve.py</string>
+        <string>8765</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/beomjun/Beom's Dashboard</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <!-- 포트가 잠깐 막혀 있을 때 너무 자주 다시 띄우지 않게 -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/beomjun/Beom's Dashboard/logs/launchd.serve.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/beomjun/Beom's Dashboard/logs/launchd.serve.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>LANG</key>
+        <string>ko_KR.UTF-8</string>
+    </dict>
+</dict>
+</plist>

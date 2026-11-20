@@ -215,6 +215,14 @@ cp launchd/com.kimbob.beomdashboard.live.plist ~/Library/LaunchAgents/
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard.live.plist
 ```
 
+로컬 서버(serve.py, http://127.0.0.1:8765)는 `com.kimbob.beomdashboard.serve` 가 늘 켜 둔다(로그인하면 뜨고 꺼지면 다시 뜸, 2026-11-20).
+공개 사이트에 없는 전체판(탐방 비공개 방 원문 등)은 이 주소로 본다. 미리보기 도구는 이 포트와 겹치지 않게 8766(`dashboard-2`)을 쓴다.
+
+```bash
+cp launchd/com.kimbob.beomdashboard.serve.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.kimbob.beomdashboard.serve.plist
+```
+
 ## 7단계: 공시 (DART)
 
 `public/dart.html` + `public/js/dart.js`(화면) + `public/js/dartfmt.js`(공시 한 건 → 문장, 홈·종목 패널 공통). 데이터는 `public/data/dart/{접수일}.json`, 종목별 `data/dart/s/{code}.json`(build_dart.py).
