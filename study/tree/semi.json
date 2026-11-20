@@ -190,7 +190,7 @@
   },
   {
    "id": "outlook27",
-   "name": "2027 전망 (리포트 14건 종합)",
+   "name": "2027 전망 (리포트 16건 종합)",
    "children": [
     {
      "id": "map",
@@ -200,7 +200,7 @@
     {
      "id": "ai-demand",
      "name": "AI 수요",
-     "desc": "CSP 설비투자 1조 달러, 수익화(RPO·증분 이익), 토큰·에이전트, 자금 조달, 전력 제약"
+     "desc": "CSP 설비투자 1조 달러, 수익화(RPO·증분 이익), 토큰·에이전트, 자금 조달, 전력 제약, 부채 발행·엔비디아 금융 지원, 앤트로픽 IPO"
     },
     {
      "id": "dram",
@@ -225,7 +225,7 @@
     {
      "id": "foundry-pkg",
      "name": "파운드리·첨단 패키징",
-     "desc": "TSMC N2·삼성 4/2nm, CoWoS 캐파, 레티클 대형화, CoPoS·EMIB"
+     "desc": "TSMC N2·삼성 4/2nm, CoWoS 캐파, 레티클 대형화, CoPoS·EMIB, EMIB-T 수율"
     },
     {
      "id": "backend",
@@ -236,6 +236,11 @@
      "id": "materials",
      "name": "장비·소재",
      "desc": "전·후공정 장비 성장률·멀티플, 소재 Q 사이클, High-K·HSN·몰리브덴"
+    },
+    {
+     "id": "components",
+     "name": "부품: 기판·MLCC",
+     "desc": "MLCC 리드타임 40주, FC-BGA 부족률 33%, 고객 선수금·공동투자, Top pick 삼성전기·대덕전자, 시총·POR"
     },
     {
      "id": "interconnect-power",

@@ -490,5 +490,60 @@
    "asic"
   ],
   "desc": "TSMC 계열 디자인하우스, eSSD 컨트롤러 2H27 양산. BNK 톱픽(목표 2.5만 원)."
+ },
+ "c:mlcc": {
+  "name": "MLCC (적층 세라믹 커패시터)",
+  "en": "Multi-layer ceramic capacitor",
+  "desc": "전자기기 전원선의 전기를 잠깐 저장했다 내보내 전압을 안정시키는 작은 부품. AI 서버 대당 6,500 → 12,000개(미래에셋), 리드타임이 정상 12주의 3.3배인 40주까지 늘었다."
+ },
+ "c:probe-card": {
+  "name": "프로브카드",
+  "en": "Probe card",
+  "desc": "웨이퍼 위 칩에 바늘을 대고 전기 신호로 불량을 가려내는 검사 부품. HBM 적층 전·후 검사가 늘어 수요가 커진다(수출액 1~10월 누계 +66%, 미래에셋)."
+ },
+ "co:daeduk": {
+  "name": "대덕전자",
+  "en": "Daeduck Electronics",
+  "code": "353200",
+  "semi": [
+   "sub"
+  ],
+  "desc": "FC-BGA·FC-CSP·메모리 기판과 MLB를 만든다. 미래에셋 Top pick(목표 18만 원, 2027F 영업이익 4,510억원)."
+ },
+ "co:simmtech": {
+  "name": "심텍",
+  "en": "Simmtech",
+  "code": "222800",
+  "semi": [
+   "sub"
+  ],
+  "desc": "메모리 모듈 기판과 SOCAMM 기판. SOCAMM 기판 매출 26F 1,500억 → 27F 약 3,500억원(미래에셋)."
+ },
+ "co:tlb": {
+  "name": "티엘비",
+  "en": "TLB",
+  "code": "356860",
+  "semi": [
+   "sub"
+  ],
+  "desc": "SOCAMM 모듈 기판 업체. 판가가 기존 모듈 기판의 약 2배(미래에셋)."
+ },
+ "co:kinsus": {
+  "name": "Kinsus (景碩)",
+  "en": "Kinsus Interconnect Technology",
+  "listed": true,
+  "desc": "대만 ABF 기판 업체. 엔비디아 전용 ABF 캐파를 3.5배 이상 늘리는 다년 계약(삼성증권). 가동 시점은 3Q28(미래에셋) vs 27년 하반기(삼성증권)."
+ },
+ "co:unimicron": {
+  "name": "유니마이크론",
+  "en": "Unimicron",
+  "listed": true,
+  "desc": "대만 최대 기판 업체. 엔비디아가 캐파를 예약했고(CAPA 예약 계약), CAPEX의 80~85%를 ABF에 쓴다(미래에셋)."
+ },
+ "co:yageo": {
+  "name": "Yageo (國巨)",
+  "en": "Yageo",
+  "listed": true,
+  "desc": "대만 수동부품·MLCC 업체. 2017~18년 판가 누적 +100%·영업이익률 19% → 55%의 사례, 2026년 7월 전 제품군 가격표 약 +50% 인상(미래에셋)."
  }
 }
