@@ -345,6 +345,90 @@ def parse(kind: str, cells: List[str]) -> Dict:
     return PARSERS[kind](body_of(cells))
 
 
+# ---------- 지분 (지수 유동비율 확인용, build_rebal.py) ----------
+# 정기보고서 '최대주주 현황'(hyslrSttus)과 '주식의 총수 현황'(stockTotqySttus), 회사별 공시 목록에서 지분이 바뀌는 공시만
+HOLD_KEEP = ('최대주주변경', '최대주주등소유주식변동', '대량보유상황보고서', '유상증자결정', '자기주식', '주식소각',
+             '전환청구권행사', '신주인수권행사', '교환청구권행사', '합병결정', '분할결정', '분할합병', '공개매수', '주식매수선택권행사')
+
+
+def fetch_periodic(session, key: str, api: str, corp: str, year: str, reprt: str, timeout: float = 20) -> List[Dict]:
+    """정기보고서 주요정보 API (hyslrSttus·stockTotqySttus 등) 한 기. 자료 없음(013)은 빈 목록"""
+    r = session.get(f'{API}/{api}.json', params={'crtfc_key': key, 'corp_code': corp, 'bsns_year': year, 'reprt_code': reprt},
+                    timeout=timeout)
+    r.raise_for_status()
+    j = r.json()
+    if j.get('status') == '013':
+        return []
+    if j.get('status') != '000':
+        raise ValueError(f"DART {j.get('status')}: {j.get('message')}")
+    return j.get('list', [])
+
+
+def holder_share(hy: List[Dict], tot: List[Dict]) -> Optional[Dict]:
+    """한 기의 최대주주 등 지분과 자사주 (보통주 대비 0~1). 분기보고서는 주식 총수 표를 '-'로 비우는 일이 많아
+    보통주 발행주식이 없으면 공시 지분율(종류주 포함 총수 대비)을 그대로 쓰고 자사주는 None"""
+    tot_rows = [r for r in hy if _norm(r.get('nm', '')) in ('계', '합계')]
+    row = next((r for r in tot_rows if _norm(r.get('stock_knd', '')).startswith('보통')), tot_rows[0] if tot_rows else None)
+    if not row:
+        return None
+    q, rt = num(row.get('trmend_posesn_stock_co')), num(row.get('trmend_posesn_stock_qota_rt'))
+    t = next((r for r in tot if _norm(r.get('se', '')).startswith('보통')), None)
+    sh = num(t.get('istc_totqy')) if t else None
+    ts = num(t.get('tesstk_co')) if t else None
+    if sh is not None and ts is None and t.get('tesstk_co', '').strip() == '-':
+        ts = 0.0                          # 발행주식은 적었고 자사주 칸만 '-' 이면 없음
+    hold = q / sh if q is not None and sh else (rt / 100 if rt is not None else None)
+    if hold is None:
+        return None
+    return {'d': row.get('stlm_dt'), 'hold': round(hold, 5), 'tsy': None if ts is None or not sh else round(ts / sh, 5)}
+
+
+def parse_treasury_after(cells: List[str]) -> Optional[Dict]:
+    """자기주식 취득·처분 결과보고서 '취득(처분)후 자기주식등의 보유상황' 보통주 행 → {'qty', 'rt'(발행주식 대비 0~1)}.
+    칸 순서: 보통주식 | 직접 수량 | 비율 | 금액 | 신탁 수량 | 비율 | 금액 | 계 수량 | 계 비율 | 금액. 계를 쓰고, 없으면 직접 보유"""
+    i = next((i for i, x in enumerate(cells) if re.search(r'(취득|처분)후자기주식', _norm(x))), -1)
+    if i < 0:
+        return None
+    j = next((j for j in range(i, min(i + 60, len(cells))) if _norm(cells[j]).startswith('보통')), -1)
+    if j < 0:
+        return None
+    q, rt = (num(cells[j + 7]), num(cells[j + 8])) if j + 8 < len(cells) else (None, None)
+    if q is None or rt is None:
+        q, rt = (num(cells[j + 1]), num(cells[j + 2])) if j + 2 < len(cells) else (None, None)
+    return None if rt is None else {'qty': q, 'rt': round(rt / 100, 5)}
+
+
+def fetch_filings(session, key: str, corp: str, bgn: str, end: str, timeout: float = 20) -> List[Dict]:
+    """회사 하나의 공시 목록 (bgn·end: YYYYMMDD)"""
+    rows, page = [], 1
+    while True:
+        r = session.get(f'{API}/list.json', params={'crtfc_key': key, 'corp_code': corp, 'bgn_de': bgn, 'end_de': end,
+                                                    'page_count': 100, 'page_no': page}, timeout=timeout)
+        r.raise_for_status()
+        j = r.json()
+        if j.get('status') == '013':
+            return []
+        if j.get('status') != '000':
+            raise ValueError(f"DART {j.get('status')}: {j.get('message')}")
+        rows += j['list']
+        if page >= int(j['total_page']):
+            return rows
+        page += 1
+
+
+def holder_events(rows: List[Dict]) -> List[Dict]:
+    """지분이 바뀌는 공시만 [{d, t, f(제출인), no}] 날짜 순. 첨부 정정·결과 보고는 뺀다"""
+    out = []
+    for r in rows:
+        n = _norm(r.get('report_nm', ''))
+        if not any(k in n for k in HOLD_KEEP) or '첨부' in n:
+            continue
+        d = r.get('rcept_dt', '')
+        out.append({'d': f'{d[:4]}-{d[4:6]}-{d[6:8]}', 't': re.sub(r'\s+', ' ', r.get('report_nm', '')).strip(),
+                    'f': (r.get('flr_nm') or '').strip(), 'no': r.get('rcept_no')})
+    return sorted(out, key=lambda e: (e['d'], e['no'] or ''))
+
+
 # ---------- 분기 컨센서스 (네이버 종목 분기 재무의 추정 열) ----------
 def parse_quarter_cns(payload: Dict) -> Dict[str, Dict]:
     """{'202609': {'sales': 764, 'op': -259, 'np': -319, 'cnp': None}} — 추정(isConsensus=Y) 열만, 억원"""
