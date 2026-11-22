@@ -1,477 +1,500 @@
 {
- "_note": "Study › 전력·원전·신재생 색인 (power-2027 종합 문서)",
- "c:ia": {
-  "name": "계통연계계약 (IA)",
-  "en": "Interconnection Agreement",
-  "desc": "발전·부하 사업자가 유틸리티와 망 보강비·접속 일정을 확약하는 계약. 변압기·차단기 발주는 이 계약 뒤에 나온다 — 접속 '신청'만으로는 발주가 없다(DS)."
- },
- "c:dc-spread": {
-  "name": "신뢰성 스프레드",
-  "en": "Reliability spread",
-  "desc": "데이터센터 수요 중 '신청·미착공' 용량에서 '건설 중' 용량을 뺀 값. 클수록 유틸리티가 그 수요를 믿기 어렵다. 미국 2022년 5.0GW → 2025년 173.0GW(DS, DC Byte)."
- },
- "c:iso-rto": {
-  "name": "ISO/RTO와 규제·경쟁시장",
-  "en": "ISO / RTO",
-  "desc": "미국 도매전력시장 운영 기관(PJM·ERCOT·MISO·SPP·CAISO·NYISO·ISO-NE). 경쟁시장(부하 약 60~70%)은 발전사가 시장가격으로 투자비를 회수해야 하고, 규제시장(약 30~40%)은 수직통합 유틸리티가 요금에 넣어 회수한다(KB). 신규 원전이 규제시장에 먼저 지어지는 이유."
- },
- "c:pjm-bra": {
-  "name": "PJM 용량경매 (BRA)",
-  "en": "PJM Base Residual Auction",
-  "desc": "3년 뒤 필요한 발전 용량을 미리 사는 경매. 2028/29 경매는 상한가 $325/MW-일로 낙찰됐는데도 필요량 156.0GW에 6.8GW 못 미쳤다(DS)."
- },
- "c:congestion": {
-  "name": "송전 혼잡비용",
-  "en": "Congestion cost",
-  "desc": "송전선이 꽉 차서 싼 발전기를 못 돌리고 비싼 발전기를 돌리며 생기는 추가 비용. PJM 2025년 36.5억 달러로 2023년 이후 다시 늘었다(KB)."
- },
- "c:ferc-206": {
-  "name": "FERC 소명명령 206호",
-  "en": "FERC Show Cause Order (2026.6.18)",
-  "desc": "미국 연방에너지규제위원회가 6개 ISO/RTO에 대형부하(50MW 이상) 접속·비용 전가 약관을 소명하라고 한 명령. 제출 11/16, 의견 12/16, 시행은 2027년 중순 예상(DS·메리츠)."
- },
- "c:ferc-order": {
-  "name": "FERC Order 1920·2023",
-  "en": "FERC Order 1920 / 2023",
-  "desc": "1920(2024): 송전사업자에 20년 장기 송전계획 수립 의무 — 765kV 백본 승인의 근거. 2023: 접속 심사를 선착순에서 '준비된 순서(클러스터)'로 바꿔 약 2년 단축 목표, 효과는 2027~28년부터(KB)."
- },
- "c:baaja": {
-  "name": "BAAJA (초당적 인허가·송전 법안)",
-  "en": "Bipartisan American Affordability and Jobs Act",
-  "desc": "2026.9 상원 공동 발의. 인허가 소송 제기기한 6년 → 150일, 유효 인허가 취소 금지, 230kV 이상 주간 송전선 FERC 백스톱, 20MW 이상 데이터센터 송전 증설비 수요자 부담. 11/9 상원 절차표결(DS·교보 풍력)."
- },
- "c:rppa": {
-  "name": "대형부하 요금제·RPPA",
-  "en": "Large load tariff / Ratepayer Protection Act",
-  "desc": "데이터센터 같은 대형부하가 망 투자비를 떠안게 하는 장치. 주별 요금제는 계약용량 70~90% 최소청구(메리츠), 연방 RPPA(H.R.9340)는 하원 417-3 통과 후 상원 계류(DS)."
- },
- "c:765kv": {
-  "name": "765kV 초고압 송전",
-  "en": "765kV transmission",
-  "desc": "345kV보다 전류가 절반 이하, 손실은 약 1/4. 1회선이 345kV 5~6회선을 대신한다. 미국 신규 승인·계획 약 5,600마일, 2032년까지 550~600억 달러(KB). 미국 765kV 변압기 공급 실적은 효성·HD현대일렉트릭 등 소수."
- },
- "c:lead-time": {
-  "name": "리드타임 (변압기·장납기)",
-  "en": "Lead time",
-  "desc": "발주부터 인도까지 걸리는 기간. 미국 전력용 변압기 2025년 2분기 128주, 승압변압기(GSU) 144주(DS). 국내 345kV 약 34개월(미래). 가스터빈 최소 5년(KB)."
- },
- "c:plan-12th": {
-  "name": "12차 전력수급기본계획",
-  "en": "12th Basic Plan for Electricity",
-  "desc": "2040년까지의 국가 전력 계획(연말 확정 예정). 재전망 2040 최대전력 158.4~165GW(11차 2038년 129.3GW), 소비량 847~885TWh. 늘어난 몫은 거의 전부 반도체·데이터센터다."
- },
- "c:reserve": {
-  "name": "설비예비율 22%",
-  "en": "Reserve margin",
-  "desc": "최대전력보다 22% 더 설비를 갖춘다는 기준(7~11차 공통). 필요 설비 = 최대전력 × 1.22."
- },
- "c:grid-act": {
-  "name": "전력망 특별법 (BT)",
-  "en": "Power Grid Special Act",
-  "desc": "2026.8.20 개정 통과. 민간이 송전망을 지어 한전에 넘기는 BT(Build & Transfer) 방식 허용(2029년 말까지 한시). 삼성·SK 직접 조달 → 전력기기 판가 상승 기대(미래). 이자 부담은 한전채보다 약 56% 크다(DS)."
- },
- "c:lmp": {
-  "name": "LMP (지역별 도매가격)",
-  "en": "Locational Marginal Price",
-  "desc": "에너지 한계비용 + 송전 혼잡비용 + 손실비용으로 지역마다 다른 도매가격. 2027년 도입 예정. 모의운영에서 연중 31%의 시간에 가격이 갈렸고 수도권이 평균 10.6원/kWh 비쌌다(신한·하나)."
- },
- "c:region-tariff": {
-  "name": "산업용 지역별 전기요금",
-  "en": "Regional industrial tariff",
-  "desc": "4개 권역 산업용 요금을 지방일수록 낮추는 제도(인상 없이 인하만). 남부권 13~18원/kWh 인하. 한전 판매수입 연 2.4~3.6조원 감소(신한), 정부 추산 2.8조원."
- },
- "c:smp": {
-  "name": "SMP (계통한계가격)",
-  "en": "System Marginal Price",
-  "desc": "시간대별로 마지막에 돌린 발전기의 변동비로 정하는 도매가격. 대개 LNG가 정한다. 한전이 민간 발전에서 사는 가격이라 유가·LNG가 오르면 한전 원가가 오른다."
- },
- "c:kepco-bond": {
-  "name": "한전채 발행한도 특례",
-  "en": "KEPCO bond limit",
-  "desc": "한전법상 사채 한도를 '자본금+적립금의 5배'로 늘린 특례가 2027년 말 끝나 2배로 돌아간다. 2027년 말 잔액 76조원이면 한도를 19.2조원 넘는다(DS, 국회예산정책처)."
- },
- "c:rps": {
-  "name": "RPS·REC → 계약시장",
-  "en": "RPS / REC",
-  "desc": "발전사에 재생에너지 의무를 지우고 인증서(REC)로 거래하던 제도. 2027년 종료(REC 신규 발급 2026.12.31 끝), 정부가 물량을 정해 입찰하는 계약시장으로 바뀐다."
- },
- "c:bid-cap": {
-  "name": "재생에너지 입찰 상한가",
-  "en": "Fixed-price contract cap",
-  "desc": "고정가격계약 입찰의 상한. 태양광 육지 2026년 147.7원/kWh, 정부 목표 2030년 100원·2035년 80원(미래 태양광·하나)."
- },
- "c:carbon-cert": {
-  "name": "탄소검증제",
-  "en": "Carbon certification",
-  "desc": "모듈 제조 단계 탄소배출이 적으면 판매가를 얹어 주는 제도. 1등급(630kg/kW 이하) +16원/kWh. 중국 표준배출계수가 한국의 약 1.5배라 국내 생산이 유리(미래 태양광)."
- },
- "c:doe-loan": {
-  "name": "DOE 원전 공급망 대출",
-  "en": "DOE nuclear supply chain loan",
-  "desc": "2026.6 미국 에너지부가 웨스팅하우스 AP1000 10기(2기×5개 부지)의 장납기 기자재를 미리 사도록 최대 175억 달러를 빌려주는 구조. 부지별 SPV 45억 달러 = 대출 35억 + 유틸리티 5억 + 웨스팅하우스 5억(KB)."
- },
- "c:project-power": {
-  "name": "DOC 트랙 (대미투자 원전)",
-  "en": "Project Power",
-  "desc": "한국 대미투자 자금으로 대형원전 8기(AP1000 6 + APR1400 2), 최대 1,200억 달러. 선급금 100억 달러 중 약 75억 달러가 AP1000 장납기 구매로 전망(하나·메리츠)."
- },
- "c:lli": {
-  "name": "장납기 품목 (LLI)",
-  "en": "Long Lead Items",
-  "desc": "원자로용기(42~54개월)·증기발생기(36~48개월)처럼 오래 걸리는 기자재. FID 전에 먼저 발주해 건설 기간을 약 3년 줄인다. 미국 원전의 첫 발주이자 두산에너빌리티의 첫 수주처(KB·메리츠)."
- },
- "c:ap1000": {
-  "name": "AP1000",
-  "en": "Westinghouse AP1000",
-  "desc": "웨스팅하우스 1.1GW급 가압경수로. 미국 Vogtle 3·4호기 노형. 글로벌 파이프라인 최대 91기·105GW(카메코 공개, LS·신한)."
- },
- "c:apr1400": {
-  "name": "APR1400·APR1000",
-  "en": "APR1400",
-  "desc": "한국형 1.4GW급 원전(새울·신한울). 체코 두코바니는 APR1000. 대형원전 1기 = 1.4GW로 환산한다(교보)."
- },
- "c:smr": {
-  "name": "SMR·i-SMR",
-  "en": "Small Modular Reactor",
-  "desc": "300MW 안팎 소형모듈원전. 공장 생산으로 공기를 줄이지만 초기 호기(FOAK)는 N차 호기보다 30~50% 비싸다(메리츠). i-SMR은 한국형, 모듈 170MW, 실증 4모듈 0.7GW 2035년 목표."
- },
- "c:foak": {
-  "name": "FOAK·NOAK",
-  "en": "First / Nth of a kind",
-  "desc": "첫 호기와 반복 건설 호기. Vogtle 3·4호기 순건설비 15,000달러/kW 중 2,900은 FOAK 비용, 3,800은 프로젝트 고유 비효율(신한) — 반복 건설이면 빠질 몫."
- },
- "c:lcoe": {
-  "name": "LCOE (균등화 발전원가)",
-  "en": "Levelized Cost of Electricity",
-  "desc": "설비 수명 동안의 총비용 ÷ 총발전량. 건설비가 큰 원전은 금리(WACC)와 공제(ITC)에 가장 민감하다."
- },
- "c:cwip": {
-  "name": "CWIP·COL",
-  "en": "CWIP / COL",
-  "desc": "CWIP: 건설 중 자산의 금융비용을 요금에 미리 넣는 제도(조지아·사우스캐롤라이나·노스캐롤라이나). COL: 건설·운영 통합 허가. COL이 살아 있는 부지는 바로 착공할 수 있다(KB·메리츠)."
- },
- "c:45y": {
-  "name": "45Y·48E (청정전력 공제)",
-  "en": "Clean Electricity PTC / ITC",
-  "desc": "45Y는 발전량당(kWh당 약 0.03달러), 48E는 투자액의 6%(기본)~30%(임금·도제)~50%(국내조달·에너지커뮤니티 가산). OBBBA로 풍력·태양광은 2027.12.31 가동(또는 2026.7.4 착공) 시한, 원전은 유지."
- },
- "c:sec232-solar": {
-  "name": "232 최저수입가격 (태양광)",
-  "en": "Section 232 Minimum Import Price",
-  "desc": "2026.12.4 시행. 폴리 $21/kg·웨이퍼 $100/kg·셀 22센트/W·모듈 38센트/W 아래로 수입 불가 + 15% 관세(한국·일본·EU 상한). 수입 모듈 통관 하한 43.7센트(교보 텍사스)."
- },
- "c:gas-turbine": {
-  "name": "가스터빈 슬롯",
-  "en": "Gas turbine slot",
-  "desc": "대형 가스터빈의 생산 순번. 글로벌 주문(2025년 약 100GW)이 생산능력(약 68GW)을 넘어 2030년 슬롯까지 대부분 찼다 — 후발 두산에너빌리티의 기회(메리츠)."
- },
- "c:sofc": {
-  "name": "SOFC (고체산화물 연료전지)",
-  "en": "Solid Oxide Fuel Cell",
-  "desc": "가스로 전기를 만드는 연료전지. 9개월 안팎이면 설치되고 소음·용수·배출이 적어 데이터센터 자가발전(BTM)에 쓰인다. 설비비 약 3,429달러/kW로 가스터빈(약 2,400달러)보다 비싸다(메리츠)."
- },
- "c:hvdc": {
-  "name": "HVDC (초고압 직류송전)",
-  "en": "High Voltage Direct Current",
-  "desc": "먼 거리로 대용량을 보내는 직류 송전. 동해안~신가평, 서해안 에너지고속도로(새만금→서화성 2030년 약 11조원) 등."
- },
- "c:tam": {
-  "name": "TAM (전체 시장 규모)",
-  "en": "Total Addressable Market",
-  "desc": "한 시장에 풀릴 수 있는 발주 총액. 리포트마다 정의(주기기만 / EPC 포함 / 변전소향만)가 달라 숫자를 바로 맞대면 안 된다."
- },
- "c:crack": {
-  "name": "복합정제마진",
-  "en": "Complex refining margin",
-  "desc": "원유 1배럴을 정제해 제품을 팔 때 남는 마진. 2027F 22달러(신한 정유) — 2026년 26달러보다 낮지만 2012~25 평균의 약 3배."
- },
- "co:hd-elec": {
-  "name": "HD현대일렉트릭",
-  "en": "HD Hyundai Electric",
-  "desc": "초고압 변압기·배전기기. 빅테크 1.1조원 장기공급, 울산·앨라배마 증설. 배전기기 비중 확대가 마진엔 부담(DS).",
-  "code": "267260"
- },
- "co:iljin-elec": {
-  "name": "일진전기",
-  "en": "Iljin Electric",
-  "desc": "변압기·전선. 1티어의 내수 이탈로 국내 345kV 점유 100%·154kV 74%. 미래 전력의 전력기기 최선호.",
-  "code": "103590"
- },
- "co:sanil": {
-  "name": "산일전기",
-  "en": "Sanil Electric",
-  "desc": "배전·특수변압기. 2028년 154kV 초고압 양산(DS 커버 개시).",
-  "code": "062040"
- },
- "co:doosan-enb": {
-  "name": "두산에너빌리티",
-  "en": "Doosan Enerbility",
-  "desc": "원자로·증기발생기·가스터빈 주기기. 미국 AP1000 장납기 선발주의 최우선 수혜(KB·메리츠·신한·교보·미래 전력의 원전 최선호).",
-  "code": "034020"
- },
- "co:kepco": {
-  "name": "한국전력",
-  "en": "KEPCO",
-  "desc": "송배전·판매 독점. 2027F 영업이익이 하우스마다 4.1~11.2조원으로 갈린다. 한전채 한도 특례 2027년 말 일몰.",
-  "code": "015760"
- },
- "co:kepco-enc": {
-  "name": "한전기술",
-  "en": "KEPCO E&C",
-  "desc": "원전 설계(1차 NSSS·2차 BOP 모두 하는 유일한 업체, KB).",
-  "code": "052690"
- },
- "co:kepco-kps": {
-  "name": "한전KPS",
-  "en": "KEPCO KPS",
-  "desc": "원전·발전 정비. 계속운전과 해외 정비(교보).",
-  "code": "051600"
- },
- "co:hdec": {
-  "name": "현대건설",
-  "en": "Hyundai E&C",
-  "desc": "원전 EPC. 웨스팅하우스·Holtec·TerraPower 파트너. KB 최선호(TP 15만) vs LS '모멘텀 약화'(TP 12만).",
-  "code": "000720"
- },
- "co:samsung-ena": {
-  "name": "삼성E&A",
-  "en": "Samsung E&A",
-  "desc": "화공·반도체 EPC. LS·메리츠 건설 최선호.",
-  "code": "028050"
- },
- "co:gs-enc": {
-  "name": "GS건설",
-  "en": "GS E&C",
-  "desc": "주택·동해 AI 데이터센터(2.4GW) 시공. LS·메리츠 선호.",
-  "code": "006360"
- },
- "co:samsung-ct": {
-  "name": "삼성물산",
-  "en": "Samsung C&T",
-  "desc": "건설·반도체 팹 캡티브. LS 차선호.",
-  "code": "028260"
- },
- "co:kogas": {
-  "name": "한국가스공사",
-  "en": "KOGAS",
-  "desc": "LNG 도입·도매. 원료비 미수금 부담(신한).",
-  "code": "036460"
- },
- "co:sk-gas": {
-  "name": "SK가스",
-  "en": "SK Gas",
-  "desc": "LPG·LNG 옵셔널리티(울산 GPS). 신한 최선호, 하나 Top Pick.",
-  "code": "018670"
- },
- "co:sk-eternix": {
-  "name": "SK이터닉스",
-  "en": "SK Eternix",
-  "desc": "재생에너지 개발. RPS 폐지 후 PPA 쏠림 수혜(하나 Top Pick).",
-  "code": "475150"
- },
- "co:bhi": {
-  "name": "비에이치아이",
-  "en": "BHI",
-  "desc": "배열회수보일러(HRSG)·발전 BOP(신한).",
-  "code": "083650"
- },
- "co:doosan-fc": {
-  "name": "두산퓨얼셀",
-  "en": "Doosan Fuel Cell",
-  "desc": "인산형 연료전지(PAFC)(메리츠).",
-  "code": "336260"
- },
- "co:cs-wind": {
-  "name": "씨에스윈드",
-  "en": "CS Wind",
-  "desc": "풍력 타워. 미국 육상풍력 발주 회복의 최대 수혜(교보 풍력).",
-  "code": "112610"
- },
- "co:oci-h": {
-  "name": "OCI홀딩스",
-  "en": "OCI Holdings",
-  "desc": "비중국 폴리실리콘. 미국 셀 증설이 비중국 폴리 수요로 번지는 수혜(교보 텍사스 Top-pick).",
-  "code": "010060"
- },
- "co:hd-es": {
-  "name": "HD현대에너지솔루션",
-  "en": "HD Hyundai Energy Solutions",
-  "desc": "국내 모듈·인버터 1위, 탄소검증 1등급 640W 이상 유일(미래 태양광 Top Pick).",
-  "code": "322000"
- },
- "co:s-oil": {
-  "name": "S-Oil",
-  "en": "S-Oil",
-  "desc": "정유. 샤힌 투자 종료로 FCF 확대(신한 정유).",
-  "code": "010950"
- },
- "co:sgc-energy": {
-  "name": "SGC에너지",
-  "en": "SGC Energy",
-  "desc": "발전·데이터센터 시행(메리츠·신한).",
-  "code": "005090"
- },
- "co:westinghouse": {
-  "name": "웨스팅하우스",
-  "en": "Westinghouse",
-  "desc": "AP1000 설계사(카메코 49%·브룩필드 51%). 미국 정부와 최소 800억 달러 파트너십."
- },
- "co:cameco": {
-  "name": "카메코",
-  "en": "Cameco",
-  "desc": "우라늄·웨스팅하우스 지분 49%. 우라늄 장기계약가 96.5달러/lb(신한).",
-  "ticker": "CCJ"
- },
- "co:gev": {
-  "name": "GE Vernova",
-  "en": "GE Vernova",
-  "desc": "가스터빈·변압기·풍력 터빈. 미국 육상 터빈 점유 57%.",
-  "ticker": "GEV"
- },
- "co:siemens-en": {
-  "name": "지멘스에너지",
-  "en": "Siemens Energy",
-  "desc": "가스터빈·변압기.",
-  "ticker": "ENR.DE"
- },
- "co:hitachi-en": {
-  "name": "히타치에너지",
-  "en": "Hitachi Energy",
-  "desc": "변압기(South Boston 4.57억 달러 증설). 모회사 히타치 티커.",
-  "code": "6501.T"
- },
- "co:quanta": {
-  "name": "Quanta Services",
-  "en": "Quanta Services",
-  "desc": "미국 송전 EPC. 효성중공업과 차단기 JV.",
-  "ticker": "PWR"
- },
- "co:bloom": {
-  "name": "Bloom Energy",
-  "en": "Bloom Energy",
-  "desc": "SOFC. 생산능력 1GW(2025) → 2GW(2026E) → 3~4GW(2027E).",
-  "ticker": "BE"
- },
- "co:constellation": {
-  "name": "Constellation",
-  "en": "Constellation Energy",
-  "desc": "미국 최대 원전 사업자(IPP). 하이퍼스케일러와 장기 PPA.",
-  "ticker": "CEG"
- },
- "co:vistra": {
-  "name": "Vistra",
-  "en": "Vistra",
-  "desc": "IPP. Meta와 원전 PPA.",
-  "ticker": "VST"
- },
- "co:talen": {
-  "name": "Talen Energy",
-  "en": "Talen Energy",
-  "desc": "IPP. Amazon과 Susquehanna PPA.",
-  "ticker": "TLN"
- },
- "co:nuscale": {
-  "name": "NuScale",
-  "en": "NuScale Power",
-  "desc": "SMR. TVA·ENTRA1과 최대 6GW.",
-  "ticker": "SMR"
- },
- "co:terrapower": {
-  "name": "TerraPower",
-  "en": "TerraPower",
-  "desc": "소듐냉각 SMR(Natrium). Meta와 최대 8기·2.8GW, 현대건설 EPC 우선권."
- },
- "co:holtec": {
-  "name": "Holtec",
-  "en": "Holtec",
-  "desc": "SMR-300(팰리세이드). 현대건설 파트너."
- },
- "co:fermi": {
-  "name": "Fermi America",
-  "en": "Fermi America",
-  "desc": "텍사스 AP1000 4기(Matador). 선거 후 리스크 '높음'(LS)."
- },
- "co:first-solar": {
-  "name": "First Solar",
-  "en": "First Solar",
-  "desc": "미국 최대 모듈 제조(카드뮴텔루라이드 14.2GW).",
-  "ticker": "FSLR"
- },
- "co:vestas": {
-  "name": "Vestas",
-  "en": "Vestas",
-  "desc": "풍력 터빈. 미국 육상 점유 34%.",
-  "ticker": "VWS.CO"
- },
- "co:orsted": {
-  "name": "Orsted",
-  "en": "Orsted",
-  "desc": "해상풍력 디벨로퍼. 2025.8 약 80억 유로 유상증자.",
-  "ticker": "ORSTED.CO"
- },
- "co:duke": {
-  "name": "Duke Energy",
-  "en": "Duke Energy",
-  "desc": "규제 유틸리티. W.S. Lee·Shearon Harris 후보지(KB).",
-  "ticker": "DUK"
- },
- "co:southern": {
-  "name": "Southern Company",
-  "en": "Southern Company",
-  "desc": "규제 유틸리티. Vogtle 3·4호기.",
-  "ticker": "SO"
- },
- "co:aep": {
-  "name": "AEP",
-  "en": "American Electric Power",
-  "desc": "미국 최대 송전망·765kV 운영.",
-  "ticker": "AEP"
- },
- "co:dominion": {
-  "name": "Dominion Energy",
-  "en": "Dominion Energy",
-  "desc": "버지니아 유틸리티. 데이터센터 부하 24.7GW 운영·계획(KB).",
-  "ticker": "D"
- },
- "co:khnp": {
-  "name": "한국수력원자력",
-  "en": "KHNP",
-  "desc": "한전 자회사 원전 운영사. 웨스팅하우스와의 합의로 북미·EU(체코 제외) 진출 제한(하나)."
- },
- "co:eaton": {
-  "name": "이튼",
-  "en": "Eaton",
-  "desc": "미국 전력기기(중저압 배전·UPS). 3Q26 가격 인상이 원가 상승을 웃돌았고 11/2 전 지역 가격 인상 발표(NH)."
- },
- "co:abb": {
-  "name": "ABB",
-  "en": "ABB",
-  "desc": "스위스 전력기기. 데이터센터 800V 직류 배전 구조(SST·SSCB)를 제시, 3Q26 가격 +2%p(NH)."
- },
- "c:byop": {
-  "name": "BYOP (자체 전력 조달)",
-  "en": "Bring Your Own Power",
-  "desc": "데이터센터가 쓰는 전력과 망 증설 비용을 스스로 마련·부담해야 한다는 원칙. 2026 중간선거 뒤 양당이 모두 이쪽으로 모인다(하나 해외). 가스터빈·연료전지 같은 자가발전 수요를 키운다."
- },
- "c:800vdc": {
-  "name": "800V DC 배전",
-  "en": "800V direct-current power distribution",
-  "desc": "데이터센터 안을 교류(415V AC) 대신 800V 직류로 배전하는 구조. 변환 손실·전류(손실은 전류 제곱)를 줄이고 SST(반도체 변압기)가 핵심 장비. 엔비디아 Kyber 랙(2027~28)과 함께 확산."
- },
- "c:rab-cfd": {
-  "name": "RAB · CfD (원전 금융 위험 분담)",
-  "en": "Regulated Asset Base · Contract for Difference",
-  "desc": "RAB는 건설 중부터 요금으로 비용 일부를 회수해 이자 누적을 줄이는 방식(영국 Sizewell C), CfD는 시장가격과 약정가격 차이를 정산해 수입을 고정하는 계약(스웨덴). 원전 자본비용을 10%대에서 3% 이하로 낮추는 장치(상상인)."
- },
- "co:venture-global": {
-  "name": "Venture Global",
-  "en": "Venture Global",
-  "desc": "미국 LNG 수출 2위. 계획 캐파 85MTPA 중 35% 미계약 — 단기 액화수수료 급등의 수혜(하나 해외 Top Pick).",
-  "ticker": "VG"
- },
- "n:pl": {
-  "name": "폴란드",
-  "en": "Poland",
-  "desc": "첫 원전 Lubiatowo-Kopalino(AP1000 3기). EPC 본계약은 2025년 말 목표에서 2027년 서명으로 늦었지만 2026.10 1호기 장납기 기자재 조달을 먼저 시작."
- }
+  "_note": "Study › 전력·원전·신재생 색인 (power-2027 종합 문서)",
+  "c:ia": {
+    "name": "계통연계계약 (IA)",
+    "en": "Interconnection Agreement",
+    "desc": "발전·부하 사업자가 유틸리티와 망 보강비·접속 일정을 확약하는 계약. 변압기·차단기 발주는 이 계약 뒤에 나온다 — 접속 '신청'만으로는 발주가 없다(DS)."
+  },
+  "c:dc-spread": {
+    "name": "신뢰성 스프레드",
+    "en": "Reliability spread",
+    "desc": "데이터센터 수요 중 '신청·미착공' 용량에서 '건설 중' 용량을 뺀 값. 클수록 유틸리티가 그 수요를 믿기 어렵다. 미국 2022년 5.0GW → 2025년 173.0GW(DS, DC Byte)."
+  },
+  "c:iso-rto": {
+    "name": "ISO/RTO와 규제·경쟁시장",
+    "en": "ISO / RTO",
+    "desc": "미국 도매전력시장 운영 기관(PJM·ERCOT·MISO·SPP·CAISO·NYISO·ISO-NE). 경쟁시장(부하 약 60~70%)은 발전사가 시장가격으로 투자비를 회수해야 하고, 규제시장(약 30~40%)은 수직통합 유틸리티가 요금에 넣어 회수한다(KB). 신규 원전이 규제시장에 먼저 지어지는 이유."
+  },
+  "c:pjm-bra": {
+    "name": "PJM 용량경매 (BRA)",
+    "en": "PJM Base Residual Auction",
+    "desc": "3년 뒤 필요한 발전 용량을 미리 사는 경매. 2028/29 경매는 상한가 $325/MW-일로 낙찰됐는데도 필요량 156.0GW에 6.8GW 못 미쳤다(DS)."
+  },
+  "c:congestion": {
+    "name": "송전 혼잡비용",
+    "en": "Congestion cost",
+    "desc": "송전선이 꽉 차서 싼 발전기를 못 돌리고 비싼 발전기를 돌리며 생기는 추가 비용. PJM 2025년 36.5억 달러로 2023년 이후 다시 늘었다(KB)."
+  },
+  "c:ferc-206": {
+    "name": "FERC 소명명령 206호",
+    "en": "FERC Show Cause Order (2026.6.18)",
+    "desc": "미국 연방에너지규제위원회가 6개 ISO/RTO에 대형부하(50MW 이상) 접속·비용 전가 약관을 소명하라고 한 명령. 제출 11/16, 의견 12/16, 시행은 2027년 중순 예상(DS·메리츠)."
+  },
+  "c:ferc-order": {
+    "name": "FERC Order 1920·2023",
+    "en": "FERC Order 1920 / 2023",
+    "desc": "1920(2024): 송전사업자에 20년 장기 송전계획 수립 의무 — 765kV 백본 승인의 근거. 2023: 접속 심사를 선착순에서 '준비된 순서(클러스터)'로 바꿔 약 2년 단축 목표, 효과는 2027~28년부터(KB)."
+  },
+  "c:baaja": {
+    "name": "BAAJA (초당적 인허가·송전 법안)",
+    "en": "Bipartisan American Affordability and Jobs Act",
+    "desc": "2026.9 상원 공동 발의. 인허가 소송 제기기한 6년 → 150일, 유효 인허가 취소 금지, 230kV 이상 주간 송전선 FERC 백스톱, 20MW 이상 데이터센터 송전 증설비 수요자 부담. 11/9 상원 절차표결(DS·교보 풍력)."
+  },
+  "c:rppa": {
+    "name": "대형부하 요금제·RPPA",
+    "en": "Large load tariff / Ratepayer Protection Act",
+    "desc": "데이터센터 같은 대형부하가 망 투자비를 떠안게 하는 장치. 주별 요금제는 계약용량 70~90% 최소청구(메리츠), 연방 RPPA(H.R.9340)는 하원 417-3 통과 후 상원 계류(DS)."
+  },
+  "c:765kv": {
+    "name": "765kV 초고압 송전",
+    "en": "765kV transmission",
+    "desc": "345kV보다 전류가 절반 이하, 손실은 약 1/4. 1회선이 345kV 5~6회선을 대신한다. 미국 신규 승인·계획 약 5,600마일, 2032년까지 550~600억 달러(KB). 미국 765kV 변압기 공급 실적은 효성·HD현대일렉트릭 등 소수."
+  },
+  "c:lead-time": {
+    "name": "리드타임 (변압기·장납기)",
+    "en": "Lead time",
+    "desc": "발주부터 인도까지 걸리는 기간. 미국 전력용 변압기 2025년 2분기 128주, 승압변압기(GSU) 144주(DS). 국내 345kV 약 34개월(미래). 가스터빈 최소 5년(KB)."
+  },
+  "c:plan-12th": {
+    "name": "12차 전력수급기본계획",
+    "en": "12th Basic Plan for Electricity",
+    "desc": "2040년까지의 국가 전력 계획(연말 확정 예정). 재전망 2040 최대전력 158.4~165GW(11차 2038년 129.3GW), 소비량 847~885TWh. 늘어난 몫은 거의 전부 반도체·데이터센터다."
+  },
+  "c:reserve": {
+    "name": "설비예비율 22%",
+    "en": "Reserve margin",
+    "desc": "최대전력보다 22% 더 설비를 갖춘다는 기준(7~11차 공통). 필요 설비 = 최대전력 × 1.22."
+  },
+  "c:grid-act": {
+    "name": "전력망 특별법 (BT)",
+    "en": "Power Grid Special Act",
+    "desc": "2026.8.20 개정 통과. 민간이 송전망을 지어 한전에 넘기는 BT(Build & Transfer) 방식 허용(2029년 말까지 한시). 삼성·SK 직접 조달 → 전력기기 판가 상승 기대(미래). 이자 부담은 한전채보다 약 56% 크다(DS)."
+  },
+  "c:lmp": {
+    "name": "LMP (지역별 도매가격)",
+    "en": "Locational Marginal Price",
+    "desc": "에너지 한계비용 + 송전 혼잡비용 + 손실비용으로 지역마다 다른 도매가격. 2027년 도입 예정. 모의운영에서 연중 31%의 시간에 가격이 갈렸고 수도권이 평균 10.6원/kWh 비쌌다(신한·하나)."
+  },
+  "c:region-tariff": {
+    "name": "산업용 지역별 전기요금",
+    "en": "Regional industrial tariff",
+    "desc": "4개 권역 산업용 요금을 지방일수록 낮추는 제도(인상 없이 인하만). 남부권 13~18원/kWh 인하. 한전 판매수입 연 2.4~3.6조원 감소(신한), 정부 추산 2.8조원."
+  },
+  "c:smp": {
+    "name": "SMP (계통한계가격)",
+    "en": "System Marginal Price",
+    "desc": "시간대별로 마지막에 돌린 발전기의 변동비로 정하는 도매가격. 대개 LNG가 정한다. 한전이 민간 발전에서 사는 가격이라 유가·LNG가 오르면 한전 원가가 오른다."
+  },
+  "c:kepco-bond": {
+    "name": "한전채 발행한도 특례",
+    "en": "KEPCO bond limit",
+    "desc": "한전법상 사채 한도를 '자본금+적립금의 5배'로 늘린 특례가 2027년 말 끝나 2배로 돌아간다. 2027년 말 잔액 76조원이면 한도를 19.2조원 넘는다(DS, 국회예산정책처)."
+  },
+  "c:rps": {
+    "name": "RPS·REC → 계약시장",
+    "en": "RPS / REC",
+    "desc": "발전사에 재생에너지 의무를 지우고 인증서(REC)로 거래하던 제도. 2027년 종료(REC 신규 발급 2026.12.31 끝), 정부가 물량을 정해 입찰하는 계약시장으로 바뀐다."
+  },
+  "c:bid-cap": {
+    "name": "재생에너지 입찰 상한가",
+    "en": "Fixed-price contract cap",
+    "desc": "고정가격계약 입찰의 상한. 태양광 육지 2026년 147.7원/kWh, 정부 목표 2030년 100원·2035년 80원(미래 태양광·하나)."
+  },
+  "c:carbon-cert": {
+    "name": "탄소검증제",
+    "en": "Carbon certification",
+    "desc": "모듈 제조 단계 탄소배출이 적으면 판매가를 얹어 주는 제도. 1등급(630kg/kW 이하) +16원/kWh. 중국 표준배출계수가 한국의 약 1.5배라 국내 생산이 유리(미래 태양광)."
+  },
+  "c:doe-loan": {
+    "name": "DOE 원전 공급망 대출",
+    "en": "DOE nuclear supply chain loan",
+    "desc": "2026.6 미국 에너지부가 웨스팅하우스 AP1000 10기(2기×5개 부지)의 장납기 기자재를 미리 사도록 최대 175억 달러를 빌려주는 구조. 부지별 SPV 45억 달러 = 대출 35억 + 유틸리티 5억 + 웨스팅하우스 5억(KB)."
+  },
+  "c:project-power": {
+    "name": "DOC 트랙 (대미투자 원전)",
+    "en": "Project Power",
+    "desc": "한국 대미투자 자금으로 대형원전 8기(AP1000 6 + APR1400 2), 최대 1,200억 달러. 선급금 100억 달러 중 약 75억 달러가 AP1000 장납기 구매로 전망(하나·메리츠)."
+  },
+  "c:lli": {
+    "name": "장납기 품목 (LLI)",
+    "en": "Long Lead Items",
+    "desc": "원자로용기(42~54개월)·증기발생기(36~48개월)처럼 오래 걸리는 기자재. FID 전에 먼저 발주해 건설 기간을 약 3년 줄인다. 미국 원전의 첫 발주이자 두산에너빌리티의 첫 수주처(KB·메리츠)."
+  },
+  "c:ap1000": {
+    "name": "AP1000",
+    "en": "Westinghouse AP1000",
+    "desc": "웨스팅하우스 1.1GW급 가압경수로. 미국 Vogtle 3·4호기 노형. 글로벌 파이프라인 최대 91기·105GW(카메코 공개, LS·신한)."
+  },
+  "c:apr1400": {
+    "name": "APR1400·APR1000",
+    "en": "APR1400",
+    "desc": "한국형 1.4GW급 원전(새울·신한울). 체코 두코바니는 APR1000. 대형원전 1기 = 1.4GW로 환산한다(교보)."
+  },
+  "c:smr": {
+    "name": "SMR·i-SMR",
+    "en": "Small Modular Reactor",
+    "desc": "300MW 안팎 소형모듈원전. 공장 생산으로 공기를 줄이지만 초기 호기(FOAK)는 N차 호기보다 30~50% 비싸다(메리츠). i-SMR은 한국형, 모듈 170MW, 실증 4모듈 0.7GW 2035년 목표."
+  },
+  "c:foak": {
+    "name": "FOAK·NOAK",
+    "en": "First / Nth of a kind",
+    "desc": "첫 호기와 반복 건설 호기. Vogtle 3·4호기 순건설비 15,000달러/kW 중 2,900은 FOAK 비용, 3,800은 프로젝트 고유 비효율(신한) — 반복 건설이면 빠질 몫."
+  },
+  "c:lcoe": {
+    "name": "LCOE (균등화 발전원가)",
+    "en": "Levelized Cost of Electricity",
+    "desc": "설비 수명 동안의 총비용 ÷ 총발전량. 건설비가 큰 원전은 금리(WACC)와 공제(ITC)에 가장 민감하다."
+  },
+  "c:cwip": {
+    "name": "CWIP·COL",
+    "en": "CWIP / COL",
+    "desc": "CWIP: 건설 중 자산의 금융비용을 요금에 미리 넣는 제도(조지아·사우스캐롤라이나·노스캐롤라이나). COL: 건설·운영 통합 허가. COL이 살아 있는 부지는 바로 착공할 수 있다(KB·메리츠)."
+  },
+  "c:45y": {
+    "name": "45Y·48E (청정전력 공제)",
+    "en": "Clean Electricity PTC / ITC",
+    "desc": "45Y는 발전량당(kWh당 약 0.03달러), 48E는 투자액의 6%(기본)~30%(임금·도제)~50%(국내조달·에너지커뮤니티 가산). OBBBA로 풍력·태양광은 2027.12.31 가동(또는 2026.7.4 착공) 시한, 원전은 유지."
+  },
+  "c:sec232-solar": {
+    "name": "232 최저수입가격 (태양광)",
+    "en": "Section 232 Minimum Import Price",
+    "desc": "2026.12.4 시행. 폴리 $21/kg·웨이퍼 $100/kg·셀 22센트/W·모듈 38센트/W 아래로 수입 불가 + 15% 관세(한국·일본·EU 상한). 수입 모듈 통관 하한 43.7센트(교보 텍사스)."
+  },
+  "c:gas-turbine": {
+    "name": "가스터빈 슬롯",
+    "en": "Gas turbine slot",
+    "desc": "대형 가스터빈의 생산 순번. 글로벌 주문(2025년 약 100GW)이 생산능력(약 68GW)을 넘어 2030년 슬롯까지 대부분 찼다 — 후발 두산에너빌리티의 기회(메리츠)."
+  },
+  "c:sofc": {
+    "name": "SOFC (고체산화물 연료전지)",
+    "en": "Solid Oxide Fuel Cell",
+    "desc": "가스로 전기를 만드는 연료전지. 9개월 안팎이면 설치되고 소음·용수·배출이 적어 데이터센터 자가발전(BTM)에 쓰인다. 설비비 약 3,429달러/kW로 가스터빈(약 2,400달러)보다 비싸다(메리츠)."
+  },
+  "c:hvdc": {
+    "name": "HVDC (초고압 직류송전)",
+    "en": "High Voltage Direct Current",
+    "desc": "먼 거리로 대용량을 보내는 직류 송전. 동해안~신가평, 서해안 에너지고속도로(새만금→서화성 2030년 약 11조원) 등."
+  },
+  "c:tam": {
+    "name": "TAM (전체 시장 규모)",
+    "en": "Total Addressable Market",
+    "desc": "한 시장에 풀릴 수 있는 발주 총액. 리포트마다 정의(주기기만 / EPC 포함 / 변전소향만)가 달라 숫자를 바로 맞대면 안 된다."
+  },
+  "c:crack": {
+    "name": "복합정제마진",
+    "en": "Complex refining margin",
+    "desc": "원유 1배럴을 정제해 제품을 팔 때 남는 마진. 2027F 22달러(신한 정유) — 2026년 26달러보다 낮지만 2012~25 평균의 약 3배."
+  },
+  "co:hd-elec": {
+    "name": "HD현대일렉트릭",
+    "en": "HD Hyundai Electric",
+    "desc": "초고압 변압기·배전기기. 빅테크 1.1조원 장기공급, 울산·앨라배마 증설. 배전기기 비중 확대가 마진엔 부담(DS).",
+    "code": "267260"
+  },
+  "co:iljin-elec": {
+    "name": "일진전기",
+    "en": "Iljin Electric",
+    "desc": "변압기·전선. 1티어의 내수 이탈로 국내 345kV 점유 100%·154kV 74%. 미래 전력의 전력기기 최선호.",
+    "code": "103590"
+  },
+  "co:sanil": {
+    "name": "산일전기",
+    "en": "Sanil Electric",
+    "desc": "배전·특수변압기. 2028년 154kV 초고압 양산(DS 커버 개시).",
+    "code": "062040"
+  },
+  "co:doosan-enb": {
+    "name": "두산에너빌리티",
+    "en": "Doosan Enerbility",
+    "desc": "원자로·증기발생기·가스터빈 주기기. 미국 AP1000 장납기 선발주의 최우선 수혜(KB·메리츠·신한·교보·미래 전력의 원전 최선호).",
+    "code": "034020"
+  },
+  "co:kepco": {
+    "name": "한국전력",
+    "en": "KEPCO",
+    "desc": "송배전·판매 독점. 2027F 영업이익이 하우스마다 4.1~11.2조원으로 갈린다. 한전채 한도 특례 2027년 말 일몰.",
+    "code": "015760"
+  },
+  "co:kepco-enc": {
+    "name": "한전기술",
+    "en": "KEPCO E&C",
+    "desc": "원전 설계(1차 NSSS·2차 BOP 모두 하는 유일한 업체, KB).",
+    "code": "052690"
+  },
+  "co:kepco-kps": {
+    "name": "한전KPS",
+    "en": "KEPCO KPS",
+    "desc": "원전·발전 정비. 계속운전과 해외 정비(교보).",
+    "code": "051600"
+  },
+  "co:hdec": {
+    "name": "현대건설",
+    "en": "Hyundai E&C",
+    "desc": "원전 EPC. 웨스팅하우스·Holtec·TerraPower 파트너. KB 최선호(TP 15만) vs LS '모멘텀 약화'(TP 12만).",
+    "code": "000720"
+  },
+  "co:samsung-ena": {
+    "name": "삼성E&A",
+    "en": "Samsung E&A",
+    "desc": "화공·반도체 EPC. LS·메리츠 건설 최선호.",
+    "code": "028050"
+  },
+  "co:gs-enc": {
+    "name": "GS건설",
+    "en": "GS E&C",
+    "desc": "주택·동해 AI 데이터센터(2.4GW) 시공. LS·메리츠 선호.",
+    "code": "006360"
+  },
+  "co:samsung-ct": {
+    "name": "삼성물산",
+    "en": "Samsung C&T",
+    "desc": "건설·반도체 팹 캡티브. LS 차선호.",
+    "code": "028260"
+  },
+  "co:kogas": {
+    "name": "한국가스공사",
+    "en": "KOGAS",
+    "desc": "LNG 도입·도매. 원료비 미수금 부담(신한).",
+    "code": "036460"
+  },
+  "co:sk-gas": {
+    "name": "SK가스",
+    "en": "SK Gas",
+    "desc": "LPG·LNG 옵셔널리티(울산 GPS). 신한 최선호, 하나 Top Pick.",
+    "code": "018670"
+  },
+  "co:sk-eternix": {
+    "name": "SK이터닉스",
+    "en": "SK Eternix",
+    "desc": "재생에너지 개발. RPS 폐지 후 PPA 쏠림 수혜(하나 Top Pick).",
+    "code": "475150"
+  },
+  "co:bhi": {
+    "name": "비에이치아이",
+    "en": "BHI",
+    "desc": "배열회수보일러(HRSG)·발전 BOP(신한).",
+    "code": "083650"
+  },
+  "co:doosan-fc": {
+    "name": "두산퓨얼셀",
+    "en": "Doosan Fuel Cell",
+    "desc": "인산형 연료전지(PAFC)(메리츠).",
+    "code": "336260"
+  },
+  "co:cs-wind": {
+    "name": "씨에스윈드",
+    "en": "CS Wind",
+    "desc": "풍력 타워. 미국 육상풍력 발주 회복의 최대 수혜(교보 풍력).",
+    "code": "112610"
+  },
+  "co:oci-h": {
+    "name": "OCI홀딩스",
+    "en": "OCI Holdings",
+    "desc": "비중국 폴리실리콘. 미국 셀 증설이 비중국 폴리 수요로 번지는 수혜(교보 텍사스 Top-pick).",
+    "code": "010060"
+  },
+  "co:hd-es": {
+    "name": "HD현대에너지솔루션",
+    "en": "HD Hyundai Energy Solutions",
+    "desc": "국내 모듈·인버터 1위, 탄소검증 1등급 640W 이상 유일(미래 태양광 Top Pick).",
+    "code": "322000"
+  },
+  "co:s-oil": {
+    "name": "S-Oil",
+    "en": "S-Oil",
+    "desc": "정유. 샤힌 투자 종료로 FCF 확대(신한 정유).",
+    "code": "010950"
+  },
+  "co:sgc-energy": {
+    "name": "SGC에너지",
+    "en": "SGC Energy",
+    "desc": "발전·데이터센터 시행(메리츠·신한).",
+    "code": "005090"
+  },
+  "co:westinghouse": {
+    "name": "웨스팅하우스",
+    "en": "Westinghouse",
+    "desc": "AP1000 설계사(카메코 49%·브룩필드 51%). 미국 정부와 최소 800억 달러 파트너십."
+  },
+  "co:cameco": {
+    "name": "카메코",
+    "en": "Cameco",
+    "desc": "우라늄·웨스팅하우스 지분 49%. 우라늄 장기계약가 96.5달러/lb(신한).",
+    "ticker": "CCJ"
+  },
+  "co:gev": {
+    "name": "GE Vernova",
+    "en": "GE Vernova",
+    "desc": "가스터빈·변압기·풍력 터빈. 미국 육상 터빈 점유 57%.",
+    "ticker": "GEV"
+  },
+  "co:siemens-en": {
+    "name": "지멘스에너지",
+    "en": "Siemens Energy",
+    "desc": "가스터빈·변압기.",
+    "ticker": "ENR.DE"
+  },
+  "co:hitachi-en": {
+    "name": "히타치에너지",
+    "en": "Hitachi Energy",
+    "desc": "변압기(South Boston 4.57억 달러 증설). 모회사 히타치 티커.",
+    "code": "6501.T"
+  },
+  "co:quanta": {
+    "name": "Quanta Services",
+    "en": "Quanta Services",
+    "desc": "미국 송전 EPC. 효성중공업과 차단기 JV.",
+    "ticker": "PWR"
+  },
+  "co:bloom": {
+    "name": "Bloom Energy",
+    "en": "Bloom Energy",
+    "desc": "SOFC. 생산능력 1GW(2025) → 2GW(2026E) → 3~4GW(2027E).",
+    "ticker": "BE"
+  },
+  "co:constellation": {
+    "name": "Constellation",
+    "en": "Constellation Energy",
+    "desc": "미국 최대 원전 사업자(IPP). 하이퍼스케일러와 장기 PPA.",
+    "ticker": "CEG"
+  },
+  "co:vistra": {
+    "name": "Vistra",
+    "en": "Vistra",
+    "desc": "IPP. Meta와 원전 PPA.",
+    "ticker": "VST"
+  },
+  "co:talen": {
+    "name": "Talen Energy",
+    "en": "Talen Energy",
+    "desc": "IPP. Amazon과 Susquehanna PPA.",
+    "ticker": "TLN"
+  },
+  "co:nuscale": {
+    "name": "NuScale",
+    "en": "NuScale Power",
+    "desc": "SMR. TVA·ENTRA1과 최대 6GW.",
+    "ticker": "SMR"
+  },
+  "co:terrapower": {
+    "name": "TerraPower",
+    "en": "TerraPower",
+    "desc": "소듐냉각 SMR(Natrium). Meta와 최대 8기·2.8GW, 현대건설 EPC 우선권."
+  },
+  "co:holtec": {
+    "name": "Holtec",
+    "en": "Holtec",
+    "desc": "SMR-300(팰리세이드). 현대건설 파트너."
+  },
+  "co:fermi": {
+    "name": "Fermi America",
+    "en": "Fermi America",
+    "desc": "텍사스 AP1000 4기(Matador). 선거 후 리스크 '높음'(LS)."
+  },
+  "co:first-solar": {
+    "name": "First Solar",
+    "en": "First Solar",
+    "desc": "미국 최대 모듈 제조(카드뮴텔루라이드 14.2GW).",
+    "ticker": "FSLR"
+  },
+  "co:vestas": {
+    "name": "Vestas",
+    "en": "Vestas",
+    "desc": "풍력 터빈. 미국 육상 점유 34%.",
+    "ticker": "VWS.CO"
+  },
+  "co:orsted": {
+    "name": "Orsted",
+    "en": "Orsted",
+    "desc": "해상풍력 디벨로퍼. 2025.8 약 80억 유로 유상증자.",
+    "ticker": "ORSTED.CO"
+  },
+  "co:duke": {
+    "name": "Duke Energy",
+    "en": "Duke Energy",
+    "desc": "규제 유틸리티. W.S. Lee·Shearon Harris 후보지(KB).",
+    "ticker": "DUK"
+  },
+  "co:southern": {
+    "name": "Southern Company",
+    "en": "Southern Company",
+    "desc": "규제 유틸리티. Vogtle 3·4호기.",
+    "ticker": "SO"
+  },
+  "co:aep": {
+    "name": "AEP",
+    "en": "American Electric Power",
+    "desc": "미국 최대 송전망·765kV 운영.",
+    "ticker": "AEP"
+  },
+  "co:dominion": {
+    "name": "Dominion Energy",
+    "en": "Dominion Energy",
+    "desc": "버지니아 유틸리티. 데이터센터 부하 24.7GW 운영·계획(KB).",
+    "ticker": "D"
+  },
+  "co:khnp": {
+    "name": "한국수력원자력",
+    "en": "KHNP",
+    "desc": "한전 자회사 원전 운영사. 웨스팅하우스와의 합의로 북미·EU(체코 제외) 진출 제한(하나)."
+  },
+  "co:eaton": {
+    "name": "이튼",
+    "en": "Eaton",
+    "desc": "미국 전력기기(중저압 배전·UPS). 3Q26 가격 인상이 원가 상승을 웃돌았고 11/2 전 지역 가격 인상 발표(NH)."
+  },
+  "co:abb": {
+    "name": "ABB",
+    "en": "ABB",
+    "desc": "스위스 전력기기. 데이터센터 800V 직류 배전 구조(SST·SSCB)를 제시, 3Q26 가격 +2%p(NH)."
+  },
+  "c:byop": {
+    "name": "BYOP (자체 전력 조달)",
+    "en": "Bring Your Own Power",
+    "desc": "데이터센터가 쓰는 전력과 망 증설 비용을 스스로 마련·부담해야 한다는 원칙. 2026 중간선거 뒤 양당이 모두 이쪽으로 모인다(하나 해외). 가스터빈·연료전지 같은 자가발전 수요를 키운다."
+  },
+  "c:800vdc": {
+    "name": "800V DC 배전",
+    "en": "800V direct-current power distribution",
+    "desc": "데이터센터 안을 교류(415V AC) 대신 800V 직류로 배전하는 구조. 변환 손실·전류(손실은 전류 제곱)를 줄이고 SST(반도체 변압기)가 핵심 장비. 엔비디아 Kyber 랙(2027~28)과 함께 확산."
+  },
+  "c:rab-cfd": {
+    "name": "RAB · CfD (원전 금융 위험 분담)",
+    "en": "Regulated Asset Base · Contract for Difference",
+    "desc": "RAB는 건설 중부터 요금으로 비용 일부를 회수해 이자 누적을 줄이는 방식(영국 Sizewell C), CfD는 시장가격과 약정가격 차이를 정산해 수입을 고정하는 계약(스웨덴). 원전 자본비용을 10%대에서 3% 이하로 낮추는 장치(상상인)."
+  },
+  "co:venture-global": {
+    "name": "Venture Global",
+    "en": "Venture Global",
+    "desc": "미국 LNG 수출 2위. 계획 캐파 85MTPA 중 35% 미계약 — 단기 액화수수료 급등의 수혜(하나 해외 Top Pick).",
+    "ticker": "VG"
+  },
+  "n:pl": {
+    "name": "폴란드",
+    "en": "Poland",
+    "desc": "첫 원전 Lubiatowo-Kopalino(AP1000 3기). EPC 본계약은 2025년 말 목표에서 2027년 서명으로 늦었지만 2026.10 1호기 장납기 기자재 조달을 먼저 시작."
+  },
+  "c:perovskite": {
+    "name": "페로브스카이트 (탠덤 셀)",
+    "en": "Perovskite / perovskite-silicon tandem",
+    "desc": "결정이 ABX3 구조인 박막 태양전지 소재. 실리콘 셀 위에 올려 겹치는 탠덤 구조가 실리콘 단일접합의 효율 한계를 넘는 후보다. 가볍고 유연해 위성용 경량 셀로도 거론되지만 방사선 내성·장기 안정성·궤도 실증이 아직 과제다. 시장 2025 4.1억 → 2031 53.2억 달러(연 53.5%, 하나 전망포럼 인용 Mordor)."
+  },
+  "co:seonik": {
+    "name": "선익시스템",
+    "en": "SUNIC System",
+    "code": "171090",
+    "desc": "OLED·OLEDoS·페로브스카이트 증착장비. 북미 최대 태양광 업체와 페로브스카이트 테스트 중, 2026.04 해외 고객사에 8세대 증착장비 납품(하나 전망포럼, Not Rated)."
+  },
+  "co:setrec": {
+    "name": "쎄트렉아이",
+    "en": "Satrec Initiative",
+    "code": "099320",
+    "desc": "위성 제조·영상 사업. 자회사 SIS의 자체 위성 장기 영상 계약, 한화시스템 SAR 군집위성 우선협상대상자. 3Q26 영업이익 82억원(+235.6%, 하나 전망포럼, Not Rated)."
+  },
+  "co:heain": {
+    "name": "혜인",
+    "en": "Hyein",
+    "code": "003010",
+    "desc": "CAT 건설기계·엔진·부품 국내 공급. 3.9MW급 이상 비상발전기 국내 점유율 약 15%. 2026-10 현대건설 464억원(20대, 61.5MW) 공급계약(하나 전망포럼, Not Rated)."
+  }
 }

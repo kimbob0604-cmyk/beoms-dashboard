@@ -527,5 +527,100 @@
   "name": "에퀴닉스",
   "en": "Equinix (EQIX)",
   "desc": "데이터센터·상호연결 리츠. 경쟁력은 공간보다 연결. 시총 136.7조원(미래)."
+ },
+ "c:bond-duration": {
+  "name": "채권 듀레이션 전략",
+  "en": "Duration positioning",
+  "desc": "채권 금리 변화에 대한 가격 민감도를 늘리거나 줄이는 전략. 하나 채권팀: 인상 사이클인 2026년은 '축소', 인상이 끝나는 2027년은 '확대'."
+ },
+ "c:rate-cycle-end": {
+  "name": "인상 사이클의 끝",
+  "en": "End of the hiking cycle",
+  "desc": "중앙은행이 마지막으로 기준금리를 올린 뒤에는 보통 10년 금리가 내려왔다는 과거 경로(7개국 40번 인상 사이클). 하나: 미국 12월·3월, 한국 11월·2월이 마지막 인상."
+ },
+ "c:growth-momentum": {
+  "name": "성장·물가 모멘텀 국면",
+  "en": "Growth–inflation momentum",
+  "desc": "성장과 물가의 '수준'이 아니라 '변화'를 정규화해 과열·둔화·골디락스·스태그플레이션으로 나눈 틀. 하나: 2026Q3 과열 → 2027Q4 둔화(미국·한국)."
+ },
+ "c:ois-2y2y": {
+  "name": "OIS 2y2y (최종금리 기대)",
+  "en": "OIS 2y2y",
+  "desc": "2년 뒤부터 2년간의 정책금리 기대(시장이 보는 최종금리). 하나 허성우: 최종금리 4.50% 기대에 약 50bp를 더한 5.0%가 미국 10년물 적정 수준."
+ },
+ "c:credit-supply-gap": {
+  "name": "비유동 수급량 (국내 신용채권)",
+  "en": "Illiquid credit supply",
+  "desc": "신용채권 잔존액에서 장외시장 투자자 잔액을 뺀 값. 만기보유 위주의 공사채·은행채가 늘며 2010년 말 91조원 → 2026.10 426조원(하나 김상만)."
+ },
+ "c:earnings-revision": {
+  "name": "이익 추정치 하향 조정",
+  "en": "Earnings estimate downgrades",
+  "desc": "컨센서스 순이익이 내려가는 국면. 하나 이재만: 2027 코스피 순이익 −20%·PER 8배(하향 해 평균)를 가정하면 상단 8,500P."
+ },
+ "c:sector-rotation": {
+  "name": "주도업종 순환 (이익 증가율 변화)",
+  "en": "Leading-sector rotation",
+  "desc": "이익 규모가 아니라 이익 증가율이 올라가는 업종이 지수를 이끈다는 틀. 하나 이재만: 코스피 상반기 2차전지·IT하드웨어, 하반기 제약/바이오·자동차."
+ },
+ "c:anti-involution": {
+  "name": "반내권(反内卷)",
+  "en": "Anti-involution",
+  "desc": "중국의 과당경쟁·과잉공급을 줄이는 정책. 하나 김경환: 2027년에 기대에서 실적으로, 전통 업종 CAPA 축소·마진 회복."
+ },
+ "c:blended-portfolio": {
+  "name": "혼합형 포트폴리오",
+  "en": "Blended portfolio",
+  "desc": "AI 성장주를 가지되 방어적 기업·우량채권·실물 헤지를 함께 담는 구성(하나 이영주)."
+ },
+ "c:vn-deposit-rate": {
+  "name": "베트남 예금금리와 신용 확대",
+  "en": "Vietnam deposit rate",
+  "desc": "대출이 예금보다 빨리 늘면 은행이 예금금리를 올려 주식 매력과 거래대금이 줄어든다(하나 김근아 p.64)."
+ },
+ "c:llm-cost-index": {
+  "name": "LLM 토큰 지출 지수",
+  "en": "LLM token cost index",
+  "desc": "글로벌 LLM 100만 토큰당 가중평균 비용(Silicon Data). 6개월 두 배 가까이 올랐다가 고점 대비 약 61% 하락(하나 박승진)."
+ },
+ "c:gold-silver-ratio": {
+  "name": "금/은 비율",
+  "en": "Gold-Silver Ratio",
+  "desc": "금 1온스 값이 은 몇 온스인지. LS는 장기 레인지를 72~92로 보고, 2026년 1분기 붐-버스트 뒤 다시 그 안으로 돌아왔다고 한다."
+ },
+ "c:gold-definancialization": {
+  "name": "금의 탈금융화",
+  "en": "Gold de-financialization",
+  "desc": "2000년대에 금 가격이 실질금리·달러 같은 금융 변수를 따라 움직였는데, 2022년 러우 전쟁 뒤 중앙은행 매입이 늘면서 그 관계에서 벗어난 현상(LS)."
+ },
+ "c:cb-gold-buying": {
+  "name": "중앙은행 금 매입",
+  "en": "Central bank gold buying",
+  "desc": "신흥국 중앙은행이 준비자산으로 금을 사는 것. 2022~2024년 연 1,000톤 안팎, 2026년은 1분기 러시아·터키 매각 뒤 2~3분기에 급증(LS)."
+ },
+ "c:gold-hike-low": {
+  "name": "금리 인상 국면의 금 저점",
+  "en": "Gold bottom in hiking cycle",
+  "desc": "지난 두 번의 미국 금리 인상 사이클에서 금은 인상 초기에 급락하고 중반 이후에 저점을 찍었다(2022년 11월). LS는 지금도 같다고 보고 인상 국면을 저가 매수 기회로 본다."
+ },
+ "c:copper-us-stockpile": {
+  "name": "미국 구리 재고 비축",
+  "en": "US copper stockpiling",
+  "desc": "2027년 미국 구리 관세 예상으로 구리가 미국으로 옮겨져 잠긴 것. 장부상 수급이 실제보다 빡빡해 보이고 가격을 약 30% 밀어 올린 것으로 LS가 추정한다."
+ },
+ "c:new-demand-crowding": {
+  "name": "신규 수요의 전통 수요 구축",
+  "en": "New demand crowding out legacy demand",
+  "desc": "가격에 둔감한 데이터센터·전력화 수요가 늘어 가격을 올리고, 가격에 민감한 전통 수요(건설·가전 등)가 밀려나는 현상(LS의 구리 분석)."
+ },
+ "c:india-copper-intensity": {
+  "name": "인도 1인당 구리 수요",
+  "en": "India per-capita copper demand",
+  "desc": "인도의 1인당 구리 수요는 연 0.9kg. 성장하면 5kg까지 늘 것이라는 전망으로 2035년 구리 수요 증가율이 연 2.8%(기본)~4%(가속)(LS·Trafigura)."
+ },
+ "c:commodity-cycle": {
+  "name": "원자재 사이클",
+  "en": "Commodity cycle",
+  "desc": "에너지·귀금속·비철·농산물이 돌아가며 오르는 흐름. LS는 지난 4년 상승 사이클이 에너지 급등으로 마무리될 가능성을 짚는다(금리 인상·달러 강세 재개)."
  }
 }

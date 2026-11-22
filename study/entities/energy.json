@@ -405,5 +405,21 @@
   "en": "Hyosung TNC",
   "desc": "스판덱스 세계 1위. NH 석유와가스/화학 최선호(목표 45만원) — 중국 중소형 업체 퇴출로 가격 결정력.",
   "code": "298020"
+ },
+ "co:kumho-pc": {
+  "name": "금호석유화학",
+  "en": "Kumho Petrochemical",
+  "desc": "합성고무(NBL·SBR·BR)·에폭시 업체. 하나증권 에너지/화학 Top Pick(BUY 18만원) — 합성고무 증설이 막힌 사이클 진입.",
+  "code": "011780"
+ },
+ "c:tanker-rate": {
+  "name": "탱커 운임",
+  "en": "Tanker freight rate",
+  "desc": "원유·제품을 배로 나르는 운임. 전쟁 뒤 아랍-일본 구간이 약 36달러/bbl까지 올라 원유 수요자 원가와 아시아 정제마진을 깎았다(LS 원자재 p.26)."
+ },
+ "c:lng": {
+  "name": "LNG (액화천연가스)",
+  "en": "Liquefied natural gas",
+  "desc": "천연가스를 −162℃로 액화해 배로 나르는 가스. JKM(아시아)·TTF(유럽)·Henry Hub(미국) 가격이 따로 움직인다. 이란 사태로 전체 LNG의 20%가 영향을 받았다(LS 원자재 p.32)."
  }
 }
