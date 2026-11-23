@@ -243,7 +243,9 @@ def _publish() -> int:
                             cwd=REPO, check=True, capture_output=True, text=True,
                             env={**os.environ, **env}).stdout.strip()
     git('update-ref', f'refs/heads/{BRANCH}', commit, cwd=REPO)
-    git('push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}', cwd=REPO)
+    # .env 의 GITHUB_TOKEN 으로 푸시하면 403(2026-11-20 부터 권한 거부) → 본인 gh 로그인으로 (publish_study·cloud_sync 와 같음)
+    subprocess.run(['git', 'push', '-q', '--force', 'origin', f'{BRANCH}:{BRANCH}'], cwd=REPO, check=True,
+                   capture_output=True, text=True, env=gh_env())
     git('update-ref', f'refs/remotes/origin/{BRANCH}', commit, cwd=REPO)
     subprocess.run(['git', 'prune', '--expire=now'], cwd=REPO, capture_output=True)   # 지난 배포의 파일 정리
     if not dispatch(remote, commit):   # 푸시만으로는 사이트가 안 바뀐다 (Pages 소스 = Actions). 실패하면 다음 차례에 redeploy_reason 이 다시 부른다
