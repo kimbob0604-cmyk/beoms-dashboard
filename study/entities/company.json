@@ -1,0 +1,87 @@
+{
+ "_note": "Study › 기업 정리 색인 (companies 문서). 다른 섹터 문서도 이 키를 그대로 쓴다.",
+ "co:wrtn": {
+  "name": "뤼튼테크놀로지스",
+  "en": "Wrtn Technologies",
+  "desc": "비상장. AI 캐릭터 챗 플랫폼 '크랙'(국내), 일본 '캬라푸', 북미 'OOC' 운영. DS(26.11.09) AI 엔터 톱픽. 2025 매출 471억원·영업손실 589억원, 26.08 시리즈C 1,000억원."
+ },
+ "co:enkiax": {
+  "name": "엔키AX",
+  "en": "ENKI AX",
+  "desc": "남성향 성인 웹툰 플랫폼 탑툰 운영, AI 캐릭터 챗 '탑툰챗'·단독앱 '탑톡'. DS(26.11.09) Not Rated.",
+  "code": "134580"
+ },
+ "co:kidari": {
+  "name": "키다리스튜디오",
+  "en": "Kidari Studio",
+  "desc": "글로벌 웹툰 플랫폼 레진·봄툰, AI 캐릭터 챗 '티즈(Teaz)', 숏드라마 '레진 스낵'. DS(26.11.09) Not Rated.",
+  "code": "020120"
+ },
+ "co:pinkfong": {
+  "name": "더핑크퐁컴퍼니",
+  "en": "The Pinkfong Company",
+  "desc": "핑크퐁·아기상어·베베핀 IP 홀더. AI로 애니메이션 제작 기간·비용을 줄이는 중. DS(26.11.09) Not Rated.",
+  "code": "403850"
+ },
+ "co:scatterlab": {
+  "name": "스캐터랩",
+  "en": "Scatter Lab",
+  "desc": "비상장. AI 캐릭터 챗 '제타'(무료 대화 + 광고·유료), 이루다 개발사."
+ },
+ "co:character-ai": {
+  "name": "Character.AI",
+  "en": "Character.AI",
+  "desc": "미국 AI 캐릭터 챗 플랫폼. 월평균 이용시간이 ChatGPT를 웃돈다(Sensor Tower, DS 인용)."
+ },
+ "co:webtoon-ent": {
+  "name": "WEBTOON Entertainment (네이버웹툰)",
+  "en": "WEBTOON Entertainment",
+  "desc": "나스닥 WBTN. 네이버웹툰·라인망가 운영, 캐릭터챗·바이어스(byUS) 출시."
+ },
+ "co:dearu": {
+  "name": "디어유",
+  "en": "DearU",
+  "desc": "팬 소통 플랫폼 버블 운영.",
+  "code": "376300"
+ },
+ "co:spoonlabs": {
+  "name": "스푼랩스",
+  "en": "Spoon Labs",
+  "desc": "비상장. 세로형 숏드라마 플랫폼 '비글루' 운영."
+ },
+ "co:kunlun": {
+  "name": "쿤룬테크",
+  "en": "Kunlun Tech",
+  "desc": "중국(300418.SZ). AI 숏폼 드라마·AI 엔터 앱 사업."
+ },
+ "c:ai-char-chat": {
+  "name": "AI 캐릭터 챗",
+  "en": "AI character chat",
+  "desc": "AI가 특정 성격·세계관의 캐릭터를 맡아 이용자와 실시간 대화하는 서비스. 대화 자체가 콘텐츠다. 관계형(AI 컴패니언)과 스토리·롤플레잉형으로 나뉜다(DS)."
+ },
+ "c:metered-billing": {
+  "name": "종량제 과금 (크래커)",
+  "en": "Pay-per-use billing",
+  "desc": "대화 횟수에 따라 유료 재화(크랙은 크래커, 1개 약 1원)를 쓰는 방식. 추론비용이 큰 모델일수록 더 많이 차감해 비용을 회수한다. 구독·무료 중심 모델과 대비."
+ },
+ "c:ugc-platform": {
+  "name": "UGC 창작 플랫폼",
+  "en": "User-generated content",
+  "desc": "이용자가 캐릭터·세계관을 직접 만들어 올리는 구조. 제타·크랙이 대표. 우수 창작자 확보와 독점 콘텐츠가 경쟁력이다."
+ },
+ "c:arppu": {
+  "name": "ARPPU",
+  "en": "Average revenue per paying user",
+  "desc": "결제자 1인당 평균 매출. 웹툰 플랫폼에서 WEBTOON 2Q26 일본 24.4달러 vs 한국 9.0달러, 탑툰챗은 탑툰의 1.9배(회사)."
+ },
+ "c:inference-cost": {
+  "name": "AI 추론비용",
+  "en": "Inference cost",
+  "desc": "대화·생성이 일어날 때마다 AI 모델 사용료가 드는 비용. 이용시간이 늘수록 커져 AI 캐릭터 챗의 수익성 변수가 된다(뤼튼 지급수수료 = 매출의 130%, 2025)."
+ },
+ "c:osmu": {
+  "name": "OSMU",
+  "en": "One Source Multi Use",
+  "desc": "하나의 IP를 웹툰·MD·영상·AI 챗·게임으로 여러 번 파는 전략. 키다리스튜디오(MD·숏드라마·티즈), 엔키AX, 더핑크퐁컴퍼니가 대표."
+ }
+}

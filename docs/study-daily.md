@@ -45,6 +45,8 @@ cd "/Users/beomjun/Beom's Dashboard" && python3 study_tg_daily.py
 | 금융 `fin` | `nh-fin-2027` |
 | 미드스몰캡 `smid` | `nh-smid-2027` |
 
+- 기업분석 장·종목 페이지가 있는 산업 리포트는 섹터 문서와 별도로 `companies` 문서의 회사 노드에 정리한다(트리 `study/tree/company.json`, 색인 `study/entities/company.json`, `docs/study-company-plan.md`).
+
 - 여러 섹터를 다룬 리포트는 장별로 나눠 각 문서에 넣는다.
 - 리서치 리포트가 아닌 것(가이드북·공시 모음 등), 섹터에 맞지 않는 것, 이미 들어간 리포트는 `skip` 과 이유를 적는다.
 - 위 표에 맞는 섹터가 없으면 새 섹터·문서를 만들지 말고 `skip: "섹터 없음 — 사용자 확인"` 으로 남겨 보고한다.

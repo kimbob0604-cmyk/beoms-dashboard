@@ -1,0 +1,37 @@
+{
+ "_note": "Study › 기업 정리 가지 (docs/study-company-plan.md). 산업 인뎁스에서 나온 기업을 섹터별 묶음 아래 회사 노드로 모은다. 문서: study/docs/companies.json",
+ "sector": "company",
+ "children": [
+  {
+   "id": "media",
+   "name": "미디어·엔터·플랫폼",
+   "children": [
+    {
+     "id": "wrtn",
+     "name": "뤼튼테크놀로지스 (비상장)",
+     "desc": "AI 캐릭터 챗 '크랙'. DS 톱픽"
+    },
+    {
+     "id": "enkiax",
+     "name": "엔키AX (134580)",
+     "desc": "탑툰·탑툰챗, 성인 웹툰 IP의 AI 캐릭터 챗"
+    },
+    {
+     "id": "kidari",
+     "name": "키다리스튜디오 (020120)",
+     "desc": "레진·봄툰, 티즈(Teaz), 숏드라마 레진 스낵"
+    },
+    {
+     "id": "pinkfong",
+     "name": "더핑크퐁컴퍼니 (403850)",
+     "desc": "핑크퐁·베베핀, AI 제작 효율화 수혜"
+    },
+    {
+     "id": "mentioned",
+     "name": "그 밖의 언급 기업",
+     "desc": "인뎁스 본문에 숫자·그림과 함께 나온 기업 (네이버웹툰·스캐터랩·Character.AI·디어유·스푼랩스·쿤룬테크 등)"
+    }
+   ]
+  }
+ ]
+}
