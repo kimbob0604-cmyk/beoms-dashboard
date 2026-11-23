@@ -1496,3 +1496,23 @@ details.cs-chain > summary { cursor: pointer; list-style: none; } details.cs-cha
 .sm-stg i { width: 13px; height: 7px; border-radius: 2px; background: var(--chip); }
 .sm-stg i.done { background: color-mix(in srgb, var(--accent) 45%, var(--card)); }
 .sm-stg i.cur { background: var(--accent); }
+
+/* 신고가 카드: 기업 로고 */
+.logo {
+  flex: none; position: relative; width: 38px; height: 38px; border-radius: 12px; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(16,24,40,.06);
+}
+.logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.logo.nologo { background: var(--chip); border-color: transparent; box-shadow: none; }
+.logo.nologo::after { content: attr(data-i); font-size: 15px; font-weight: 800; color: var(--sub); }
+.row:hover .logo { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+@media (max-width: 640px) { .logo { width: 34px; height: 34px; border-radius: 10px; } }
+
+.lg-wrap { flex: none; position: relative; width: 40px; height: 40px; }
+.lg-wrap .logo { width: 40px; height: 40px; }
+.lg-wrap .rank {
+  position: absolute; z-index: 1; top: -6px; left: -6px; width: 19px; height: 19px; min-width: 19px; margin: 0;
+  font-size: 10.5px; border: 2px solid var(--card); box-sizing: content-box;
+}
+@media (max-width: 640px) { .lg-wrap, .lg-wrap .logo { width: 36px; height: 36px; } }

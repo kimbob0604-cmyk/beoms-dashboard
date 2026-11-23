@@ -485,5 +485,13 @@ const Stock = (() => {
   // 행에 붙여 둘 패널 첫 화면용 정보 (이름·시장·시총·가격)
   const hintAttr = s => `data-hint="${U.esc(JSON.stringify({ n: s.n, mk: s.mk, w: s.w, mc: s.mc, p: s.p, ch: s.ch }))}"`;
 
-  return { open, close, link, hintAttr, watchList, toggleWatch };
+  // 카드용 기업 로고(네이버 증권 종목코드별 SVG) + 순위 배지. 로고가 없으면(404) 종목명 첫 글자 원형 배지로 대체
+  function rankLogo(rank, s) {
+    const ini = U.esc([...String(s.n || '?').replace(/^[(（][^)）]*[)）]/, '')][0] || '?');
+    const ok = /^\d{6}$/.test(s.c || '');   // ETF·해외·빈 코드는 요청 없이 바로 글자 배지
+    if (!ok) return `<div class="lg-wrap"><span class="rank">${rank}</span><span class="logo nologo" data-i="${ini}"></span></div>`;
+    return `<div class="lg-wrap"><span class="rank">${rank}</span><span class="logo" data-i="${ini}"><img src="https://ssl.pstatic.net/imgstock/fn/real/logo/stock/Stock${s.c}.svg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.add('nologo');this.remove()"></span></div>`;
+  }
+
+  return { open, close, link, hintAttr, watchList, toggleWatch, rankLogo };
 })();

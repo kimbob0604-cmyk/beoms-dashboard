@@ -147,12 +147,25 @@
     if (!ds.length) return ymd(d.source.date);
     return ds[0] === ds[ds.length - 1] ? ymd(ds[0]) : `${ymd(ds[0])}~${ymd(ds[ds.length - 1])}`;
   };
-  const srcLine = d => d.source.kind === 'multi' ? `리포트 ${d.source.n}건 종합 (${esc(d.source.houses || '')}) · ${esc(dateSpan(d))}` : d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(dateSpan(d))}`;
+  // 증권사 배지: 이름 → 짧은 글자·대표색 근사. 로고 이미지가 아니라 글자 배지라서 새 증권사가 늘어도 이름만 추가하면 된다
+  const BK = {
+    '하나': ['하나', '#008485'], '미래에셋': ['미래', '#F58220'], 'NH': ['NH', '#1D6FB8'], '교보': ['교보', '#1B4F9C'], '키움': ['키움', '#E5005B'],
+    'KB': ['KB', '#F2B700', '#2b2b2b'], '메리츠': ['메리', '#E8501B'], 'LS': ['LS', '#D31A2B'], 'iM': ['iM', '#00A99D'], 'DS': ['DS', '#1A4B8F'],
+    '신한': ['신한', '#0046FF'], '삼성': ['삼성', '#1428A0'], '상상인': ['상상', '#D81E2C'], '현대차': ['현차', '#002C5F'], 'IBK': ['IBK', '#0072BC'],
+    '유진': ['유진', '#00964A'], '한투': ['한투', '#D6006D'], 'BNK': ['BNK', '#D4002A'], '유안타': ['유안', '#6B3A12'], '대신': ['대신', '#00539F'],
+    '흥국': ['흥국', '#C8102E'], '다올': ['다올', '#0098C8'], 'DB': ['DB', '#00A055'],
+  };
+  const BK_ALIAS = { '한국투자': '한투', '한국투자증권': '한투', '현대차증권': '현대차', '하나증권': '하나', '유안타증권': '유안타', '다올투자증권': '다올', '대신증권': '대신' };
+  const bkKey = n => { const t = String(n || '').trim(); return BK_ALIAS[t] || (BK[t] ? t : null) || (BK[t.replace(/(투자)?증권$/, '')] ? t.replace(/(투자)?증권$/, '') : null); };
+  const bkBadge = n => { const k = bkKey(n); if (!k) return ''; const [t, bg, fg] = BK[k]; return `<span class="bk-logo" style="--bk:${bg};${fg ? `--bkf:${fg}` : ''}" title="${esc(k)}">${t}</span>`; };
+  const BK_RE = new RegExp(`(?<![A-Za-z가-힣])(${[...Object.keys(BK), ...Object.keys(BK_ALIAS)].sort((a, b) => b.length - a.length).join('|')})(?![A-Za-z]|[가-힣](?<!증권|투자|금융))`, 'g');
+  const bkRow = text => { const ks = [...new Set([...String(text || '').matchAll(BK_RE)].map(m => m[1]))]; return ks.length ? `<span class="bk-row">${ks.slice(0, 7).map(bkBadge).join('')}${ks.length > 7 ? `<small class="muted">+${ks.length - 7}</small>` : ''}</span>` : ''; };
+  const srcLine = d => d.source.kind === 'multi' ? `${bkRow(d.source.houses)}리포트 ${d.source.n}건 종합 (${esc(d.source.houses || '')}) · ${esc(dateSpan(d))}` : d.source.kind === 'book' ? `${esc(d.source.author)} 지음 · 책` : `${bkBadge(d.source.broker)}${esc(d.source.broker)} ${esc(d.source.author || '')} · ${esc(dateSpan(d))}`;
   const reportList = d => {
     const rs = reportsOf(d);
     if (!rs.length) return '';
     return `<section class="card col"><h3>리포트 ${rs.length}건 <small class="muted">표지 발간일 순</small></h3><ul class="sd-reps">${rs.map(r =>
-      `<li><b class="sd-date">${esc(ymd(r.date))}</b> <span>${FLOW_IX[d.sector] ? `<a href="?r=${encodeURIComponent(r.key)}">${esc(r.house)}</a>` : esc(r.house)}${r.analyst ? ' ' + esc(r.analyst) : ''}</span> <span class="muted">${esc(r.title)}</span></li>`).join('')}</ul></section>`;
+      `<li><b class="sd-date">${esc(ymd(r.date))}</b> <span>${bkBadge(r.house)}${FLOW_IX[d.sector] ? `<a href="?r=${encodeURIComponent(r.key)}">${esc(r.house)}</a>` : esc(r.house)}${r.analyst ? ' ' + esc(r.analyst) : ''}</span> <span class="muted">${esc(r.title)}</span></li>`).join('')}</ul></section>`;
   };
   const figLabel = f => `${f.part || f.date ? '[' + esc([f.part, ymd(f.date)].filter(Boolean).join(' · ')) + '] ' : ''}${f.no === '' ? '' : /^[^\d]/.test(f.no) ? `&lt;${esc(f.no)}&gt; ` : `&lt;${f.kind === 'fig' ? '그림' : '표'}${/-/.test(f.no) ? ' ' : ''}${f.no}&gt; `}${esc(f.title)}`;
 

@@ -301,7 +301,7 @@
     const v = pick(s);
     const [mName, mult] = METRICS[state.metric];
     return `<article class="row" ${Stock.hintAttr(s)}>
-      <span class="rank">${rank}</span>
+      ${Stock.rankLogo(rank, s)}
       <div class="r-main">
         <div class="r-top">
           <div class="r-name">${naverLink(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span>${streakBadge(s)}</div>

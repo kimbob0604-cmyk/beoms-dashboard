@@ -109,7 +109,7 @@
   function rowHtml(s, rank, recent) {
     const gx = s.gx;
     return `<article class="row" ${Stock.hintAttr(s)}>
-      <span class="rank">${rank}</span>
+      ${Stock.rankLogo(rank, s)}
       <div class="r-main">
         <div class="r-top">
           <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}

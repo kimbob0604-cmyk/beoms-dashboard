@@ -140,7 +140,7 @@
     const e = est(s), r = e[st.per], prev = prevOf(e.now, r);
     const g = s.k.y0?.op;
     return `<article class="row" ${Stock.hintAttr(s)}>
-      <span class="rank">${rank}</span>
+      ${Stock.rankLogo(rank, s)}
       <div class="r-main">
         <div class="r-top">
           <div class="r-name">${Stock.link(s)}${s.w ? `<span class="tag">${U.esc(s.w)}</span>` : ''}<span class="muted">${U.eok(s.mc)}</span></div>
