@@ -3,6 +3,304 @@
  "sector": "company",
  "children": [
   {
+   "id": "semi",
+   "name": "반도체",
+   "children": [
+    {
+     "id": "samsung-elec",
+     "name": "삼성전자 (005930)"
+    },
+    {
+     "id": "skhynix",
+     "name": "SK하이닉스 (000660)"
+    },
+    {
+     "id": "semco",
+     "name": "삼성전기 (009150)"
+    },
+    {
+     "id": "isu-petasys",
+     "name": "이수페타시스 (007660)"
+    },
+    {
+     "id": "daeduk",
+     "name": "대덕전자 (353200)"
+    },
+    {
+     "id": "simmtech",
+     "name": "심텍 (222800)"
+    },
+    {
+     "id": "sfa-semi",
+     "name": "SFA반도체 (036540)"
+    }
+   ]
+  },
+  {
+   "id": "bio",
+   "name": "바이오",
+   "children": [
+    {
+     "id": "hanmi-pharm",
+     "name": "한미약품 (128940)"
+    },
+    {
+     "id": "celltrion",
+     "name": "셀트리온 (068270)"
+    },
+    {
+     "id": "sk-biopharm",
+     "name": "SK바이오팜 (326030)"
+    },
+    {
+     "id": "alteogen",
+     "name": "알테오젠 (196170)"
+    },
+    {
+     "id": "samsung-biologics",
+     "name": "삼성바이오로직스 (207940)"
+    },
+    {
+     "id": "hanall",
+     "name": "한올바이오파마 (009420)"
+    },
+    {
+     "id": "olix",
+     "name": "올릭스 (226950)"
+    },
+    {
+     "id": "yuhan",
+     "name": "유한양행 (000100)"
+    },
+    {
+     "id": "gc-pharma",
+     "name": "녹십자 (006280)"
+    },
+    {
+     "id": "hlb",
+     "name": "HLB (028300)"
+    },
+    {
+     "id": "hk-inno-n",
+     "name": "HK이노엔 (195940)"
+    },
+    {
+     "id": "ablbio",
+     "name": "에이비엘바이오 (298380)"
+    },
+    {
+     "id": "stpharm",
+     "name": "에스티팜 (237690)"
+    }
+   ]
+  },
+  {
+   "id": "energy",
+   "name": "2차전지·에너지",
+   "children": [
+    {
+     "id": "samsung-sdi",
+     "name": "삼성SDI (006400)"
+    },
+    {
+     "id": "lges",
+     "name": "LG에너지솔루션 (373220)"
+    },
+    {
+     "id": "sk-innovation",
+     "name": "SK이노베이션 (SK온) (096770)"
+    },
+    {
+     "id": "s-oil",
+     "name": "S-Oil (010950)"
+    },
+    {
+     "id": "lnf",
+     "name": "엘앤에프 (066970)"
+    },
+    {
+     "id": "posco-fm",
+     "name": "포스코퓨처엠 (003670)"
+    },
+    {
+     "id": "lg-chem",
+     "name": "LG화학 (051910)"
+    },
+    {
+     "id": "lotte-em",
+     "name": "롯데에너지머티리얼즈 (020150)"
+    },
+    {
+     "id": "hyosung-tnc",
+     "name": "효성티앤씨 (298020)"
+    },
+    {
+     "id": "ecopro-bm",
+     "name": "에코프로비엠 (247540)"
+    },
+    {
+     "id": "skc",
+     "name": "SKC (011790)"
+    }
+   ]
+  },
+  {
+   "id": "power",
+   "name": "전력·원전·신재생",
+   "children": [
+    {
+     "id": "doosan-enb",
+     "name": "두산에너빌리티 (034020)"
+    },
+    {
+     "id": "kepco",
+     "name": "한국전력 (015760)"
+    },
+    {
+     "id": "hanwha-sol",
+     "name": "한화솔루션 (009830)"
+    },
+    {
+     "id": "hyosung-hi",
+     "name": "효성중공업 (298040)"
+    },
+    {
+     "id": "hd-elec",
+     "name": "HD현대일렉트릭 (267260)"
+    },
+    {
+     "id": "ls-electric",
+     "name": "LS일렉트릭 (010120)"
+    },
+    {
+     "id": "oci-h",
+     "name": "OCI홀딩스 (010060)"
+    },
+    {
+     "id": "iljin-elec",
+     "name": "일진전기 (103590)"
+    },
+    {
+     "id": "hd-es",
+     "name": "HD현대에너지솔루션 (322000)"
+    },
+    {
+     "id": "cs-wind",
+     "name": "씨에스윈드 (112610)"
+    },
+    {
+     "id": "sk-gas",
+     "name": "SK가스 (018670)"
+    },
+    {
+     "id": "bhi",
+     "name": "비에이치아이 (083650)"
+    },
+    {
+     "id": "sanil",
+     "name": "산일전기 (062040)"
+    }
+   ]
+  },
+  {
+   "id": "cons",
+   "name": "소비재",
+   "children": [
+    {
+     "id": "samyang-foods",
+     "name": "삼양식품 (003230)"
+    },
+    {
+     "id": "ktng",
+     "name": "KT&G (033780)"
+    },
+    {
+     "id": "hyundai-dept",
+     "name": "현대백화점 (069960)"
+    },
+    {
+     "id": "lotte-shopping",
+     "name": "롯데쇼핑 (023530)"
+    },
+    {
+     "id": "orion-kr",
+     "name": "오리온 (271560)"
+    },
+    {
+     "id": "lotte-wellfood",
+     "name": "롯데웰푸드 (280360)"
+    },
+    {
+     "id": "amorepacific",
+     "name": "아모레퍼시픽 (090430)"
+    },
+    {
+     "id": "bgf-retail",
+     "name": "BGF리테일 (282330)"
+    },
+    {
+     "id": "cosmax",
+     "name": "코스맥스 (192820)"
+    },
+    {
+     "id": "nongshim",
+     "name": "농심 (004370)"
+    },
+    {
+     "id": "cj-cheiljedang",
+     "name": "CJ제일제당 (097950)"
+    },
+    {
+     "id": "shinsegae",
+     "name": "신세계 (004170)"
+    },
+    {
+     "id": "apr",
+     "name": "에이피알 (278470)"
+    },
+    {
+     "id": "lotte-chilsung",
+     "name": "롯데칠성 (005300)"
+    },
+    {
+     "id": "emart",
+     "name": "이마트 (139480)"
+    },
+    {
+     "id": "gs-retail",
+     "name": "GS리테일 (007070)"
+    },
+    {
+     "id": "fnf",
+     "name": "F&F (383220)"
+    },
+    {
+     "id": "cj-freshway",
+     "name": "CJ프레시웨이 (051500)"
+    },
+    {
+     "id": "silicon2",
+     "name": "실리콘투 (257720)"
+    },
+    {
+     "id": "binggrae",
+     "name": "빙그레 (005180)"
+    },
+    {
+     "id": "lg-hh",
+     "name": "LG생활건강 (051900)"
+    },
+    {
+     "id": "hotel-shilla",
+     "name": "호텔신라 (008770)"
+    },
+    {
+     "id": "dalba",
+     "name": "달바글로벌 (483650)"
+    }
+   ]
+  },
+  {
    "id": "media",
    "name": "미디어·엔터·플랫폼",
    "children": [
@@ -30,6 +328,406 @@
      "id": "mentioned",
      "name": "그 밖의 언급 기업",
      "desc": "인뎁스 본문에 숫자·그림과 함께 나온 기업 (네이버웹툰·스캐터랩·Character.AI·디어유·스푼랩스·쿤룬테크 등)"
+    },
+    {
+     "id": "hybe",
+     "name": "하이브 (352820)"
+    },
+    {
+     "id": "skt",
+     "name": "SK텔레콤 (017670)"
+    },
+    {
+     "id": "naver",
+     "name": "NAVER (035420)"
+    },
+    {
+     "id": "kt",
+     "name": "KT (030200)"
+    },
+    {
+     "id": "lguplus",
+     "name": "LG유플러스 (032640)"
+    },
+    {
+     "id": "krafton",
+     "name": "크래프톤 (259960)"
+    },
+    {
+     "id": "sm",
+     "name": "에스엠 (041510)"
+    },
+    {
+     "id": "nhn",
+     "name": "NHN (181710)"
+    },
+    {
+     "id": "jyp",
+     "name": "JYP Ent. (035900)"
+    },
+    {
+     "id": "yg",
+     "name": "와이지엔터테인먼트 (122870)"
+    },
+    {
+     "id": "samsung-sds",
+     "name": "삼성에스디에스 (018260)"
+    },
+    {
+     "id": "ncsoft",
+     "name": "엔씨소프트 (NC) (036570)"
+    },
+    {
+     "id": "netmarble",
+     "name": "넷마블 (251270)"
+    },
+    {
+     "id": "gspnl",
+     "name": "GS피앤엘 (499790)"
+    },
+    {
+     "id": "studio-dragon",
+     "name": "스튜디오드래곤 (253450)"
+    },
+    {
+     "id": "cheil",
+     "name": "제일기획 (030000)"
+    },
+    {
+     "id": "lgcns",
+     "name": "LG CNS (064400)"
+    },
+    {
+     "id": "kakao",
+     "name": "카카오 (035720)"
+    },
+    {
+     "id": "kmw",
+     "name": "KMW (032500)"
+    },
+    {
+     "id": "kakaogames",
+     "name": "카카오게임즈 (293490)"
+    },
+    {
+     "id": "hanatour",
+     "name": "하나투어 (039130)"
+    },
+    {
+     "id": "shiftup",
+     "name": "시프트업 (462870)"
+    },
+    {
+     "id": "paradise",
+     "name": "파라다이스 (034230)"
+    },
+    {
+     "id": "lotte-tour",
+     "name": "롯데관광개발 (032350)"
+    },
+    {
+     "id": "rfhic",
+     "name": "RFHIC (218410)"
+    }
+   ]
+  },
+  {
+   "id": "mobility",
+   "name": "모빌리티·로봇",
+   "children": [
+    {
+     "id": "hyundai-motor",
+     "name": "현대차 (005380)"
+    },
+    {
+     "id": "hyundai-mobis",
+     "name": "현대모비스 (012330)"
+    },
+    {
+     "id": "kia",
+     "name": "기아 (000270)"
+    },
+    {
+     "id": "robotis",
+     "name": "로보티즈 (108490)"
+    },
+    {
+     "id": "hyundai-autoever",
+     "name": "현대오토에버 (307950)"
+    },
+    {
+     "id": "hanon",
+     "name": "한온시스템 (018880)"
+    },
+    {
+     "id": "hankook-tire",
+     "name": "한국타이어앤테크놀로지 (161390)"
+    },
+    {
+     "id": "samhyun",
+     "name": "삼현 (437730)"
+    }
+   ]
+  },
+  {
+   "id": "industrials",
+   "name": "산업재 (건설·운송·조선·철강)",
+   "children": [
+    {
+     "id": "hhi",
+     "name": "HD현대중공업 (329180)"
+    },
+    {
+     "id": "samsung-heavy",
+     "name": "삼성중공업 (010140)"
+    },
+    {
+     "id": "hdec",
+     "name": "현대건설 (000720)"
+    },
+    {
+     "id": "lig-da",
+     "name": "LIG D&A (구 LIG넥스원) (079550)"
+    },
+    {
+     "id": "hanwha-ocean",
+     "name": "한화오션 (042660)"
+    },
+    {
+     "id": "hanwha-aero",
+     "name": "한화에어로스페이스 (012450)"
+    },
+    {
+     "id": "kai",
+     "name": "한국항공우주(KAI) (047810)"
+    },
+    {
+     "id": "gs-enc",
+     "name": "GS건설 (006360)"
+    },
+    {
+     "id": "hyundai-rotem",
+     "name": "현대로템 (064350)"
+    },
+    {
+     "id": "hanwha-systems",
+     "name": "한화시스템 (272210)"
+    },
+    {
+     "id": "samsung-ena",
+     "name": "삼성E&A (028050)"
+    },
+    {
+     "id": "korean-air",
+     "name": "대한항공 (003490)"
+    },
+    {
+     "id": "hyundai-glovis",
+     "name": "현대글로비스 (086280)"
+    },
+    {
+     "id": "seah-besteel-h",
+     "name": "세아베스틸지주 (001430)"
+    },
+    {
+     "id": "hd-marine-sol",
+     "name": "HD현대마린솔루션 (443060)"
+    },
+    {
+     "id": "posco-h",
+     "name": "POSCO홀딩스 (005490)"
+    },
+    {
+     "id": "dl-enc",
+     "name": "DL이앤씨 (375500)"
+    },
+    {
+     "id": "hd-ce",
+     "name": "HD건설기계 (267270)"
+    },
+    {
+     "id": "esr-kendall",
+     "name": "ESR켄달스퀘어리츠 (365550)"
+    },
+    {
+     "id": "dongkuk-steel",
+     "name": "동국제강 (460860)"
+    },
+    {
+     "id": "jin-air",
+     "name": "진에어 (272450)"
+    },
+    {
+     "id": "pan-ocean",
+     "name": "팬오션 (028670)"
+    },
+    {
+     "id": "hmm",
+     "name": "HMM (011200)"
+    },
+    {
+     "id": "hanwha-engine",
+     "name": "한화엔진 (082740)"
+    },
+    {
+     "id": "daewoo-enc",
+     "name": "대우건설 (047040)"
+    },
+    {
+     "id": "hyundai-steel",
+     "name": "현대제철 (004020)"
+    },
+    {
+     "id": "kyeryong-enc",
+     "name": "계룡건설 (013580)"
+    },
+    {
+     "id": "asiana",
+     "name": "아시아나항공 (020560)"
+    }
+   ]
+  },
+  {
+   "id": "fin",
+   "name": "금융",
+   "children": [
+    {
+     "id": "samsung-fire",
+     "name": "삼성화재 (000810)"
+    },
+    {
+     "id": "kb-financial",
+     "name": "KB금융 (105560)"
+    },
+    {
+     "id": "db-ins",
+     "name": "DB손해보험 (005830)"
+    },
+    {
+     "id": "sk-holdings",
+     "name": "SK (034730)"
+    },
+    {
+     "id": "samsung-sec",
+     "name": "삼성증권 (016360)"
+    },
+    {
+     "id": "woori-fg",
+     "name": "우리금융지주 (316140)"
+    },
+    {
+     "id": "samsung-ct",
+     "name": "삼성물산 (028260)"
+    },
+    {
+     "id": "samsung-life",
+     "name": "삼성생명 (032830)"
+    },
+    {
+     "id": "hyundai-marine",
+     "name": "현대해상 (001450)"
+    },
+    {
+     "id": "hanwha-life",
+     "name": "한화생명 (088350)"
+    },
+    {
+     "id": "kiwoom",
+     "name": "키움증권 (039490)"
+    },
+    {
+     "id": "nh-sec",
+     "name": "NH투자증권 (005940)"
+    },
+    {
+     "id": "ls",
+     "name": "LS (006260)"
+    },
+    {
+     "id": "mirae-sec",
+     "name": "미래에셋증권 (006800)"
+    },
+    {
+     "id": "doosan",
+     "name": "두산 (전자BG) (000150)"
+    },
+    {
+     "id": "hanwha-gi",
+     "name": "한화손해보험 (000370)"
+    },
+    {
+     "id": "lg-corp",
+     "name": "LG (003550)"
+    },
+    {
+     "id": "hanwha",
+     "name": "한화 (000880)"
+    },
+    {
+     "id": "hana-fg",
+     "name": "하나금융지주 (086790)"
+    },
+    {
+     "id": "cj",
+     "name": "CJ (001040)"
+    },
+    {
+     "id": "shinhan-fg",
+     "name": "신한지주 (055550)"
+    },
+    {
+     "id": "korea-inv",
+     "name": "한국금융지주 (071050)"
+    },
+    {
+     "id": "sk-square",
+     "name": "SK스퀘어 (402340)"
+    }
+   ]
+  },
+  {
+   "id": "smid",
+   "name": "미드스몰캡",
+   "children": [
+    {
+     "id": "gnc-energy",
+     "name": "지엔씨에너지 (119850)"
+    },
+    {
+     "id": "mirae-corp",
+     "name": "미래산업 (025560)"
+    },
+    {
+     "id": "kona-i",
+     "name": "코나아이 (052400)"
+    },
+    {
+     "id": "uniquest",
+     "name": "유니퀘스트 (077500)"
+    },
+    {
+     "id": "asflow",
+     "name": "아스플로 (159010)"
+    },
+    {
+     "id": "foosung",
+     "name": "후성 (093370)"
+    },
+    {
+     "id": "xi-snd",
+     "name": "자이에스앤디 (317400)"
+    },
+    {
+     "id": "global-technology",
+     "name": "글로벌테크놀로지 (486510)"
+    },
+    {
+     "id": "pnt",
+     "name": "피엔티 (137400)"
+    },
+    {
+     "id": "gc-genome",
+     "name": "지씨지놈 (340450)"
     }
    ]
   }
