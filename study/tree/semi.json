@@ -190,7 +190,7 @@
   },
   {
    "id": "outlook27",
-   "name": "2027 전망 (리포트 16건 종합)",
+   "name": "2027 전망 (리포트 22건 종합)",
    "children": [
     {
      "id": "map",
@@ -236,6 +236,11 @@
      "id": "materials",
      "name": "장비·소재",
      "desc": "전·후공정 장비 성장률·멀티플, 소재 Q 사이클, High-K·HSN·몰리브덴"
+    },
+    {
+     "id": "china",
+     "name": "중국 반도체",
+     "desc": "CXMT·YMTC 캐파·점유율, 자국 장비 50% 의무, 중국 WFE, 자국 AI 칩 HBM 수요(미래에셋)"
     },
     {
      "id": "components",

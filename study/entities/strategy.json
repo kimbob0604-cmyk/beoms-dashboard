@@ -622,5 +622,50 @@
   "name": "원자재 사이클",
   "en": "Commodity cycle",
   "desc": "에너지·귀금속·비철·농산물이 돌아가며 오르는 흐름. LS는 지난 4년 상승 사이클이 에너지 급등으로 마무리될 가능성을 짚는다(금리 인상·달러 강세 재개)."
+ },
+ "c:ai-trust-shock": {
+  "name": "AI 신뢰 쇼크",
+  "en": "AI trust shock",
+  "desc": "2026-11 엔비디아 SEC 회계 조사 보도·지역별 매출 기준 변경·10-Q 제출 지연으로 AI 하드웨어 주가가 이익이 아니라 신뢰·할인율 때문에 빠진 일."
+ },
+ "c:mdd": {
+  "name": "MDD (고점 대비 최대 낙폭)",
+  "en": "Maximum drawdown",
+  "desc": "직전 고점에서 저점까지 빠진 비율. KOSPI는 IMF −64.7%·금융위기 −54.1%·IT버블 −52.7%, 이번 −46.6%(NH)."
+ },
+ "c:stab-fund": {
+  "name": "증권시장안정펀드",
+  "en": "Market stabilization fund",
+  "desc": "정부·금융권이 주식을 사 주는 기금. 한국은 2008년 이후 집행 없음, 대만 NSF는 올해 10번째 개입 승인(NH)."
+ },
+ "c:undershoot": {
+  "name": "언더슈팅",
+  "en": "Undershoot",
+  "desc": "이익은 늘었는데 가격만 빠져 PER·PBR이 역사적 저점 아래로 내려간 상태(대신: PER 3.4배·PBR 0.84배)."
+ },
+ "c:support-zone": {
+  "name": "지지권 (확률가중 저점)",
+  "en": "Support zone",
+  "desc": "파동·되돌림·낙폭·밸류가 같은 자리를 가리키는 가격대. 대신 1차 4,510~4,580P(50%)·2차 4,320~4,400P(40%)."
+ },
+ "c:ai-dc-capacity": {
+  "name": "AI 데이터센터 용량 (GW)",
+  "en": "AI DC capacity",
+  "desc": "세계 AI 서버가 쓰는 전력 용량. SK: 2025년 말 31GW → 2027년 말 102GW."
+ },
+ "c:rent-required": {
+  "name": "필요 임대 매출",
+  "en": "Required rent",
+  "desc": "서버 사업자가 IT 기기 투자를 3년 안에 회수하려고 받아야 하는 연 임대료. SK: 2027 신규분 약 $315B."
+ },
+ "c:consumer-agent": {
+  "name": "Consumer Agent (Meta Muse)",
+  "en": "Consumer agent",
+  "desc": "일정·메일·쇼핑·결제를 대신하는 개인용 AI 에이전트. SK: Muse 2028년 말 ARR Neutral $40B·Good $193B."
+ },
+ "c:bubble-compare": {
+  "name": "버블 비교 (멀티플 주도 vs 이익 주도)",
+  "en": "Bubble comparison",
+  "desc": "닷컴·ARK는 멀티플이 끌어올렸고 AI 랠리는 이익이 끌어올렸다는 한화의 비교."
  }
 }

@@ -421,5 +421,11 @@
   "name": "LNG (액화천연가스)",
   "en": "Liquefied natural gas",
   "desc": "천연가스를 −162℃로 액화해 배로 나르는 가스. JKM(아시아)·TTF(유럽)·Henry Hub(미국) 가격이 따로 움직인다. 이란 사태로 전체 LNG의 20%가 영향을 받았다(LS 원자재 p.32)."
+ },
+ "co:hs-hyosung-am": {
+  "name": "HS효성첨단소재",
+  "en": "HS Hyosung Advanced Materials",
+  "desc": "PET 타이어코드·탄소섬유.",
+  "code": "298050"
  }
 }

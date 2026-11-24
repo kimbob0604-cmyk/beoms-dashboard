@@ -496,5 +496,41 @@
   "en": "Hyein",
   "code": "003010",
   "desc": "CAT 건설기계·엔진·부품 국내 공급. 3.9MW급 이상 비상발전기 국내 점유율 약 15%. 2026-10 현대건설 464억원(20대, 61.5MW) 공급계약(하나 전망포럼, Not Rated)."
+ },
+ "c:supercap": {
+  "name": "슈퍼커패시터 (EDLC·LiC)",
+  "en": "Supercapacitor",
+  "desc": "배터리보다 충방전이 빠르고 수명이 긴 저장장치. 연료전지(Bloom SOFC)의 순간 부하 변동을 받고, 800VDC 랙의 CBU에도 쓰인다. 연료전지용은 중소형 EDLC, CBU는 대형 EDLC와 LiC가 검토된다(메리츠 11/24)."
+ },
+ "c:cbu": {
+  "name": "CBU (Capacitor Backup Unit)",
+  "en": "Capacitor Backup Unit",
+  "desc": "800VDC 데이터센터에서 랙 옆 사이드카 안에 들어가, GPU 부하가 밀리초~초 단위로 오르내리는 변동을 슈퍼커패시터로 완화하는 모듈. 전원이 계통이든 터빈이든 연료전지든 800V 랙마다 붙는다. 셀 기준 1GW당 약 100억원(메리츠 추정)."
+ },
+ "c:pafc": {
+  "name": "PAFC (인산형 연료전지)",
+  "en": "Phosphoric Acid Fuel Cell",
+  "desc": "150~250℃에서 작동하는 연료전지. SOFC보다 효율은 낮지만 가격이 10~20% 싸고 부하 추종이 빠르며 희토류를 거의 안 쓴다. 두산퓨얼셀이 만든다(메리츠 11/24)."
+ },
+ "c:social-license": {
+  "name": "주민 수용성 (speed to social license)",
+  "en": "Social license / local acceptance",
+  "desc": "전력 확보 속도(speed to power)에 이어 AI 데이터센터 개발을 늦추는 변수. 주민 반대 이유는 전기요금·대기오염·물·소음이고, 원인의 대부분이 전력 설비라 발전원 선택이 인허가 속도를 좌우한다(메리츠 11/24)."
+ },
+ "c:scandium": {
+  "name": "스칸듐 (산화스칸듐)",
+  "en": "Scandium oxide",
+  "desc": "SOFC 전해질에 넣어 이온전도도를 높이는 희토류. 2025년 세계 생산 약 80톤으로 시장이 작고 Bloom이 최대 수요처다. 1GW당 약 37톤이 필요하다는 추정(메리츠)."
+ },
+ "co:softbank": {
+  "name": "소프트뱅크",
+  "en": "SoftBank Group",
+  "desc": "미국 AI 데이터센터용 가스터빈 9.2GW 슬롯을 2026.5 GE 버노바 등에 예약했다가 11월 조달계획 변경으로 37억 달러 손실을 공개했다(SK 11/23)."
+ },
+ "co:vinatech": {
+  "name": "비나텍",
+  "en": "VINATech",
+  "code": "126340",
+  "desc": "슈퍼커패시터 셀 제조. Bloom Energy SOFC에 셀을 공급하는 메인 벤더(연료전지 매출 비중 80% 이상). 2026.6 베트남 공장 화재, 신규 흥옌 공장 가동. DS Top Pick(매수 15만원)·메리츠 Not Rated(11/24)."
  }
 }

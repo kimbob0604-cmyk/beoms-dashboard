@@ -632,5 +632,36 @@
    "c": "237690"
   },
   "desc": "올리고핵산 원료(CDMO) 회사. KB 2027 Buy(목표 15만 원)."
+ },
+ "c:binsa": {
+  "name": "BINSA (바이오기술 투자 국가안보법)",
+  "en": "Biotechnology Investment National Security Act (bill)",
+  "desc": "2026.6 미국에서 발의된 법안. COINS Act 규제 대상에 바이오 기술을 넣어, 미국 기업이 중국 기업에서 라이선스를 들여오는 것도 재무부 심사를 받게 한다(SK)."
+ },
+ "c:fic": {
+  "name": "First in Class (계열 내 최초)",
+  "en": "First-in-class",
+  "desc": "처음 보는 표적·기전으로 만든 약. 이미 검증된 표적을 빨리 따라가는 Fast Follower·Me-too 와 반대. SK는 중국 신약 후보의 FIC 비중이 약 19%(빅파마가 사 간 중국 파이프라인은 10.5%)라, 다음 기준은 '얼마나 새로운가'라고 본다."
+ },
+ "co:samyang-biopharm": {
+  "name": "삼양바이오팜",
+  "en": "Samyang Biopharm",
+  "desc": "SK가 차세대 모달리티 — 'RNA 치료제의 한계에 도전하는' 혁신 기업으로 꼽은 회사(SK p.147)."
+ },
+ "co:algenomics": {
+  "name": "알지노믹스",
+  "en": "Rznomics",
+  "desc": "SK가 차세대 모달리티(RNA) 혁신 기업으로 꼽은 회사(SK p.147). 하나: 2026.11.18 코스닥150 편입."
+ },
+ "co:oscotec": {
+  "name": "오스코텍",
+  "en": "Oscotec",
+  "code": "039200",
+  "desc": "KB 2026년 국내 기술이전 표에 Agios–오스코텍. SK가 First in Class 혁신 기업으로 꼽은 회사(SK p.147)."
+ },
+ "co:kanaph": {
+  "name": "카나프테라퓨틱스",
+  "en": "Kanaph Therapeutics",
+  "desc": "SK가 First in Class 혁신 기업으로 꼽은 회사(SK p.147)."
  }
 }
