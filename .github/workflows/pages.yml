@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 15
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy2.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,5 +36,14 @@ jobs:
         with:
           path: .
           retention-days: 1
+      # 업로드 직후 deploy-pages 가 아티팩트 목록을 조회하면 아직 등록 전이라
+      # 'No artifacts named "github-pages"' 로 실패할 때가 있다(2026-11-24 기준 25회 중 9회).
+      # 이 오류는 배포를 만들기 전에 나므로, 잠깐 기다렸다 한 번 더 부르면 된다.
       - id: deploy
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - if: steps.deploy.outcome == 'failure'
+        run: sleep 15
+      - id: deploy2
+        if: steps.deploy.outcome == 'failure'
         uses: actions/deploy-pages@v4
