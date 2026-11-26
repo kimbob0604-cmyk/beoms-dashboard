@@ -532,5 +532,25 @@
   "en": "VINATech",
   "code": "126340",
   "desc": "슈퍼커패시터 셀 제조. Bloom Energy SOFC에 셀을 공급하는 메인 벤더(연료전지 매출 비중 80% 이상). 2026.6 베트남 공장 화재, 신규 흥옌 공장 가동. DS Top Pick(매수 15만원)·메리츠 Not Rated(11/24)."
+ },
+ "c:vpl": {
+  "name": "VPL (가상송전망 ESS)",
+  "en": "Virtual Power Line",
+  "desc": "송전선 양끝의 ESS를 함께 충·방전해 혼잡한 시간·위치의 흐름을 한도 안으로 맞추는 방식. 새 선로 없이 기존 선로를 더 쓰게 한다."
+ },
+ "c:gfm": {
+  "name": "GFM (Grid-Forming)",
+  "en": "Grid-Forming inverter",
+  "desc": "인버터가 스스로 전압·주파수 기준을 만들어 약한 계통을 버티게 하는 PCS 제어 기능. 별도 설비가 아니라 PCS의 기능이다."
+ },
+ "c:fast-bess": {
+  "name": "Fast BESS",
+  "en": "Fast-response BESS",
+  "desc": "수백 ms 안에 큰 출력을 내는 계통용 배터리. 저장 시간(MWh)보다 출력(MW)과 응답 속도가 핵심이다."
+ },
+ "c:central-contract": {
+  "name": "중앙계약시장 (장기 ESS)",
+  "en": "Central contract market",
+  "desc": "전력거래소 입찰로 장주기 ESS 사업자를 뽑고 15년 고정 수익을 주는 국내 시장."
  }
 }

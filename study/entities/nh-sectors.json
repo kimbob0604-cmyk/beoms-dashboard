@@ -1374,5 +1374,106 @@
   "name": "Value & Growth Universe (LS)",
   "en": "Value & Growth Universe",
   "desc": "LS증권 Mid-Small cap 팀이 월간으로 관리하는 중소형 투자유망 20종목. Value Part = 안정적 현금흐름·Valuation 메리트, Growth Part = 중장기 Core 경쟁력·시장 트렌드 부합."
+ },
+ "c:vla": {
+  "name": "VLA (시각·언어·행동 모델)",
+  "en": "Vision-Language-Action",
+  "desc": "카메라 영상과 말로 된 지시를 보고 로봇 동작을 바로 만들어 내는 모델. 2024년 학회 논문 언급 0.03% → 2026년 9.9%로 가장 크게 늘었다(유진)."
+ },
+ "c:qdd": {
+  "name": "QDD (준직접구동 액추에이터)",
+  "en": "Quasi-Direct Drive",
+  "desc": "고토크 모터에 낮은 감속비(6~10:1)를 붙인 구동기. 외력에 순응하고 충격에 강하며 단순하지만 토크 밀도는 낮다. 유진은 연구 단계에 최적화된 방식이라 본다."
+ },
+ "c:mtbi": {
+  "name": "MTBI (평균 개입 간격)",
+  "en": "Mean Time Between Interventions",
+  "desc": "사람이 개입하는 사이에 로봇이 혼자 일한 평균 시간. Walden(토요타) 340초, BD(현대차) 약 20분에 1회. 휴머노이드 상용화의 새 지표다."
+ },
+ "c:sim2real": {
+  "name": "Sim2Real (시뮬레이션 → 실물 격차)",
+  "en": "Sim-to-real gap",
+  "desc": "시뮬레이션에서 배운 정책이 실제 로봇에서 성능이 떨어지는 문제. 열·마모로 액추에이터 특성이 시간에 따라 변하는 것도 원인이다."
+ },
+ "c:wheel-base": {
+  "name": "휠 베이스 휴머노이드",
+  "en": "Wheeled humanoid",
+  "desc": "다리 대신 바퀴·승강축을 쓰는 휴머노이드. 유진 설계로 이족보행보다 가동 시간 3.9배, 부품값 약 11% 낮다."
+ },
+ "c:robot-hand": {
+  "name": "로봇 핸드",
+  "en": "Robot hand",
+  "desc": "휴머노이드의 손. 직구동·텐던·링키지 방식이 공존하고 BD는 13자유도, 테슬라는 약 22자유도다. 핸드 가격 목표는 휴머노이드의 20%."
+ },
+ "c:tactile": {
+  "name": "촉각 센서",
+  "en": "Tactile sensor",
+  "desc": "접촉·힘을 재는 센서. 광학·자기·압저항·정전용량·압전형이 있고 규격이 없어 양산 로봇 탑재는 아직 멀다."
+ },
+ "c:bass-model": {
+  "name": "Bass 확산 모형",
+  "en": "Bass diffusion",
+  "desc": "신제품이 S자 곡선으로 퍼지는 모형. 유진은 p 0.0075·q 0.27로 10→90% 도달 약 15년을 가정한다."
+ },
+ "c:roi-hurdle": {
+  "name": "고객 ROI 허들",
+  "en": "ROI hurdle",
+  "desc": "연 절감 인건비 ÷ 연 로봇 비용이 이 배수를 넘어야 도입한다는 가정. 유진 Base 1.75배(Bear 2.0·Bull 1.5)."
+ },
+ "co:google-deepmind": {
+  "name": "구글 딥마인드",
+  "en": "Google DeepMind",
+  "desc": "Gemini Robotics 계열을 만든다. BD 아틀라스·Apptronik와 협력하며 로봇 AI 플랫폼을 노린다."
+ },
+ "co:physical-intelligence": {
+  "name": "피지컬 인텔리전스",
+  "en": "Physical Intelligence",
+  "desc": "π0 계열 로봇 파운데이션 모델을 만드는 스타트업."
+ },
+ "co:wonik-robotics": {
+  "name": "원익로보틱스",
+  "en": "Wonik Robotics",
+  "desc": "Allegro Hand를 만드는 로봇 핸드 회사(비상장). 국민성장펀드 로봇 1호."
+ },
+ "co:aidin-robotics": {
+  "name": "에이딘로보틱스",
+  "en": "Aidin Robotics",
+  "desc": "힘·토크 센서와 촉각 센서 회사(비상장). 2027년 8월 코스닥 상장 목표."
+ },
+ "co:cmes": {
+  "name": "씨메스로보틱스",
+  "en": "CMES Robotics",
+  "desc": "비전·AI 기반 작업 단위 어플리케이션을 만드는 로봇 SI 회사."
+ },
+ "co:bigwave": {
+  "name": "빅웨이브로보틱스",
+  "en": "Bigwave Robotics",
+  "desc": "서비스 로봇 통합 제어(솔링크)와 도입 채널(마로솔)을 가진 회사."
+ },
+ "co:hl-mando": {
+  "name": "HL만도",
+  "en": "HL Mando",
+  "desc": "국내 상장 샤시·제동·조향 부품사(204320). 4족보행 로봇용 액추에이터를 양산해 왔고(관련 매출 150~180억원) 북미 휴머노이드 고객과 사양을 협의 중이다. IBK 매수 54,000원(하향), 시총 1.606조원(11/24).",
+  "code": "204320"
+ },
+ "c:erev": {
+  "name": "EREV(주행거리 연장 전기차)",
+  "en": "Extended Range EV",
+  "desc": "엔진은 발전만 하고 바퀴는 모터가 굴리는 차. 배터리를 BEV의 절반 이하로 줄여 값을 낮추고 장거리를 달린다. 중국 시장은 2021년 10.5만 대 → 2025년 123.5만 대(유진). 현대차는 2027년 상반기 미국에서 싼타페 EREV를 낸다."
+ },
+ "c:rmac": {
+  "name": "RMAC(Robot Metaplant Application Center)",
+  "en": "RMAC",
+  "desc": "2026년 9월 현대차그룹 조지아 공장(HMGMA) 안에 연 Atlas 훈련·검증 시설. 2027년 규모를 약 10배로 키울 계획이고 2028년부터 Atlas가 공장 부품 분류·서열 작업에 들어간다(유진)."
+ },
+ "co:ubtech": {
+  "name": "UBTECH (优必选)",
+  "en": "UBTech Robotics",
+  "desc": "중국 선전의 휴머노이드 업체(9880 HK). 2026년 상반기 매출 12.69억 위안(+104%), 풀사이즈 휴머노이드가 46.5%. 2025년 풀사이즈 1,079대 출하, 적자 지속(IBK)."
+ },
+ "c:cathode-cycle": {
+  "name": "양극재 투자 사이클(선례)",
+  "en": "Cathode investment cycle",
+  "desc": "IBK가 휴머노이드 부품주를 읽는 잣대. 양극재는 기대 형성(2018~19) → 공급망 진입(2020~21) → 양산 확대(2021~22) → 실적 성장(2022~23) → 검증·조정(2023~25) 순서였고, 수주에서 실적까지 약 1~3년 걸렸다."
  }
 }

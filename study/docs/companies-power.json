@@ -5,7 +5,7 @@
  "source": {
   "kind": "multi",
   "n": 12,
-  "houses": "미래에셋·DS·메리츠·하나·신한·교보·KB·LS·NH·상상인·DB·iM",
+  "houses": "미래에셋·DS·메리츠·하나·신한·교보·KB·LS·NH·상상인·DB·iM·유진(11/25 한국전력)",
   "date": "2026-11-06 ~ 11-24",
   "pages": 0,
   "broker": "",
@@ -61,7 +61,8 @@
    "rg-14968",
    "rg-14983",
    "rg-15010",
-   "rg-15013"
+   "rg-15013",
+   "rg-15047"
   ]
  },
  "done": [
@@ -79,7 +80,7 @@
  },
  "topics": [
   {
-   "node": "company/power/doosan-enb",
+   "node": "company/power/gen/doosan-enb",
    "title": "두산에너빌리티 — 원전 선발주 1순위 수혜, 하우스 7곳 모두 매수. 시총 약 16배 영업이익(NH 기준)",
    "summary": {
     "points": [
@@ -251,7 +252,7 @@
    ]
   },
   {
-   "node": "company/power/kepco",
+   "node": "company/power/util/kepco",
    "title": "한국전력 — 2027F 영업이익이 하우스마다 4.1~11.2조원, 목표주가는 PBR 0.4~0.52배",
    "summary": {
     "points": [
@@ -268,6 +269,7 @@
      "t": "sec",
      "h": "① 한눈에 — 한국전력 (015760)",
      "body": [
+      "유진 26.11.24: BUY 4만원(유지), 2027E 영업이익 2.94조원(−44%), 세전 적자전환 — 하우스 중 가장 낮다. 시총 15.95조원(11/23, 24,850원), 필자 계산 시총 ÷ 영업이익 = 5.4배.",
       "사업: 송배전·판매 독점 공기업. 한전채 한도 특례가 2027년 말 일몰.",
       "DS 26.11.10: 중립 3.3만원. 미국은 수익자 부담과 CWIP 조기 산입이 있는데 한전은 없어, 재평가 조건은 세 가지라고 봄.",
       "하나 26.11.06: 2027년 규제는 \"승자 없는 규제\" — 패자는 한전·비수도권 발전이 분명. 소매요금 차등을 인하만으로 설계해 주택용 정상화 기회를 놓쳤다고 비판.",
@@ -291,7 +293,8 @@
       "목표주가: 교보 3.8만(10/23) · 신한 4만(11/4) · 메리츠 4.6만(11/5) · 하나 4만(11/5) · DS 3.3만원(11/10, 중립). 하나 해외·상상인·NH 는 2027F 추정을 내지 않음.",
       "PBR 근거: 메리츠 0.52배(ROE 10.7% 회귀 + 원전 프리미엄 10%) × BPS 88,825원, 신한 0.48배 × 81,823원, 교보 0.46배 × 82,575원, DS 0.4배(지속가능 ROE 3.6% ÷ 자기자본비용 9.0%) × 83,142원.",
       "견해 차이: 2027F 영업이익이 컨센서스 10.29조원(하나 인용)보다 낮게 본 곳 셋, 비슷하거나 높게 본 곳 둘. 메리츠는 본문 8.4조(−5.2%)와 표 11.15조원(+24.9%)이 달라 표 값을 씀.",
-      "견해 차이: Dubai 2027F 신한 유틸 90달러 vs 메리츠 82.8달러(2026F 95 · 93.9달러)."
+      "견해 차이: Dubai 2027F 신한 유틸 90달러 vs 메리츠 82.8달러(2026F 95 · 93.9달러).",
+      "2027F 영업이익(조원): 유진 2.94 — 기존 범위(4.1~11.2조원) 아래로 넓어졌다(신한 유틸 4.10 → 유진 2.94). 목표주가 유진 4만원(유지)."
      ],
      "tags": [
       "co:kepco",
@@ -301,7 +304,7 @@
       "c:lmp",
       "c:rppa"
      ],
-     "src": "power-2027 · 투자의견 표 · 교보 p.61 · 메리츠 p.33·74"
+     "src": "power-2027 · 투자의견 표 · 교보 p.61 · 메리츠 p.33·74 · 유진 p.77"
     },
     {
      "t": "calc",
@@ -401,7 +404,7 @@
    ]
   },
   {
-   "node": "company/power/hanwha-sol",
+   "node": "company/power/renew/hanwha-sol",
    "title": "한화솔루션 — 미국 모듈 가격이 이익을 가르는 태양광 대표주. 시총 약 3.7~5.4배 영업이익, 빚 포함 EV 로는 약 14배",
    "summary": {
     "points": [
@@ -590,7 +593,7 @@
    ]
   },
   {
-   "node": "company/power/hyosung-hi",
+   "node": "company/power/grid/hyosung-hi",
    "title": "효성중공업 — 미국 765kV·북미 수주 믹스의 최선호, 세 하우스 모두 매수. 시총 약 9.5배 영업이익(미래 기준)",
    "summary": {
     "points": [
@@ -722,7 +725,7 @@
    ]
   },
   {
-   "node": "company/power/hd-elec",
+   "node": "company/power/grid/hd-elec",
    "title": "HD현대일렉트릭 — 같은 회사 목표가가 47.2만~101만원, 배전 확대를 보는 눈이 갈림. 시총 약 9.9배 영업이익(NH 기준)",
    "summary": {
     "points": [
@@ -852,7 +855,7 @@
    ]
   },
   {
-   "node": "company/power/ls-electric",
+   "node": "company/power/grid/ls-electric",
    "title": "LS ELECTRIC — 국내 전력기기 중 가장 비싼 PER(약 16배), 데이터센터 수주가 절반. 시총 약 13.8배 영업이익(KB 기준)",
    "summary": {
     "points": [
@@ -963,7 +966,7 @@
    ]
   },
   {
-   "node": "company/power/oci-h",
+   "node": "company/power/renew/oci-h",
    "title": "OCI홀딩스 — 비중국 폴리실리콘이 희소해지는 태양광 Top pick, 4곳 모두 매수. 시총 약 6.0~6.4배 영업이익(미래·iM·DB 기준)",
    "summary": {
     "points": [
@@ -1105,7 +1108,7 @@
    ]
   },
   {
-   "node": "company/power/iljin-elec",
+   "node": "company/power/grid/iljin-elec",
    "title": "일진전기 — 1티어의 내수 이탈로 345kV 점유 100%, 미래 전력 최선호. 시총 약 7.9배 영업이익",
    "summary": {
     "points": [
@@ -1194,7 +1197,7 @@
    ]
   },
   {
-   "node": "company/power/hd-es",
+   "node": "company/power/renew/hd-es",
    "title": "HD현대에너지솔루션 — 탄소검증 1등급 640W 이상 유일, 미래 Top pick. 시총 약 5.8배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -1306,7 +1309,7 @@
    ]
   },
   {
-   "node": "company/power/cs-wind",
+   "node": "company/power/renew/cs-wind",
    "title": "씨에스윈드 — 미국 육상풍력 타워 수혜, DS Top Pick. 시총 약 5.4~5.7배 영업이익",
    "summary": {
     "points": [
@@ -1429,7 +1432,7 @@
    ]
   },
   {
-   "node": "company/power/sk-gas",
+   "node": "company/power/util/sk-gas",
    "title": "SK가스 — 하우스 3곳이 모두 매수, LNG-LPG 스프레드가 추가 이익. 시총 약 3.7배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -1516,7 +1519,7 @@
    ]
   },
   {
-   "node": "company/power/bhi",
+   "node": "company/power/gen/bhi",
    "title": "비에이치아이 — 배열회수보일러(HRSG) 발전 기자재, 신한 목표 8만원. 시총 약 5.7배 영업이익(컨센서스)",
    "summary": {
     "points": [
@@ -1583,7 +1586,7 @@
    ]
   },
   {
-   "node": "company/power/sanil",
+   "node": "company/power/grid/sanil",
    "title": "산일전기 — DS 커버리지 개시, 2028년 154kV 초고압 양산. 시총 약 10.1배 영업이익(DS 기준)",
    "summary": {
     "points": [
@@ -1653,7 +1656,7 @@
    ]
   },
   {
-   "node": "company/power/doosan-fc",
+   "node": "company/power/gen/doosan-fc",
    "title": "두산퓨얼셀 — 미국 데이터센터 PAFC 수주로 2027년 매출이 두 배, 메리츠 Buy 4.1만원(37% 하향). 영업이익은 메리츠 22억 vs DS 89억",
    "summary": {
     "points": [
@@ -1919,7 +1922,7 @@
    ]
   },
   {
-   "node": "company/power/vinatech",
+   "node": "company/power/renew/vinatech",
    "title": "비나텍 — Bloom 연료전지 슈퍼커패시터 메인 벤더, DS Top Pick(매수 15만원)·메리츠 NR. 시총 약 17배 영업이익(DS 기준)",
    "summary": {
     "points": [

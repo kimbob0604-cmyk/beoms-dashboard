@@ -2259,7 +2259,7 @@
       "co:hotel-shilla"
      ],
      "src": "SK 나승두 p.218~222",
-     "add": "SK 호텔은 종목 의견·목표주가가 없고 NH의 호텔신라 의견은 소비재 문서(cons-2027)에 있어 같은 문서에서 맞대지 않는다. 호텔신라 기업 노드는 `company/cons/hotel-shilla`."
+     "add": "SK 호텔은 종목 의견·목표주가가 없고 NH의 호텔신라 의견은 소비재 문서(cons-2027)에 있어 같은 문서에서 맞대지 않는다. 호텔신라 기업 노드는 `company/cons/retail/hotel-shilla`."
     },
     {
      "t": "tbl",

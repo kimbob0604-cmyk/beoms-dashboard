@@ -32,7 +32,7 @@
  },
  "topics": [
   {
-   "node": "company/bio/hanmi-pharm",
+   "node": "company/bio/pharma/hanmi-pharm",
    "title": "한미약품 — 2026 기술료 급등 뒤 정상화, 5개 하우스 모두 톱픽·관심, 시총 약 19.0배 영업이익",
    "summary": {
     "points": [
@@ -226,7 +226,7 @@
    ]
   },
   {
-   "node": "company/bio/celltrion",
+   "node": "company/bio/cdmo/celltrion",
    "title": "셀트리온 — 신제품 고마진 시밀러, 대형 최선호, 시총 약 20.2배 영업이익",
    "summary": {
     "points": [
@@ -401,7 +401,7 @@
    ]
   },
   {
-   "node": "company/bio/sk-biopharm",
+   "node": "company/bio/pharma/sk-biopharm",
    "title": "SK바이오팜 — 엑스코프리 한 제품 회사, 오파칼림 가치를 얹느냐가 12만~16만원을 가름, 시총 약 14.9배 영업이익",
    "summary": {
     "points": [
@@ -562,7 +562,7 @@
    ]
   },
   {
-   "node": "company/bio/alteogen",
+   "node": "company/bio/biotech/alteogen",
    "title": "알테오젠 — 키트루다 SC 효소 플랫폼, 하나 단독 관심종목, 시총 약 29.8배 영업이익",
    "summary": {
     "points": [
@@ -685,7 +685,7 @@
    ]
   },
   {
-   "node": "company/bio/samsung-biologics",
+   "node": "company/bio/cdmo/samsung-biologics",
    "title": "삼성바이오로직스 — 1~4공장 풀가동·5공장 램프업, 다올 200만원·KB 190만원, 시총 약 23.0배 영업이익",
    "summary": {
     "points": [
@@ -828,7 +828,7 @@
    ]
   },
   {
-   "node": "company/bio/hanall",
+   "node": "company/bio/biotech/hanall",
    "title": "한올바이오파마 — 이뮤노반트 시총을 따라가는 바이오텍, NH 최선호, 시총 약 464.1배 영업이익(의미 작음)",
    "summary": {
     "points": [
@@ -940,7 +940,7 @@
    ]
   },
   {
-   "node": "company/bio/olix",
+   "node": "company/bio/biotech/olix",
    "title": "올릭스 — siRNA 딜 기대가 가장 촘촘한 교보 톱픽",
    "summary": {
     "points": [
@@ -1006,7 +1006,7 @@
    ]
   },
   {
-   "node": "company/bio/yuhan",
+   "node": "company/bio/pharma/yuhan",
    "title": "유한양행 — 렉라자 로열티와 마리포사 OS, 시총 약 33.1배 영업이익",
    "summary": {
     "points": [
@@ -1103,7 +1103,7 @@
    ]
   },
   {
-   "node": "company/bio/gc-pharma",
+   "node": "company/bio/pharma/gc-pharma",
    "title": "녹십자 — 알리글로 미국 성장과 기술이전 기저, KB 18만원, 시총 약 13.2배 영업이익",
    "summary": {
     "points": [
@@ -1205,7 +1205,7 @@
    ]
   },
   {
-   "node": "company/bio/hlb",
+   "node": "company/bio/biotech/hlb",
    "title": "HLB — 세 번의 CRL 뒤 4번째 PDUFA 2027.4.9",
    "summary": {
     "points": [
@@ -1251,7 +1251,7 @@
    ]
   },
   {
-   "node": "company/bio/hk-inno-n",
+   "node": "company/bio/pharma/hk-inno-n",
    "title": "HK이노엔 — 케이캡 미국 FDA 결정이 첫 이벤트, 시총 약 6.8배 영업이익",
    "summary": {
     "points": [
@@ -1349,7 +1349,7 @@
    ]
   },
   {
-   "node": "company/bio/ablbio",
+   "node": "company/bio/biotech/ablbio",
    "title": "에이비엘바이오 — 그랩바디B 플랫폼 기술이전",
    "summary": {
     "points": [
@@ -1393,7 +1393,7 @@
    ]
   },
   {
-   "node": "company/bio/stpharm",
+   "node": "company/bio/cdmo/stpharm",
    "title": "에스티팜 — 올리고핵산 CDMO, RNA 센티먼트가 트리거, 시총 약 15.6배 영업이익",
    "summary": {
     "points": [

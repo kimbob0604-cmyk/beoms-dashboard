@@ -30,7 +30,7 @@
  },
  "topics": [
   {
-   "node": "company/media/wrtn",
+   "node": "company/media/ai-content/wrtn",
    "title": "뤼튼테크놀로지스 — 종량제로 AI 캐릭터 챗의 수익성을 푸는 비상장 톱픽",
    "pages": "p.38~52",
    "summary": {
@@ -673,7 +673,7 @@
    ]
   },
   {
-   "node": "company/media/enkiax",
+   "node": "company/media/ai-content/enkiax",
    "title": "엔키AX — 성인 웹툰 IP 위에 올린 탑툰챗, 시총 약 6~9배 영업이익",
    "pages": "p.53~58",
    "summary": {
@@ -1080,7 +1080,7 @@
    ]
   },
   {
-   "node": "company/media/kidari",
+   "node": "company/media/ai-content/kidari",
    "title": "키다리스튜디오 — MD·숏드라마·티즈로 IP를 넓히는 레진·봄툰, 시총 약 6배 영업이익",
    "pages": "p.59~64",
    "summary": {
@@ -1496,7 +1496,7 @@
    ]
   },
   {
-   "node": "company/media/pinkfong",
+   "node": "company/media/ai-content/pinkfong",
    "title": "더핑크퐁컴퍼니 — AI 제작 효율화의 수혜 IP 홀더, 시총 약 9배 영업이익",
    "pages": "p.66~72",
    "summary": {
@@ -2081,7 +2081,7 @@
    ]
   },
   {
-   "node": "company/media/mentioned",
+   "node": "company/media/ai-content/mentioned",
    "title": "그 밖의 언급 기업 — 산업 인뎁스 본문에 숫자와 함께 나온 8곳",
    "pages": "p.3~37",
    "summary": {

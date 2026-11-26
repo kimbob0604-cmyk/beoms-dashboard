@@ -30,7 +30,7 @@
  },
  "topics": [
   {
-   "node": "company/smid/gnc-energy",
+   "node": "company/smid/aidc/gnc-energy",
    "title": "지엔씨에너지 — 데이터센터 비상발전기 독점, 시총 약 6.5배 영업이익",
    "summary": {
     "points": [
@@ -155,7 +155,7 @@
    ]
   },
   {
-   "node": "company/smid/xi-snd",
+   "node": "company/smid/aidc/xi-snd",
    "title": "자이에스앤디 — 주택 턴어라운드와 데이터센터 시공, 시총 약 3.0배 영업이익",
    "summary": {
     "points": [
@@ -273,7 +273,7 @@
    ]
   },
   {
-   "node": "company/smid/uniquest",
+   "node": "company/smid/aidc/uniquest",
    "title": "유니퀘스트 — 반도체 유통사가 AI 서버를 판다, 시총 약 2.2배 영업이익",
    "summary": {
     "points": [
@@ -389,7 +389,7 @@
    ]
   },
   {
-   "node": "company/smid/asflow",
+   "node": "company/smid/semi/asflow",
    "title": "아스플로 — 시공 부품에서 장비 부품으로, 시총 약 8.3배 영업이익",
    "summary": {
     "points": [
@@ -483,7 +483,7 @@
    ]
   },
   {
-   "node": "company/smid/mirae-corp",
+   "node": "company/smid/semi/mirae-corp",
    "title": "미래산업 — 메모리 테스트 핸들러, 시총 약 2.1배 영업이익",
    "summary": {
     "points": [
@@ -609,7 +609,7 @@
    ]
   },
   {
-   "node": "company/smid/global-technology",
+   "node": "company/smid/semi/global-technology",
    "title": "글로벌테크놀로지 — TV·차량용 LDI 팹리스, 시총 약 6.1배 영업이익",
    "summary": {
     "points": [
@@ -697,7 +697,7 @@
    ]
   },
   {
-   "node": "company/smid/foosung",
+   "node": "company/smid/growth/foosung",
    "title": "후성 — 불소 하나로 반도체 가스와 전해질, 시총 약 9.4배 영업이익",
    "summary": {
     "points": [
@@ -818,7 +818,7 @@
    ]
   },
   {
-   "node": "company/smid/pnt",
+   "node": "company/smid/growth/pnt",
    "title": "피엔티 — 롤투롤 장비에서 차세대 공정·소재로, 시총 약 6.1배 영업이익",
    "summary": {
     "points": [
@@ -943,7 +943,7 @@
    ]
   },
   {
-   "node": "company/smid/kona-i",
+   "node": "company/smid/growth/kona-i",
    "title": "코나아이 — 지역화폐 1위와 고마진 메탈카드, 시총 약 2.2배 영업이익",
    "summary": {
     "points": [
@@ -1063,7 +1063,7 @@
    ]
   },
   {
-   "node": "company/smid/gc-genome",
+   "node": "company/smid/growth/gc-genome",
    "title": "지씨지놈 — 같은 검사를 해외에서 비싸게, 시총 약 18.4배 영업이익",
    "summary": {
     "points": [
@@ -1176,7 +1176,7 @@
    ]
   },
   {
-   "node": "company/smid/sam-cns",
+   "node": "company/smid/semi/sam-cns",
    "title": "샘씨엔에스 — HBM 세라믹 STF 공급이 2026.12월 시작, LS Buy 목표 25,000원, 시총 약 15.9배 영업이익",
    "summary": {
     "points": [

@@ -40,7 +40,7 @@
  },
  "topics": [
   {
-   "node": "company/media/hybe",
+   "node": "company/media/ent/hybe",
    "title": "하이브 — 엔터 업종 공통 톱픽, 시총 약 16.3배 영업이익",
    "summary": {
     "points": [
@@ -226,7 +226,7 @@
    ]
   },
   {
-   "node": "company/media/sm",
+   "node": "company/media/ent/sm",
    "title": "에스엠 — 저연차 IP 이익 증가의 중심, 시총 약 11.3배 영업이익",
    "summary": {
     "points": [
@@ -377,7 +377,7 @@
    ]
   },
   {
-   "node": "company/media/jyp",
+   "node": "company/media/ent/jyp",
    "title": "JYP Ent. — 스트레이키즈 이익, 시총 약 10.9배 영업이익",
    "summary": {
     "points": [
@@ -495,7 +495,7 @@
    ]
   },
   {
-   "node": "company/media/yg",
+   "node": "company/media/ent/yg",
    "title": "와이지엔터테인먼트 — 블랙핑크 공백기, 시총 약 14.4배 영업이익",
    "summary": {
     "points": [
@@ -630,7 +630,7 @@
    ]
   },
   {
-   "node": "company/media/skt",
+   "node": "company/media/telecom/skt",
    "title": "SK텔레콤 — 통신 3사 중 데이터센터 최대 수혜, 시총 약 7.4배 영업이익",
    "summary": {
     "points": [
@@ -814,7 +814,7 @@
    ]
   },
   {
-   "node": "company/media/kt",
+   "node": "company/media/telecom/kt",
    "title": "KT — 주주환원과 데이터센터 1GW, 시총 약 5.6배 영업이익",
    "summary": {
     "points": [
@@ -978,7 +978,7 @@
    ]
   },
   {
-   "node": "company/media/lguplus",
+   "node": "company/media/telecom/lguplus",
    "title": "LG유플러스 — 파주 AIDC와 자사주 계속 여부, 시총 약 5.4배 영업이익",
    "summary": {
     "points": [
@@ -1157,7 +1157,7 @@
    ]
   },
   {
-   "node": "company/media/kmw",
+   "node": "company/media/telecom/kmw",
    "title": "KMW — 통신장비 흑자전환 기대, 시총 약 8배 하나 2027F 영업이익",
    "summary": {
     "points": [
@@ -1274,7 +1274,7 @@
    ]
   },
   {
-   "node": "company/media/rfhic",
+   "node": "company/media/telecom/rfhic",
    "title": "RFHIC — 방산이 받치는 통신장비 최선호, 시총 약 16.4배 영업이익",
    "summary": {
     "points": [
@@ -1407,7 +1407,7 @@
    ]
   },
   {
-   "node": "company/media/naver",
+   "node": "company/media/platform/naver",
    "title": "NAVER — AI 데이터센터와 에이전트, 시총 약 9.6배 영업이익",
    "summary": {
     "points": [
@@ -1578,7 +1578,7 @@
    ]
   },
   {
-   "node": "company/media/krafton",
+   "node": "company/media/game/krafton",
    "title": "크래프톤 — 신작 일정과 톱픽 논란, 시총 약 6.9배 영업이익",
    "summary": {
     "points": [
@@ -1782,7 +1782,7 @@
    ]
   },
   {
-   "node": "company/media/nhn",
+   "node": "company/media/platform/nhn",
    "title": "NHN — 정부 GPU 임차 데이터센터, 시총 약 7.2배 영업이익",
    "summary": {
     "points": [
@@ -1916,7 +1916,7 @@
    ]
   },
   {
-   "node": "company/media/kakao",
+   "node": "company/media/platform/kakao",
    "title": "카카오 — 2월 인적분할과 AI, 시총 약 13.2배 영업이익",
    "summary": {
     "points": [
@@ -2049,7 +2049,7 @@
    ]
   },
   {
-   "node": "company/media/ncsoft",
+   "node": "company/media/game/ncsoft",
    "title": "엔씨소프트 — 2027 신작 10종, 시총 약 6.3배 영업이익",
    "summary": {
     "points": [
@@ -2223,7 +2223,7 @@
    ]
   },
   {
-   "node": "company/media/netmarble",
+   "node": "company/media/game/netmarble",
    "title": "넷마블 — 신작 15종과 수수료 절감, 시총 약 11.5배 영업이익",
    "summary": {
     "points": [
@@ -2339,7 +2339,7 @@
    ]
   },
   {
-   "node": "company/media/shiftup",
+   "node": "company/media/game/shiftup",
    "title": "시프트업 — 니케 이익 정체, 시총 약 24배 영업이익",
    "summary": {
     "points": [
@@ -2487,7 +2487,7 @@
    ]
   },
   {
-   "node": "company/media/kakaogames",
+   "node": "company/media/game/kakaogames",
    "title": "카카오게임즈 — 적자에서 흑자 전환 기대, 시총 약 11.3배 영업이익",
    "summary": {
     "points": [
@@ -2597,7 +2597,7 @@
    ]
   },
   {
-   "node": "company/media/samsung-sds",
+   "node": "company/media/platform/samsung-sds",
    "title": "삼성에스디에스 — 삼성 그룹 AI 인프라, 시총 약 14.5배 영업이익",
    "summary": {
     "points": [
@@ -2733,7 +2733,7 @@
    ]
   },
   {
-   "node": "company/media/lgcns",
+   "node": "company/media/platform/lgcns",
    "title": "LG CNS — 금융 차세대와 AI DC, 시총 약 10.0배 영업이익",
    "summary": {
     "points": [
@@ -2865,7 +2865,7 @@
    ]
   },
   {
-   "node": "company/media/studio-dragon",
+   "node": "company/media/ai-content/studio-dragon",
    "title": "스튜디오드래곤 — 제작비 절감과 IP, 시총 약 15.9배 영업이익",
    "summary": {
     "points": [
@@ -2982,7 +2982,7 @@
    ]
   },
   {
-   "node": "company/media/cheil",
+   "node": "company/media/ai-content/cheil",
    "title": "제일기획 — 캡티브 예산 정상화와 주주환원, 시총 약 5.4배 영업이익",
    "summary": {
     "points": [
@@ -3100,7 +3100,7 @@
    ]
   },
   {
-   "node": "company/media/gspnl",
+   "node": "company/media/leisure/gspnl",
    "title": "GS피앤엘 — 인바운드 호텔 수요, 시총 약 3.1배 영업이익",
    "summary": {
     "points": [
@@ -3235,7 +3235,7 @@
    ]
   },
   {
-   "node": "company/media/hanatour",
+   "node": "company/media/leisure/hanatour",
    "title": "하나투어 — 이연 수요와 일본 자회사, 시총 약 7.5배 영업이익",
    "summary": {
     "points": [
@@ -3354,7 +3354,7 @@
    ]
   },
   {
-   "node": "company/media/paradise",
+   "node": "company/media/leisure/paradise",
    "title": "파라다이스 — 카지노 드롭액과 호텔 증설, 시총 약 5.3배 영업이익",
    "summary": {
     "points": [
@@ -3472,7 +3472,7 @@
    ]
   },
   {
-   "node": "company/media/lotte-tour",
+   "node": "company/media/leisure/lotte-tour",
    "title": "롯데관광개발 — 드롭액 증가와 이자비용 감소, 시총 약 4.3배 영업이익",
    "summary": {
     "points": [

@@ -59,7 +59,7 @@
  },
  "topics": [
   {
-   "node": "company/industrials/hhi",
+   "node": "company/industrials/ship/hhi",
    "title": "HD현대중공업 — NH·상상인·미래 조선 톱픽, 하우스별 이익 3.9~4.9조원, 시총 약 5.3~6.6배",
    "summary": {
     "points": [
@@ -259,7 +259,7 @@
    ]
   },
   {
-   "node": "company/industrials/samsung-heavy",
+   "node": "company/industrials/ship/samsung-heavy",
    "title": "삼성중공업 — 현대차증권·키움 톱픽, 100% 환헤지, 시총 약 5.2~6.6배 영업이익",
    "summary": {
     "points": [
@@ -408,7 +408,7 @@
    ]
   },
   {
-   "node": "company/industrials/hanwha-ocean",
+   "node": "company/industrials/ship/hanwha-ocean",
    "title": "한화오션 — 필리조선소·특수선 확장, 목표가 5.7만 대 9.0만원, 시총 약 5.9~6.1배",
    "summary": {
     "points": [
@@ -542,7 +542,7 @@
    ]
   },
   {
-   "node": "company/industrials/hd-marine-sol",
+   "node": "company/industrials/ship/hd-marine-sol",
    "title": "HD현대마린솔루션 — NH 조선 톱픽, 엔진 애프터마켓과 발전용 MRO, 시총 약 16배 영업이익",
    "summary": {
     "points": [
@@ -675,7 +675,7 @@
    ]
   },
   {
-   "node": "company/industrials/hanwha-engine",
+   "node": "company/industrials/ship/hanwha-engine",
    "title": "한화엔진 — 미래에셋 엔진 최선호, 시총 약 5.4배 영업이익",
    "summary": {
     "points": [
@@ -771,7 +771,7 @@
    ]
   },
   {
-   "node": "company/industrials/hanwha-aero",
+   "node": "company/industrials/defense/hanwha-aero",
    "title": "한화에어로스페이스 — 대신·상상인 방산 톱픽, 2027F 영업이익 3.9~6.1조원으로 갈림, 시총 약 5.1~8.0배",
    "summary": {
     "points": [
@@ -940,7 +940,7 @@
    ]
   },
   {
-   "node": "company/industrials/hanwha-systems",
+   "node": "company/industrials/defense/hanwha-systems",
    "title": "한화시스템 — 다기능레이더·우주, 대신 목표 8.5만원, 시총 약 14~19배 영업이익",
    "summary": {
     "points": [
@@ -1065,7 +1065,7 @@
    ]
   },
   {
-   "node": "company/industrials/kai",
+   "node": "company/industrials/defense/kai",
    "title": "한국항공우주(KAI) — 키움 톱픽, 목표가 13만~18.5만원, 시총 약 16~22배 영업이익",
    "summary": {
     "points": [
@@ -1226,7 +1226,7 @@
    ]
   },
   {
-   "node": "company/industrials/lig-da",
+   "node": "company/industrials/defense/lig-da",
    "title": "LIG D&A(구 LIG넥스원) — 키움 톱픽 95만원 대 대신·메리츠 55만원, 시총 약 12~16배 영업이익",
    "summary": {
     "points": [
@@ -1372,7 +1372,7 @@
    ]
   },
   {
-   "node": "company/industrials/hyundai-rotem",
+   "node": "company/industrials/defense/hyundai-rotem",
    "title": "현대로템 — K2 폴란드 3차가 열쇠, 대신·메리츠 목표 11만원, 시총 약 8~9배 영업이익",
    "summary": {
     "points": [
@@ -1480,7 +1480,7 @@
    ]
   },
   {
-   "node": "company/industrials/hdec",
+   "node": "company/industrials/construction/hdec",
    "title": "현대건설 — 원전 EPC 기대와 이익 증가, 목표가 12만~15만원, 시총 약 7.1~7.6배 영업이익",
    "summary": {
     "points": [
@@ -1667,7 +1667,7 @@
    ]
   },
   {
-   "node": "company/industrials/gs-enc",
+   "node": "company/industrials/construction/gs-enc",
    "title": "GS건설 — 상상인 건설 최선호·하나 Top Pick, 하우스 이익 4,940억~6,564억원, 시총 약 3.7~4.9배",
    "summary": {
     "points": [
@@ -1817,7 +1817,7 @@
    ]
   },
   {
-   "node": "company/industrials/samsung-ena",
+   "node": "company/industrials/construction/samsung-ena",
    "title": "삼성E&A — NH·미래 건설 최선호, 이익은 NH 1.40조 대 미래 1.65조원, 시총 약 7~8배",
    "summary": {
     "points": [
@@ -1982,7 +1982,7 @@
    ]
   },
   {
-   "node": "company/industrials/dl-enc",
+   "node": "company/industrials/construction/dl-enc",
    "title": "DL이앤씨 — 상상인만 다루는 건설사, 2027 감익에도 시총 약 3.7배 영업이익",
    "summary": {
     "points": [
@@ -2097,7 +2097,7 @@
    ]
   },
   {
-   "node": "company/industrials/daewoo-enc",
+   "node": "company/industrials/construction/daewoo-enc",
    "title": "대우건설 — LNG·저장 실적과 체코 원전 후보, 하우스 영업이익은 없고 시총 약 5.1배(컨센서스)",
    "summary": {
     "points": [
@@ -2175,7 +2175,7 @@
    ]
   },
   {
-   "node": "company/industrials/kyeryong-enc",
+   "node": "company/industrials/construction/kyeryong-enc",
    "title": "계룡건설 — 하나 Top Pick, PER 1.5배의 관급 건설사, 시총 약 0.9배 영업이익",
    "summary": {
     "points": [
@@ -2269,7 +2269,7 @@
    ]
   },
   {
-   "node": "company/industrials/korean-air",
+   "node": "company/industrials/transport/korean-air",
    "title": "대한항공 — NH·상상인·하나 모두 운송 톱픽, 이익 2.0~2.2조원, 시총 약 5.2~5.7배",
    "summary": {
     "points": [
@@ -2454,7 +2454,7 @@
    ]
   },
   {
-   "node": "company/industrials/jin-air",
+   "node": "company/industrials/transport/jin-air",
    "title": "진에어 — 상상인 목표 1만원, 통합 LCC 기대, 시총 약 3.6배 영업이익",
    "summary": {
     "points": [
@@ -2557,7 +2557,7 @@
    ]
   },
   {
-   "node": "company/industrials/asiana",
+   "node": "company/industrials/transport/asiana",
    "title": "아시아나항공 — 2026.12 대한항공에 합병 예정, 개별 이익 전망 없음",
    "summary": {
     "points": [
@@ -2591,7 +2591,7 @@
    ]
   },
   {
-   "node": "company/industrials/hyundai-glovis",
+   "node": "company/industrials/transport/hyundai-glovis",
    "title": "현대글로비스 — NH 운송 톱픽(319,000원), PCTC 12척 도입, 시총 약 5.8배 영업이익",
    "summary": {
     "points": [
@@ -2699,7 +2699,7 @@
    ]
   },
   {
-   "node": "company/industrials/hmm",
+   "node": "company/industrials/transport/hmm",
    "title": "HMM — 컨테이너 공급 과잉으로 2027F 영업이익 −45%, 시총 약 12~13배",
    "summary": {
     "points": [
@@ -2791,7 +2791,7 @@
    ]
   },
   {
-   "node": "company/industrials/pan-ocean",
+   "node": "company/industrials/transport/pan-ocean",
    "title": "팬오션 — VLCC 인도와 새 배당정책, 시총 약 3.5배 영업이익(컨센서스)",
    "summary": {
     "points": [
@@ -2900,7 +2900,7 @@
    ]
   },
   {
-   "node": "company/industrials/posco-h",
+   "node": "company/industrials/steel/posco-h",
    "title": "POSCO홀딩스 — 하나 Top Pick 74만원 대 상상인 41만원, 시총 약 4.8~5.4배 영업이익",
    "summary": {
     "points": [
@@ -3070,7 +3070,7 @@
    ]
   },
   {
-   "node": "company/industrials/seah-besteel-h",
+   "node": "company/industrials/steel/seah-besteel-h",
    "title": "세아베스틸지주 — NH·상상인·하나 모두 고른 철강 톱픽, 이익 1,822억~2,510억원, 시총 약 4.3~6.0배",
    "summary": {
     "points": [
@@ -3253,7 +3253,7 @@
    ]
   },
   {
-   "node": "company/industrials/hyundai-steel",
+   "node": "company/industrials/steel/hyundai-steel",
    "title": "현대제철 — 상상인 철강 최선호, 2027F 영업이익 +109.5%, 시총 약 6.6배",
    "summary": {
     "points": [
@@ -3380,7 +3380,7 @@
    ]
   },
   {
-   "node": "company/industrials/dongkuk-steel",
+   "node": "company/industrials/steel/dongkuk-steel",
    "title": "동국제강 — 하나 Top Picks, 전기요금 인하의 최대 수혜, 시총 약 2.2~2.8배 영업이익",
    "summary": {
     "points": [
@@ -3511,7 +3511,7 @@
    ]
   },
   {
-   "node": "company/industrials/hd-ce",
+   "node": "company/industrials/machinery/hd-ce",
    "title": "HD건설기계 — 키움 단독 BUY 175,000원, 엔진 증설과 중동 재건, 시총 약 4.2배 영업이익",
    "summary": {
     "points": [
@@ -3600,7 +3600,7 @@
    ]
   },
   {
-   "node": "company/industrials/esr-kendall",
+   "node": "company/industrials/construction/esr-kendall",
    "title": "ESR켄달스퀘어리츠 — NH 리츠 Top Pick, 배당수익률 약 10%, P/FFO 10.4배",
    "summary": {
     "points": [
@@ -3672,7 +3672,7 @@
    ]
   },
   {
-   "node": "company/industrials/korea-zinc",
+   "node": "company/industrials/steel/korea-zinc",
    "title": "고려아연 — iM 중장기 최선호 125만원, 2026년 4Q가 바닥이고 2027E 영업이익은 −32%, 시총 약 14.9배",
    "summary": {
     "points": [
@@ -3793,7 +3793,7 @@
    ]
   },
   {
-   "node": "company/industrials/seah-steel",
+   "node": "company/industrials/steel/seah-steel",
    "title": "세아제강 — 유진 BUY 17만원, 미국 OCTG 강세로 4Q 이익 회복, 2027E 영업이익 124십억원에 시총 약 2.5배",
    "summary": {
     "points": [
@@ -3910,7 +3910,7 @@
    ]
   },
   {
-   "node": "company/industrials/cj-logistics",
+   "node": "company/industrials/transport/cj-logistics",
    "title": "CJ대한통운 — iM BUY 목표 10만원으로 하향(11만 → 10만), 택배 단가 회복 불확실, 2027E 영업이익 4,750억원에 시총 약 3.5배",
    "summary": {
     "points": [

@@ -667,5 +667,45 @@
   "name": "버블 비교 (멀티플 주도 vs 이익 주도)",
   "en": "Bubble comparison",
   "desc": "닷컴·ARK는 멀티플이 끌어올렸고 AI 랠리는 이익이 끌어올렸다는 한화의 비교."
+ },
+ "c:kospi-band-27": {
+  "name": "KOSPI 2027 밴드",
+  "en": "KOSPI 2027 band",
+  "desc": "연간 지수 범위를 P/B(자산 대비 값)×BPS로 잡은 것. LS 4,300~6,500(P/B 0.8~1.21배), IBK 5,000~8,000(P/B 1~1.5배)."
+ },
+ "c:implied-earn-cut": {
+  "name": "내재 감익",
+  "en": "Implied earnings cut",
+  "desc": "현재 P/B가 ROE-P/B 회귀선에서 말해 주는 ROE가 컨센서스보다 얼마나 낮은지. 시장이 이익이 그만큼 줄 것으로 값을 매겼다는 뜻. LS: 코스피 55%, 삼전·닉스 등 7종목 제외 20%."
+ },
+ "c:target-liquidity": {
+  "name": "표적 유동성",
+  "en": "Targeted liquidity",
+  "desc": "LS 용어. 빅테크·정부가 가격보다 납기·물량을 앞세워 특정 공급망에만 돈을 쏟는 것. 범용 유동성(경제 전반에 퍼지는 돈)과 구분."
+ },
+ "c:margin-relabel": {
+  "name": "마진 리레이팅 4단계",
+  "en": "Margin re-rating stages",
+  "desc": "LS 틀. ①마진이 과거 상단 돌파 ②마진 개선 속도 정점 ③상대주가 정점 ④이익 증가율 정점. 4단계면 끝난 업종, 1단계면 막 시작."
+ },
+ "c:offbalance-3t": {
+  "name": "장부 외 의무 $3조",
+  "en": "Off-balance obligations",
+  "desc": "연준 11월 금융안정보고서: 7대 빅테크·엔비디아의 미개시 장기 리스 $1조 초과 + 잔존가치 보증·인수 약정 $2조 초과."
+ },
+ "c:corp-debt-speed": {
+  "name": "기업부채 증가속도",
+  "en": "Corporate debt speed",
+  "desc": "기업부채/GDP를 3년 전과 비교한 변화(%p). LS: +8%p를 넘으면 버블 붕괴 신호, 지금은 72.5% vs 78.4%로 −5.9%p."
+ },
+ "c:c26-weight": {
+  "name": "반도체 가중치 (연쇄가중)",
+  "en": "C26 chain weight",
+  "desc": "한국 GDP 성장 기여도 = 전년 명목 비중 × 올해 물량 증가율. 2026년 가격 급등은 성장률에 안 잡히고 2027년 가중치(20%대)를 키운다(LS 최광혁)."
+ },
+ "c:foreign-holding": {
+  "name": "외국인 코스피 지분율·시총",
+  "en": "Foreign holding",
+  "desc": "IBK: 지분율 37.2%, 외국인 시총 약 1,400조원(2010년 이후 평균 580조원). 매도 압력이 2027년에도 이어질 수 있다고 봄."
  }
 }

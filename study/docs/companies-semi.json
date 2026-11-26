@@ -99,7 +99,7 @@
  },
  "topics": [
   {
-   "node": "company/semi/samsung-elec",
+   "node": "company/semi/memory/samsung-elec",
    "title": "삼성전자 — 메모리 업황 수혜 1순위, 시총 약 1.9배 영업이익",
    "summary": {
     "points": [
@@ -240,7 +240,7 @@
    ]
   },
   {
-   "node": "company/semi/skhynix",
+   "node": "company/semi/memory/skhynix",
    "title": "SK하이닉스 — HBM 확정 물량의 대표주, 시총 약 1.7배 영업이익",
    "summary": {
     "points": [
@@ -380,7 +380,7 @@
    ]
   },
   {
-   "node": "company/semi/semco",
+   "node": "company/semi/substrate/semco",
    "title": "삼성전기 — MLCC·FC-BGA 가격 결정권, 시총 약 11.6배 영업이익",
    "summary": {
     "points": [
@@ -519,7 +519,7 @@
    ]
   },
   {
-   "node": "company/semi/daeduk",
+   "node": "company/semi/substrate/daeduk",
    "title": "대덕전자 — FC-BGA·메모리 기판 인상 수혜, 시총 약 8.0배 영업이익",
    "summary": {
     "points": [
@@ -656,7 +656,7 @@
    ]
   },
   {
-   "node": "company/semi/simmtech",
+   "node": "company/semi/substrate/simmtech",
    "title": "심텍 — 메모리 모듈 기판·SOCAMM, 시총 약 6.6배 영업이익",
    "summary": {
     "points": [
@@ -792,7 +792,7 @@
    ]
   },
   {
-   "node": "company/semi/isu-petasys",
+   "node": "company/semi/substrate/isu-petasys",
    "title": "이수페타시스 — 고다층 MLB, 시총 약 7.9배 영업이익",
    "summary": {
     "points": [
@@ -929,7 +929,7 @@
    ]
   },
   {
-   "node": "company/semi/sfa-semi",
+   "node": "company/semi/equip/sfa-semi",
    "title": "SFA반도체 — 삼성 DDR5 외주 테스트, 시총 약 14.1배 영업이익",
    "summary": {
     "points": [
@@ -1050,7 +1050,7 @@
    ]
   },
   {
-   "node": "company/semi/tlb",
+   "node": "company/semi/substrate/tlb",
    "title": "티엘비 — SOCAMM 모듈 기판, 시총 약 8.2배 영업이익",
    "summary": {
     "points": [
@@ -1149,7 +1149,7 @@
    ]
   },
   {
-   "node": "company/semi/hanmi-semi",
+   "node": "company/semi/equip/hanmi-semi",
    "title": "한미반도체 — HBM 본더에서 Logic 본더로, 시총 약 31.6배 영업이익",
    "summary": {
     "points": [
@@ -1245,7 +1245,7 @@
    ]
   },
   {
-   "node": "company/semi/semifive",
+   "node": "company/semi/design/semifive",
    "title": "세미파이브 — ASIC 디자인하우스, 수주잔고 2,455억원",
    "summary": {
     "points": [
@@ -1337,7 +1337,7 @@
    ]
   },
   {
-   "node": "company/semi/hanwha-vision",
+   "node": "company/semi/equip/hanwha-vision",
    "title": "한화비전 — 시큐리티 + 반도체 장비(한화세미텍), 시총 약 10.1배 2025 영업이익",
    "summary": {
     "points": [
@@ -1433,7 +1433,7 @@
    ]
   },
   {
-   "node": "company/semi/gigavis",
+   "node": "company/semi/equip/gigavis",
    "title": "기가비스 — 기판 검사·가공 장비, 시총 약 6.4배 영업이익",
    "summary": {
     "points": [
@@ -1524,7 +1524,7 @@
    ]
   },
   {
-   "node": "company/semi/bh",
+   "node": "company/semi/substrate/bh",
    "title": "비에이치 — 스마트폰 FPCB, 시총 약 4.5배 영업이익",
    "summary": {
     "points": [

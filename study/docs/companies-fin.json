@@ -87,7 +87,7 @@
  },
  "topics": [
   {
-   "node": "company/fin/samsung-fire",
+   "node": "company/fin/insurance/samsung-fire",
    "title": "삼성화재 — 손보 최대 자본, 전자 배당 반영 여부로 이익이 갈림. 시총 약 9.4배 순이익(NH 기준)",
    "summary": {
     "points": [
@@ -234,7 +234,7 @@
    ]
   },
   {
-   "node": "company/fin/kb-financial",
+   "node": "company/fin/bank/kb-financial",
    "title": "KB금융 — 은행 Top Pick, 환원율 59%로 최상위. 시총 약 8.1배 순이익(NH 기준)",
    "summary": {
     "points": [
@@ -382,7 +382,7 @@
    ]
   },
   {
-   "node": "company/fin/db-ins",
+   "node": "company/fin/insurance/db-ins",
    "title": "DB손해보험 — 자본정책을 숫자로 낸 보험 Top Pick. 시총 약 5.6배 순이익(NH 11/18 기준)",
    "summary": {
     "points": [
@@ -514,7 +514,7 @@
    ]
   },
   {
-   "node": "company/fin/sk-holdings",
+   "node": "company/fin/holdco/sk-holdings",
    "title": "SK — NAV 할인 60%대 지주 1순위, 자사주 소각이 열쇠. 지주는 NAV 할인율로 봄(시총은 2027F 지배순이익의 약 1.8배)",
    "summary": {
     "points": [
@@ -655,7 +655,7 @@
    ]
   },
   {
-   "node": "company/fin/samsung-sec",
+   "node": "company/fin/securities/samsung-sec",
    "title": "삼성증권 — 증권 최선호, 배당이 논리. 시총 약 4.2배 순이익(NH 기준)",
    "summary": {
     "points": [
@@ -770,7 +770,7 @@
    ]
   },
   {
-   "node": "company/fin/woori-fg",
+   "node": "company/fin/bank/woori-fg",
    "title": "우리금융지주 — 환원율이 가장 가파르게 오르는 은행주. 시총 약 6.8배 순이익(NH 기준)",
    "summary": {
     "points": [
@@ -900,7 +900,7 @@
    ]
   },
   {
-   "node": "company/fin/samsung-ct",
+   "node": "company/fin/holdco/samsung-ct",
    "title": "삼성물산 — 지주 할인 60%대에 건설·바이오 이익이 얹힌 구조. 시총 약 8.9배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -1015,7 +1015,7 @@
    ]
   },
   {
-   "node": "company/fin/samsung-life",
+   "node": "company/fin/insurance/samsung-life",
    "title": "삼성생명 — 삼성전자 지분가치가 핵심, 시총은 NH 합산 가치의 약 0.8배. 순이익 기준 PER 약 11.5배",
    "summary": {
     "points": [
@@ -1163,7 +1163,7 @@
    ]
   },
   {
-   "node": "company/fin/hyundai-marine",
+   "node": "company/fin/insurance/hyundai-marine",
    "title": "현대해상 — 자본 지표는 회복, 성장 동력이 숙제. 현재 PBR 약 0.43배",
    "summary": {
     "points": [
@@ -1292,7 +1292,7 @@
    ]
   },
   {
-   "node": "company/fin/hanwha-life",
+   "node": "company/fin/insurance/hanwha-life",
    "title": "한화생명 — 확장은 타당하나 자본비율이 불안. 현재 PBR 약 0.21배",
    "summary": {
     "points": [
@@ -1423,7 +1423,7 @@
    ]
   },
   {
-   "node": "company/fin/hanwha-gi",
+   "node": "company/fin/insurance/hanwha-gi",
    "title": "한화손해보험 — 초과 자본이 거의 없어 미배당. 목표 8,600원",
    "summary": {
     "points": [
@@ -1498,7 +1498,7 @@
    ]
   },
   {
-   "node": "company/fin/kiwoom",
+   "node": "company/fin/securities/kiwoom",
    "title": "키움증권 — 하나가 고른 증권 Top pick, 거래대금에 가장 민감. 시총 약 4.3배 순이익(하나 기준)",
    "summary": {
     "points": [
@@ -1596,7 +1596,7 @@
    ]
   },
   {
-   "node": "company/fin/ls",
+   "node": "company/fin/holdco/ls",
    "title": "LS — 지주 중 할인이 가장 깊고(68.4%) 비상장 LS전선이 재평가 열쇠",
    "summary": {
     "points": [
@@ -1717,7 +1717,7 @@
    ]
   },
   {
-   "node": "company/fin/doosan",
+   "node": "company/fin/holdco/doosan",
    "title": "두산 — 전자BG(CCL)가 이익을 끌고 가는 지주, NAV 할인 64.2%",
    "summary": {
     "points": [
@@ -1834,7 +1834,7 @@
    ]
   },
   {
-   "node": "company/fin/lg-corp",
+   "node": "company/fin/holdco/lg-corp",
    "title": "LG — 할인이 가장 얕은 지주(47~53%), 순현금과 환원 정책이 근거",
    "summary": {
     "points": [
@@ -1966,7 +1966,7 @@
    ]
   },
   {
-   "node": "company/fin/hanwha",
+   "node": "company/fin/holdco/hanwha",
    "title": "한화 — 에어로스페이스 배당·상표권이 현금원, 할인율은 하우스별로 55.6~65%",
    "summary": {
     "points": [
@@ -2100,7 +2100,7 @@
    ]
   },
   {
-   "node": "company/fin/cj",
+   "node": "company/fin/holdco/cj",
    "title": "CJ — 비상장 올리브영 가치와 자사주 7.3%가 열쇠, NAV 할인 61.8%",
    "summary": {
     "points": [
@@ -2201,7 +2201,7 @@
    ]
   },
   {
-   "node": "company/fin/nh-sec",
+   "node": "company/fin/securities/nh-sec",
    "title": "NH투자증권 — iM 만 Top pick, 배당성향이 높고 베타가 낮음. 시총 약 6.3배 순이익(유진 기준)",
    "summary": {
     "points": [
@@ -2299,7 +2299,7 @@
    ]
   },
   {
-   "node": "company/fin/mirae-sec",
+   "node": "company/fin/securities/mirae-sec",
    "title": "미래에셋증권 — 합병 자사주 소각이 환원의 열쇠. 시총 약 4.8배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -2393,7 +2393,7 @@
    ]
   },
   {
-   "node": "company/fin/hana-fg",
+   "node": "company/fin/bank/hana-fg",
    "title": "하나금융지주 — 환원율 50%대, 은행 Top pick 은 아님. 시총 약 5.4배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -2485,7 +2485,7 @@
    ]
   },
   {
-   "node": "company/fin/shinhan-fg",
+   "node": "company/fin/bank/shinhan-fg",
    "title": "신한지주 — 환원율 57%, 롯데손보 인수 진행. 시총 약 4.9배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -2576,7 +2576,7 @@
    ]
   },
   {
-   "node": "company/fin/korea-inv",
+   "node": "company/fin/securities/korea-inv",
    "title": "한국금융지주 — 발행어음 1위(22.5조원), 환율 민감도 상승. 시총 약 2.8배 영업이익(컨센서스 2027)",
    "summary": {
     "points": [
@@ -2668,7 +2668,7 @@
    ]
   },
   {
-   "node": "company/fin/sk-square",
+   "node": "company/fin/holdco/sk-square",
    "title": "SK스퀘어 — SK하이닉스 20.0%를 가진 중간지주, SK 의 NAV 42%가 이 지분",
    "summary": {
     "points": [

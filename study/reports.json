@@ -655,5 +655,110 @@
   "analyst": "신희철",
   "title": "통신 — 세 가지 성장 Catalyst",
   "date": "2026-11-24"
+ },
+ "rg-15021": {
+  "house": "LS",
+  "analyst": "신중호·정다운·황산해",
+  "title": "2027 연간 전망 AI의 꼬인 매듭 재무장 사이클과 투자기회",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15031": {
+  "house": "유진",
+  "analyst": "이재일",
+  "title": "자동차 2027년, 주가 반전의 조건들",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15035": {
+  "house": "상상인",
+  "analyst": "이달미",
+  "title": "제약, 바이오 2027년 연간전망",
+  "date": "2024-01-02",
+  "auto": true
+ },
+ "rg-15038": {
+  "house": "미래에셋",
+  "analyst": "정세훈",
+  "title": "방산 2027년 나아질 일만 남았다",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15047": {
+  "house": "유진",
+  "analyst": "황성현",
+  "title": "배터리, 유틸리티 Trend Setter vol 3 AI Grid & Power Solutions",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15051": {
+  "house": "DB",
+  "analyst": "김지은",
+  "title": "음식료 아구통을 돌리는 K 음식료",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15056": {
+  "house": "키움",
+  "analyst": "김은갑",
+  "title": "2027년 은행 산업 전망 기업가치제고계획 목표 상향과 ROE 상승",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15059": {
+  "house": "키움",
+  "analyst": "손예빈",
+  "title": "2027년 화장품 산업 전망 K뷰티의 지구정복 ver2 카테고리 편",
+  "date": "2026-11-24",
+  "auto": true
+ },
+ "rg-15063": {
+  "house": "LS",
+  "analyst": "최광혁",
+  "title": "2027년 연간 전망 뜨거운 성장률과 비어가는 지갑 노말 2 0시대, 5가지 질문에 답하다",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15067": {
+  "house": "IBK",
+  "analyst": "변준호",
+  "title": "IBKS 2027년 증시 전망 상고하저 그리고 B B B",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15078": {
+  "house": "하나",
+  "analyst": "박종대",
+  "title": "화장품 바닥 잡기 3선",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15081": {
+  "house": "SK",
+  "analyst": "권순우",
+  "title": "모빌리티 자동차산업, 수요Demand에서 선택Decision의 시대로",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15085": {
+  "house": "다올",
+  "analyst": "박종현",
+  "title": "2027 의료기기, 화장품 연간 전망 AI는 알고 있다",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15091": {
+  "house": "신영",
+  "analyst": "박진수",
+  "title": "2027년 2차전지 전망 변함없는 공식",
+  "date": "2026-11-25",
+  "auto": true
+ },
+ "rg-15097": {
+  "house": "IBK",
+  "analyst": "이승훈·이현욱",
+  "title": "IBKS AI, 자동차 Collabo In Depth 휴머노이드 패권 경쟁, 승자는",
+  "date": "2026-11-25",
+  "auto": true
  }
 }
