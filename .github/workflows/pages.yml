@@ -5,6 +5,9 @@
 # 'GitHub Actions' 로 두고, 맥(publish.py)과 cloud-live 가 gh-pages 를 푸시한 뒤 이 워크플로를 부른다 → 1분마다 갱신.
 # 줄 서 있는 배포는 가장 새 것 하나만 남고(concurrency), 실행할 때 gh-pages 의 최신 커밋을 받으므로 늘 마지막 내용이 올라간다.
 #
+# 2026-11-26: 배포 번호(pages_build_version)가 main 커밋 번호라, main 이 그대로면 매번 같은 번호가 된다. 이날 11:22 이후 같은 번호의 배포가
+# '성공'으로 끝나도 사이트에 반영되지 않았다 → main 을 한 번 바꿔 번호를 새로 만든다.
+#
 # 되돌리기: gh api -X PUT repos/<저장소>/pages -f build_type=legacy -f 'source[branch]=gh-pages' -f 'source[path]=/'
 name: pages
 
