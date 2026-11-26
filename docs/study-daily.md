@@ -115,7 +115,7 @@ python3 study_tg_brief.py <오늘 날짜 YYYY-MM-DD>
 ```
 
 - 그날 받은 편지함을 섹터별로 묶어(넣은 문서의 섹터 기준) 리포트마다 `하우스 애널리스트 「제목」` + `brief` + `call` 한 줄씩 보낸다. 섹터마다 Study 링크가 붙는다.
-- 봇은 Beom's Macro 알림 봇(@Beomjun_Macro_bot)을 같이 쓴다. 방 번호는 `.env` 의 `STUDY_TG_CHAT`. 같은 날짜는 한 번만 보낸다(`study_src/inbox/.sent-<날짜>`).
+- 봇은 리포트 전용 @beomjun_report_bot (2026-11-26 사용자 지정). 열쇠는 `.env` 의 `STUDY_TG_TOKEN`(사용자가 넣음), 방 번호는 `STUDY_TG_CHAT`. 같은 날짜는 한 번만 보낸다(`study_src/inbox/.sent-<날짜>`).
 - 먼저 `--dry` 로 찍어 보고 brief 가 빠진 줄이 없는지 확인한 뒤 보낸다. 새 리포트가 없는 날은 보내지 않는다.
 - 어제 받은 편지함 중 오늘 끝낸 줄이 있으면 그 날짜도 보낸다(아직 안 보낸 날짜만).
 

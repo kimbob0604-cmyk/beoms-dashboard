@@ -9,7 +9,7 @@
   call   투자의견·목표주가·톱픽 (선택, 짧게)
   skip   건너뛴 이유 → 맨 아래 '건너뜀' 줄
 하우스·애널리스트·제목은 study/reports.json, 없으면 파일 이름에서 읽는다.
-봇은 Beom's Macro 알림 봇을 같이 쓴다: STUDY_TG_TOKEN·STUDY_TG_CHAT (없으면 MACRO_TG_TOKEN·MACRO_TG_CHAT).
+봇은 리포트 전용 @beomjun_report_bot: STUDY_TG_TOKEN·STUDY_TG_CHAT (2026-11-26 사용자 지정, 매크로 봇으로는 보내지 않는다).
 열쇠는 환경변수 → 이 폴더 .env → ~/Beom's Macro/.env 순서로 이름으로만 찾는다. 같은 날짜를 두 번 보내지 않는다(inbox 파일에 sent 기록).
 """
 import html
@@ -143,9 +143,9 @@ def main():
     if sent_mark.exists() and '--force' not in sys.argv:
         print(f'study_tg_brief: {day} 는 이미 보냄 (--force 로 다시)')
         return 0
-    token, chat = key('STUDY_TG_TOKEN', 'MACRO_TG_TOKEN'), key('STUDY_TG_CHAT', 'MACRO_TG_CHAT')
+    token, chat = key('STUDY_TG_TOKEN'), key('STUDY_TG_CHAT')
     if not token or not chat:
-        print('study_tg_brief: 봇 열쇠 또는 방 번호(STUDY_TG_CHAT·MACRO_TG_CHAT)가 없어 보내지 않음')
+        print('study_tg_brief: 봇 열쇠(STUDY_TG_TOKEN) 또는 방 번호(STUDY_TG_CHAT)가 없어 보내지 않음')
         return 1
     for m in msgs:
         r = requests.post(f'https://api.telegram.org/bot{token}/sendMessage', timeout=30,
