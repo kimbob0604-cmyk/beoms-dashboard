@@ -285,6 +285,90 @@ const Stock = (() => {
     </section>`;
   }
 
+  // ---------- ETF 편입 (data/etf/{code}.json — build_etf_by_stock.py) ----------
+  // 이 종목을 담은 ETF 마다 비중·보유액·등락률·순설정·환매, 그리고 '이 종목 몫' = ETF 순설정·환매 × 비중
+  // (설정·환매 때 LP·운용사가 바스켓으로 이 종목을 사고판 금액 추정). 기간은 1·5·20일
+  const ETF_P = [[1, '1일'], [5, '5일'], [20, '20일']];
+  const ETF_SHOW = 12;
+  let etfData = null, etfP = 1, etfSort = 'held', etfAll = false, etfMc = null;
+  const EI = { c: 0, n: 1, wt: 2, held: 3, r: { 1: 4, 5: 5, 20: 6 }, f: { 1: 7, 5: 8, 20: 9 }, asof: 10, stale: 11, base: 12 };
+  const etfShare = (r, p) => (r[EI.f[p]] == null ? null : r[EI.f[p]] * r[EI.wt] / 100);
+
+  function etfHtml() {
+    const d = etfData;
+    if (d === undefined) return '<section class="st-sec"><h3>ETF 편입</h3><p class="muted st-loading">불러오는 중…</p></section>';
+    if (!d?.rows?.length) return '';
+    const p = etfP;
+    const fmt = v => (v == null ? '<span class="muted">–</span>' : `<span class="${U.cls(v)}">${U.eok(v, true)}</span>`);
+    const pctH = v => (v == null ? '<span class="muted">–</span>' : `<span class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span>`);
+    const held = d.rows.reduce((a, r) => a + (r[EI.held] || 0), 0);
+    const share = d.h.slice(-p).reduce((a, v) => a + (v || 0), 0);
+    const key = etfSort === 'share' ? r => -Math.abs(etfShare(r, p) || 0) : etfSort === 'ret' ? r => -(r[EI.r[p]] ?? -1e9) : r => -(r[EI.held] || 0);
+    const rows = [...d.rows].sort((a, b) => key(a) - key(b));
+    const shown = etfAll ? rows : rows.slice(0, ETF_SHOW);
+    const max = Math.max(...rows.map(r => Math.abs(etfShare(r, p) || 0)), 0.01);
+    const bar = v => `<span class="fbar"><i class="${v >= 0 ? 'pos' : 'neg'}" style="width:${Math.abs(v || 0) / max * 50}%"></i></span>`;
+    const th = (k, l) => `<th class="num"><button class="linkish${etfSort === k ? ' on' : ''}" data-etfsort="${k}">${l}${etfSort === k ? ' ▾' : ''}</button></th>`;
+    const nStale = d.rows.filter(r => r[EI.stale]).length;
+    return `<section class="st-sec st-etf">
+      <div class="st-sec-head"><h3>ETF 편입 <small class="muted">${d.rows.length}개 ETF · ${U.md(d.d)} 기준</small></h3>
+        <div class="seg" role="group">${ETF_P.map(([k, l]) => `<button data-etfp="${k}" class="${k === p ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+      <div class="st-kpis">
+        <div><span>ETF 보유액 합</span><b>${U.eok(held)}</b>${etfMc ? `<small>시총의 ${(held / etfMc * 100).toFixed(2)}%</small>` : ''}</div>
+        <div><span>ETF 통한 순유입 ${p}일</span><b>${fmt(share)}</b><small>설정·환매 × 비중 합</small></div>
+        <div><span>담은 ETF</span><b>${d.rows.length}개</b><small>${nStale ? `비중 묵은 ETF ${nStale}개` : '모두 7일 안 PDF'}</small></div>
+      </div>
+      <div class="st-etf-plot"></div>
+      <div class="tbl-wrap"><table class="tbl etf-tbl">
+        <thead><tr><th>ETF</th><th class="num">비중</th>${th('held', '보유액')}${th('ret', `등락 ${p}일`)}<th class="num">ETF 설정·환매</th>${th('share', '이 종목 몫')}<th class="bar-cell"></th></tr></thead>
+        <tbody>${shown.map(r => `<tr>
+          <td class="etf-name"><a href="${naverUrl(r[EI.c])}" target="_blank" rel="noopener" title="${U.esc(r[EI.base] || '')}">${U.esc(r[EI.n] || r[EI.c])}</a>
+            ${r[EI.stale] ? `<small class="muted" title="운용사 PDF 가 ${r[EI.asof]} 이후 안 들어와 그때 비중을 씁니다">비중 ${U.md(r[EI.asof])}</small>` : ''}</td>
+          <td class="num">${r[EI.wt].toFixed(2)}%</td>
+          <td class="num">${U.eok(r[EI.held])}</td>
+          <td class="num">${pctH(r[EI.r[p]])}</td>
+          <td class="num">${fmt(r[EI.f[p]])}</td>
+          <td class="num"><b>${fmt(etfShare(r, p))}</b></td>
+          <td class="bar-cell">${bar(etfShare(r, p))}</td></tr>`).join('')}</tbody>
+      </table></div>
+      ${rows.length > ETF_SHOW ? `<button class="linkish etf-more">${etfAll ? '접기' : `나머지 ${rows.length - ETF_SHOW}개 더 보기`}</button>` : ''}
+      <p class="note">이 종목 몫 = ETF 순설정·환매 × 이 종목 비중 — 설정·환매 때 LP·운용사가 바스켓으로 이 종목을 사고판 금액 추정입니다.
+        순설정·환매는 상장좌수 변화 × NAV(KBJ 원장). 비중은 운용사 PDF 마지막 값을 기간 전체에 곱합니다.
+        운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO)만 들어가서 합계는 하한이고,
+        레버리지·인버스의 선물 노출은 빠집니다.${nStale ? ` 비중이 ${U.md(d.d)}보다 7일 넘게 묵은 ETF ${nStale}개는 날짜를 함께 적었습니다.` : ''}</p>
+    </section>`;
+  }
+
+  function drawEtf() {
+    const el = panel.querySelector('.st-etf-plot');
+    const d = etfData;
+    if (!el || !d?.h?.length) return;
+    const h = d.h, n = h.length;
+    Plot.chart(el, {
+      n, height: 120, uid: 'ste',
+      panes: [{ h: 1, zero: true, fmt: v => U.eok(v, true), series: [{ type: 'bar', values: h, cls: i => (h[i] >= 0 ? 'up' : 'dn') }] }],
+      xTicks: d.days.map((x, i) => [i, U.md(x)]).filter((_, i) => i % 5 === (n - 1) % 5),
+      tip: i => `<div class="tt-h">${U.md(d.days[i])}</div><div class="tt-v">ETF 통한 순유입 <b class="${U.cls(h[i])}">${U.eok(h[i], true)}</b></div>`,
+    });
+  }
+
+  function paintEtf() {
+    const slot = panel.querySelector('.st-etf-slot');
+    if (!slot) return;
+    slot.innerHTML = etfHtml();
+    drawEtf();
+  }
+
+  async function loadEtf(c) {
+    etfData = undefined;
+    etfAll = false;
+    let x = null;
+    try { x = await U.json(`data/etf/${c}.json`); } catch (e) { /* 어느 ETF 도 담지 않은 종목 */ }
+    if (code !== c) return;
+    etfData = x;
+    paintEtf();
+  }
+
   // 최근 90일 DART 주요 공시 (data/dart/s/{code}.json)
   function dartHtml() {
     if (!filings?.length || typeof DartFmt === 'undefined') return '<div class="st-dart-slot"></div>';
@@ -317,12 +401,14 @@ const Stock = (() => {
       Object.assign(s, { p: live.p, ch: live.ch, pl: liveLabel() });
     }
     capK = s.mc && s.p ? s.mc / s.p : null;
+    etfMc = s.mc || null;
     panel.innerHTML = `${headHtml(s)}${chartHtml()}
       <div class="st-body">${d === undefined ? '<p class="muted st-loading">리포트·수급 불러오는 중…</p>'
-        : `${growthHtml(s)}${targetHtml(s)}<div class="st-fund-slot"></div>${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}${flowDetailHtml(s)}
+        : `${growthHtml(s)}${targetHtml(s)}<div class="st-fund-slot"></div>${dartHtml()}${kwHtml(s)}${reportsHtml(s)}${flowHtml(s)}${flowDetailHtml(s)}<div class="st-etf-slot">${etfHtml()}</div>
            <p class="muted small st-note">리포트: 네이버 증권 리서치(증권사 제공) 요약에서 키워드를 뽑았습니다. 원문은 제목·PDF 링크로 보세요.
            목표가 변경은 같은 증권사의 직전 리포트와 비교했습니다. 목표 시총 = 목표가 × 지금 주식 수(우선주 포함 회사 시총 기준 어림).</p>`}</div>`;
     drawChart();
+    drawEtf();
   }
 
   async function open(c, h = {}) {
@@ -340,6 +426,7 @@ const Stock = (() => {
     panel.scrollTop = 0;
     loadChart(c);
     loadFilings(c);
+    loadEtf(c);
     const [d] = await Promise.all([
       U.json(`data/stocks/${c}.json`).catch(() => null),   // 리포트·수급 데이터가 없는 종목은 null
       loadLive(c),
@@ -374,6 +461,11 @@ const Stock = (() => {
       star.textContent = on ? '★' : '☆';
       return;
     }
+    const ep = e.target.closest('[data-etfp]');
+    if (ep) { etfP = +ep.dataset.etfp; return paintEtf(); }
+    const es = e.target.closest('[data-etfsort]');
+    if (es) { etfSort = es.dataset.etfsort; return paintEtf(); }
+    if (e.target.closest('.etf-more')) { etfAll = !etfAll; return paintEtf(); }
     const c = e.target.closest('[data-chart]');
     if (c) {
       chart = c.dataset.chart;

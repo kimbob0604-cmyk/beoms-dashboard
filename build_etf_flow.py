@@ -1,15 +1,16 @@
 """
-ETF 기계적 수급 — KBJ 가 내보낸 종목별 ETF 흐름(~/kbj-site/data/etf/stocks*.json) → public/data/etf_flow.json
+ETF 기계적 수급 — KBJ 종목별 ETF 흐름 → public/data/etf_flow.json
 
 KBJ(kbj/engines/etf/stock_flows.py)가 ETF 순설정·환매 금액에 운용사 PDF 구성 비중을 곱해 종목마다 더한 값이다.
 '순유입 몫' = 설정·환매로 생긴 바스켓 매매 추정(LP·운용사가 실제로 사고판 금액). 주가 움직임 중 펀더멘털이 아닌 부분이 얼마인지 본다.
 구성종목을 아는 ETF 만 들어가서(덮은 비율 coverage) 값은 하한이다.
 
-KBJ 는 기간(1·5·20일) × 정렬(순유입·순유출·거래대금 대비)마다 상위 100종목을 따로 내보낸다. 여기서 기간마다 합쳐 한 파일로 만든다.
-KBJ 내보내기가 없으면(다른 컴퓨터) 아무것도 하지 않는다.
+기간(1·5·20일) × 정렬(순유입·순유출·거래대금 대비)마다 상위 100종목을 받아 기간마다 합쳐 한 파일로 만든다.
+2026-11-26 부터 KBJ 사이트(com.kbj.site)를 굴리지 않으므로 KBJ 컨테이너에서 kbj_etf_periods.py 로 직접 받는다.
+컨테이너가 꺼져 있으면 예전 사이트 내보내기(~/kbj-site/data/etf/stocks*.json)가 남아 있을 때만 그걸 쓴다.
 
 하루 판정(day 블록, 2026-11-20 — newsbot 커버리지의 '기계적 수급'을 본뜸):
-- KBJ 컨테이너(kbj-api-1)가 돌면 kbj_etf_days.py 로 날짜별·전 종목 1일 순유입 몫을 받아 db/etf_flow.db 에 쌓는다
+- KBJ 컨테이너(kbj-scheduler-1)가 돌면 kbj_etf_days.py 로 날짜별·전 종목 1일 순유입 몫을 받아 db/etf_flow.db 에 쌓는다
   (구성종목 PDF 가 처음 쌓인 2026-10-20 부터. 한 번 받은 날은 다시 받지 않고, 최근 2일은 늘 다시 받는다).
 - 판정 = 그날 ETF 몫 ÷ 직전 20거래일 평균 거래대금(ADV20). ±5% 이상 매수·매도, ±10% 이상 강한 매수·매도, 그 아래는 영향 작음.
   (2026-10-20~11-19 에 ±2% 를 넘는 종목이 하루 100~360개라 5%·10% 로 잡았다. 화면에서 문턱을 바꾸면 다시 판정한다)
@@ -34,7 +35,7 @@ SRC = Path.home() / 'kbj-site' / 'data' / 'etf'
 OUT = ROOT / 'public' / 'data' / 'etf_flow.json'
 DB = ROOT / 'db' / 'etf_flow.db'
 MARKET_DB = ROOT / 'db' / 'dashboard.db'
-CONTAINER = 'kbj-api-1'
+CONTAINER = 'kbj-scheduler-1'           # KBJ 파이썬이 있는 컨테이너 (사이트용 kbj-api-1 은 2026-11-26 부터 안 띄운다)
 FIRST_DAY = date(2026, 10, 20)        # KBJ 가 운용사 PDF 를 처음 쌓은 다음 날 — 이보다 앞은 구성 비중이 없다
 TH = (0.05, 0.10)                     # 판정 문턱: ETF 몫 ÷ ADV20 (영향 작음 / 매수·매도 / 강한). 화면에서 바꿀 수 있다
 MIN_EOK = 1.0                         # 억 — 판정에 필요한 최소 몫
@@ -61,15 +62,31 @@ def row(r: dict) -> dict:
             'top': [[e.get('name') or e['code'], eok(e.get('inflow'))] for e in (r.get('top_etfs') or [])]}
 
 
-def build(src: Path = SRC):
+def fetch_periods(top=100) -> dict:
+    """KBJ 컨테이너에서 {"기간:정렬": 사이트 내보내기와 같은 모양} (kbj_etf_periods.py)"""
+    script = (ROOT / 'kbj_etf_periods.py').read_text(encoding='utf-8')
+    r = subprocess.run(['docker', 'exec', '-i', CONTAINER, 'python', '-', str(top)], input=script, capture_output=True,
+                       text=True, timeout=900)
+    if r.returncode != 0:
+        raise RuntimeError(f'kbj_etf_periods 실패 (종료 {r.returncode}): {r.stderr.strip().splitlines()[-1:]}')
+    return json.loads(r.stdout or '{}')
+
+
+def build(src: Path = SRC, live: dict | None = None):
+    """live = fetch_periods() 결과. 없으면 src 의 사이트 내보내기 파일"""
     out, meta = {}, None
     for p in PERIODS:
         rows, head = {}, None
         for s in SORTS:
-            f = src / src_name(p, s)
-            if not f.exists():
-                continue
-            d = json.loads(f.read_text(encoding='utf-8'))
+            if live is not None:
+                d = live.get(f'{p}:{s}')
+                if d is None:
+                    continue
+            else:
+                f = src / src_name(p, s)
+                if not f.exists():
+                    continue
+                d = json.loads(f.read_text(encoding='utf-8'))
             head = head or d
             for r in d['data']['rows']:
                 rows.setdefault(r['code'], row(r))
@@ -288,7 +305,13 @@ def main() -> int:
     except (RuntimeError, subprocess.SubprocessError, ValueError) as e:
         print(f'KBJ 컨테이너에서 받기 실패 — 쌓인 날로 만든다: {type(e).__name__} {e}')
     day = day_block(conn)
-    data = build()
+    live = None
+    if container_up():
+        try:
+            live = fetch_periods()
+        except (RuntimeError, subprocess.SubprocessError, ValueError) as e:
+            print(f'KBJ 컨테이너에서 기간 합 받기 실패 — 예전 내보내기 파일을 본다: {type(e).__name__} {e}')
+    data = build(live=live)
     if data is None and day is None:
         print(f'KBJ ETF 내보내기가 없습니다 ({SRC}). 건너뜁니다.')
         return 0

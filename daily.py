@@ -189,6 +189,9 @@ def main() -> int:
         # ETF 기계적 수급: KBJ 가 내보낸 종목별 ETF 순유입 몫(~/kbj-site/data/etf)을 한 파일로. 없으면 조용히 건너뛴다
         if run('ETF 기계적 수급', ['build_etf_flow.py'], log) != 0:
             problems.append('ETF 기계적 수급 JSON 빌드 실패')
+        # 종목별 ETF 편입(종목 패널): 담은 ETF·비중·등락률·순설정·환매 × 비중. KBJ 컨테이너가 꺼져 있으면 4로 건너뛴다
+        if run('종목별 ETF 편입', ['build_etf_by_stock.py'], log) not in (0, 4):
+            problems.append('종목별 ETF 편입 JSON 빌드 실패')
         # 지수 정기변경 패시브 수급: 편입·편출 종목 예상 유입·패시브 효과 (rebal_event.json). history.db 종가를 쓰므로 위 sync 뒤에.
         # KBJ DB 컨테이너가 없거나 보여 줄 기간(show_until)이 지났으면 4로 건너뛴다
         if run('지수 정기변경', ['build_rebal.py'], log) not in (0, 4):

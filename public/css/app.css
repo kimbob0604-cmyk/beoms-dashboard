@@ -250,6 +250,17 @@ mark { background: none; color: var(--text); font-weight: 700; }
 .fbar i { position: absolute; top: 0; bottom: 0; border-radius: 2px; opacity: .75; }
 .fbar i.pos { left: 50%; background: var(--up); }
 .fbar i.neg { right: 50%; background: var(--down); }
+/* 종목 패널 — ETF 편입 (stock.js etfHtml) */
+.st-etf-plot { margin: 0 0 8px; }
+.etf-tbl { margin-bottom: 6px; }
+.etf-tbl th:first-child, .etf-tbl td:first-child { padding-left: 0; }
+.etf-tbl th .linkish { font-size: inherit; color: inherit; font-weight: inherit; }
+.etf-tbl th .linkish.on { color: var(--text); }
+.etf-tbl .etf-name { max-width: 210px; }
+.etf-tbl .etf-name a { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); text-decoration: none; }
+.etf-tbl .etf-name a:hover { text-decoration: underline; }
+.etf-tbl .etf-name small { font-size: 11px; }
+.st-etf .etf-more { margin: 0 0 8px; }
 .st-note { padding: 8px 22px 0; line-height: 1.6; }
 .st-loading { padding: 18px 22px; border-top: 1px solid var(--line); }
 

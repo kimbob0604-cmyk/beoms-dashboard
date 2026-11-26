@@ -1,7 +1,7 @@
 """
 KBJ 컨테이너 안에서 도는 읽기 전용 스크립트 — 날짜별 '종목마다 ETF 순유입 몫'(1일)을 JSON 으로 내보낸다.
 
-build_etf_flow.py 가 `docker exec -i kbj-api-1 python - 날짜...` 로 이 파일을 넘겨 실행한다.
+build_etf_flow.py 가 `docker exec -i kbj-scheduler-1 python - 날짜...` 로 이 파일을 넘겨 실행한다.
 KBJ API(/api/etf/stocks)는 오늘 하루·상위 300종목만 주지만, 같은 계산(readers.etf.etf_stock_flows)을
 기준 시각만 바꿔 부르면 지난 날짜·전 종목을 얻는다. 구성 비중은 그날 기준 가장 최근 운용사 PDF.
 DB 에 쓰지 않는다. 출력: [{date, meta, stale, rows}] (stdout, 한 줄 JSON). 로그는 stderr.
