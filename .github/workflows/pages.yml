@@ -5,6 +5,10 @@
 # 'GitHub Actions' 로 두고, 맥(publish.py)과 cloud-live 가 gh-pages 를 푸시한 뒤 이 워크플로를 부른다 → 1분마다 갱신.
 # 줄 서 있는 배포는 가장 새 것 하나만 남고(concurrency), 실행할 때 gh-pages 의 최신 커밋을 받으므로 늘 마지막 내용이 올라간다.
 #
+# 2026-11-26: 배포 번호(pages_build_version)가 main 커밋 번호라, main 이 그대로면 매번 같은 번호가 된다. 이날 11:22 이후 같은 번호의 배포가
+# '성공'으로 끝나도 사이트에 반영되지 않았다. 그래서 deploy-pages 대신 Pages 배포 API 를 직접 불러, 배포 번호를
+# 그 gh-pages 커밋 번호로 붙인다(배포마다 새 커밋이라 번호가 매번 다르다)(아티팩트도 이름 대신 번호로 넘겨 '아티팩트 없음' 오류도 없어진다).
+#
 # 되돌리기: gh api -X PUT repos/<저장소>/pages -f build_type=legacy -f 'source[branch]=gh-pages' -f 'source[path]=/'
 name: pages
 
@@ -32,9 +36,38 @@ jobs:
         with:
           ref: gh-pages
           fetch-depth: 1
-      - uses: actions/upload-pages-artifact@v3
+      - id: ver
+        run: echo "v=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - id: art
+        uses: actions/upload-pages-artifact@v3
         with:
           path: .
           retention-days: 1
+      # 배포 번호를 매번 다르게: POST /pages/deployments (deploy-pages 가 하는 일과 같고, pages_build_version 만 우리가 정한다)
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/github-script@v7
+        env:
+          ARTIFACT_ID: ${{ steps.art.outputs.artifact_id }}
+          VER: ${{ steps.ver.outputs.v }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const oidc = await core.getIDToken();
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+            let dep;
+            for (let i = 0; i < 4; i++) {
+              try {
+                dep = (await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
+                  owner, repo, artifact_id: Number(process.env.ARTIFACT_ID), pages_build_version: process.env.VER, oidc_token: oidc })).data;
+                break;
+              } catch (e) { core.warning(`배포 만들기 실패 ${i + 1}: ${e.message}`); if (i === 3) throw e; await sleep(15000); }
+            }
+            core.info(`배포 ${process.env.VER} → ${dep.page_url}`);
+            core.setOutput('page_url', dep.page_url);
+            for (let i = 0; i < 120; i++) {
+              const st = (await github.request('GET /repos/{owner}/{repo}/pages/deployments/{id}', { owner, repo, id: process.env.VER })).data.status;
+              if (st === 'succeed') { core.info('배포 완료'); return; }
+              if (/fail|error|lost|cancel/i.test(st)) { core.setFailed(`배포 상태 ${st}`); return; }
+              await sleep(5000);
+            }
+            core.setFailed('10분 안에 배포가 끝나지 않음');
