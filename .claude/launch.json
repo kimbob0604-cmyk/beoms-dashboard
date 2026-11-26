@@ -16,6 +16,14 @@
         "serve.py"
       ],
       "port": 8766
+    },
+    {
+      "name": "macro",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/beomjun/Beom's Macro/serve.py"
+      ],
+      "port": 8770
     }
   ]
 }
