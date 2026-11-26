@@ -49,6 +49,10 @@
       {
        "id": "bh",
        "name": "비에이치 (090460)"
+      },
+      {
+       "id": "lg-innotek",
+       "name": "LG이노텍 (011070)"
       }
      ]
     },
@@ -162,6 +166,14 @@
       {
        "id": "g2gbio",
        "name": "지투지바이오 (456160)"
+      },
+      {
+       "id": "ligachem",
+       "name": "리가켐바이오 (141080)"
+      },
+      {
+       "id": "dnd-pharmatech",
+       "name": "디앤디파마텍 (347850)"
       }
      ]
     }
@@ -271,6 +283,10 @@
       {
        "id": "sanil",
        "name": "산일전기 (062040)"
+      },
+      {
+       "id": "ls-marine",
+       "name": "LS마린솔루션 (060370)"
       }
      ]
     },
@@ -315,6 +331,14 @@
       {
        "id": "vinatech",
        "name": "비나텍 (126340)"
+      },
+      {
+       "id": "sk-eternix",
+       "name": "SK이터닉스 (475150)"
+      },
+      {
+       "id": "sk-oceanplant",
+       "name": "SK오션플랜트 (100090)"
       }
      ]
     },
@@ -730,6 +754,46 @@
       {
        "id": "hanwha-engine",
        "name": "한화엔진 (082740)"
+      },
+      {
+       "id": "hd-ksoe",
+       "name": "HD한국조선해양 (009540)"
+      },
+      {
+       "id": "hd-hme",
+       "name": "HD현대마린엔진 (071970)"
+      },
+      {
+       "id": "stx-engine",
+       "name": "STX엔진 (077970)"
+      },
+      {
+       "id": "taekwang",
+       "name": "태광 (023160)"
+      },
+      {
+       "id": "sungkwang-bend",
+       "name": "성광벤드 (014620)"
+      },
+      {
+       "id": "hankuk-carbon",
+       "name": "한국카본 (017960)"
+      },
+      {
+       "id": "dongsung-fintec",
+       "name": "동성화인텍 (033500)"
+      },
+      {
+       "id": "sejin-heavy",
+       "name": "세진중공업 (075580)"
+      },
+      {
+       "id": "oriental-jeongong",
+       "name": "오리엔탈정공 (014940)"
+      },
+      {
+       "id": "halla-ims",
+       "name": "한라IMS (092460)"
       }
      ]
     },
@@ -756,6 +820,10 @@
       {
        "id": "hanwha-systems",
        "name": "한화시스템 (272210)"
+      },
+      {
+       "id": "innospace",
+       "name": "이노스페이스 (462350)"
       }
      ]
     },
@@ -908,6 +976,14 @@
       {
        "id": "sk-square",
        "name": "SK스퀘어 (402340)"
+      },
+      {
+       "id": "hyosung-corp",
+       "name": "효성 (004800)"
+      },
+      {
+       "id": "hd-hyundai",
+       "name": "HD현대 (267250)"
       }
      ]
     },
@@ -1002,6 +1078,10 @@
       {
        "id": "kiwoom",
        "name": "키움증권 (039490)"
+      },
+      {
+       "id": "meritz-fg",
+       "name": "메리츠금융지주 (138040)"
       }
      ]
     }

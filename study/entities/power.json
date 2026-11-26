@@ -552,5 +552,20 @@
   "name": "중앙계약시장 (장기 ESS)",
   "en": "Central contract market",
   "desc": "전력거래소 입찰로 장주기 ESS 사업자를 뽑고 15년 고정 수익을 주는 국내 시장."
+ },
+ "c:kr-contract-market": {
+  "name": "계약시장 (RPS 대체 입찰)",
+  "en": "Renewable fixed-price contract market",
+  "desc": "2027.1.1부터 신규 재생에너지가 REC 대신 정부 입찰로 선정돼 한전과 장기 고정가격 계약을 맺는 국내 제도."
+ },
+ "co:ls-marine": {
+  "name": "LS마린솔루션",
+  "code": "060370",
+  "desc": "해저케이블 시공·포설선 운영사. LS 계열. 서해안 HVDC 해저케이블 시공 후보."
+ },
+ "co:sk-oceanplant": {
+  "name": "SK오션플랜트",
+  "code": "100090",
+  "desc": "해상풍력 하부구조물(재킷·모노파일)과 특수선을 만드는 회사."
  }
 }

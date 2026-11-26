@@ -427,5 +427,22 @@
   "en": "HS Hyosung Advanced Materials",
   "desc": "PET 타이어코드·탄소섬유.",
   "code": "298050"
+ },
+ "c:bbu-cell": {
+  "name": "BBU 셀 시장",
+  "en": "Server BBU cell market",
+  "desc": "AI 서버 랙 안의 백업 배터리(BBU)에 들어가는 셀 시장. 서버 출하 × 서버당 배터리(kWh) × 채택률 × 셀 단가로 센다."
+ },
+ "co:nanosinso": {
+  "name": "나노신소재",
+  "en": "Nano Sinsozae",
+  "desc": "CNT 도전재·분산액 업체(121600). 북미 ESS용 LFP·BBU 원통형 전지 고출력 요구의 수혜 후보.",
+  "code": "121600"
+ },
+ "co:sangsin-edp": {
+  "name": "상신이디피",
+  "en": "Sangsin EDP",
+  "desc": "2차전지 캔(원통형·각형) 업체(091580). 말레이시아 원통형 캔, 북미 ESS 각형 캔 라인.",
+  "code": "091580"
  }
 }

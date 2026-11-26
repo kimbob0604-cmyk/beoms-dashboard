@@ -1023,7 +1023,7 @@
  "co:hd-hyundai": {
   "name": "HD현대",
   "en": "HD Hyundai",
-  "desc": "조선·전력기기·건설기계 지주. 흥국 목표 180,000원(하향), 상장 자회사 지분가치 33조원.",
+  "desc": "조선·전력기기·건설기계 지주. 흥국 목표 180,000원(하향), 상장 자회사 지분가치 33조원. 대신 Market Perform 120,000원(하향, 11/26), 자기주식 10.5% 소각 계획이 상향 조건.",
   "code": "267250"
  },
  "co:gs-holdings": {
@@ -1475,5 +1475,140 @@
   "name": "양극재 투자 사이클(선례)",
   "en": "Cathode investment cycle",
   "desc": "IBK가 휴머노이드 부품주를 읽는 잣대. 양극재는 기대 형성(2018~19) → 공급망 진입(2020~21) → 양산 확대(2021~22) → 실적 성장(2022~23) → 검증·조정(2023~25) 순서였고, 수주에서 실적까지 약 1~3년 걸렸다."
+ },
+ "c:other-corp-flow": {
+  "name": "기타법인 순매수 (자사주 매입)",
+  "en": "Other corporations net buying",
+  "desc": "거래소 투자자 분류에서 금융회사가 아닌 일반 법인의 매매. 상장기업의 자사주 직접 취득이 여기에 잡힌다. 2026 하락장 고점 이후 순매수 61.9조원으로 개인·기관을 합친 것보다 컸다(대신)."
+ },
+ "c:bitcoin-cycle": {
+  "name": "비트코인 반감기 사이클",
+  "en": "Bitcoin halving cycle",
+  "desc": "비트코인 채굴 보상이 반으로 줄어드는 반감기(약 4년) 뒤 평균 약 16개월 만에 고점을 찍고 조정하는 패턴. iM은 2026년 4분기를 저점 가능 구간, 2027년 상반기를 추세 회복으로 본다."
+ },
+ "c:dat": {
+  "name": "디지털자산 트레저리 (DAT)",
+  "en": "Digital asset treasury",
+  "desc": "비트코인·이더리움 같은 가상자산을 핵심 재무자산으로 사 모으는 상장사(Strategy·Metaplanet 등). 주식·채권 발행으로 자금을 조달해 매입하므로 주가·조달 여건이 매입 여력을 정한다."
+ },
+ "c:clarity-act": {
+  "name": "CLARITY Act",
+  "en": "CLARITY Act",
+  "desc": "미국 가상자산 시장구조 법안(디지털자산 관할을 SEC에서 CFTC로 재편). 2025.7 하원 통과, 상원 미통과. Kalshi 연내 통과 확률 74.15% → 약 1%(iM, 2026.11)."
+ },
+ "c:sec-exemption": {
+  "name": "SEC 혁신면제",
+  "en": "SEC innovation exemption",
+  "desc": "2026.9.17 SEC가 토큰화 증권 거래 플랫폼·유동성 공급자에 거래소·딜러 정의를 5년 한시로 면제해 AMM·유동성 풀로 토큰화 NMS 주식을 거래하게 한 조치."
+ },
+ "c:msci-nonop": {
+  "name": "MSCI 비영업기업 편출 기준",
+  "en": "MSCI non-operating company rule",
+  "desc": "실질 영업자산이 부족한 기업(디지털자산 보유가 큰 DAT 등)을 MSCI 지수에서 빼는 기준. 2026.11 리뷰에서 Strategy 등 6종목 편출 확정(11.30 종가, 12.1 적용)."
+ },
+ "c:esg-etf": {
+  "name": "ESG ETF (ESG 등급 활용)",
+  "en": "ESG ETF",
+  "desc": "ESG 등급을 편입·배제 기준으로 쓰는 ETF. 대만은 TIP·MSCI 등급 기준을 공시한 상품(00878)이 변동성 대비 수익률 2.68로 가장 높았다(대신)."
+ },
+ "co:strategy-mstr": {
+  "name": "Strategy (MSTR)",
+  "en": "Strategy Inc.",
+  "desc": "세계 최대 비트코인 보유 상장사(850,849 BTC, 최대 발행량의 4.05%). MSCI 편출 확정(11.30), 전환사채·우선주 재무 부담."
+ },
+ "co:hyosung-corp": {
+  "name": "효성",
+  "en": "Hyosung Corp.",
+  "code": "004800",
+  "desc": "효성중공업(NAV의 약 67.5%) 등을 가진 지주. 대신 BUY 142,000원(하향), 목표 할인율 75.8%. 배당 25%까지 거리가 7개 지주 중 가장 짧음."
+ },
+ "c:small-launch": {
+  "name": "소형 발사체",
+  "en": "Small launch vehicle",
+  "desc": "LEO(지구 저궤도) 탑재량 2톤 이하 로켓(500kg 이하는 초소형). 일렉트론·알파·스펙트럼·세레스-1·한빛-나노. 위성 한 기를 원하는 궤도·시점에 올려 주지만 kg당 값은 라이드셰어의 2~4배(유진)."
+ },
+ "c:rideshare": {
+  "name": "라이드셰어 (위성 합승 발사)",
+  "en": "Rideshare launch",
+  "desc": "한 번의 발사에 수십~백여 기의 소형위성을 같이 실어 비용을 나누는 방식. 스페이스X 트랜스포터는 50kg 35만 달러 + 초과 kg당 7,000달러(2026). 소형 발사체 시장을 줄인 원인(유진)."
+ },
+ "c:mep": {
+  "name": "MEP (기계·전기·배관)",
+  "en": "Mechanical, Electrical, Plumbing",
+  "desc": "건물 안에 설치하는 냉각·공조·전력·배관 설비. 데이터센터는 공사비의 50~60%(일반)·70~85%(AI)가 MEP라 건축보다 플랜트에 가깝다(DS)."
+ },
+ "co:rocket-lab": {
+  "name": "로켓랩",
+  "en": "Rocket Lab",
+  "ticker": "RKLB",
+  "listed": true,
+  "desc": "소형 발사 1위(일렉트론 통산 100회)에서 위성·통신으로 확장하는 미국 우주기업. 2026.3Q 매출 2.68억 달러(+73%), 이리듐 80억 달러 인수 발표(유진)."
+ },
+ "co:firefly": {
+  "name": "파이어플라이 에어로스페이스",
+  "en": "Firefly Aerospace",
+  "ticker": "FLY",
+  "listed": true,
+  "desc": "1톤급 알파 발사체와 달 착륙선 블루고스트. 2026.3Q 매출 1.11억 달러, 백로그 17억 달러(유진)."
+ },
+ "co:isar": {
+  "name": "이자르 에어로스페이스",
+  "en": "Isar Aerospace",
+  "listed": false,
+  "desc": "독일 소형 발사체 스펙트럼 개발사. 2026.9 유럽 민간 첫 궤도 도달, 수요의 60%가 국방(유진)."
+ },
+ "co:innospace": {
+  "name": "이노스페이스",
+  "en": "Innospace",
+  "code": "462350",
+  "desc": "하이브리드 엔진 소형 발사체 한빛-나노·세빛 개발. 한빛-나노 1차 2025.12 실패, 2차 2027년 상반기(유진)."
+ },
+ "co:stx-engine": {
+  "name": "STX엔진",
+  "en": "STX Engine",
+  "code": "077970",
+  "desc": "특수엔진(국내 자주포 등)이 정체성인 엔진 업체. 신영 목표 17,000원(하향), 민수엔진 수주잔고 6,936억원."
+ },
+ "co:taekwang": {
+  "name": "태광",
+  "en": "Taekwang",
+  "code": "023160",
+  "desc": "관이음쇠(피팅). 중동 수주 집중도가 높고 북미를 신성장으로. 신영 목표 42,000원(유지)."
+ },
+ "co:sungkwang-bend": {
+  "name": "성광벤드",
+  "en": "Sung Kwang Bend",
+  "code": "014620",
+  "desc": "대형 관이음쇠. 북미(가스복합화력·LNG터미널·데이터센터) 친화도가 높다. 신영 목표 36,000원(유지)."
+ },
+ "co:hankuk-carbon": {
+  "name": "한국카본",
+  "en": "Hankuk Carbon",
+  "code": "017960",
+  "desc": "LNG 운반선용 초저온 보냉재. 장기 성장은 2029년 이후 방산부품 확대 때 확인. 신영 목표 16,000원(하향)."
+ },
+ "co:dongsung-fintec": {
+  "name": "동성화인텍",
+  "en": "Dongsung Finetec",
+  "code": "033500",
+  "desc": "LNG·LPG 보냉재. 수주잔고 감소 영향이 중단기 이어질 것으로 신영이 봄. 목표 20,000원(하향)."
+ },
+ "co:sejin-heavy": {
+  "name": "세진중공업",
+  "en": "Sejin Heavy Industries",
+  "code": "075580",
+  "desc": "LPG 독립형 화물창 제조. HD현대 그룹 해외사업장 수혜. 신영 목표 22,000원(하향)."
+ },
+ "co:oriental-jeongong": {
+  "name": "오리엔탈정공",
+  "en": "Oriental Precision",
+  "code": "014940",
+  "desc": "선박용 크레인·데크하우스. 삼성중공업의 2029년까지 LNG선 인도 연 20척 확보 수혜. 신영 목표 16,000원(하향)."
+ },
+ "co:halla-ims": {
+  "name": "한라IMS",
+  "en": "Halla IMS",
+  "code": "092460",
+  "desc": "선박 부품·조선소 운영(영도·광양 조선소 인수). 매출의 50%가 중국 현지 OEM 생산. 신영 목표 28,000원(유지)."
  }
 }
