@@ -79,7 +79,10 @@ cd "/Users/beomjun/Beom's Dashboard" && python3 study_tg_daily.py
    - `overview` 도 바뀐 결론에 맞춘다.
    - 기록 문서(`docs/study-*-plan.md`)에 'YYYY-MM-DD 추가' 절을 적는다: 넣은 리포트, 바뀐 합의 수, 새 견해 차이, 원문 오류.
 6. **흐름**: 그 섹터에 `study/flow/<섹터>.json` 이 있으면 리포트 한 줄을 넣는다 — 성격·시각(낙관/중립/신중)·한 줄 결론·핵심 주장 4~6·목표주가(변경)·흐름 숫자. 날짜·하우스는 reports.json 에서 자동, 카드 연결도 빌드가 자동으로 찾는다(`docs/study-timeline-plan.md`).
-7. 끝나면 inbox 줄에 `"done": "<문서id>"` 를 적는다.
+7. 끝나면 inbox 줄에 `"done": "<문서id>"` 를 적는다. 같은 줄에 텔레그램 요약용 두 값도 적는다(2026-11-26 사용자 요청):
+   - `"brief"`: 리포트의 한 줄 결론, 60~90자 쉬운 한국어. 숫자 하나는 꼭 넣는다(예 "2027 HBM 수요 +45%, 공급 부족은 2027 하반기까지 — 메모리 가격 상승 지속").
+   - `"call"`(있을 때만): 투자의견·목표주가·톱픽을 짧게(예 "Overweight · 톱픽 SK하이닉스 TP 95만원(상향)").
+   - 건너뛴 줄은 `"skip"` 이유가 그대로 요약 맨 아래에 나간다.
 
 ## 4. 빌드·확인
 
@@ -105,7 +108,18 @@ python3 publish_study.py
 - 커밋 메시지 끝에는 공동 작성 줄(Co-Authored-By)을 붙인다.
 - `publish_study.py` 는 암호(`.env` 의 STUDY_PASS)로 잠가 https://kimbob0604-cmyk.github.io/beoms-study/ 에 올린다. 바뀐 파일만 올라간다.
 
-## 6. 보고
+## 6. 텔레그램 요약 보내기
+
+```bash
+python3 study_tg_brief.py <오늘 날짜 YYYY-MM-DD>
+```
+
+- 그날 받은 편지함을 섹터별로 묶어(넣은 문서의 섹터 기준) 리포트마다 `하우스 애널리스트 「제목」` + `brief` + `call` 한 줄씩 보낸다. 섹터마다 Study 링크가 붙는다.
+- 봇은 Beom's Macro 알림 봇(@Beomjun_Macro_bot)을 같이 쓴다. 방 번호는 `.env` 의 `STUDY_TG_CHAT`. 같은 날짜는 한 번만 보낸다(`study_src/inbox/.sent-<날짜>`).
+- 먼저 `--dry` 로 찍어 보고 brief 가 빠진 줄이 없는지 확인한 뒤 보낸다. 새 리포트가 없는 날은 보내지 않는다.
+- 어제 받은 편지함 중 오늘 끝낸 줄이 있으면 그 날짜도 보낸다(아직 안 보낸 날짜만).
+
+## 7. 보고
 
 - 받은 리포트 수, 문서별로 넣은 리포트(하우스·제목·표지 날짜), 새 카드·그림 수, 건너뛴 것과 이유를 쓴다.
 - 확인이 필요한 것(표지 날짜 `check`, 섹터 없음, 로그인 만료)도 함께 쓴다.
