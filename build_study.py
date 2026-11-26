@@ -22,7 +22,9 @@ Beom's Study 빌드: study/ (손으로 쓰는 원본) → public/data/study/ (�
 """
 
 import argparse
+import collections
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -186,6 +188,15 @@ def main():
             warns.append(f'{d["id"]}: {fig_path} 없음 — study_extract.py 를 먼저 실행')
         used = {}
         ncards = 0
+        # 애널리스트 필터(2026-11-26 사용자): 카드마다 '하우스 애널리스트' 이름표(c['an']) — 그림은 그림의 리포트 키로, 글 카드는 src 에 적힌 하우스 이름으로
+        an_of = lambda rk: f"{REPORTS[rk]['house']} {REPORTS[rk].get('analyst') or ''}".strip() if rk in REPORTS else None
+        by_house = collections.defaultdict(set)
+        for k, v in doc_reports.items():
+            if v.get('house'):
+                by_house[v['house']].add(an_of(k))
+        # 같은 하우스 리포트가 여럿이면 글 카드는 누구 것인지 모른다 → '하우스 (여러 리포트)' 로 묶는다 (그림 카드는 리포트 키로 정확히 붙음)
+        house_re = [(re.compile(rf"(?<![가-힣A-Za-z]){re.escape(h)}(?:투자증권|증권)?(?![가-힣A-Za-z])"), next(iter(a)) if len(a) == 1 else f'{h} (여러 리포트)') for h, a in by_house.items()]
+        only = an_of(next(iter(doc_reports))) if len(doc_reports) == 1 else None
         for ti, t in enumerate(d['topics']):
             if t['node'] not in nodes:
                 errs.append(f'{d["id"]} 주제 "{t["title"]}": 트리에 없는 노드 {t["node"]}')
@@ -255,6 +266,17 @@ def main():
                     errs += [f'{where}: 차트 {m}' for m in check_chart(c['chart'])]
                 if c.get('semi'):
                     link_cells(c, where)
+                an = []
+                for fx in [c.get('fig')] + [st.get('fig') for st in c.get('steps', [])]:
+                    rk = figs.get((fx or {}).get('key'), {}).get('pdf') if fx else None
+                    if isinstance(rk, str) and an_of(rk):
+                        an.append(an_of(rk))
+                if not an and c.get('src'):
+                    an = [a for rx, a in house_re if a and rx.search(str(c['src']))]
+                if not an and only:
+                    an = [only]
+                if an:
+                    c['an'] = sorted(set(an))
                 for k in c.get('tags', []) + c.get('addTags', []):
                     if k not in ents:
                         errs.append(f'{where}: 색인에 없는 키 {k}')
@@ -265,6 +287,7 @@ def main():
                                             'add': k in c.get('addTags', [])})
             node_topics[t['node']].append({'doc': d['id'], 'ti': ti, 'title': t['title'], 'pages': t.get('pages'),
                                            'n': len(t['cards']),
+                                           'an': dict(collections.Counter(a for c in t['cards'] for a in c.get('an', []))),
                                            'nfig': sum(1 for c in t['cards'] if c['t'] in ('fig', 'tbl'))})
         # 빠진 그림: 작성 끝난 범위 안인데 카드가 없음
         lo, hi = d.get('done', [0, -1])
@@ -294,8 +317,13 @@ def main():
             path = f'{prefix}/{n["id"]}' if prefix else n['id']
             kids = attach(n.get('children', []), path)
             topics = node_topics.get(path, [])
+            an = collections.Counter()
+            for x in topics:
+                an.update(x.get('an', {}))
+            for k in kids:
+                an.update(k.get('an', {}))
             out.append({'id': n['id'], 'path': path, 'name': n['name'], 'desc': n.get('desc', ''),
-                        'topics': topics, 'children': kids,
+                        'topics': topics, 'children': kids, 'an': dict(an.most_common()),
                         'count': len(topics) + sum(k['count'] for k in kids)})
         return out
 

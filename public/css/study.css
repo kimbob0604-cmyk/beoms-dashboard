@@ -315,3 +315,10 @@ h1 .sd-chip { font-size: 12px; vertical-align: middle; }
   background: var(--bk, var(--chip)); color: var(--bkf, #fff); font-size: 10.5px; font-weight: 800; letter-spacing: -0.02em; vertical-align: 1px; line-height: 1; }
 .bk-row { display: inline-flex; flex-wrap: wrap; gap: 3px; margin-right: 6px; vertical-align: 1px; }
 .bk-row .bk-logo { margin-right: 0; }
+
+/* 애널리스트 필터 칩 (2026-11-26) */
+.sd-anf { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin: -4px 0 16px; }
+.sd-anf .sd-chip { text-decoration: none; color: var(--text); }
+.sd-anf .sd-chip small { color: var(--muted); margin-left: 2px; }
+.sd-anf .sd-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sd-anf .sd-chip.on small { color: rgba(255,255,255,.8); }

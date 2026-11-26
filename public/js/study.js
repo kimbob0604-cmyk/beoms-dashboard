@@ -297,8 +297,15 @@
     </div>`;
   }
 
-  function topicHtml(doc, ti) {
+  function topicHtml(doc, ti, an) {
     const t = doc.topics[ti];
+    if (an) {   // 애널리스트 필터: 그 사람 카드만 (요약·용어는 여러 하우스를 합친 것이라 뺀다)
+      const keep = t.cards.map((c, ci) => [c, ci]).filter(([c]) => (c.an || []).includes(an));
+      if (!keep.length) return '';
+      return `<article class="sd-topic" id="t-${doc.id}-${ti}"><header class="sd-thead"><h2>${esc(t.title)}</h2>
+        <p class="muted small"><a href="?d=${encodeURIComponent(doc.id)}">${esc(doc.title)}</a> · ${esc(an)} 카드 ${keep.length}/${t.cards.length}개</p></header>
+        <div class="sd-cards">${keep.map(([c, ci]) => cardHtml(doc, ti, ci, c)).join('')}</div></article>`;
+    }
     const s = t.summary || {};
     // 이 주제에 나온 개념 → 용어 상자
     const concepts = [...new Set(t.cards.flatMap(c => c.tags || []).filter(k => k.startsWith('c:')))];
@@ -345,10 +352,31 @@
         <p class="muted small">색인 목록은 왼쪽 검색창에 아무 글자나 넣으면 나옵니다.</p></section>`;
   }
 
-  async function showNode(path, card) {
+  // 애널리스트 필터 칩 (2026-11-26 사용자: 섹터 안에서 애널리스트별로). 숫자 = 이 가지 안 그 사람 카드 수
+  function anChips(n, an) {
+    const list = Object.entries(n.an || {});
+    if (list.length < 2 && !an) return '';
+    const href = a => `?n=${encodeURIComponent(n.path)}${a ? `&a=${encodeURIComponent(a)}` : ''}`;
+    return `<div class="sd-anf"><span class="muted small">애널리스트</span>
+      <a class="sd-chip${an ? '' : ' on'}" href="${href('')}">전체</a>
+      ${list.map(([a, c]) => `<a class="sd-chip${a === an ? ' on' : ''}" href="${href(a)}">${esc(a)} <small>${c}</small></a>`).join('')}</div>`;
+  }
+  const subTopics = n => [...n.topics, ...n.children.flatMap(subTopics)];
+
+  async function showNode(path, card, an) {
     const n = nodeMap[path];
     if (!n) return showHome();
-    let html = crumbs(path) + `<div class="page-head"><h1>${esc(n.name)}</h1>${n.desc ? `<p>${esc(n.desc)}</p>` : ''}</div>`;
+    let html = crumbs(path) + `<div class="page-head"><h1>${esc(n.name)}</h1>${n.desc ? `<p>${esc(n.desc)}</p>` : ''}</div>` + anChips(n, an);
+    if (an) {
+      const ts = subTopics(n).filter(t => (t.an || {})[an]);
+      const docs = await Promise.all([...new Set(ts.map(t => t.doc))].map(getDoc));
+      const by = Object.fromEntries(docs.map(d => [d.id, d]));
+      html += `<p class="muted small sd-from">${esc(an)} — 이 가지 안 주제 ${ts.length}개, 카드 ${ts.reduce((s, t) => s + t.an[an], 0)}장. 그림·표는 리포트에서 바로, 글 카드는 출처에 적힌 하우스로 붙였다(같은 하우스 리포트가 여럿이면 '여러 리포트').</p>`;
+      html += ts.map(t => topicHtml(by[t.doc], t.ti, an)).join('') || '<p class="msg">이 가지에는 이 애널리스트 카드가 없습니다.</p>';
+      $('body').innerHTML = html;
+      window.scrollTo(0, 0);
+      return;
+    }
     if (n.children.length) {
       html += `<div class="sd-kids">${n.children.map(k => `<a class="sd-kid card${k.count ? '' : ' sd-empty'}" href="${nodeHref(k.path)}">
         <b>${esc(k.name)}</b><small class="muted">${k.count ? `주제 ${k.count}` : '아직 없음'}</small></a>`).join('')}</div>`;
@@ -491,7 +519,7 @@
     else if (v === 'book') body = `<p class="muted small">날짜와 상관없는 교재·책입니다.</p>${kids(book)}`;
     else body = flowHtml(n.path, F);
     $('body').innerHTML = crumbs(n.path) + `<div class="page-head"><h1>${esc(n.name)}</h1>${n.desc ? `<p>${esc(n.desc)}</p>` : ''}</div>
-      <nav class="fl-tabs">${tab('flow', '흐름', F.order.length)}${tab('topic', '주제', topic.length)}${book.length ? tab('book', '교재', book.length) : ''}</nav>${body}`;
+      <nav class="fl-tabs">${tab('flow', '흐름', F.order.length)}${tab('topic', '주제', topic.length)}${book.length ? tab('book', '교재', book.length) : ''}</nav>${v === 'topic' ? anChips(n, '') : ''}${body}`;
     window.scrollTo(0, 0);
   }
 
@@ -538,6 +566,7 @@
     drawTree(r.n || '');
     try {
       if (r.r) await showReport(r.r);
+      else if (r.n && r.a) await showNode(r.n, r.c, r.a);
       else if (r.n && FLOW_IX[r.n] && nodeMap[r.n]) await showSector(nodeMap[r.n], r.v || 'flow');
       else if (r.n) await showNode(r.n, r.c);
       else if (r.e) await showEntity(r.e);

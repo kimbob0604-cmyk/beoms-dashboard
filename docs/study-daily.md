@@ -46,6 +46,8 @@ cd "/Users/beomjun/Beom's Dashboard" && python3 study_tg_daily.py
 | 미드스몰캡 `smid` | `nh-smid-2027` |
 
 - 기업분석 장·종목 페이지가 있는 산업 리포트는 섹터 문서와 별도로 `companies` 문서의 회사 노드에 정리한다(트리 `study/tree/company.json`, 색인 `study/entities/company.json`, `docs/study-company-plan.md`).
+  회사 노드는 `company/<섹터>/<소분류>/<회사>` 3단계다(2026-11-26~). 리포트·회사 이름으로 소분류를 만들지 않는다.
+- 글 카드 `src` 에는 하우스 이름을 꼭 적는다(섹터 화면의 애널리스트 필터가 이걸로 카드를 붙인다).
 
 - 여러 섹터를 다룬 리포트는 장별로 나눠 각 문서에 넣는다.
 - 리서치 리포트가 아닌 것(가이드북·공시 모음 등), 섹터에 맞지 않는 것, 이미 들어간 리포트는 `skip` 과 이유를 적는다.
