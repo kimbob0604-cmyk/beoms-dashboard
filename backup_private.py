@@ -7,6 +7,7 @@
 - db/visits.sql   : db/visits.db 를 SQL 텍스트로 뜬 것 (sqlite3 visits.db < visits.sql 로 되살린다).
                     바이너리 .db 를 매일 올리면 저장소가 하루 몇 MB 씩 불어나서 텍스트로 둔다 (새 글만 차이로 쌓인다).
 - data/visits.json: 탐방 탭 이 컴퓨터용 전체본 (build_visits.py)
+- visit_docs/*.json: 탐방 탭 증권사 자료(콥데이 기업별 노트를 회사별로 나눈 글·요약, visit_docs.py). 원본 PDF 는 올리지 않는다.
 - 글이 바뀌지 않았으면(새 글·수정 글 없음) 커밋하지 않는다. 시총만 바뀐 visits.json 은 그때 같이 올라간다.
 - 텔레그램 로그인 파일(tg_user.session)과 키는 올리지 않는다.
 
@@ -26,6 +27,7 @@ PRIV = ROOT / '.private'
 SRC_DB = ROOT / 'db' / 'visits.db'
 SRC_JSON = ROOT / 'public' / 'data' / 'visits.json'
 FINGERPRINT = PRIV / 'db' / 'visits.fingerprint'   # 마지막으로 올린 글 목록의 해시
+DOCS = ROOT / 'visit_docs'                          # 증권사 자료 (visit_docs.py)
 
 
 def git(*args, check=True) -> str:
@@ -36,6 +38,8 @@ def fingerprint(conn) -> str:
     h = hashlib.sha256()
     for row in conn.execute('SELECT chat_id, id, date, chat, text FROM msg ORDER BY chat_id, id'):
         h.update(repr(row).encode())
+    for p in sorted(DOCS.glob('*.json')) if DOCS.exists() else []:
+        h.update(p.name.encode() + p.read_bytes())
     return h.hexdigest()
 
 
@@ -57,6 +61,10 @@ def main() -> int:
                 f.write(line + '\n')
         if SRC_JSON.exists():
             shutil.copyfile(SRC_JSON, PRIV / 'data' / 'visits.json')
+        if DOCS.exists():
+            (PRIV / 'visit_docs').mkdir(exist_ok=True)
+            for p in DOCS.glob('*.json'):
+                shutil.copyfile(p, PRIV / 'visit_docs' / p.name)
         FINGERPRINT.write_text(fp + '\n')
         n, last = conn.execute('SELECT COUNT(*), MAX(date) FROM msg').fetchone()
         git('add', '-A')

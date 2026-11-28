@@ -6,6 +6,8 @@
 - 종목에는 지금 시총과 영업이익(전년 실적·올해·내년·내후년 추정) → POR = 시총 ÷ 영업이익 을 붙이고,
   글에는 그날의 시총(탐방 당시 시총)을 붙여 '탐방 뒤 시총이 얼마나 변했나'를 보여 준다. 주가가 아니라 시총 기준이다.
 - 요약(visit_notes.json)이 있으면 붙인다:  python3 visit_notes.py pending / add
+- 증권사 자료(visit_docs/*.json — 콥데이 기업별 노트 PDF 를 회사별로 나눈 것, visit_docs.py)도 같은 종목 카드에 넣는다.
+  공개판에는 공개 채널 글처럼 제목·요약만(원문은 이 컴퓨터와 암호 건 전체판에만).
 
 공개 배포 (2026-11-10 사용자 결정으로 탐방 탭 공개): 이 컴퓨터용 visits.json(전부)과 따로 공개용 visits_pub.json 을 만든다(public_view).
   - 주소가 없는 비공개 방의 글: 원문까지 싣는다 (사용자가 그 방 사람들의 허락을 받았다고 한 범위)
@@ -27,6 +29,7 @@ from datetime import datetime
 from pathlib import Path
 
 import db
+import visit_docs
 import visits as V
 from build_growth import company_mcaps
 from build_naver import market_info, por_base
@@ -62,23 +65,29 @@ def load_names(conn, strat: Path = STRAT_DB) -> dict:
 
 
 def mcap_then(hist, conn, code: str, day: str):
-    """그날(또는 그 전 마지막 거래일)의 보통주 시총(억). 과거 DB(20년) → 없으면 최근 가격 DB"""
+    """그날(또는 그 전 마지막 거래일)의 보통주 시총(억). 과거 DB(20년)와 최근 가격 DB 가운데 그날에 더 가까운 값.
+    과거 DB 에 며칠이 빠져 있으면(예: 2026-11-20) 과거 DB 만 보면 그 전날 값을 쓰게 된다 (2026-11-26 고침)"""
+    found = []
     if hist is not None:
-        r = hist.execute('SELECT mcap FROM hp WHERE code = ? AND date <= ? AND mcap IS NOT NULL ORDER BY date DESC LIMIT 1',
+        r = hist.execute('SELECT date, mcap FROM hp WHERE code = ? AND date <= ? AND mcap IS NOT NULL ORDER BY date DESC LIMIT 1',
                          (code, day)).fetchone()
         if r:
-            return r[0]
-    r = conn.execute('SELECT mcap FROM price_daily WHERE code = ? AND date <= ? ORDER BY date DESC LIMIT 1',
+            found.append((r[0], 1, r[1]))           # 같은 날이면 과거 DB 를 먼저 (기존 동작)
+    r = conn.execute('SELECT date, mcap FROM price_daily WHERE code = ? AND date <= ? AND mcap IS NOT NULL ORDER BY date DESC LIMIT 1',
                      (code, day)).fetchone()
-    return r[0] if r else None
+    if r:
+        found.append((r[0], 0, r[1]))
+    return max(found)[2] if found else None
 
 
 def note_id(m) -> str:
     return f"{m['chat_id']}:{m['id']}"
 
 
-def build(conn, vconn, hist=None, summaries=None, names=None) -> dict:
+def build(conn, vconn, hist=None, summaries=None, names=None, docs=None) -> dict:
+    """docs: 증권사 자료(visit_docs.load_all — 콥데이 기업별 노트 PDF 를 회사별로 나눈 것). 같은 종목 카드에 함께 넣는다."""
     summaries = summaries or {}
+    docs = docs or []
     d = conn.execute('SELECT MAX(date) FROM price_daily').fetchone()[0]
     info, _ = market_info(conn, d)
     pv = por_base(d)
@@ -119,6 +128,24 @@ def build(conn, vconn, hist=None, summaries=None, names=None) -> dict:
         item['mc0'] = round(then) if then else None
         by_code[c].append(item)
 
+    doc_notes = visit_docs.notes(docs, V.key_lines)
+    for item in doc_notes:
+        c = item.pop('code')
+        item.pop('name')
+        if not c:
+            etc.append(item)
+            continue
+        then = mcap_then(hist, conn, c, item['d'])
+        common_now = (prices.get(c) or {}).get('mcap')
+        if then and common_now and company.get(c):
+            then *= company[c] / common_now
+        item['mc0'] = round(then) if then else None
+        by_code[c].append(item)
+    if doc_notes:          # 자료 글이 섞이면 날짜(같은 날이면 시각) 최신순으로 다시 줄 세운다
+        for items in by_code.values():
+            items.sort(key=lambda n: (n['d'], n['tm']), reverse=True)
+        etc.sort(key=lambda n: (n['d'], n['tm']), reverse=True)
+
     cos = []
     for c, items in by_code.items():
         i = info.get(c) or {}
@@ -128,14 +155,15 @@ def build(conn, vconn, hist=None, summaries=None, names=None) -> dict:
     cos.sort(key=lambda x: x['last'], reverse=True)
 
     rooms = defaultdict(int)
-    for m in notes:
+    for m in notes + doc_notes:
         for r in m['rooms']:
             rooms[r] += 1
     collected = vconn.execute("SELECT v FROM meta WHERE k = 'collected_at'").fetchone()
     return {
         'date': d, 'built_at': datetime.now().isoformat(timespec='seconds'),
         'collected_at': collected[0] if collected else None,
-        'n_raw': len(raw), 'n_notes': len(notes), 'since': notes[-1]['date'][:10] if notes else None,
+        'n_raw': len(raw), 'n_notes': len(notes) + len(doc_notes), 'n_docs': len(doc_notes),
+        'since': notes[-1]['date'][:10] if notes else None,
         'rooms': sorted(([k, v] for k, v in rooms.items()), key=lambda x: -x[1]),
         'cos': cos, 'etc': etc,
     }
@@ -176,13 +204,13 @@ def main() -> int:
     vconn = sqlite3.connect(f'file:{a.db}?mode=ro', uri=True)
     hist = sqlite3.connect(f'file:{HISTORY_DB}?mode=ro', uri=True) if HISTORY_DB.exists() else None
     summaries = json.loads(NOTES.read_text(encoding='utf-8')) if NOTES.exists() else {}
-    data = build(conn, vconn, hist, summaries)
+    data = build(conn, vconn, hist, summaries, docs=visit_docs.load_all())
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     pub = public_view(data)
     out.with_name(out.stem + '_pub.json').write_text(json.dumps(pub, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
-    print(f"visits.json: 글 {data['n_raw']}건 → 탐방 노트 {data['n_notes']}건, {len(data['cos'])}종목 + 기타 {len(data['etc'])}건"
+    print(f"visits.json: 글 {data['n_raw']}건 → 탐방 노트 {data['n_notes']}건(증권사 자료 {data['n_docs']}건 포함), {len(data['cos'])}종목 + 기타 {len(data['etc'])}건"
           f" · 공개용 {pub['n_notes']}건({len(pub['cos'])}종목, 원문 포함 {sum(1 for c in pub['cos'] for n in c['notes'] if n['x']) + sum(1 for n in pub['etc'] if n['x'])}건)")
     return 0
 

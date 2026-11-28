@@ -368,6 +368,28 @@ python3 visit_notes.py pending            # 요약이 없는 노트 / add <id> "
   - 2026-11-10 기준 공개용 782건(261종목) 가운데 원문 포함 26건. 차트용 `data/vchart/` 도 함께 올라간다
 - `daily.py` 가 매 실행마다 수집·빌드한다. 키·로그인이 없으면 종료 코드 4로 조용히 건너뛴다.
 
+증권사 자료 — 콥데이·NDR 기업별 노트 PDF (2026-11-26)
+
+받은 PDF 를 글로 풀어 회사별로 나눠 탐방 탭의 같은 종목 카드에 넣는다(출처 칸 = 자료 이름, '증권사 자료' 표시).
+
+```bash
+python3 visit_docs.py import 파일.pdf --id imcd261120 --date 2026-11-20 --source "iM증권 Corporate Day"
+python3 visit_docs.py list                                  # 회사·종목 코드·요약 유무
+python3 visit_docs.py show imcd261120 3                     # 3번째 회사 본문
+python3 visit_docs.py sum imcd261120 3 "요약"                # 요약 저장 (20~400자)
+python3 visit_docs.py code imcd261120 3 011070              # 종목 코드 고치기
+python3 visit_docs.py fix imcd261120 12 "39월" "3~9월" "원본에서 물결표 빠짐"   # 원본 오탈자 (내역이 남고 다시 뽑아도 유지)
+python3 build_visits.py && python3 collect_visits_chart.py  # 탐방 탭에 반영
+```
+
+- 저장: `visit_docs/<id>.json`(본문·요약·바로잡은 내역), 원본 PDF 는 `visit_docs/src/`. 증권사 자료 원문이라 gitignore, 비공개 저장소에만(`backup_private.py`, PDF 제외).
+- 공개판(`visits_pub.json`)에는 제목·요약만 가고 본문·핵심 줄은 빠진다. 본문은 이 컴퓨터와 암호 건 전체판에만.
+- 글 뽑기(PyMuPDF): 워드 변환 PDF 는 한글·영문 글꼴이 바뀌는 자리에 가짜 공백이 생겨('SK 하이닉스', '’27 년') `TEXT_INHIBIT_SPACES` 로 뽑는다.
+  줄은 오른쪽 여백까지 찬 줄만 다음 줄과 잇고(40pt 안, 문장이 안 끝났으면 62pt 안), 머리 기호·굵게 시작하는 줄·표·큰 글씨 제목은 새 줄. 표는 칸별로 읽어 '칸 | 칸', 세로 병합 칸은 앞 줄에 합친다.
+- 회사 나누기: 목차의 회사 이름 줄 다음 줄이 'iM증권 …(애널리스트)'인 자리. 종목 코드는 지금 종목명(옛 이름 포함)에 띄어쓰기 무시로 맞추고, 안 맞으면 `ALIAS`(SM엔터테인먼트→에스엠 등).
+- 첫 자료: 2026-11-20 iM증권 Corporate Day 24개사(70쪽). 원본에서 물결표가 빠진 6곳(SK이노베이션 '39월'·'1011월', OCI홀딩스 '2030%' 등)은 `fix` 로 바로잡았다.
+- 같이 고친 것: 탐방 당시 시총(`build_visits.mcap_then`)이 과거 DB 에 그날이 빠져 있으면 전날 값을 쓰던 문제 → 과거 DB·가격 DB 중 그날에 가까운 값.
+
 시총·POR 표시 (모든 탭 공통)
 
 - POR 표(`U.porTable`): `POR = 시총 ÷ 영업이익`을 전년 실적~내후년 추정까지 연도별로 보여 주고 내년 열을 강조한다. 종목 파일의 `pv`(`build_naver.por_series`)에 연도별 영업이익만 싣고 배수는 화면이 지금 시총으로 계산한다(장중 시총 반영).

@@ -1,4 +1,5 @@
 // 탐방 노트 탭: data/visits.json (build_visits.py) — 내 텔레그램 방에서 '탐방'이 들어간 글을 종목별로 모은 것
+//   + 받은 증권사 자료(콥데이 기업별 노트 PDF → 회사별 글, visit_docs.py — 글의 src = 'doc')
 // - 종목 카드: 시총(주가 아님), POR = 시총 ÷ 영업이익 표(전년 실적~내후년 추정), 탐방 당시 시총 → 지금 시총
 // - 글: 직접 쓴 요약(visit_notes.json)이 있으면 요약, 그 아래 숫자가 든 핵심 줄, 원문은 접어 둔다
 // - 차트: data/vchart/{code}.json (collect_visits_chart.py — 네이버 일봉 500거래일). 축은 시총(주가 × 지금 주식 수),
@@ -85,16 +86,18 @@
 
   function noteHtml(n, c) {
     const s = c ? since(c, n) : null;
+    const doc = n.src === 'doc';      // 증권사 자료(콥데이 기업별 노트 PDF → 회사별 글, visit_docs.py)
     return `<li class="vs-note" id="${noteDomId(n)}">
-      <div class="vs-note-head"><b>${U.dateLabel(n.d)}</b><span>${n.tm}</span>
-        <span>${n.dm ? '<span class="pill">1:1</span> ' : ''}${n.rooms.map(U.esc).join(' · ')}</span>${n.k === 'mention' ? '<span class="pill">언급</span>' : ''}${n.fwd && !n.rooms.includes(n.fwd) ? `<span>출처 ${U.esc(n.fwd)}</span>` : ''}
+      <div class="vs-note-head"><b>${U.dateLabel(n.d)}</b>${n.tm ? `<span>${n.tm}</span>` : ''}
+        <span>${n.dm ? '<span class="pill">1:1</span> ' : ''}${doc ? '<span class="pill">증권사 자료</span> ' : ''}${n.rooms.map(U.esc).join(' · ')}</span>${n.k === 'mention' ? '<span class="pill">언급</span>' : ''}${n.fwd && !n.rooms.includes(n.fwd) ? `<span>출처 ${U.esc(n.fwd)}</span>` : ''}
         ${n.mc0 ? `<span>당시 시총 <b>${U.eok(n.mc0)}</b>${s != null ? ` → 지금 ${chg(s)}` : ''}</span>` : ''}
         ${n.link ? `<a href="${U.esc(n.link)}" target="_blank" rel="noopener">텔레그램에서 열기 ↗</a>` : ''}</div>
       <p class="vs-title">${U.esc(n.t)}</p>
       ${n.sum ? `<p class="vs-sum">${U.num(n.sum)}</p>` : ''}
       ${n.lines.length ? `<ul class="vs-lines">${n.lines.map(l => `<li>${U.num(l)}</li>`).join('')}</ul>` : ''}
       ${n.also?.length ? `<p class="vs-also">함께 나온 종목: ${n.also.map(a => Stock.link(a)).join(', ')}</p>` : ''}
-      ${n.x ? `<details><summary>원문 보기 (${n.x.length.toLocaleString('ko-KR')}자)</summary><pre class="vs-text">${U.esc(n.x)}</pre></details>`
+      ${n.x ? `<details><summary>${doc ? '회사별 노트 전문' : '원문'} 보기 (${n.x.length.toLocaleString('ko-KR')}자)</summary><pre class="vs-text">${U.esc(n.x)}</pre>${doc && n.file ? `<p class="vs-also">자료: ${U.esc(n.file)}</p>` : ''}</details>`
+        : doc ? '<p class="vs-also">증권사 자료라 공개판에는 요약만 싣습니다. 전문은 전체판에서 볼 수 있습니다.</p>'
         : n.lim ? `<p class="vs-also">공개 채널 글이라 제목만 싣습니다${n.link ? ` · <a href="${U.esc(n.link)}" target="_blank" rel="noopener">원문은 채널에서 ↗</a>` : ''}</p>` : ''}
     </li>`;
   }
@@ -213,10 +216,11 @@
     $('asof').textContent = data.built_at ? `${U.timeLabel(data.built_at)} 정리` : '';
     $('foot').innerHTML = `<p><b>읽는 법</b> · POR = 시총 ÷ 영업이익(FnGuide 컨센서스, 내년 열 강조). 시총은 우선주를 더한 회사 시총입니다.
       '당시 시총'은 글이 올라온 날(휴일이면 그 전 거래일)의 시총이라, 그 뒤 증자가 있었다면 변화율에 함께 들어갑니다.
-      핵심 줄은 숫자와 실적·수주·증설 같은 말이 함께 있는 줄을 기계적으로 고른 것이고, 요약은 글을 읽고 따로 쓴 것입니다.</p>
+      핵심 줄은 숫자와 실적·수주·증설 같은 말이 함께 있는 줄을 기계적으로 고른 것이고, 요약은 글을 읽고 따로 쓴 것입니다.
+      '증권사 자료'는 받은 콥데이 기업별 노트(PDF)를 회사별로 나눈 글로, 날짜는 행사일입니다.</p>
       <p class="muted">${data.public
-        ? '글은 각 방 작성자의 것입니다. 공개 채널의 글은 제목과 링크만 싣고, 원문은 작성자의 허락을 받은 방의 글만 싣습니다. 1:1 대화는 싣지 않습니다.'
-        : '글 원문은 각 방 작성자의 것입니다. 이 컴퓨터에서는 받은 글을 모두 보여 주고, 공개 사이트에는 줄인 사본(공개 채널은 제목·링크만, 1:1 대화 제외)을 올립니다.'}</p>`;
+        ? '글은 각 방 작성자의 것입니다. 공개 채널의 글은 제목과 링크만 싣고, 원문은 작성자의 허락을 받은 방의 글만 싣습니다. 1:1 대화는 싣지 않습니다. 증권사 자료는 요약만 싣습니다.'
+        : '글 원문은 각 방 작성자의 것입니다. 이 컴퓨터에서는 받은 글을 모두 보여 주고, 공개 사이트에는 줄인 사본(공개 채널은 제목·링크만, 증권사 자료는 요약만, 1:1 대화 제외)을 올립니다.'}</p>`;
   }
 
   function setup() {
