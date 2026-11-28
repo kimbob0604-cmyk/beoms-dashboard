@@ -26,7 +26,7 @@ const Plot = (() => {
       if (s.type === 'candle') {
         for (let i = from; i < to; i++) { take(s.h[i] ?? s.c[i]); take(s.l[i] ?? s.c[i]); }
       } else {
-        for (let i = from; i < to; i++) take(s.values[i]);
+        for (let i = from; i < to; i++) take(s.values[i] != null && s.from ? s.values[i] + (s.from[i] || 0) : s.values[i]);
         if (s.type === 'bar') take(0);
       }
     }
@@ -53,7 +53,7 @@ const Plot = (() => {
   //         height, uid, marks: [{i, v, n}], onMark(mark) }
   // marks: 날짜 표시(탐방일·발표일). 세로 점선 + 첫 칸의 v 자리에 점(n 이 2 이상이면 조금 크게). 점 근처를 누르면 onMark
   // series: {type:'line', values, color, width, area, split(기준선 위·아래 색), connect, dash}
-  //         {type:'candle', o,h,l,c} · {type:'bar', values, color(i)}
+  //         {type:'candle', o,h,l,c} · {type:'bar', values, cls(i), from(쌓을 때 시작값 배열)}
   function chart(el, spec) {
     el.classList.add('plot');
     el._spec = spec;
@@ -122,10 +122,11 @@ const Plot = (() => {
           }
         } else if (s.type === 'bar') {
           const bw = Math.max(1, Math.min(step * 0.7, 14));
-          const z = Y(Math.max(lo, 0));
+          const z0 = Y(Math.max(lo, 0));
           s.values.forEach((v, i) => {
             if (!defined(v)) return;
-            const y = Y(v);
+            const b = s.from ? s.from[i] || 0 : 0;      // 쌓은 막대: from[i] 에서 시작
+            const z = b ? Y(b) : z0, y = Y(b + v);
             svg += `<rect class="pl-bar ${s.cls ? s.cls(i) : ''}" x="${(X(i) - bw / 2).toFixed(1)}" y="${Math.min(y, z).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5, Math.abs(z - y)).toFixed(1)}"/>`;
           });
         } else {

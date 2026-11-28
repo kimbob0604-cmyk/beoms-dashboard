@@ -6,7 +6,7 @@
   --b-decline: #7aa2e3; --b-loss: #c4c9d0;
   --shadow: 0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.05);
   --accent: #3182f6; --hover: #f7f8fa; --head-bg: rgba(255,255,255,.86);
-  --inv-ind: #9b6bd3; --inv-frgn: #f08a24; --inv-org: #14a39a; --inv-prog: #8b95a1;
+  --etf-rb: #8b5cf6; --inv-ind: #9b6bd3; --inv-frgn: #f08a24; --inv-org: #14a39a; --inv-prog: #8b95a1;
   --ma20: #f0a020; --ma60: #8f6ed5; --tm-base: #eef0f3; --tm-flat: #dde1e6; --tm-text: #191f28;
   --grid: #eef0f3; --tip-bg: rgba(255,255,255,.97);
   color-scheme: light;
@@ -261,6 +261,7 @@ mark { background: none; color: var(--text); font-weight: 700; }
 .etf-tbl .etf-name a:hover { text-decoration: underline; }
 .etf-tbl .etf-name small { font-size: 11px; }
 .st-etf .etf-more { margin: 0 0 8px; }
+.etf-tbl .etf-ev { font-size: 11px; margin-right: 6px; color: var(--etf-rb); font-weight: 600; }
 .st-note { padding: 8px 22px 0; line-height: 1.6; }
 .st-loading { padding: 18px 22px; border-top: 1px solid var(--line); }
 
@@ -323,6 +324,7 @@ line.pl-up, line.pl-dn, line.pl-eq { stroke-width: 1; }
 .pl-prov { stroke: var(--text); stroke-width: 2; }
 .pl-bar { fill: var(--muted); opacity: .35; }
 .pl-bar.up { fill: var(--up); opacity: .45; } .pl-bar.dn { fill: var(--down); opacity: .45; }
+.pl-bar.rb { fill: var(--etf-rb); opacity: .8; }
 .pl-last { stroke: var(--card); stroke-width: 1.5; }
 .pl-hit { fill: transparent; cursor: crosshair; }
 .pl-cx, .pl-cy { stroke: var(--text); stroke-width: 1; stroke-dasharray: 3 3; opacity: .55; }
