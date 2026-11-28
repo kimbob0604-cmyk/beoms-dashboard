@@ -323,12 +323,15 @@ const Stock = (() => {
   function etfHtml() {
     const d = etfData;
     if (d === undefined) return '<section class="st-sec"><h3>ETF 편입</h3><p class="muted st-loading">불러오는 중…</p></section>';
+    if (d?.none) return `<section class="st-sec st-etf"><h3>ETF 편입 <small class="muted">ETF 없음</small></h3>
+      <p class="muted small">구성(PDF)을 받는 국내 주식형·레버리지 ETF 가운데 이 종목을 담은 ETF 가 없습니다 — ETF 를 통한 기계적 수급은 0 입니다.
+        안 받는 운용사(WON·파워·IBK 등 작은 곳)의 ETF 는 빠집니다.</p></section>`;
     if (!d?.rows?.length) return d?.rebal ? `<section class="st-sec st-etf"><h3>ETF 편입 <small class="muted">담은 ETF 없음</small></h3>${etfRebal(d.rebal)}</section>` : '';
     const p = etfP;
     const fmt = v => (v == null ? '<span class="muted">–</span>' : v === 0 ? '<span class="muted">0</span>' : `<span class="${U.cls(v)}">${U.eok(v, true)}</span>`);
     const pctH = v => (v == null ? '<span class="muted">–</span>' : `<span class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span>`);
     const held = d.rows.reduce((a, r) => a + (r[EI.held] || 0), 0);
-    const cr = lastSum(d.h, p), rb = lastSum(d.rb || [], p);
+    const cr = lastSum(d.h, p), rb = lastSum(d.rb || [], p), rl = lastSum(d.rl || [], p);
     const rbLate = d.rb && d.rb[d.rb.length - 1] == null;      // 마지막 날 리밸런싱은 아직 모름
     const gap = (d.g || []).slice(-p).some(x => x);
     const key = etfSort === 'share' ? r => -Math.abs(etfTot(r, p) || 0) : etfSort === 'rb' ? r => -Math.abs(r[EI.rb[p]] || 0)
@@ -344,7 +347,7 @@ const Stock = (() => {
       ${etfRebal(d.rebal)}
       <div class="st-kpis">
         <div><span>ETF 보유액 합</span><b>${U.eok(held)}</b>${etfMc ? `<small>시총의 ${(held / etfMc * 100).toFixed(2)}%</small>` : ''}</div>
-        <div><span>ETF 매매 ${p}일</span><b>${fmt(etfSum(cr, rb))}</b><small>설정·환매 ${fmt(cr)} · 리밸런싱 ${fmt(rb)}${rbLate ? '<sup title="마지막 거래일 리밸런싱은 다음 거래일 PDF 가 와야 압니다">*</sup>' : ''}${gap ? ' <span title="PDF 가 빈 날이 있어 그 사이 변화를 다음 날에 몰아 적었습니다">(구간 합)</span>' : ''}</small></div>
+        <div><span>ETF 매매 ${p}일</span><b>${fmt(etfSum(cr, rb))}</b><small>설정·환매 ${fmt(cr)} · 리밸런싱 ${fmt(rb)}${rl ? ` <span title="리밸런싱 가운데 레버리지 ETF 가 배수를 맞추느라 사고판 몫(값이 내리면 판다)">(레버리지 조정 ${fmt(rl)})</span>` : ''}${rbLate ? '<sup title="마지막 거래일 리밸런싱은 다음 거래일 PDF 가 와야 압니다">*</sup>' : ''}${gap ? ' <span title="PDF 가 빈 날이 있어 그 사이 변화를 다음 날에 몰아 적었습니다">(구간 합)</span>' : ''}</small></div>
         <div><span>담은 ETF</span><b>${d.rows.length}개</b><small>${nEv ? `20일 안 리밸런싱 ${nEv}개 · ` : ''}${nStale ? `비중 묵은 ETF ${nStale}개` : '모두 7일 안 PDF'}</small></div>
       </div>
       <div class="st-etf-plot"></div>
@@ -363,11 +366,12 @@ const Stock = (() => {
       ${rows.length > ETF_SHOW ? `<button class="linkish etf-more">${etfAll ? '접기' : `나머지 ${rows.length - ETF_SHOW}개 더 보기`}</button>` : ''}
       <p class="note">ETF 가 이 종목을 사고판 금액을 둘로 나눴습니다.
         <b>설정·환매 몫</b> = ETF 순설정·환매(상장좌수 변화 × NAV, KBJ 원장 — 칸에 마우스를 올리면 보입니다) × 그날 바스켓 비중 — LP·운용사가 바스켓째 사고판 금액.
-        <b>리밸런싱 몫</b> = 1 CU 당 수량 변화 × 좌수(상장좌수 ÷ CU) × 주가 — 설정·환매 없이 운용사가 바스켓을 바꾼 매매(지수 변경·비중 조정·액티브 교체).
+        <b>리밸런싱 몫</b> = 1 CU 당 수량 변화 × 좌수(상장좌수 ÷ CU) × 주가 — 설정·환매 없이 운용사가 바스켓을 바꾼 매매(지수 변경·비중 조정·액티브 교체,
+        그리고 레버리지 ETF 가 배수를 맞추는 일일 조정 — 값이 내리면 팔고 오르면 산다).
         PDF 날짜의 바스켓은 직전 거래일 장 마감 뒤 것이라, 수량 변화는 그 직전 거래일 매매로 적습니다.${rbLate ? ' * 마지막 거래일 리밸런싱은 다음 거래일 PDF 가 와야 압니다.' : ''}
         PDF 가 빈 날 뒤 첫 PDF 는 그 사이 변화를 한 날에 몰아 적습니다(구간 합).
-        운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO)만 들어가서 합계는 하한이고,
-        레버리지·인버스의 선물 노출은 빠집니다.${nStale ? ` 비중이 ${U.md(d.d)}보다 7일 넘게 묵은 ETF ${nStale}개는 날짜를 함께 적었습니다.` : ''}</p>
+        운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO·KIWOOM·1Q, 레버리지는 현물을 담는 몫만)만 들어가서 합계는 하한이고,
+        인버스와 레버리지의 선물·스왑 노출은 빠집니다.${nStale ? ` 비중이 ${U.md(d.d)}보다 7일 넘게 묵은 ETF ${nStale}개는 날짜를 함께 적었습니다.` : ''}</p>
     </section>`;
   }
 
@@ -375,7 +379,7 @@ const Stock = (() => {
     const el = panel.querySelector('.st-etf-plot');
     const d = etfData;
     if (!el || !d?.h?.length) return;
-    const h = d.h, rb = d.rb || h.map(() => null), g = d.g || [], n = h.length;
+    const h = d.h, rb = d.rb || h.map(() => null), rl = d.rl || h.map(() => 0), g = d.g || [], n = h.length;
     const from = rb.map((v, i) => (v != null && h[i] != null && (v >= 0) === (h[i] >= 0) ? h[i] : 0));   // 같은 방향이면 위에 쌓는다
     Plot.chart(el, {
       n, height: 130, uid: 'ste',
@@ -385,7 +389,7 @@ const Stock = (() => {
       xTicks: d.days.map((x, i) => [i, U.md(x)]).filter((_, i) => i % 5 === (n - 1) % 5),
       tip: i => `<div class="tt-h">${U.md(d.days[i])}${g[i] ? ' <small>(구간 합)</small>' : ''}</div>
         <div class="tt-v">설정·환매 몫 <b class="${U.cls(h[i])}">${U.eok(h[i], true)}</b></div>
-        <div class="tt-v">리밸런싱 몫 ${rb[i] == null ? '<b class="muted">다음 PDF 뒤</b>' : `<b class="${U.cls(rb[i])}">${U.eok(rb[i], true)}</b>`}</div>
+        <div class="tt-v">리밸런싱 몫 ${rb[i] == null ? '<b class="muted">다음 PDF 뒤</b>' : `<b class="${U.cls(rb[i])}">${U.eok(rb[i], true)}</b>`}${rl[i] ? ` <small>(레버리지 조정 ${U.eok(rl[i], true)})</small>` : ''}</div>
         <div class="tt-v">합 <b class="${U.cls(etfSum(h[i], rb[i]))}">${U.eok(etfSum(h[i], rb[i]), true)}</b></div>`,
     });
   }
@@ -401,7 +405,7 @@ const Stock = (() => {
     etfData = undefined;
     etfAll = false;
     let x = null;
-    try { x = await U.json(`data/etf/${c}.json`); } catch (e) { /* 어느 ETF 도 담지 않은 종목 */ }
+    try { x = await U.json(`data/etf/${c}.json`); } catch (e) { x = { none: true }; /* 어느 ETF 도 담지 않은 종목 (파일 없음) */ }
     if (code !== c) return;
     etfData = x;
     paintEtf();

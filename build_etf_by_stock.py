@@ -15,6 +15,8 @@ KBJ 컨테이너(kbj-scheduler-1)에서 kbj_etf_by_stock.py 로 ETF 마다 받�
     PDF 날짜 D 의 바스켓은 D 직전 거래일 장 마감 뒤 것 → D 와 그 앞 PDF 의 수량 차는 D 직전 거래일 매매로 본다.
     그래서 마지막 거래일 리밸런싱은 다음 거래일 PDF 가 와야 안다(None).
     PDF 가 며칠 비면 그 사이 차이를 다음 PDF 직전 거래일 하나에 몰아 적고 '구간 합'(g) 표시.
+    레버리지 ETF(현물을 담는 몫)의 수량 변화는 대개 배수를 맞추는 일일 조정이다(값이 내리면 판다) —
+    리밸런싱 몫에 들어가되 그 몫을 따로(rl) 적는다. 바스켓 재설정 기준도 배수² 만큼 넓힌다.
     주가 = 그날 PDF 금액 ÷ 수량(여러 ETF 중앙값). 주가가 갑자기 반·두 배가 되고 수량이 거꾸로 움직이면
     분할·병합으로 보고 뺀다. 펀드 하루 리밸런싱 순액이 순자산의 15% 를 넘으면 바스켓 재설정으로 보고 뺀다.
   ETF 보유액(억) = ETF 순자산 × 비중
@@ -23,8 +25,9 @@ KBJ 컨테이너(kbj-scheduler-1)에서 kbj_etf_by_stock.py 로 ETF 마다 받�
   실측 = 리밸런싱일(매매일)의 리밸런싱 몫 합 — 다음 거래일 PDF(적용일 PDF)가 들어온 뒤에야 나온다
   적용일 + REBAL_KEEP 달력일까지 붙인다.
 
-한계: 운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO)만 들어가서 합계는 하한.
-레버리지·인버스의 선물 노출은 PDF 에서 종목이 아니므로 빠진다.
+한계: 운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO·KIWOOM·1Q —
+국내 주식형 + 현물을 담는 레버리지, KBJ etf.collect)만 들어가서 합계는 하한.
+레버리지·인버스의 선물·스왑 노출은 PDF 에서 종목이 아니므로 빠진다. 어느 ETF 도 담지 않은 종목은 파일이 없다(패널 'ETF 없음').
 
   python3 build_etf_by_stock.py
 """
@@ -158,7 +161,7 @@ def ledger(x):
                 net += v
                 day[c] = [v, gap, q0, q1, w0, w1]
             na = (e['nav'][i] or 0) * ls
-            if na and abs(net) > RESET_SHARE * na:
+            if na and abs(net) > RESET_SHARE * max(1.0, abs(e.get('lv') or 1.0)) ** 2 * na:
                 skipped['reset'] += 1
                 continue
             for c, r in day.items():
@@ -235,6 +238,7 @@ def build(x: dict, rb: dict | None = None) -> dict:
     out = {}
     for code, s in by.items():
         cr, rb, gp = [0.0] * n, [0.0 if i <= last_known else None for i in range(n)], [0] * n
+        rl = [0.0] * n                                  # 리밸런싱 몫 가운데 레버리지 일일 조정
         rows = []
         for c, (wt, asof) in s['rows'].items():
             e = etf[c]
@@ -252,6 +256,8 @@ def build(x: dict, rb: dict | None = None) -> dict:
                     continue
                 rd[i] = (rd[i] or 0.0) + v
                 rb[i] = (rb[i] or 0.0) + v
+                if x['etfs'][c].get('lv'):
+                    rl[i] += v
                 gp[i] = max(gp[i], g)
                 if abs(v) >= EV_MIN and (ev is None or abs(v) > abs(ev[5])):
                     kind = 'NEW' if not q0 else 'DROP' if not q1 else 'ADD' if q1 > q0 else 'CUT'
@@ -273,6 +279,7 @@ def build(x: dict, rb: dict | None = None) -> dict:
         out[code] = {'c': code, 'n': s['n'] or x.get('names', {}).get(code), 'd': x['end'], 'days': days,
                      'h': [round(v / 1e8, 2) for v in cr],
                      'rb': [None if v is None else round(v / 1e8, 2) for v in rb], 'g': gp,
+                     'rl': [round(v / 1e8, 2) for v in rl],
                      'cols': ['etf', 'name', 'wt', 'held', 'r1', 'r5', 'r20', 'f1', 'f5', 'f20', 'asof', 'stale', 'base',
                               'c1', 'c5', 'c20', 'b1', 'b5', 'b20', 'ev'],
                      'rows': rows, 'rebal': m}
