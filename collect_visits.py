@@ -17,7 +17,7 @@
   python3 collect_visits.py scan "방 이름"      # 그 방의 글을 통째로 훑어 '탐방'이 든 글을 담는다 (검색이 놓친 글 보충)
   python3 collect_visits.py import result.json # 텔레그램 데스크톱 '채팅 기록 내보내기'(JSON) 파일에서 담기 (API 없이)
   python3 collect_visits.py logout             # 이 컴퓨터의 로그인 정보 지우기
-  python3 collect_visits.py --topic concall    # 같은 방식으로 컨콜(실적 발표 컨퍼런스콜) 노트 → db/concall.db (소비재 탭이 쓴다)
+  python3 collect_visits.py --topic concall    # 같은 방식으로 컨콜(실적 발표 컨퍼런스콜) 노트 → db/concall.db (Beom's Consumer 가 읽는다)
 
 텔레그램 검색은 낱말 앞부분으로 찾는다. '탐방'은 '탐방노트'는 찾지만 '기업탐방'은 못 찾으므로 KEYWORDS 를 여러 개 둔다.
 담을 때는 본문에 '탐방'이 실제로 있는 글만 남긴다.

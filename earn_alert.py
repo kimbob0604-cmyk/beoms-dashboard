@@ -2,7 +2,8 @@
 실적 공시 속보 — 관심 종목의 실적 공시가 @darthacking 에 올라오면 예상치 대비와 함께 텔레그램으로 (교보·다올 채널의 공시 속보와 같은 모양)
 
 collect_earn.py 가 장중(live.py, 10분마다)에 받아 둔 db/earn.db 의 earn_post 에서 아직 안 보낸 글만 고른다.
-관심 종목 = 소비재 탭 종목(consumer_assets.json) + 월간 수출 확정치 종목(export_watch.json) + earn_alert.json 의 extra.
+관심 종목 = Beom's Consumer(~/Beom's Consumer)의 종목(consumer_assets.json) + 월간 수출 확정치 종목(export_watch.json) + earn_alert.json 의 extra.
+소비재는 2026-11-26 에 별도 사이트로 옮겼지만 실적 글 수집(@darthacking)·이 알림은 범스보드에 남았다.
 같은 회사·같은 분기는 처음 한 번만 보낸다(잠정실적 공정공시 뒤 분기보고서). 처음 돌릴 때는 지금까지의 글을 보낸 것으로 표시만 한다.
 
   python3 earn_alert.py              # 새 글 미리보기 (보내지 않음)
@@ -24,6 +25,7 @@ from tg_notify import send, tg_target
 ROOT = Path(__file__).resolve().parent
 EARN_DB = ROOT / 'db' / 'earn.db'
 CFG = ROOT / 'earn_alert.json'
+CONSUMER = Path.home() / "Beom's Consumer"     # 관심 종목 목록이 있는 곳 (없으면 extra 만)
 LINK = 'https://kimbob0604-cmyk.github.io/beoms-dashboard/dart.html'
 CASE = dict(E.CASES)
 SCHEMA = 'CREATE TABLE IF NOT EXISTS alert_meta (k TEXT PRIMARY KEY, v TEXT)'
@@ -32,12 +34,15 @@ SCHEMA = 'CREATE TABLE IF NOT EXISTS alert_meta (k TEXT PRIMARY KEY, v TEXT)'
 def watch_codes() -> dict:
     """{종목코드: 이름}"""
     out = {}
-    for s in json.loads((ROOT / 'consumer_assets.json').read_text(encoding='utf-8'))['stocks']:
-        out[s['code']] = s.get('name')
-    for c in json.loads((ROOT / 'export_watch.json').read_text(encoding='utf-8'))['cats']:
-        for it in c['items']:
-            if it.get('c'):
-                out.setdefault(it['c'], it['n'])
+    assets, watch = CONSUMER / 'consumer_assets.json', CONSUMER / 'export_watch.json'
+    if assets.exists():
+        for s in json.loads(assets.read_text(encoding='utf-8'))['stocks']:
+            out[s['code']] = s.get('name')
+    if watch.exists():
+        for c in json.loads(watch.read_text(encoding='utf-8'))['cats']:
+            for it in c['items']:
+                if it.get('c'):
+                    out.setdefault(it['c'], it['n'])
     if CFG.exists():
         for c, n in json.loads(CFG.read_text(encoding='utf-8')).get('extra', {}).items():
             out.setdefault(c, n)
@@ -119,7 +124,7 @@ def notify(conn, log=print, dry=False) -> int:
     if dry or not (enabled and token and chat):
         for p in posts:
             log(message(p) + '\n')
-        log(f'실적 속보: {len(posts)}건 미리보기' + ('' if dry else ' (보내기 꺼짐 — .env EXPORT_TG_ENABLED=1)'))
+        log(f'실적 속보: {len(posts)}건 미리보기' + ('' if dry else " (보내기 꺼짐 — ~/Beom's Consumer/.env CONSUMER_TG_ENABLED=1)"))
         return 0 if dry else 4
     for p in posts:
         try:

@@ -1,5 +1,5 @@
 """
-매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·전략 트래커·탐방 노트·소비재·바이오·홈·종목 차트) → GitHub Pages 배포(publish.py)
+매일 실행: 가격 → 컨센서스 → 네이버(리포트·신고가·수급·지수) → DART 공시·분기 추정치 → JSON 빌드(이익 성장·네이버·공시·이벤트 스터디·퀀트 팩터·조건 백테스트(아침)·전략 트래커·탐방 노트·바이오·홈·종목 차트) → Beom's Consumer 갱신(그 폴더의 run_daily.py) → GitHub Pages 배포(publish.py)
 장중 10분 간격 홈 갱신은 live.py 가 따로 한다.
 
 launchd(com.kimbob.beomdashboard.daily)가 월~토 07:10, 12:10, 평일 20:40에 부른다.
@@ -11,7 +11,7 @@ KRX 일별 데이터는 보통 다음 날 아침에 열리므로 12:10 실행이
 
 - 컨센서스가 2(커버리지 급감·형식 변경 의심)면 빌드하지 않는다. 3(서버 응답 없음, 연속 실패로 중단)이면
   빌드는 하되, build_growth 가 추정치 종목 수가 모자란 스냅샷을 건너뛰어 덜 받은 값으로 화면을 덮어쓰지 않는다.
-- 월간 수출 확정치는 관세청 수집 뒤 export_watch.py --notify 가 새 달에 한 번 텔레그램으로 보낸다(.env EXPORT_TG_ENABLED=1 일 때만).
+- 소비재(수출 통계·월간 확정치 알림 등)는 2026-11-26 부터 ~/Beom's Consumer 의 run_daily.py 가 한다 — 이 파일은 컨콜 노트만 모으고 그것을 부른다.
 - 경고·실패는 macOS 알림으로 띄우고, 전체 출력은 logs/daily_YYYYMMDD.log 에 남긴다.
 
   python3 daily.py
@@ -25,6 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 LOG_DIR = ROOT / 'logs'
+CONSUMER = Path.home() / "Beom's Consumer"     # 소비재 사이트 (run_daily.py 를 부른다)
 
 
 def notify(title: str, msg: str):
@@ -36,10 +37,10 @@ def _as_str(s: str) -> str:
     return '"' + s.replace('\\', '\\\\').replace('"', '\\"') + '"'
 
 
-def run(step: str, args: list, log) -> int:
+def run(step: str, args: list, log, cwd=ROOT) -> int:
     log.write(f'\n=== {datetime.now():%H:%M:%S} {step}: {" ".join(args)}\n')
     log.flush()
-    code = subprocess.run([sys.executable, *args], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT).returncode
+    code = subprocess.run([sys.executable, *args], cwd=cwd, stdout=log, stderr=subprocess.STDOUT).returncode
     log.write(f'=== {datetime.now():%H:%M:%S} {step} 종료 코드 {code}\n')
     log.flush()
     return code
@@ -153,39 +154,13 @@ def main() -> int:
         if run('탐방 비공개 백업', ['backup_private.py'], log) != 0:
             problems.append('탐방 원본 비공개 저장소 푸시 실패 — 다음 실행에서 다시 올림')
         run('탐방 차트', ['collect_visits_chart.py'], log)   # 탐방 종목의 네이버 일봉 (하루 한 번, 실패해도 직전 파일이 남는다)
-        # 소비재 탭: 관세청 수출 통계(올해 창은 14~21일에 하루 한 번, 그 밖엔 7일에 한 번만 다시 받는다 — 아니면 바로 끝난다),
-        # 텔레그램 컨콜 노트, 그리고 빌드. 키·로그인이 없으면 4로 건너뛴다
-        if run('수출 통계', ['collect_trade.py'], log) not in (0, 4):
-            problems.append('관세청 수출 통계 일부 실패 — 다음 실행에서 이어 받음')
-        # 월간 수출 확정치 알림: 전월 확정치를 빠짐없이 받은 첫 실행에서 한 번 텔레그램으로 (꺼져 있으면 4)
-        if run('수출 알림', ['export_watch.py', '--notify'], log) not in (0, 4):
-            problems.append('월간 수출 확정치 텔레그램 알림 실패 — 다음 실행에서 다시 보냄')
-        # EU 화장품 수입(Eurostat, 키 없음): 하루 한 번, 최근 14개월만 다시 받는다. 실패해도 직전 값으로 빌드한다
-        if run('EU 수입', ['collect_eu.py'], log) != 0:
-            problems.append('EU 수입(Eurostat) 일부 실패 — 다음 실행에서 다시 받음')
-        # 미국 수입(UN Comtrade 공개 미리보기, 키 없음 — 한 달에 한 번 호출, 하루 한 번 최근 6개월)
-        if run('미국 수입', ['collect_us.py'], log) != 0:
-            problems.append('미국 수입(UN Comtrade) 일부 실패 — 다음 실행에서 다시 받음')
-        # 외국인 의료 소비(한국관광 데이터랩 화면의 조회 주소, 하루 한 번 최근 13개월)
-        if run('외국인 의료 소비', ['collect_medical.py'], log) != 0:
-            problems.append('외국인 의료 소비(데이터랩) 일부 실패 — 직전 값 유지')
-        if run('의료관광 알림', ['medical_alert.py', '--notify'], log) not in (0, 4):   # 새 달이 들어온 날 한 번 텔레그램
-            problems.append('월간 의료관광 텔레그램 알림 실패 — 다음 실행에서 다시 보냄')
-        # 방한 외래관광객(출입국관광통계, 공공데이터포털 키): 하루 한 번 최근 13개월. 키가 이 서비스에 등록 전이면 4
-        if run('방한 관광객', ['collect_tourism.py'], log) not in (0, 4):
-            problems.append('방한 관광객 통계 일부 실패 — 다음 실행에서 다시 받음')
-        # 구글 트렌드(주 1회, 막히면 묶음별로 직전 값 유지)와 newsbot 의 Amazon·TikTok·Reddit 집계(하루 한 번, 공개 배포 제외)
-        if run('구글 트렌드', ['collect_trends.py'], log) != 0:
-            problems.append('구글 트렌드 일부 실패 — 직전 값 유지')
-        run('네이버 트렌드', ['collect_naver_trends.py'], log)   # 시술·톡신 검색(주 1회). 데이터랩 권한 전이면 4
-        if run('섹터 뉴스', ['collect_news.py'], log) not in (0, 4):   # 관심 종목·키워드 기사 제목(네이버 뉴스 검색)
-            problems.append('섹터 뉴스(네이버 검색) 일부 실패')
-        if run('대체데이터', ['collect_altdata.py'], log) != 0:
-            problems.append('newsbot 대체데이터 받기 실패 — 직전 값 유지')
+        # 컨콜 노트(텔레그램): 로그인이 이 폴더에 있어 여기서 모은다 → Beom's Consumer 가 db/concall.db 를 읽는다
         if run('컨콜 수집', ['collect_visits.py', '--topic', 'concall'], log) not in (0, 4):
             problems.append('텔레그램 컨콜 글 수집 실패 — 다음 실행에서 이어 받음')
-        if run('소비재 빌드', ['build_consumer.py'], log) != 0:
-            problems.append('소비재 JSON 빌드 실패')
+        # Beom's Consumer(~/Beom's Consumer — 2026-11-26 소비재 탭을 떼어 낸 로컬 사이트): 관세청 수출 통계·EU/미국 수입·관광·의료·검색·뉴스 수집
+        # → 월간 확정치·의료관광 알림 → consumer.json. 시총·POR·분기 실적·컨콜을 위 결과(이 폴더 DB)에서 읽으므로 이 자리에서 부른다
+        if CONSUMER.exists() and run("범스 컨슈머", ['run_daily.py'], log, cwd=CONSUMER) != 0:
+            problems.append("범스 컨슈머 갱신 일부 실패 (~/Beom's Consumer/logs 확인)")
         # ETF 기계적 수급: KBJ 가 내보낸 종목별 ETF 순유입 몫(~/kbj-site/data/etf)을 한 파일로. 없으면 조용히 건너뛴다
         if run('ETF 기계적 수급', ['build_etf_flow.py'], log) != 0:
             problems.append('ETF 기계적 수급 JSON 빌드 실패')

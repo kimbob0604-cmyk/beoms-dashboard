@@ -6,7 +6,16 @@ from pathlib import Path
 from unittest import mock
 
 import build_etf_flow as E
-import momentum
+
+
+def wilder_rsi(closes, n=14):
+    """momentum.rsi(Beom's Consumer 로 옮김)와 같은 식 — rsi_series 끝값 대조용"""
+    gains = [max(b - a, 0) for a, b in zip(closes, closes[1:])]
+    losses = [max(a - b, 0) for a, b in zip(closes, closes[1:])]
+    ag, al = sum(gains[:n]) / n, sum(losses[:n]) / n
+    for g, l in zip(gains[n:], losses[n:]):
+        ag, al = (ag * (n - 1) + g) / n, (al * (n - 1) + l) / n
+    return 100.0 if al == 0 else round(100 - 100 / (1 + ag / al), 1)
 
 
 class JudgeTest(unittest.TestCase):
@@ -34,7 +43,7 @@ class RsiTest(unittest.TestCase):
         closes = [100 + (i % 7) * 1.5 - (i % 3) for i in range(80)]
         rs = E.rsi_series(closes)
         self.assertIsNone(rs[13])
-        self.assertEqual(rs[-1], momentum.rsi(closes))
+        self.assertEqual(rs[-1], wilder_rsi(closes))
         self.assertEqual(E.pct_rank(list(range(100)), 90), 0.905)
         self.assertIsNone(E.pct_rank([50] * 10, 50))          # 이력이 짧으면 백분위 없음
 
@@ -65,6 +74,34 @@ class DayBlockTest(unittest.TestCase):
             self.assertEqual(x['h'], [[3.0, 0.03], [12.0, 0.12]])
             self.assertEqual(x['top'][1][2], '2026-10-01')       # 순유입 큰 ETF 의 비중이 묵었다는 표시
             self.assertEqual(json.loads(json.dumps(b))['th'], list(E.TH))
+
+
+class EtfFlowTest(unittest.TestCase):
+    def test_src_names_match_kbj(self):
+        self.assertEqual(E.src_name(5, 'in'), 'stocks.json')
+        self.assertEqual(E.src_name(5, 'out'), 'stocks@sort-out.json')
+        self.assertEqual(E.src_name(1, 'in'), 'stocks@period-1.json')
+        self.assertEqual(E.src_name(20, 'pct'), 'stocks@period-20.sort-pct.json')
+
+    def test_build_merges_sorts(self):
+        def f(rows, period=5):
+            return {'as_of': '2026-11-12T15:30:00+09:00', 'generated_at': 'g', 'notes': ['n'],
+                    'data': {'period': period, 'start': 's', 'end': 'e', 'coverage_pct': 37.0, 'n_etfs_known': 352, 'n_total': 1235,
+                             'holdings_asof': '2026-10-19', 'rows': rows}}
+        r = lambda c, v: {'code': c, 'name': c, 'inflow': v, 'inflow_pct': 1.0, 'n_etfs': 3,  # noqa: E731
+                          'top_etfs': [{'code': '069500', 'name': 'KODEX 200', 'inflow': v}]}
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d)
+            (p / 'stocks.json').write_text(json.dumps(f([r('A', 2e10)])))
+            (p / 'stocks@sort-out.json').write_text(json.dumps(f([r('B', -3e10), r('A', 2e10)])))
+            out = E.build(p)
+        self.assertEqual(list(out['periods']), ['5'])
+        rows = {x['c']: x for x in out['periods']['5']['rows']}
+        self.assertEqual(rows['A']['in'], 200.0)                   # 억원
+        self.assertEqual(rows['B']['top'], [['KODEX 200', -300.0]])
+        self.assertEqual(out['holdings_asof'], '2026-10-19')
+        with tempfile.TemporaryDirectory() as d:
+            self.assertIsNone(E.build(Path(d)))
 
 
 if __name__ == '__main__':

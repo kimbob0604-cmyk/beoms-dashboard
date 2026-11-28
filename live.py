@@ -7,8 +7,11 @@ launchd(com.kimbob.beomdashboard.live)가 1분마다 부른다 (2026-11-19 사�
 - 평일 장 마감 뒤: 장중에 맥이 자서 그날 시세가 하나도 없으면 한 번 받는다 → 그날 신고가(잠정)·홈 (저녁 수급이 오면 정규장 종가로 바뀜)
 - 느린 수집(live.py --slow, 매분 부르되 따로 돌고 아래 간격마다): 1분 갱신을 막지 않게 별도 프로세스·잠금으로 돈다.
     5분  텔레그램 실적 글 → 실적 속보·오늘 발표 종목 분봉 → 실적 발표 덱, @DOC_POOL 리포트 → 리포트 탭
-    15분 텔레그램 탐방 노트 → 탐방 탭, 컨콜 → 소비재 탭, 섹터 뉴스(네이버 검색 API) → 소비재 탭 뉴스
+    15분 텔레그램 탐방 노트 → 탐방 탭, 컨콜 → Beom's Consumer 다시 빌드, 섹터 뉴스(네이버 검색 API) → Beom's Consumer 뉴스
+         (소비재는 2026-11-26 별도 사이트 ~/Beom's Consumer 로 옮겼다. 텔레그램 로그인이 여기 있어 컨콜은 여기서 모으고, 그 폴더의 스크립트를 부른다.
+          바뀌면 그 폴더 publish.py 로 그 사이트(beoms-consumer, 암호)만 다시 배포한다 — 범스보드 배포와 따로)
     30분 네이버 투자전략 리포트 → 전략 트래커 (평일 07:00~20:00)
+    10분 공개 채널(@alexppark) 새 글 중 아마존·틱톡 → @beomjun_consumer_bot (Beom's Consumer channel_forward.py, 24시간)
   텔레그램 수집기들은 같은 로그인 세션 파일(db/tg_user.session)을 직접 열어서 둘이 동시에 돌면 안 된다 → 차례로 돌고,
   daily.py 가 돌고 있으면(같은 수집을 한다) 그동안 쉰다. 탐방·컨콜은 전체 방 검색이라 텔레그램이 속도 제한을 걸 수 있어 15분.
   바뀐 게 있을 때만(DB 행 수·파일 내용) 그 탭을 다시 빌드하고 배포한다.
@@ -48,8 +51,10 @@ BEAT_EVERY, SNAP_EVERY = 300, 6 * 3600
 SLOW = (('tg', 300, dtime(6, 0), dtime(23, 59), False),
         ('tgsearch', 900, dtime(6, 0), dtime(23, 59), False),
         ('news', 900, dtime(6, 0), dtime(23, 0), False),
+        ('chan', 600, dtime(0, 0), dtime(23, 59), False),   # Beom's Consumer: 다올 박종현 채널 아마존·틱톡 글 → 봇 (channel_forward.py)
         ('strategy', 1800, dtime(7, 0), dtime(20, 0), True))
 PUBLIC = ROOT / 'public'
+CONSUMER = Path.home() / "Beom's Consumer"     # 소비재 사이트 (컨콜 노트가 바뀌면 다시 빌드, 섹터 뉴스 수집)
 STUDY_FILES = ('study.html', 'css/app.css', 'css/study.css', 'js/util.js', 'js/study_chart.js', 'js/study.js')
 STUDY_STAMP = LOG_DIR / 'study_publish.stamp'   # Study 사이트에 마지막으로 올린 빌드의 지문
 
@@ -190,10 +195,10 @@ def publish_study_if_changed(log):
         STUDY_STAMP.write_text(sig)
 
 
-def run(args, log) -> int:
-    log.write(f'--- {datetime.now():%H:%M:%S} {" ".join(args)}\n')
+def run(args, log, cwd=ROOT) -> int:
+    log.write(f'--- {datetime.now():%H:%M:%S} {" ".join(args)}{"" if cwd == ROOT else f" ({cwd.name})"}\n')
     log.flush()
-    return subprocess.run([sys.executable, *args], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT).returncode
+    return subprocess.run([sys.executable, *args], cwd=cwd, stdout=log, stderr=subprocess.STDOUT).returncode
 
 
 def main() -> int:
@@ -306,10 +311,11 @@ def slow_main() -> int:
         for name in due:
             (LOG_DIR / f'live_slow_{name}.stamp').touch()
         new = False
+        cons = False          # Beom's Consumer 데이터가 바뀌었나 (컨콜 노트·섹터 뉴스)
         if 'tg' in due:
             earn0 = fingerprint(EARN_DB, EARN_FP)
             if run(['collect_earn.py', 'posts'], log) == 0:
-                run(['earn_alert.py', '--notify'], log)   # 관심 종목(소비재·의료기기) 실적 공시 속보 → 텔레그램
+                run(['earn_alert.py', '--notify'], log)   # 관심 종목(Beom's Consumer 종목·의료기기) 실적 공시 속보 → 텔레그램
                 run(['collect_earn.py', 'minutes', '--today'], log)
             if changed(earn0, fingerprint(EARN_DB, EARN_FP)):
                 new |= run(['build_earn.py'], log) == 0
@@ -325,12 +331,17 @@ def slow_main() -> int:
             if changed(v0, vis()):
                 new |= run(['build_visits.py'], log) == 0
             run(['collect_visits.py', '--topic', 'concall'], log)
-            if changed(c0, cc()):
-                new |= run(['build_consumer.py'], log) == 0
-        if 'news' in due:
-            n0 = file_fp(PUBLIC / 'data' / 'news.json')
-            run(['collect_news.py'], log)
-            new |= changed(n0, file_fp(PUBLIC / 'data' / 'news.json'))
+            if changed(c0, cc()) and CONSUMER.exists():
+                cons |= run(['build_consumer.py'], log, cwd=CONSUMER) == 0
+        if 'news' in due and CONSUMER.exists():
+            nf = lambda: file_fp(CONSUMER / 'public' / 'data' / 'news.json')  # noqa: E731
+            n0 = nf()
+            run(['collect_news.py'], log, cwd=CONSUMER)            # Beom's Consumer 섹터 뉴스 (로컬 화면은 1분마다 다시 읽는다)
+            cons |= changed(n0, nf())
+        if 'chan' in due and CONSUMER.exists():
+            run(['channel_forward.py'], log, cwd=CONSUMER)         # 공개 채널 미리보기(로그인 없음) — 키워드 글 링크를 봇으로
+        if cons:
+            run(['publish.py'], log, cwd=CONSUMER)                 # Beom's Consumer 암호 배포 (바뀐 파일만, 범스보드 배포와 따로)
         if 'strategy' in due:
             stg = lambda: db_fp(ROOT / 'db' / 'strategy.db', ('doc', 'tgpost'))
             s0 = stg()

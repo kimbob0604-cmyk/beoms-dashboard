@@ -2,9 +2,9 @@
 # 바이오 탭: 2026-11-10 사용자 승인으로 공개 (보류 해제)
 # 전략 트래커: 2026-11-10 사용자 승인으로 공개 (보류 해제)
 # 탐방 노트 탭: 2026-11-10 사용자 승인으로 공개 (보류 해제). 올라가는 것은 공개용으로 줄인 visits_pub.json — build_visits.public_view
-# 소비재 탭: 2026-11-11 사용자 요청으로 공개 (보류 해제). 컨콜 노트는 공개용 사본(consumer_calls_pub.json — 1:1 제외, 공개 채널은 제목·링크만)만 올린다
+# 소비재 탭: 2026-11-11 공개했다가 2026-11-26 별도 사이트 Beom's Consumer(~/Beom's Consumer, 로컬)로 옮김 — 이 사이트에서는 빠졌다 (publish.py FILES·RENAMED 에서도 뺌)
 # @DOC_POOL 글 목록(리포트 탭): 2026-11-17 사용자 승인으로 공개. 올라가는 것은 제목·증권사·의견·목표가·글 링크뿐 (요약 본문·PDF 없음) — build_docpool.py
-# 대체데이터(Amazon·TikTok·Reddit): newsbot 의 집계를 받아 둔 것이라 공개하지 않는다 (2026-11-16, collect_altdata.py)
+# 대체데이터(Amazon·TikTok·Reddit): newsbot 의 집계라 공개하지 않는다 (2026-11-16). 지금은 Beom's Consumer 로 옮겨 여기엔 옛 사본만 남았다
 data/altdata.json
 # Beom's Study: 대시보드 사이트에는 올리지 않는다. 다른 사이트(github.io/beoms-study)로 publish_study.py 가 암호로 잠가 올린다(2026-11-18 사용자 요청, STUDY_PASS 가 있을 때만)
 study.html
