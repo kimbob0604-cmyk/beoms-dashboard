@@ -1,12 +1,17 @@
 """
 KRX 일별 종가·시총 수집
 
-KRX 일별 데이터는 다음 날 아침에 열린다. 그래서 장 마감(15:40) 뒤 저녁·다음 날 이른 아침 실행에서는
+KRX 일별 데이터는 다음 날 아침(08시 무렵)에 열린다. 그래서 장 마감(15:40) 뒤 저녁·다음 날 이른 아침 실행에서는
 그날 종가를 네이버 증권 전 종목 시세로 먼저 채우고, KRX 가 열리면 그 날짜를 KRX 값으로 덮어쓴다.
-네이버 값은 넥스트레이드 시간외(~20:00)까지 반영한 통합 가격이라 KRX 정규장 종가와 조금 다를 수 있다.
+네이버 목록 종가는 KRX 시간외 단일가·넥스트레이드 애프터마켓(~20:00)까지 따라간 통합 가격이라 정규장 종가와 다르다.
+그래서 종목별 수급(flow_daily)에 정규장 종가가 있는 종목은 그 값으로 바꿔 넣고, 나머지는 KRX 가 덮어쓸 때까지 통합 가격이다.
+
+KRX 확정값인지는 일봉(ohlc_daily)에 시가가 있는지로 본다 (네이버 임시 종가에는 시가가 없다).
+기본 실행은 최근 HEAL_DAYS 일 안에서 확정값이 아닌 평일을 매번 KRX 로 다시 받는다 — 전에는 가장 최근 날 하나만 받아서,
+그날이 '가장 최근'인 동안 실행이 모두 실패하면 임시 종가가 그대로 남았다 (2026-11-20·11-26, 디앤디파마텍 11-26 37,200 vs KRX 36,450).
 
 CLI
-  python3 collect_prices.py                     # 가장 최근 거래일 (오늘부터 거슬러 올라가며 탐색)
+  python3 collect_prices.py                     # 가장 최근 거래일 + 최근 HEAL_DAYS 일 중 KRX 확정값이 아닌 날
   python3 collect_prices.py --date 2026-11-02   # 지정일
   python3 collect_prices.py --days 30           # 최근 30일 백필 (휴장일은 자동 건너뜀)
 """
@@ -29,6 +34,7 @@ CLOSE_AFTER = dtime(15, 40)   # 이 시각 뒤면 그날 종가가 확정된 것
 PREOPEN = dtime(8, 0)         # 넥스트레이드 프리마켓 시작. 이 뒤로는 네이버 시세가 새 날짜로 바뀐다
 NAVER_MIN_ROWS = 2000         # 이보다 적으면 목록이 덜 온 것으로 보고 쓰지 않음
 NAVER_TRIES = 3               # 목록에 같은 종목이 겹쳐 오면 다시 받아 합치는 횟수 (처음 포함)
+HEAL_DAYS = 14                # 이 기간 안의 평일 중 KRX 확정값이 아닌 날은 기본 실행마다 KRX 로 다시 받는다
 
 
 OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume, chg)
@@ -36,10 +42,17 @@ OHLC_SQL = """INSERT INTO ohlc_daily (date, code, open, high, low, close, volume
 
 
 def collect_date(conn, session, d: date, ohlc_only: bool = False) -> int:
-    """ohlc_only: 일봉만 채운다 (차트용 과거 백필. price_daily 는 건드리지 않음)"""
+    """ohlc_only: 일봉만 채운다 (차트용 과거 백필. price_daily 는 건드리지 않음).
+    한 시장이라도 비면(휴장·미공개) 아무것도 쓰지 않는다 — 한 시장만 쓰면 다른 시장의 임시 종가가 지워지고
+    그날이 확정된 것으로 보인다. 첫 시장이 비면 다음 시장은 묻지 않는다 (KRX 호출 한도 아끼기)."""
     rows = []
     for market in krx.ENDPOINTS:
-        rows += krx.fetch_daily(session, config.KRX_API_KEY, d.strftime('%Y%m%d'), market)
+        got = krx.fetch_daily(session, config.KRX_API_KEY, d.strftime('%Y%m%d'), market)
+        if not got:
+            if rows:
+                log.warning('%s: KRX %s 만 비어 있음 — 쓰지 않음', d, market)
+            return 0
+        rows += got
         time.sleep(0.3)
     if rows:
         with conn:
@@ -93,6 +106,30 @@ def naver_list(session) -> list:
     return rows
 
 
+def regular_close(conn, rows, d: date) -> int:
+    """
+    네이버 목록 행(rows)의 통합 가격을, 종목별 수급(flow_daily)에 그날 정규장 종가가 있는 종목은 그 값으로 바꾼다 (바꾼 수).
+    flow_daily.close 는 네이버 수급 응답의 krx.regularMarketClosingPrice 다. live.py 가 20:20 무렵부터 받고
+    대상은 시총 1,000억 이상 보통주 + 리포트 종목(약 1,400개)이라 20:40 실행이면 시총 큰 종목은 거의 다 바뀐다.
+    등락률은 네이버 기준가(종가 - 전일 대비)로, 시총은 상장주식수 × 정규장 종가로 다시 계산한다.
+    """
+    reg = {c: v for c, v in conn.execute(
+        'SELECT code, close FROM flow_daily WHERE date = ? AND close > 0', (d.isoformat(),))}
+    n = 0
+    for r in rows:
+        c = reg.get(r['code'])
+        if not c:
+            continue
+        if c != r['close']:
+            if r.get('base'):
+                r['change_pct'] = round((c / r['base'] - 1) * 100, 2)
+            if r.get('shares'):
+                r['mcap'] = r['shares'] * c / 1e8
+            r['close'] = c
+        n += 1
+    return n
+
+
 def collect_naver(conn, session, d: date) -> int:
     """네이버 전 종목 시세 중 날짜가 d 인 보통·우선주만 d 의 가격으로 저장 (KRX 가 나중에 덮어씀)"""
     by = {}
@@ -106,7 +143,9 @@ def collect_naver(conn, session, d: date) -> int:
     if len(rows) < NAVER_MIN_ROWS:
         return 0
     for r in rows:
-        r['shares'] = round(r['mcap'] * 1e8 / r['close']) if r['mcap'] else None
+        r['shares'] = round(r['mcap'] * 1e8 / r['close']) if r['mcap'] else None   # 네이버 시총 = 통합 가격 × 상장주식수
+    n_reg = regular_close(conn, rows, d)
+    log.info('%s: 네이버 목록 %d종목 중 %d종목은 종목별 수급의 정규장 종가로 바꿈', d, len(rows), n_reg)
     with conn:
         conn.execute('DELETE FROM price_daily WHERE date = ?', (d.isoformat(),))
         conn.executemany(
@@ -131,9 +170,39 @@ def fill_from_naver(conn, session, latest: str):
         log.warning('네이버 시세 실패: %s', e)
         return
     if n:
-        log.info('%s: %d종목 (네이버 통합 시세, KRX 공개 전 임시)', d, n)
+        log.info('%s: %d종목 (네이버 시세, KRX 공개 전 임시)', d, n)
     else:
         log.info('%s: 네이버 시세에 이날 종가 없음 (휴장일?)', d)
+
+
+def confirmed_dates(conn, since: str) -> set:
+    """since 이후 KRX 확정값이 들어간 날 (일봉에 시가가 있는 날. 네이버 임시 종가는 시가가 없다)"""
+    return {r[0] for r in conn.execute(
+        'SELECT DISTINCT date FROM ohlc_daily WHERE date >= ? AND open IS NOT NULL', (since,))}
+
+
+def heal(conn, session, latest: date) -> list:
+    """
+    latest 앞 HEAL_DAYS 일 중 KRX 확정값이 없는 평일(네이버 임시 종가로 남은 날·아예 빈 날)을 KRX 로 다시 받는다 (채운 날 목록).
+    기본 실행은 KRX 가 연 가장 최근 날만 받는다. 그날이 '가장 최근'인 동안 실행이 모두 실패하면
+    (07:10 은 KRX 공개 전, 12:10 은 네트워크 오류, 또는 daily.py 가 오래 돌아 다음 실행들이 건너뜀) 임시 종가가 영영 남았다.
+    휴장일은 KRX 가 빈 목록을 돌려줘 아무것도 쓰지 않는다 (실행마다 1회 호출).
+    """
+    done = confirmed_dates(conn, (latest - timedelta(days=HEAL_DAYS)).isoformat())
+    fixed = []
+    for i in range(1, HEAL_DAYS + 1):
+        d = latest - timedelta(days=i)
+        if d.weekday() >= 5 or d.isoformat() in done:
+            continue
+        try:
+            n = collect_date(conn, session, d)
+        except requests.RequestException as e:
+            log.warning('%s: KRX 다시 받기 실패 — %s', d, e)
+            continue
+        if n:
+            log.info('%s: %d종목 (KRX 확정값이 없던 날 — 다시 채움)', d, n)
+            fixed.append(d)
+    return fixed
 
 
 def main():
@@ -179,7 +248,7 @@ def main():
             log.info('%s: %d종목', d, n)
         return
 
-    # 기본: 최근 거래일 1개 (오늘 데이터는 보통 다음 날 열림) + 그 뒤 끝난 장은 네이버 종가로
+    # 기본: KRX 가 연 최근 거래일 (오늘 데이터는 보통 다음 날 열림) + 그 앞에 확정값이 없는 날 + 그 뒤 끝난 장은 네이버 종가로
     for i in range(0, 7):
         d = today - timedelta(days=i)
         if d.weekday() >= 5:
@@ -187,6 +256,7 @@ def main():
         n = collect_date(conn, session, d)
         if n:
             log.info('%s: %d종목', d, n)
+            heal(conn, session, d)
             fill_from_naver(conn, session, d.isoformat())
             return
     sys.exit('최근 7일 내 KRX 데이터 없음')

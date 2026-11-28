@@ -166,15 +166,19 @@ def parse_high52(payload: Dict, market: str) -> Dict:
     for s in stocks:
         if s.get('stockEndType') != 'stock':   # ETF·ETN 제외
             continue
+        close = to_num(s.get('closePriceRaw') or s.get('closePrice'))
+        diff = to_num(s.get('compareToPreviousClosePriceRaw'))     # 부호 있음 (하락이면 음수)
         rows.append({
             'date': _date(s['localTradedAt']),
             'code': s['itemCode'],
             'name': s.get('stockName'),
             'market': market,
-            'close': to_num(s.get('closePriceRaw') or s.get('closePrice')),
+            'close': close,
             'change_pct': to_num(s.get('fluctuationsRatio')),
             'mcap': (to_num(s.get('marketValueRaw')) or 0) / 1e8,
             'trd_val': (to_num(s.get('accumulatedTradingValueRaw')) or 0) / 1e8,
+            # 등락률의 기준가 (KRX 전일 종가, 권리락·분할이면 조정된 값). 종가를 정규장 종가로 바꿀 때 등락률을 다시 계산하는 데 쓴다
+            'base': close - diff if close and diff is not None else None,
         })
     return {'total': int(payload.get('totalCount') or 0), 'rows': rows}
 
@@ -210,8 +214,11 @@ def fetch_industry_codes(session, no: int, timeout: float = 10) -> List[str]:
 def fetch_market_list(session, market: str, page: int = 1, page_size: int = 100, timeout: float = 10) -> Dict:
     """
     시총순 전 종목 시세. 신고가 목록과 응답 모양이 같다.
-    closePrice 는 네이버 통합 시세라 장 마감 뒤에도 넥스트레이드 시간외 거래(~20:00)를 따라 움직인다.
-    등락률은 KRX 전일 종가 대비. KRX 정규장 종가 자체는 이 응답에 없다.
+    closePrice 는 네이버 통합 시세라 장 마감 뒤에도 KRX 시간외 단일가(16:00~18:00)·넥스트레이드 애프터마켓(~20:00)을
+    따라 움직인다 (2026-11-27 디앤디파마텍 42,650 vs KRX 42,150 — 넥스트레이드 종목이 아니어도 KRX 시간외로 바뀐다).
+    overMarketPriceInfo.overPrice 는 넥스트레이드 애프터마켓 가격이다. 등락률은 KRX 전일 종가 대비.
+    KRX 정규장 종가 자체는 이 응답에 없다 (exchangeType 등 인자를 줘도 같다). 종목별 수급 응답의
+    krx.regularMarketClosingPrice(→ flow_daily.close)가 정규장 종가다.
     """
     r = session.get(f'{M_API}/stocks/marketValue/{market}',
                     params={'page': page, 'pageSize': page_size}, timeout=timeout)

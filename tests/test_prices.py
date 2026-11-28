@@ -72,6 +72,60 @@ class NaverListTest(unittest.TestCase):
         self.assertEqual(n, 2)
         self.assertEqual(next(it), [])          # NAVER_TRIES 번만 받는다
 
+    def test_regular_close_from_flow_replaces_integrated_price(self):
+        # 2026-11-26 디앤디파마텍: 네이버 목록 37,200 (+9.9%, 시간외 포함) / 정규장 36,450 / 기준가 33,850
+        conn = self._conn()
+        conn.execute("INSERT INTO flow_daily (date, code, close) VALUES ('2026-11-19', '347850', 36450)")
+        rows = [{**_row('347850', 37200.0), 'change_pct': 9.9, 'base': 33850.0, 'shares': 45996189},
+                {**_row('000002', 500.0), 'base': 490.0, 'shares': 1000}]
+        self.assertEqual(P.regular_close(conn, rows, date(2026, 11, 19)), 1)
+        self.assertEqual(rows[0]['close'], 36450)
+        self.assertEqual(rows[0]['change_pct'], 7.68)            # KRX FLUC_RT 와 같다
+        self.assertAlmostEqual(rows[0]['mcap'], 16765.611, places=2)
+        self.assertEqual(rows[1]['close'], 500.0)                # 수급에 없는 종목은 그대로
+
+
+class KrxHealTest(unittest.TestCase):
+    """가장 최근 날만 받으면, 그날이 '가장 최근'인 동안 실행이 다 실패했을 때 임시 종가가 남는다 (2026-11-20·11-26)"""
+
+    def _conn(self):
+        return NaverListTest._conn(self)
+
+    def test_one_market_empty_writes_nothing(self):
+        from unittest import mock
+        conn = self._conn()
+        conn.execute("INSERT INTO price_daily (date, code, close) VALUES ('2026-11-26', '347850', 37200)")
+        krx_row = {**_row('005930', 1000.0, '2026-11-26'), 'shares': 1, 'open': 1, 'high': 1, 'low': 1, 'volume': 1}
+        with mock.patch.object(P.krx, 'fetch_daily', lambda s, k, d, m: [krx_row] if m == 'KOSPI' else []), \
+             mock.patch.object(P.time, 'sleep', lambda s: None):
+            self.assertEqual(P.collect_date(conn, None, date(2026, 11, 26)), 0)
+        self.assertEqual(tuple(conn.execute('SELECT code, close FROM price_daily').fetchone()), ('347850', 37200))
+        self.assertEqual(conn.execute('SELECT COUNT(*) FROM price_daily').fetchone()[0], 1)
+
+    def test_heal_refetches_unconfirmed_weekdays_only(self):
+        from unittest import mock
+        conn = self._conn()
+        # 11-25 확정(시가 있음), 11-26 네이버 임시(시가 없음), 11-24 는 아예 없음, 11-27 이 가장 최근 KRX 날
+        conn.executemany('INSERT INTO ohlc_daily (date, code, open, close) VALUES (?, ?, ?, ?)', [
+            ('2026-11-25', '000001', 10, 10), ('2026-11-26', '000001', None, 11), ('2026-11-27', '000001', 12, 12)])
+        for d in ('2026-11-23', '2026-11-20', '2026-11-19', '2026-11-18', '2026-11-17', '2026-11-16', '2026-11-13'):
+            conn.execute('INSERT INTO ohlc_daily (date, code, open, close) VALUES (?, ?, ?, ?)', (d, '000001', 1, 1))
+        called = []
+        with mock.patch.object(P, 'collect_date', lambda c, s, d: called.append(d.isoformat()) or 5):
+            fixed = P.heal(conn, None, date(2026, 11, 27))
+        self.assertEqual(called, ['2026-11-26', '2026-11-24'])  # 주말·확정된 날은 부르지 않는다
+        self.assertEqual([d.isoformat() for d in fixed], called)
+
+
+class Base52Test(unittest.TestCase):
+    def test_base_price_from_signed_diff(self):
+        from collectors import naver
+        s = lambda code, close, diff: {'stockEndType': 'stock', 'itemCode': code, 'localTradedAt': '2026-11-27T20:20:00+09:00',
+                                       'closePriceRaw': str(close), 'compareToPreviousClosePriceRaw': str(diff),
+                                       'fluctuationsRatio': '0', 'marketValueRaw': '0', 'accumulatedTradingValueRaw': '0'}
+        rows = naver.parse_high52({'stocks': [s('A', 42650, 6200), s('B', 84000, -700)], 'totalCount': 2}, 'KOSPI')['rows']
+        self.assertEqual([r['base'] for r in rows], [36450, 84700])
+
 
 if __name__ == '__main__':
     unittest.main()

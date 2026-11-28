@@ -328,10 +328,14 @@ def sync(conn):
         if conn.execute('SELECT 1 FROM hp WHERE date = ? AND open IS NOT NULL LIMIT 1', (d,)).fetchone():
             last = d
             break
+    # last 앞이라도 최근 30일 안에서 여기 확정값이 없는 날(그때는 화면용 DB에 임시 종가만 있어 건너뛴 날)은 다시 본다.
+    # 화면용 DB가 나중에 KRX 로 고쳐져도 last 가 이미 지나가 영영 비어 있었다 (2026-11-20·11-26 — 2026-11-28 발견)
+    recent = min(last, (date.today() - timedelta(days=30)).isoformat())
+    have = {r[0] for r in conn.execute('SELECT DISTINCT date FROM hp WHERE date > ? AND open IS NOT NULL', (recent,))}
     days = [r[0] for r in src.execute(
         'SELECT DISTINCT p.date FROM price_daily p WHERE p.date > ? AND p.date < ? AND EXISTS '
         '(SELECT 1 FROM ohlc_daily o WHERE o.date = p.date AND o.chg IS NOT NULL AND o.open IS NOT NULL) ORDER BY 1',
-        (last, date.today().isoformat()))]
+        (recent, date.today().isoformat())) if r[0] > last or r[0] not in have]
     for d in days:
         rows = [dict(zip(('date', 'code', 'name', 'market', 'close', 'change_pct', 'mcap', 'trd_val',
                           'open', 'high', 'low', 'volume'), r)) for r in src.execute(
