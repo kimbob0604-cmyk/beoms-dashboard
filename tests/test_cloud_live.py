@@ -60,15 +60,19 @@ class SiteTest(unittest.TestCase):
         return d.parent
 
     def test_skips_outside_hours_and_when_mac_fresh(self):
-        f = self.folder({'built': '2026-11-18T10:50:00'})
-        self.assertEqual(CL.site(f, now=datetime(2026, 11, 18, 8, 30)), CL.SKIP)
-        self.assertEqual(CL.site(f, now=datetime(2026, 11, 21, 10, 0)), CL.SKIP)       # 토요일
-        self.assertEqual(CL.site(f, now=datetime(2026, 11, 18, 11, 0)), CL.SKIP)       # 맥이 10분 전에 배포
+        # 건너뛸 때는 시세를 받으러 가지 않아야 한다: 쓰면 바로 깨지는 session 을 넘긴다 (예전에는 네트워크로 받은 시세 날짜 때문에 우연히 통과했다)
+        f = self.folder({'built': '2026-11-18T10:58:00'})
+        no_net = object()
+        self.assertEqual(CL.site(f, session=no_net, now=datetime(2026, 11, 18, 8, 30)), CL.SKIP)
+        self.assertEqual(CL.site(f, session=no_net, now=datetime(2026, 11, 21, 10, 0)), CL.SKIP)       # 토요일
+        self.assertEqual(CL.site(f, session=no_net, now=datetime(2026, 11, 18, 11, 0)), CL.SKIP)       # 맥이 2분 전에 배포
 
     def test_mac_fresh(self):
+        # MAC_FRESH = 4분 (2026-11-19 cloud-live 1분 주기로 바꾸며 15분 → 4분)
         now = datetime(2026, 11, 18, 11, 0)
-        self.assertTrue(CL.mac_fresh({'built': '2026-11-18T10:50:00'}, now))
-        self.assertFalse(CL.mac_fresh({'built': '2026-11-18T10:40:00'}, now))
+        self.assertTrue(CL.mac_fresh({'built': '2026-11-18T10:57:00'}, now))
+        self.assertFalse(CL.mac_fresh({'built': '2026-11-18T10:56:00'}, now))          # 딱 4분 전이면 이미 오래된 것
+        self.assertFalse(CL.mac_fresh({'built': '2026-11-18T10:50:00'}, now))
         self.assertFalse(CL.mac_fresh({'built': '2026-11-18T10:58:00', 'by': 'cloud'}, now))
 
 
