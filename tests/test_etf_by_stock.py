@@ -58,5 +58,21 @@ class LedgerTest(unittest.TestCase):
         assert out['h'][0] == round(1e9 * w13 / 1e8, 2) and out['h'][1] == round(1e9 * w16 / 1e8, 2)
 
 
+    def test_rebal_marks_expected_and_expiry(self):
+        rb = {'event': {'title': '12월 정기변경', 'rebalance': '2026-11-16', 'effective': '2026-11-17'},
+              'idx': {'K200': {'name': '코스피200', 'aum': {'etf1': 1000.0, 'tr': 500.0, 'date': '2026-11-13'},
+                               'new': [{'c': '000001', 'n': 'A', 'w': 0.01, 'wa': None, 'tv20': 30.0}],
+                               'out': [{'c': '000003', 'n': 'C', 'w': 0.002, 'tv20': 5.0}]}}}
+        m = b.rebal_marks(rb, '2026-11-17')
+        self.assertEqual(m['000001']['exp'], 15.0)                  # (1배 + TR) × 편입 후 비중
+        self.assertEqual(m['000003']['exp'], -3.0)                  # 편출은 − 지금 비중
+        self.assertEqual(b.rebal_marks(rb, '2026-12-31'), {})       # 적용일 + 30일 지나면 뺀다
+        x = data({'2026-11-13': snap_rows(5000, 10000), '2026-11-16': snap_rows(5000, 10000),
+                  '2026-11-17': snap_rows(4900, 10200)})
+        out = b.build(x, rb)
+        self.assertEqual(out['000001']['rebal']['act'], round(-100 * 20 * 100000 / 1e8, 1))   # 리밸런싱일 실측
+        self.assertEqual(out['000003']['rows'], [])                 # 담은 ETF 가 없어도 파일을 만든다
+
+
 if __name__ == "__main__":
     unittest.main()

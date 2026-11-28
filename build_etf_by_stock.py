@@ -18,6 +18,10 @@ KBJ 컨테이너(kbj-scheduler-1)에서 kbj_etf_by_stock.py 로 ETF 마다 받�
     주가 = 그날 PDF 금액 ÷ 수량(여러 ETF 중앙값). 주가가 갑자기 반·두 배가 되고 수량이 거꾸로 움직이면
     분할·병합으로 보고 뺀다. 펀드 하루 리밸런싱 순액이 순자산의 15% 를 넘으면 바스켓 재설정으로 보고 뺀다.
   ETF 보유액(억) = ETF 순자산 × 비중
+정기변경(public/data/rebal.json — build_rebal.py)의 편입·편출 종목에는 'rebal' 을 붙인다:
+  예상 = 추종 자금(1배 + TR ETF) × 편입 후 비중(편출은 − 지금 비중), 거래대금 며칠치
+  실측 = 리밸런싱일(매매일)의 리밸런싱 몫 합 — 다음 거래일 PDF(적용일 PDF)가 들어온 뒤에야 나온다
+  적용일 + REBAL_KEEP 달력일까지 붙인다.
 
 한계: 운용사 PDF 를 받는 ETF(KODEX·TIGER·RISE·ACE·SOL·HANARO·PLUS·KoAct·TIMEFOLIO)만 들어가서 합계는 하한.
 레버리지·인버스의 선물 노출은 PDF 에서 종목이 아니므로 빠진다.
@@ -37,6 +41,8 @@ N = 20                      # 순설정·환매를 받는 거래일 수 (1·5·2
 STALE_DAYS = 7              # 마지막 거래일보다 이만큼 오래된 PDF 는 '비중 오래됨'
 RESET_SHARE = 0.15          # 펀드 하루 리밸런싱 순액 ÷ 순자산이 이보다 크면 바스켓 재설정(매매 아님)
 EV_MIN = 1e8                # 표에 '편입·편출·비중' 표시를 붙이는 리밸런싱 금액 하한(원)
+REBAL = ROOT / 'public' / 'data' / 'rebal.json'
+REBAL_KEEP = 30             # 정기변경 적용일 뒤 이 달력일까지 패널에 남긴다
 
 
 def container_up() -> bool:
@@ -160,7 +166,30 @@ def ledger(x):
     return out, known, skipped
 
 
-def build(x: dict) -> dict:
+def rebal_marks(rb: dict | None, end: str) -> dict:
+    """{종목코드: 정기변경 한 줄} — rebal.json 의 편입·편출. 적용일 + REBAL_KEEP 일이 지났으면 비운다"""
+    from datetime import date, timedelta
+    if not rb or not rb.get('event'):
+        return {}
+    ev = rb['event']
+    if date.fromisoformat(end) > date.fromisoformat(ev['effective']) + timedelta(days=REBAL_KEEP):
+        return {}
+    out = {}
+    for I in rb.get('idx', {}).values():
+        a = (I['aum'].get('etf1') or 0) + (I['aum'].get('tr') or 0)          # 억 (신한식: 1배 + TR)
+        for kind, xs in (('in', I.get('new', [])), ('out', I.get('out', []))):
+            for s in xs:
+                if s.get('w') is None:
+                    continue
+                v = a * s['w'] * (1 if kind == 'in' else -1)
+                out[s['c']] = {'t': ev['title'], 'idx': I['name'], 'k': kind, 'rd': ev['rebalance'], 'ed': ev['effective'],
+                               'w': round(s['w'] * 100, 3), 'wa': None if s.get('wa') is None else round(s['wa'] * 100, 3),
+                               'exp': round(v, 1), 'tv': s.get('tv20'),
+                               'n': s.get('n'), 'aum': round(a), 'aum_d': I['aum'].get('date')}
+    return out
+
+
+def build(x: dict, rb: dict | None = None) -> dict:
     """{종목코드: 파일 내용}"""
     from bisect import bisect_right
     from datetime import date, timedelta
@@ -200,6 +229,9 @@ def build(x: dict) -> dict:
             if ok_code(code, x['etfs']) and c in etf:
                 by.setdefault(code, {'n': None, 'rows': {}})['rows'].setdefault(c, (0.0, None))
     last_known = known - 1                             # days 기준 i (tds 첫날을 뺐으므로 −1)
+    marks = rebal_marks(rb, x['end'])
+    for code, m in marks.items():                      # 담은 ETF 가 없는 편입 예정 종목도 파일을 만든다
+        by.setdefault(code, {'n': m['n'], 'rows': {}})
     out = {}
     for code, s in by.items():
         cr, rb, gp = [0.0] * n, [0.0 if i <= last_known else None for i in range(n)], [0] * n
@@ -229,15 +261,21 @@ def build(x: dict) -> dict:
             rows.append([c, e['n'], round(wt, 3), None if e['na'] is None else round(e['na'] * wt / 100 / 1e8, 1),
                          *e['r'], *e['s'], asof, 1 if asof and asof < cut else 0, e['bi'],
                          ksum(cd, 1), ksum(cd, 5), ksum(cd, 20), ksum(rd, 1), ksum(rd, 5), ksum(rd, 20), ev])
-        if not rows:
+        m = marks.get(code)
+        if not rows and not m:
             continue
+        if m:
+            m = dict(m)
+            ri = days.index(m['rd']) if m['rd'] in days else None
+            m['act'] = None if ri is None or rb[ri] is None else round(rb[ri] / 1e8, 1)   # 실측: 리밸런싱일 리밸런싱 몫 합
+            m.pop('n')
         rows.sort(key=lambda r: -(r[3] or 0))           # ETF 보유액 큰 순
         out[code] = {'c': code, 'n': s['n'] or x.get('names', {}).get(code), 'd': x['end'], 'days': days,
                      'h': [round(v / 1e8, 2) for v in cr],
                      'rb': [None if v is None else round(v / 1e8, 2) for v in rb], 'g': gp,
                      'cols': ['etf', 'name', 'wt', 'held', 'r1', 'r5', 'r20', 'f1', 'f5', 'f20', 'asof', 'stale', 'base',
                               'c1', 'c5', 'c20', 'b1', 'b5', 'b20', 'ev'],
-                     'rows': rows}
+                     'rows': rows, 'rebal': m}
     return out
 
 
@@ -251,7 +289,11 @@ def main() -> int:
         print(f'KBJ 컨테이너({CONTAINER})가 꺼져 있습니다. 건너뜁니다.')
         return 4
     x = fetch()
-    files = build(x)
+    try:
+        rb = json.loads(REBAL.read_text(encoding='utf-8')) if REBAL.exists() else None
+    except (OSError, ValueError):
+        rb = None
+    files = build(x, rb)
     OUT.mkdir(parents=True, exist_ok=True)
     keep = set()
     for code, d in files.items():

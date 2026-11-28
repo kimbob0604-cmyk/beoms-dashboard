@@ -261,6 +261,8 @@ mark { background: none; color: var(--text); font-weight: 700; }
 .etf-tbl .etf-name a:hover { text-decoration: underline; }
 .etf-tbl .etf-name small { font-size: 11px; }
 .st-etf .etf-more { margin: 0 0 8px; }
+.etf-rebal { margin: 0 0 10px; padding: 8px 10px; border-radius: 8px; background: var(--chip); font-size: 13px; line-height: 1.6; }
+.etf-rebal small { margin-left: 4px; cursor: help; text-decoration: underline dotted; }
 .etf-tbl .etf-ev { font-size: 11px; margin-right: 6px; color: var(--etf-rb); font-weight: 600; }
 .st-note { padding: 8px 22px 0; line-height: 1.6; }
 .st-loading { padding: 18px 22px; border-top: 1px solid var(--line); }

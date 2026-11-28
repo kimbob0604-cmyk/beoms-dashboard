@@ -28,3 +28,6 @@ visit_docs/
 .cloudsync/
 .cloud_state.json
 db/.snap_sha
+
+# 브라우저 확인 도구(Playwright MCP) 스냅·콘솔 기록
+.playwright-mcp/

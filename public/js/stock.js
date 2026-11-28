@@ -309,10 +309,21 @@ const Stock = (() => {
     return `<small class="etf-ev ${kind === 'NEW' || kind === 'ADD' ? 'up' : 'dn'}" title="${U.esc(tip)}">${EV_TXT[kind]}${kind === 'ADD' || kind === 'CUT' ? pct : ''} ${U.md(day)}</small>`;
   }
 
+  // 지수 정기변경 편입·편출 예정 한 줄 (data/rebal.json → build_etf_by_stock 이 종목 파일에 붙인다)
+  function etfRebal(m) {
+    if (!m) return '';
+    const days = m.tv ? Math.abs(m.exp) / m.tv : null;
+    const act = m.act != null ? ` · 실측(${U.md(m.rd)} 리밸런싱 몫) <b class="${U.cls(m.act)}">${U.eok(m.act, true)}</b>` : '';
+    const wa = m.wa != null ? ` · 실제 비중 ${m.wa.toFixed(3)}%` : '';
+    return `<div class="etf-rebal"><b>${U.md(m.rd)} ${U.esc(m.idx)} ${m.k === 'in' ? '편입' : '편출'} 예정</b>
+      · 예상 패시브 <b class="${U.cls(m.exp)}">${U.eok(m.exp, true)}</b>${days != null ? ` (거래대금 ${days.toFixed(1)}일치)` : ''}${act}${wa}
+      <small class="muted" title="${U.esc(`${m.t} · 추종 자금(1배+TR ETF) ${U.eok(m.aum)} × ${m.k === 'in' ? '편입 후 비중' : '지금 비중'} ${m.w}% · 거래대금은 20일 평균 · 적용일 ${m.ed} — 수급 탭 '지수 정기변경' 칸 기본값(신한식)과 같은 식`)}">계산식</small></div>`;
+  }
+
   function etfHtml() {
     const d = etfData;
     if (d === undefined) return '<section class="st-sec"><h3>ETF 편입</h3><p class="muted st-loading">불러오는 중…</p></section>';
-    if (!d?.rows?.length) return '';
+    if (!d?.rows?.length) return d?.rebal ? `<section class="st-sec st-etf"><h3>ETF 편입 <small class="muted">담은 ETF 없음</small></h3>${etfRebal(d.rebal)}</section>` : '';
     const p = etfP;
     const fmt = v => (v == null ? '<span class="muted">–</span>' : v === 0 ? '<span class="muted">0</span>' : `<span class="${U.cls(v)}">${U.eok(v, true)}</span>`);
     const pctH = v => (v == null ? '<span class="muted">–</span>' : `<span class="${U.cls(v)}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</span>`);
@@ -330,6 +341,7 @@ const Stock = (() => {
     return `<section class="st-sec st-etf">
       <div class="st-sec-head"><h3>ETF 편입 <small class="muted">${d.rows.length}개 ETF · ${U.md(d.d)} 기준</small></h3>
         <div class="seg" role="group">${ETF_P.map(([k, l]) => `<button data-etfp="${k}" class="${k === p ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+      ${etfRebal(d.rebal)}
       <div class="st-kpis">
         <div><span>ETF 보유액 합</span><b>${U.eok(held)}</b>${etfMc ? `<small>시총의 ${(held / etfMc * 100).toFixed(2)}%</small>` : ''}</div>
         <div><span>ETF 매매 ${p}일</span><b>${fmt(etfSum(cr, rb))}</b><small>설정·환매 ${fmt(cr)} · 리밸런싱 ${fmt(rb)}${rbLate ? '<sup title="마지막 거래일 리밸런싱은 다음 거래일 PDF 가 와야 압니다">*</sup>' : ''}${gap ? ' <span title="PDF 가 빈 날이 있어 그 사이 변화를 다음 날에 몰아 적었습니다">(구간 합)</span>' : ''}</small></div>
