@@ -24,6 +24,27 @@
         "/Users/beomjun/Beom's Macro/serve.py"
       ],
       "port": 8770
+    },
+    {
+      "name": "bio",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/beomjun/Beom's Bio/serve.py"
+      ],
+      "port": 8780
+    },
+    {
+      "name": "consumer",
+      "url": "http://127.0.0.1:8790",
+      "port": 8790
+    },
+    {
+      "name": "china",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/beomjun/Beom's China/serve.py"
+      ],
+      "port": 8780
     }
   ]
 }
